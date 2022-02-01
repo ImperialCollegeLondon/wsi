@@ -192,15 +192,22 @@ class Land(Node):
             tank.reinit()
 
 class Land_(Node):
-    def __init__(**kwargs):
+    def __init__(self, **kwargs):
         
         super().__init__(**kwargs)
+        surfaces = self.surfaces.copy()
+        self.surfaces = {}
+        for sname, surface in surfaces.items():
+            self.surfaces[sname] = Surface(**surface)
+            self.surfaces[sname].parent = self
 
         #Update handlers
         self.push_set_handler['Sewer'] = self.push_set_flood
-
+        self.push_set_handler[('Demand','Garden')] = self.push_set_garden
+        self.push_check_handler[('Demand','Garden')] = self.push_check_garden
+        
         #Initiliase values
-        self.total_evaporation = self.empty_vqip()
+        self.total_evaporation = 0
         self.total_runoff = self.empty_vqip()
         self.total_infiltration = self.empty_vqip()
         self.total_percolation = self.empty_vqip()
@@ -210,7 +217,7 @@ class Land_(Node):
         for surface in self.surfaces.values():
             self.mass_balance_ds.append(surface.ds)
         self.mass_balance_in.append(lambda : self.total_runoff)
-        self.mass_balance_out.append(lambda : self.total_evaporation)
+        self.mass_balance_out.append(lambda : self.v_change_vqip(self.empty_vqip(), self.total_evaporation))
 
     def create_runoff(self):
         #Temporary variable to keep track of everything
@@ -221,30 +228,30 @@ class Land_(Node):
                                      'surface_runoff' : {}}
         
         #Update surfaces
-        for surface in self.surfaces.values()
+        for sname, surface in self.surfaces.items():
             #Make rain
             runoff = surface.apply_precipitation()
-            temp_tracking['runoff'][surface] = runoff
+            temp_tracking['runoff'][sname] = runoff
 
             #Get evaporation
             evaporation = surface.pull_evaporation()
-            temp_tracking['evaporation'][surface] = evaporation
+            temp_tracking['evaporation'][sname] = evaporation
 
             #Get infiltration
             infiltration = surface.pull_infiltration()
-            temp_tracking['infiltration'][surface] = infiltration
+            temp_tracking['infiltration'][sname] = infiltration
 
             #Get percolation
             percolation = surface.pull_percolation()
-            temp_tracking['percolation'][surface] = percolation
+            temp_tracking['percolation'][sname] = percolation
 
             #Get runoff
             surface_runoff = surface.pull_ponded()
-            temp_tracking['surface_runoff'][surface] = surface_runoff
+            temp_tracking['surface_runoff'][sname] = surface_runoff
             
             #Update totals
             self.total_infiltration = self.blend_vqip(self.total_infiltration, infiltration)
-            self.total_evaporation = self.blend_vqip(self.total_evaporation, evaporation)
+            self.total_evaporation += evaporation
             self.total_runoff = self.blend_vqip(self.total_runoff, runoff)
             self.total_percolation = self.blend_vqip(self.total_percolation, percolation)
 
@@ -259,31 +266,56 @@ class Land_(Node):
         
         amount_entering_rivers = self.blend_vqip(self.total_surface_runoff, self.total_percolation)
 
-        runoff_remaining = self.push_distributed(amount_entering_rivers, of_type = ['Node', 'River']) #TODO seems suspicious.. do I need 'not of type'?
+        runoff_remaining = self.push_distributed(amount_entering_rivers, of_type = ['Node']) #TODO seems suspicious.. do I need 'not of type'?
 
         #Redistribute unsent infiltration
-        if infiltration_remaining['volume'] > 0:
+        if infiltration_remaining['volume'] > constants.FLOAT_ACCURACY:
+            print('infiltraiton remaining')
             #Calculate proportion
             proportions = {sname : value['volume'] / self.total_infiltration['volume'] for sname, value in temp_tracking['infiltration'].items()}
             self.redistribute_to_surfaces(proportions, temp_tracking['infiltration'], infiltration_remaining['volume'])
             
         #Redistribute amount_entering rivers in proportion to percolation and using percolation concentrations
-        if runoff_remaining['volume'] > 0:
+        if runoff_remaining['volume'] > constants.FLOAT_ACCURACY:
+            print('runoff to river remaining')
             #Calculate proportion
             proportions = {sname : value['volume'] / self.total_percolation['volume'] for sname, value in temp_tracking['percolation'].items()}
             self.redistribute_to_surfaces(proportions, temp_tracking['percolation'], runoff_remaining['volume'])
-
-    def redistribute_to_surfaces(proportions, concentrations, amount):
+        
+        
+        
+        
+    def redistribute_to_surfaces(self, proportions, concentrations, amount):
         for sname, surface in self.surfaces.items():
             #Calculate amount and concentration
-            to_send = amount * proportions[sname]['volume']
+            to_send = amount * proportions[sname]
             to_send = self.v_change_vqip(concentrations[sname], to_send)
 
             #Update tank
             _ = surface.push_storage(to_send, force = True)
 
+    def push_set_flood(self, vqip):
+        #Update flooded volume
+        return self.surfaces['impervious'].push_storage(vqip, force=True)
+    
+    def push_set_garden(self, vqip):
+        #Respond to a demand node filling excess garden demand
+        return self.surfaces['garden'].push_storage(vqip, force = True)
+    
+    def push_check_garden(self, vqip = None):
+        #Respond to a garden checking excess before sending water
+        excess = self.surfaces['garden'].get_excess()
+        if vqip is not None:
+            excess['volume'] = min(excess['volume'], vqip['volume'])
+        return excess
+    
+    def reinit(self):
+        for surface in self.surfaces.values():
+            surface.end_timestep()
+            surface.reinit()
+
     def end_timestep(self):
-        self.total_evaporation = self.empty_vqip()
+        self.total_evaporation = 0
         self.total_runoff = self.empty_vqip()
         self.total_infiltration = self.empty_vqip()
         self.total_percolation = self.empty_vqip()
@@ -293,7 +325,7 @@ class Land_(Node):
             surface.end_timestep()
 
 class Surface(Tank):
-    def __init__(**kwargs):
+    def __init__(self, **kwargs):
         self.area = 0
         self.capacity = 0
         self.datum = 10
@@ -301,16 +333,16 @@ class Surface(Tank):
         self.evaporation_t = 1 #mm
         self.infiltration_t = 1 #mm
 
-        self.pollutant_dict = self.empty_vqip()
-
         super().__init__(**kwargs)
+        
+        # self.pollutant_dict = self.empty_vqip()
 
     def apply_precipitation(self):
         #Read data
-        precipitation_mm = self.data_input_dict[(self.name, 'precipitation', self.t)]
+        precipitation_mm = self.parent.data_input_dict[(self.parent.name, 'precipitation', self.parent.t)]
 
         #Convert to recharge
-        runoff = self.surface.area * precipitation_mm * constants.MM_M2_TO_M3
+        runoff = self.area * precipitation_mm * constants.MM_M2_TO_M3
 
         #Apply pollutants
         runoff = self.v_change_vqip(self.pollutant_dict, runoff)
@@ -325,7 +357,7 @@ class Surface(Tank):
         evaporation_mm = self.evaporation_t
 
         #Convert to an amount
-        evaporation = self.surface.area * evaporation_mm * constants.MM_M2_TO_M3
+        evaporation = self.area * evaporation_mm * constants.MM_M2_TO_M3
 
         #Update tank
         evaporation = self.evaporate(evaporation)
@@ -337,10 +369,10 @@ class Surface(Tank):
         infiltration_mm = self.infiltration_t
 
         #Convert to an amount
-        infiltration = self.surface.area * infiltration_mm * constants.MM_M2_TO_M3
+        infiltration = self.area * infiltration_mm * constants.MM_M2_TO_M3
 
         #Update tank
-        infiltration = self.pull_storage(infiltration)
+        infiltration = self.pull_storage({'volume' : infiltration})
 
         return infiltration
 
@@ -349,10 +381,6 @@ class Surface(Tank):
         percolation = self.storage['volume'] * self.percolation_coefficient
 
         #Update tank
-        percolation = self.pull_storage(percolation)
+        percolation = self.pull_storage({'volume' : percolation})
 
         return percolation
-
-    def push_set_flood(self, vqip):
-        #Update flooded volume
-        return self.surfaces['impervious'].push_storage(vqip, force=True)
