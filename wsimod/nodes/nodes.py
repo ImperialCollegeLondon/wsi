@@ -538,7 +538,10 @@ class Tank(WSIObj):
         self.capacity = 0
         self.area = 1
         self.datum = 10
-        
+
+        #Vol. of water in a tank that is unavailable to evaporation. Must be >0
+        #Otherwise, evaporation will remove pollutants if it drops a tank to 0.
+        self.unable_to_evap = 0.0001
         
         super().__init__(**kwargs)
         
