@@ -73,7 +73,7 @@ class Model(WSIObj):
             for node in self.nodes['catchment']:
                 node.route()
 
-            for arc in arclist:
+            for arc in self.arclist:
                 _ = arc.update_queue()
             
             """Mass balance checks
