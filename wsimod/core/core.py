@@ -51,6 +51,12 @@ class WSIObj:
             c[pollutant] *= c['volume']
         return c
     
+    def total_to_concentration(self, c):
+        c = self.copy_vqip(c)
+        for pollutant in constants.ADDITIVE_POLLUTANTS:
+            c[pollutant] /= c['volume']
+        return c
+    
     def extract_vqip(self, c1, c2):
         #Directly subtract c2 from c1 for vol and additive pollutants
         c = self.empty_vqip()
