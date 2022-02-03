@@ -194,6 +194,9 @@ class Land(Node):
 class Land_(Node):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        
+        self.__class__.__name__ = 'Land'
+        
         surfaces = self.surfaces.copy()
         self.surfaces = {}
         for sname, surface in surfaces.items():
@@ -341,7 +344,7 @@ class Surface(Tank):
 
     def apply_precipitation_infiltration_evaporation(self):
         #Read data
-        precipitation_mm = self.parent.data_input_dict[(self.parent.name, 'precipitation', self.parent.t)]
+        precipitation_mm = self.parent.data_input_dict[('precipitation', self.parent.t)]
         
         #Apply evaporation
         evaporation_mm = max(precipitation_mm - self.evaporation_t, 0)

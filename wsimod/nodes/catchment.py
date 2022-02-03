@@ -22,13 +22,11 @@ class Catchment(Node):
         self.mass_balance_in.append(lambda : self.get_flow())
         
     def get_flow(self):
-        vqip = {'volume' : self.data_input_dict[(self.name,
-                                               'flow',
+        vqip = {'volume' : self.data_input_dict[('flow',
                                                self.t)]}
         vqip['volume'] *= constants.M3_S_TO_M3_DT
         for pollutant in constants.POLLUTANTS:
-            vqip[pollutant] = self.data_input_dict[(self.name,
-                                                   pollutant,
+            vqip[pollutant] = self.data_input_dict[(pollutant,
                                                    self.t)]
         return vqip
     
