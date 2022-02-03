@@ -31,3 +31,4 @@ MAXITER = 10000 # Max iterations in a while loop
 M3_S_TO_M3_DT = 86400
 UG_L_TO_KG_M3 = 1e-6
 MG_L_TO_KG_M3 = 1e-3
+MM_TO_M = 1e-3
