@@ -6,7 +6,7 @@ Created on Wed Apr  7 08:43:32 2021
 """
 from wsimod.nodes import nodes
 from wsimod.core import constants, WSIObj
-from wsimod.arcs import Arc, AltQueueArc
+from wsimod.arcs import AltQueueArc
 
 class Node(WSIObj):
     """
