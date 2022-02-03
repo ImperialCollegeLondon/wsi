@@ -14,9 +14,7 @@ class Arc(WSIObj):
         self.name = None
         self.in_port = None
         self.out_port = None
-        self.number_of_timesteps = 0
         self.capacity = constants.UNBOUNDED_CAPACITY
-        self.queue = []
         self.preference = 1
         
         #Update args
@@ -46,6 +44,100 @@ class Arc(WSIObj):
             self.out_port.in_arcs_type[in_type][self.name] = self
 
         
+    def send_push_request(self, vqip, tag = 'default', force = False):
+        
+        vqip = self.copy_vqip(vqip)
+        
+        if vqip['volume'] < constants.FLOAT_ACCURACY:
+            return self.empty_vqip()
+        
+        #Apply pipe capacity
+        if force:
+            not_pushed = self.empty_vqip()
+        else:
+            excess_in = self.get_excess(direction = 'push', vqip = vqip, tag = tag)
+            not_pushed = self.v_change_vqip(vqip, 
+                                            max(vqip['volume'] - excess_in['volume'], 0))
+        
+        
+        #Don't attempt to send volume that exceeds capacity
+        vqip['volume'] -= not_pushed['volume']
+        
+        #Set push
+        reply = self.out_port.push_set(vqip, tag)
+        
+        #Update total amount successfully sent
+        vqip['volume'] -= reply['volume']
+        
+        #Combine non-sent water
+        reply = self.blend_vqip(reply, not_pushed)
+        
+        #Update mass balance
+        self.flow_in += vqip['volume']
+        self.flow_out = self.flow_in
+        
+        self.vqip_in = self.blend_vqip(self.vqip_in, vqip)
+        self.vqip_out = self.vqip_in
+        
+        return reply
+    
+    def send_pull_request(self, vqip, tag = 'default'):
+        volume = vqip['volume']
+        #Apply pipe capacity
+        excess_in = self.get_excess(direction = 'pull', vqip = vqip)['volume']
+        not_pulled = max(volume - excess_in, 0)
+        volume -= not_pulled
+        vqip['volume'] = volume
+        
+        #Make pull
+        vqip = self.in_port.pull_set(vqip)
+        
+        #Update mass balance
+        self.flow_in += vqip['volume']
+        self.flow_out = self.flow_in
+        
+        self.vqip_in = self.blend_vqip(self.vqip_in, vqip)
+        self.vqip_out = self.vqip_in
+        
+        return vqip
+    
+    def send_push_check(self, vqip = None, tag = 'default'):
+        return self.get_excess(direction = 'push', vqip = vqip, tag = tag)
+
+    
+    def send_pull_check(self, vqip = None, tag = 'default'):
+        return self.get_excess(direction = 'pull', vqip = vqip, tag = tag)
+    
+    def get_excess(self, direction, vqip = None, tag = 'default'):
+        #Get excess in direction (push/pull)
+        
+        #Pipe capacity
+        pipe_excess = self.capacity - self.flow_in
+        
+        #Node capacity
+        if direction == 'push':
+            node_excess = self.out_port.push_check(vqip, tag)
+        elif direction == 'pull':
+            node_excess = self.in_port.pull_check(vqip, tag)
+        excess = min(pipe_excess, node_excess['volume'])
+
+        #TODO : returning this as a vqip seems dodgy.. at least for pushes
+        return self.v_change_vqip(node_excess, excess)
+    
+    def end_timestep(self):
+        self.vqip_in = self.empty_vqip()
+        self.vqip_out = self.empty_vqip()
+        self.flow_in = 0
+        self.flow_out = 0
+
+    def reinit(self):
+        self.end_timestep()
+
+class QueueArc(Arc):
+    def __init__(self, **kwargs):
+        self.number_of_timesteps = 0
+        self.queue = []
+        super().__init__(**kwargs)
         
     def send_pull_request(self, vqip, tag = 'default'):
         volume = vqip['volume']
@@ -157,29 +249,6 @@ class Arc(WSIObj):
         
         return total_removed
     
-    def send_push_check(self, vqip = None, tag = 'default'):
-        return self.get_excess(direction = 'push', vqip = vqip, tag = tag)
-
-    
-    def send_pull_check(self, vqip = None, tag = 'default'):
-        return self.get_excess(direction = 'pull', vqip = vqip, tag = tag)
-    
-    def get_excess(self, direction, vqip = None, tag = 'default'):
-        #Get excess in direction (push/pull)
-        
-        #Pipe capacity
-        pipe_excess = self.capacity - self.flow_in
-        
-        #Node capacity
-        if direction == 'push':
-            node_excess = self.out_port.push_check(vqip, tag)
-        elif direction == 'pull':
-            node_excess = self.in_port.pull_check(vqip, tag)
-        excess = min(pipe_excess, node_excess['volume'])
-
-        #TODO : returning this as a vqip seems dodgy.. at least for pushes
-        return self.v_change_vqip(node_excess, excess)
-    
     def end_timestep(self):
         self.vqip_in = self.empty_vqip()
         self.vqip_out = self.empty_vqip()
@@ -193,8 +262,8 @@ class Arc(WSIObj):
     def reinit(self):
         self.end_timestep()
         self.queue = []
-    
-class AltQueueArc(Arc):
+        
+class AltQueueArc(QueueArc):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.queue = {0 : self.empty_vqip(), 1 : self.empty_vqip()}
