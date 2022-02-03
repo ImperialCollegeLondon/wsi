@@ -449,40 +449,50 @@ class Node(WSIObj):
         return pulled
     
     def push_distributed(self, vqip, of_type = None, tag = 'default'):
-        #Push in proportion to connected by priority
         
-        #Initialise pushed, deficit, connected, iter_
-        not_pushed = vqip['volume']
-        not_pushed_ = self.copy_vqip(vqip)
-        connected = self.get_connected(direction = 'push', 
-                                       of_type = of_type, 
-                                       tag = tag)
-        iter_ = 0
-        
-        #Iterate over receiving nodes until sent
-        while ((not_pushed > constants.FLOAT_ACCURACY) & 
-              (connected['avail'] > constants.FLOAT_ACCURACY) &
-              (iter_ < constants.MAXITER)):
-
-            #Push to connected
-            amount_to_push = min(connected['avail'], not_pushed)
-            
-            for key, allocation in connected['allocation'].items():
-                
-                to_send = amount_to_push * allocation / connected['priority']
-                to_send = self.v_change_vqip(vqip, to_send)
-                reply = self.out_arcs[key].send_push_request(to_send, tag = tag)
-                not_pushed_['volume'] -= (to_send['volume'] - reply['volume'])
-            
-            not_pushed = not_pushed_['volume']
+        if len(self.out_arcs) == 1:
+            #If only one out_arc, just send the water down that
+            if of_type == None:
+                not_pushed_ = next(iter(self.out_arcs.values())).send_push_request(vqip, tag = tag)
+            elif any([x in of_type for x, y in self.out_arcs_type.items() if len(y) > 0]):
+                    not_pushed_ = next(iter(self.out_arcs_type[of_type].values())).send_push_request(vqip, tag = tag)
+            else:
+                #No viable out arcs
+                not_pushed_ = vqip
+        else:
+            #Push in proportion to connected by priority
+            #Initialise pushed, deficit, connected, iter_
+            not_pushed = vqip['volume']
+            not_pushed_ = self.copy_vqip(vqip)
             connected = self.get_connected(direction = 'push', 
                                            of_type = of_type, 
                                            tag = tag)
-            iter_ += 1
+            iter_ = 0
             
-        if iter_ == constants.MAXITER:
-            print('Maxiter reached')
-            
+            #Iterate over receiving nodes until sent
+            while ((not_pushed > constants.FLOAT_ACCURACY) & 
+                  (connected['avail'] > constants.FLOAT_ACCURACY) &
+                  (iter_ < constants.MAXITER)):
+    
+                #Push to connected
+                amount_to_push = min(connected['avail'], not_pushed)
+                
+                for key, allocation in connected['allocation'].items():
+                    
+                    to_send = amount_to_push * allocation / connected['priority']
+                    to_send = self.v_change_vqip(vqip, to_send)
+                    reply = self.out_arcs[key].send_push_request(to_send, tag = tag)
+                    not_pushed_['volume'] -= (to_send['volume'] - reply['volume'])
+                
+                not_pushed = not_pushed_['volume']
+                connected = self.get_connected(direction = 'push', 
+                                               of_type = of_type, 
+                                               tag = tag)
+                iter_ += 1
+                
+            if iter_ == constants.MAXITER:
+                print('Maxiter reached')
+                
         return not_pushed_
         
     def check_basic(self, direction, vqip = None, of_type = None, tag = 'default'):
