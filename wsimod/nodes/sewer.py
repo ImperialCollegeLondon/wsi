@@ -110,3 +110,33 @@ class Sewer(Node):
     
     def reinit(self):
         self.sewer_tank.reinit()
+
+class EnfieldFoulSewer(Sewer):
+    #TODO: combine with sewer
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.__class__.__name__ = 'Sewer'
+        
+    def make_discharge(self):
+        _ = self.sewer_tank.internal_arc.update_queue(direction = 'push')
+        
+        #Discharge downstream
+        if self.sewer_tank.storage['volume'] > self.storm_exchange * self.sewer_tank.capacity:
+            exchange_v = min((1 - self.storm_exchange) * self.sewer_tank.capacity, 
+                             self.sewer_tank.active_storage['volume'])
+            exchange = self.v_change_vqip(self.sewer_tank.active_storage, exchange_v)
+            remaining = self.push_distributed(exchange)
+            sent_to_exchange = self.v_change_vqip(self.sewer_tank.active_storage, exchange_v - remaining['volume'])
+            sent_to_exchange_ = self.sewer_tank.pull_storage(sent_to_exchange)
+            
+            
+        remaining = self.push_distributed(self.sewer_tank.active_storage,
+                                        of_type = ['Waste'])
+
+        #Update tank
+        sent = self.sewer_tank.active_storage['volume'] - remaining['volume']
+        sent = self.v_change_vqip(self.sewer_tank.active_storage,
+                                  sent)
+        reply = self.sewer_tank.pull_storage(sent)
+        if (reply['volume'] - sent['volume']) > constants.FLOAT_ACCURACY:
+            print('Miscalculated tank storage in discharge')
