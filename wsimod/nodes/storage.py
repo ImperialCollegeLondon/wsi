@@ -99,7 +99,45 @@ class Groundwater(Storage):
         if (reply['volume'] - sent['volume']) > constants.FLOAT_ACCURACY:
             print('Miscalculated tank storage in discharge')
         
+class EnfieldGroundwater(Groundwater):
+    #TODO: combine with regular GW
+    def __init__(self, **kwargs):
+        self.timearea = {0 : 1}
         
+        super().__init__(**kwargs)
+        self.push_set_handler['default'] = self.push_set_timearea
+        self.tank = QueueTank(capacity = self.storage,
+                                             area = self.area,
+                                             datum = self.datum,
+                                             )
+        #Treat as a regular GW node
+        self.__class__.__name__ = 'Groundwater'
+        
+    def distribute(self):
+        _ = self.tank.internal_arc.update_queue(direction = 'push')
+        
+        sewer_infiltration = max((self.tank.active_storage['volume'] - self.tank.capacity * self.sewer_infiltration_threshold) * self.sewer_infiltration_amount, 0)
+        sewer_infiltration = self.v_change_vqip(self.tank.active_storage,
+                                                sewer_infiltration)
+        remaining = self.push_distributed(sewer_infiltration, of_type = ['Sewer'])
+        sewer_infiltration['volume'] -= remaining['volume']
+        reply = self.tank.pull_storage(sewer_infiltration)
+        if (reply['volume'] - sewer_infiltration['volume']) > constants.FLOAT_ACCURACY:
+            print('Miscalculated tank storage in sewer infiltration')
+            
+        remaining = self.push_distributed(self.tank.active_storage, of_type = ['Node'])
+        
+        if remaining['volume'] > constants.FLOAT_ACCURACY:
+            print('Groundwater couldnt push all')
+        
+        #Update tank
+        sent = self.tank.active_storage['volume'] - remaining['volume']
+        sent = self.v_change_vqip(self.tank.active_storage,
+                                  sent)
+        reply = self.tank.pull_storage(sent)
+        if (reply['volume'] - sent['volume']) > constants.FLOAT_ACCURACY:
+            print('Miscalculated tank storage in discharge')
+            
     
 class Abstraction(Storage):
     """
