@@ -455,7 +455,7 @@ class Node(WSIObj):
             if of_type == None:
                 not_pushed_ = next(iter(self.out_arcs.values())).send_push_request(vqip, tag = tag)
             elif any([x in of_type for x, y in self.out_arcs_type.items() if len(y) > 0]):
-                    not_pushed_ = next(iter(self.out_arcs_type[of_type].values())).send_push_request(vqip, tag = tag)
+                not_pushed_ = next(iter(self.out_arcs.values())).send_push_request(vqip, tag = tag)
             else:
                 #No viable out arcs
                 not_pushed_ = vqip
