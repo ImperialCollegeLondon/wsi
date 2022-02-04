@@ -4,7 +4,7 @@ Created on Mon Nov 15 14:20:36 2021
 
 @author: bdobson
 """
-from wsimod.nodes.nodes import Node, Tank
+from wsimod.nodes.nodes import Node, Tank, QueueTank
 from wsimod.core import constants
 
 class Land(Node):
@@ -193,6 +193,11 @@ class Land(Node):
 
 class Land_(Node):
     def __init__(self, **kwargs):
+        self.subsurface_timearea = {0 : 0.3,
+                                    1 : 0.3,
+                                    2 : 0.2,
+                                    3 : 0.1,
+                                    4 : 0.1}
         super().__init__(**kwargs)
         
         self.__class__.__name__ = 'Land'
@@ -215,12 +220,21 @@ class Land_(Node):
         self.total_percolation = self.empty_vqip()
         self.total_subsurface_runoff = self.empty_vqip()
         self.total_surface_runoff = self.empty_vqip()
-
+        
+        self.subsurface_flow = QueueTank(capacity = constants.UNBOUNDED_CAPACITY,
+                                             area = constants.UNBOUNDED_CAPACITY,
+                                             datum = 0,
+                                             number_of_timesteps = 0
+                                             )
         #Mass balance
         for surface in self.surfaces.values():
             self.mass_balance_ds.append(surface.ds)
+        self.mass_balance_ds.append(self.subsurface_flow.ds)
         self.mass_balance_in.append(lambda : self.total_precipitation)
         self.mass_balance_out.append(lambda : self.v_change_vqip(self.empty_vqip(), self.total_evaporation))
+
+        
+
 
     def create_runoff(self):
         #Temporary variable to keep track of everything
@@ -239,15 +253,20 @@ class Land_(Node):
             temp_tracking['evaporation'][sname] = evaporation
             temp_tracking['infiltration'][sname] = infiltration
             
-            #Get percolation
+            # ponded = surface.pull_ponded()
+            # percolation = self.v_change_vqip(ponded,ponded['volume'] * surface.percolation_coefficient)
+            # subsurface_runoff = self.v_change_vqip(ponded,ponded['volume'] * (1 - surface.percolation_coefficient))
+            # surface_runoff = surface_excess
+            
+            # #Get percolation
             percolation = surface.pull_percolation()
             temp_tracking['percolation'][sname] = percolation
 
-            #Get subsurface_runoff
+            # #Get subsurface_runoff
             subsurface_runoff = surface.pull_subsurface_runoff()
             temp_tracking['subsurface_runoff'][sname] = subsurface_runoff
-
-            #Get runoff
+            
+            # #Get runoff
             surface_runoff = self.blend_vqip(surface.pull_ponded(), surface_excess)
             temp_tracking['surface_runoff'][sname] = surface_runoff
             
@@ -265,9 +284,20 @@ class Land_(Node):
             else:
                 self.total_surface_runoff = self.blend_vqip(self.total_surface_runoff, surface_runoff)
 
+        
+        for time, normalised in self.subsurface_timearea.items():
+            subsurface_runoff_ = self.v_change_vqip(self.total_subsurface_runoff, 
+                                                    self.total_subsurface_runoff['volume'] * normalised)
+            reply = self.subsurface_flow.push_storage(subsurface_runoff_,
+                                                      time = time) # TODO Should this be forced?
+            if reply['volume'] > constants.FLOAT_ACCURACY:
+                print('weird for subsurface')
+        
+        subsurface_runoff_leaving = self.subsurface_flow.pull_storage(self.subsurface_flow.active_storage)
+        
         percolation_remaining = self.push_distributed(self.total_percolation, of_type = ['Groundwater'])
         
-        amount_entering_rivers = self.blend_vqip(self.total_surface_runoff, self.total_subsurface_runoff)
+        amount_entering_rivers = self.blend_vqip(self.total_surface_runoff, subsurface_runoff_leaving)
 
         runoff_remaining = self.push_distributed(amount_entering_rivers, of_type = ['Node']) #TODO seems suspicious.. do I need 'not of type'?
 
@@ -327,7 +357,8 @@ class Land_(Node):
         
         for surface in self.surfaces.values():
             surface.end_timestep()
-
+        self.subsurface_flow.end_timestep()
+        
 class Surface(Tank):
     def __init__(self, **kwargs):
         self.area = 0
@@ -347,7 +378,7 @@ class Surface(Tank):
         precipitation_mm = self.parent.data_input_dict[('precipitation', self.parent.t)]
         
         #Apply evaporation
-        evaporation_mm = max(precipitation_mm - self.evaporation_t, 0)
+        evaporation_mm = min(self.evaporation_t, precipitation_mm)
         precipitation_mm -= evaporation_mm
                 
         #Apply infiltration
