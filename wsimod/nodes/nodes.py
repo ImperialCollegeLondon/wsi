@@ -551,7 +551,7 @@ class Tank(WSIObj):
 
         #Vol. of water in a tank that is unavailable to evaporation. Must be >0
         #Otherwise, evaporation will remove pollutants if it drops a tank to 0.
-        self.unavailable_to_evap = 0.0001
+        self.unavailable_to_evap = 0.000001
         
         super().__init__(**kwargs)
         
@@ -609,6 +609,8 @@ class Tank(WSIObj):
         
         #Adjust based on available volume
         reply = min(vqip['volume'], self.storage['volume'])
+        if (self.storage['volume'] - reply) < self.unavailable_to_evap:
+            reply = max(reply - self.unavailable_to_evap, 0)
         
         #Extract from storage
         self.storage['volume'] -= reply
