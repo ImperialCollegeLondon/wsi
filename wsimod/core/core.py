@@ -39,7 +39,8 @@ class WSIObj:
         c = self.empty_vqip()
         
         c['volume'] = c1['volume'] + c2['volume']
-        if c['volume'] > constants.FLOAT_ACCURACY:
+        # if c['volume'] > constants.FLOAT_ACCURACY:
+        if c['volume'] > 0:
             for pollutant in constants.POLLUTANTS:
                 c[pollutant] = (c1[pollutant]*c1['volume'] + c2[pollutant] * c2['volume'])/c['volume']
             
