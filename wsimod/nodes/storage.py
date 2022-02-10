@@ -79,7 +79,8 @@ class Groundwater(Storage):
             vqip_ = self.v_change_vqip(vqip, 
                                        vqip['volume'] * normalised)
             reply_ = self.tank.push_storage(vqip_,
-                                            time = time) # TODO Should this be forced?
+                                            time = time,
+                                            force = True) # TODO Should this be forced?
             reply = self.blend_vqip(reply, reply_)
         return reply
         
