@@ -32,3 +32,4 @@ M3_S_TO_M3_DT = 86400
 UG_L_TO_KG_M3 = 1e-6
 MG_L_TO_KG_M3 = 1e-3
 MM_TO_M = 1e-3
+G_TO_KG = 1000
