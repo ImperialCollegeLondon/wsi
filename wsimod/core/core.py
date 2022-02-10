@@ -46,6 +46,14 @@ class WSIObj:
             
         return c
     
+    def sum_vqip(self, t1, t2):
+        #Sum two vqips given as totals rather than concentrations
+        t = self.empty_vqip()
+        t['volume'] = t1['volume'] + t2['volume']
+        for pollutant in constants.POLLUTANTS:
+            t[pollutant] = t1[pollutant] + t2[pollutant]
+        return t
+        
     def concentration_to_total(self, c):
         c = self.copy_vqip(c)
         for pollutant in constants.ADDITIVE_POLLUTANTS:
@@ -70,6 +78,8 @@ class WSIObj:
                 c[pollutant] = (c1[pollutant] - c2[pollutant])/c['volume']
             
         return c
+    
+    
     
     def v_distill_vqip(self, c, v):
         #Distill v from c
