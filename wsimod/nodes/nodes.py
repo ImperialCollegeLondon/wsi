@@ -557,8 +557,8 @@ class Tank(WSIObj):
         
         
         #TODO enable stores to be initialised not empty
-        self.storage = self.empty_vqip()
-        self.storage_ = self.empty_vqip()
+        self.storage = self.v_change_vqip(self.empty_vqip(), self.unavailable_to_evap)
+        self.storage_ = self.v_change_vqip(self.empty_vqip(), self.unavailable_to_evap)
     
     def ds(self):
         return self.ds_vqip(self.storage, self.storage_)
@@ -641,6 +641,14 @@ class Tank(WSIObj):
         evap = min(evap, avail)
         self.storage = self.v_distill_vqip(self.storage, evap)
         return evap
+    
+    def push_total(self, vqip):
+        
+        #Push vqip to storage where pollutants are given as a total rather than concentration
+        storage = self.concentration_to_total(self.storage)
+        self.storage = self.total_to_concentration(self.sum_vqip(storage, vqip))
+        
+        return self.empty_vqip()
     
     def end_timestep(self):
         self.storage_ = self.copy_vqip(self.storage)
