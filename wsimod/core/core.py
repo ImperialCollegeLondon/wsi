@@ -119,7 +119,7 @@ class WSIObj:
     def generic_temperature_decay(self, c, d, temperature):
         c = self.copy_vqip(c)
         diff = self.empty_vqip()
-        for pol, pars in d.keys():
+        for pol, pars in d.items():
             diff[pol] = -c[pol] * pars['constant'] * pars['exponent'] ** (temperature - constants.DECAY_REFERENCE_TEMPERATURE) 
             c[pol] += diff[pol]
             diff[pol] *= c['volume']        
