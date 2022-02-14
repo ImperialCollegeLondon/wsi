@@ -115,3 +115,12 @@ class WSIObj:
                       c_['volume'] * c_[pol]
         #TODO what about non-additive ...
         return ds
+    
+    def generic_temperature_decay(self, c, d, temperature):
+        c = self.copy_vqip(c)
+        diff = self.empty_vqip()
+        for pol, pars in d.keys():
+            diff[pol] = -c[pol] * pars['constant'] * pars['exponent'] ** (temperature - constants.DECAY_REFERENCE_TEMPERATURE) 
+            c[pol] += diff[pol]
+            diff[pol] *= c['volume']        
+        return c, diff
