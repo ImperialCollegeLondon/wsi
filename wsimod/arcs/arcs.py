@@ -318,8 +318,41 @@ class AltQueueArc(QueueArc):
         self.end_timestep()
         self.queue = {0 : self.empty_vqip(), 1 : self.empty_vqip()}
 
-class RiverArc(Arc):
-    pass
+class DecayRiver(QueueArc):
+    def __init__(self, **kwargs):
+        self.decays = {}
+        super().__init__(**kwargs)
+    
+    def enter_queue(self, vqtip, direction = None, tag = 'default'):
+        temperature = self.data_input_dict[('temperature', self.in_port.t)]
+        vqtip, diff = self.generic_temperature_decay(vqtip, self.decays, temperature)
+        
+        #diff contains total gain(+)/loss(-) of pollutants due to decay
+        #ignored for now because mass balance within arcs isn't tracked
+        
+        #Form as request and append to queue
+        request = {'vqtip' : vqtip,
+                   'average_flow' : vqtip['volume'] / (vqtip['time'] + 1),
+                   'direction' : direction,
+                   'tag' : tag}
+        
+        self.queue.append(request)
+        
+        #Update inflows
+        self.flow_in += request['average_flow']
+        self.vqip_in = self.blend_vqip(self.vqip_in, vqtip)
+
+    def end_timestep(self):
+        self.vqip_in = self.empty_vqip()
+        self.vqip_out = self.empty_vqip()
+        self.flow_in = 0
+        self.flow_out = 0
+        # self.update_queue(direction = 'pull') # TODO Is this needed? - probably
+        # self.update_queue(direction = 'push') # TODO Is this needed? - probably
+        for request in self.queue:
+            temperature = self.data_input_dict[('temperature', self.in_port.t)]
+            request['vqtip'], diff = self.generic_temperature_decay(request['vqtip'], self.decays, temperature)
+            request['vqtip']['time'] = max(request['vqtip']['time'] - 1, 0)
     
 class SewerArc(Arc):
     pass
