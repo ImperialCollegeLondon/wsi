@@ -1,5 +1,9 @@
 # wsimod
-
+Installation
+Download, navigate to this folder and run:
+```
+python setup.py develop
+```
 
 ```
 |---- projects
