@@ -372,7 +372,7 @@ class Surface(Tank):
         self.percolation_coefficient = 0.001
         self.evaporation_t = 1 #mm
         self.infiltration_t = 1 #mm
-
+        self.crop_coeffient = 1
         super().__init__(**kwargs)
         
         # self.pollutant_dict = self.empty_vqip()
@@ -382,7 +382,8 @@ class Surface(Tank):
         precipitation_mm = self.parent.data_input_dict[('precipitation', self.parent.t)]
         
         #Apply evaporation
-        evaporation_mm = min(self.evaporation_t, precipitation_mm)
+        evaporation_t = self.parent.data_input_dict[('et0', self.parent.t)]*self.crop_coefficient
+        evaporation_mm = min(evaporation_t, precipitation_mm)
         precipitation_mm -= evaporation_mm
                 
         #Apply infiltration
@@ -390,9 +391,9 @@ class Surface(Tank):
         precipitation_mm -= excess_mm
         
         #If evaporation is less than evaporation_t, then no water is entering tank, no excess
-        if evaporation_mm < self.evaporation_t:
+        if evaporation_mm < evaporation_t:
             #Take water from tank
-            evap_from_tank = (self.evaporation_t - evaporation_mm) * self.area * constants.MM_M2_TO_M3
+            evap_from_tank = (evaporation_t - evaporation_mm) * self.area * constants.MM_M2_TO_M3
             evap_from_tank = self.evaporate(evap_from_tank)
             
             #Combine to calculate total evaporation
