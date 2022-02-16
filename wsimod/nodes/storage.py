@@ -15,7 +15,7 @@ class Storage(Node):
         self.storage = 0
         self.area = 0
         self.datum = 10
-        
+        self.decays = None
         self.travel_time = 0
         
         super().__init__(**kwargs)
@@ -24,6 +24,8 @@ class Storage(Node):
         self.tank = Tank(capacity = self.storage,
                             area = self.area,
                             datum = self.datum,
+                            decays = self.decays,
+                            parent = self
                             )
         
         self.tank.storage['volume'] = self.initial_storage # TODO Automate this better
@@ -71,6 +73,8 @@ class Groundwater(Storage):
         self.tank = QueueTank(capacity = self.storage,
                                              area = self.area,
                                              datum = self.datum,
+                                             decays = self.decays,
+                                             parent = self
                                              )
     def push_set_timearea(self, vqip):
         reply = self.empty_vqip()
@@ -110,6 +114,8 @@ class EnfieldGroundwater(Groundwater):
         self.tank = QueueTank(capacity = self.storage,
                                              area = self.area,
                                              datum = self.datum,
+                                             parent = self,
+                                             decays = self.decays
                                              )
         #Treat as a regular GW node
         self.__class__.__name__ = 'Groundwater'

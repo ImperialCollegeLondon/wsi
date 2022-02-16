@@ -30,7 +30,8 @@ class Land(Node):
         self.unavailable_to_evap = 0.01 
         
         self.tanks = {}
-                
+        
+        
         #Update args
         super().__init__(**kwargs)
         
@@ -220,6 +221,7 @@ class Land_(Node):
         self.total_percolation = self.empty_vqip()
         self.total_subsurface_runoff = self.empty_vqip()
         self.total_surface_runoff = self.empty_vqip()
+        # self.total_decay = self.empty_vqip()
         
         self.subsurface_flow = QueueTank(capacity = constants.UNBOUNDED_CAPACITY,
                                              area = constants.UNBOUNDED_CAPACITY,
@@ -232,6 +234,7 @@ class Land_(Node):
         self.mass_balance_ds.append(self.subsurface_flow.ds)
         self.mass_balance_in.append(lambda : self.total_precipitation)
         self.mass_balance_out.append(lambda : self.v_change_vqip(self.empty_vqip(), self.total_evaporation))
+        
 
         
 
@@ -507,6 +510,7 @@ class DepositionLand(Land_):
 class DepositionSurface(Surface):
     
     def __init__(self, **kwargs):
+        self.decays = {}
         super().__init__(**kwargs)
         
         #Give deposition pollutant dict 0 volume

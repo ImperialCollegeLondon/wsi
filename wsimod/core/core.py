@@ -42,6 +42,7 @@ class WSIObj:
         # if c['volume'] > constants.FLOAT_ACCURACY:
         if c['volume'] > 0:
             for pollutant in constants.POLLUTANTS:
+               
                 c[pollutant] = (c1[pollutant]*c1['volume'] + c2[pollutant] * c2['volume'])/c['volume']
             
         return c
@@ -120,7 +121,8 @@ class WSIObj:
         c = self.copy_vqip(c)
         diff = self.empty_vqip()
         for pol, pars in d.items():
-            diff[pol] = -c[pol] * pars['constant'] * pars['exponent'] ** (temperature - constants.DECAY_REFERENCE_TEMPERATURE) 
+            diff[pol] = -c[pol] * max(pars['constant'] * pars['exponent'] ** (temperature - constants.DECAY_REFERENCE_TEMPERATURE), 1)
             c[pol] += diff[pol]
+
             diff[pol] *= c['volume']        
         return c, diff

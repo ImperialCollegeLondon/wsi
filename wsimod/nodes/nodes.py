@@ -6,7 +6,7 @@ Created on Wed Apr  7 08:43:32 2021
 """
 from wsimod.nodes import nodes
 from wsimod.core import constants, WSIObj
-from wsimod.arcs import AltQueueArc
+from wsimod.arcs import AltQueueArc, DecayArc
 
 class Node(WSIObj):
     """
@@ -548,13 +548,15 @@ class Tank(WSIObj):
         self.capacity = 0
         self.area = 1
         self.datum = 10
-
+        self.decays = None
         #Vol. of water in a tank that is unavailable to evaporation. Must be >0
         #Otherwise, evaporation will remove pollutants if it drops a tank to 0.
         self.unavailable_to_evap = 0.000001
         
         super().__init__(**kwargs)
         
+        if self.decays:
+            self.end_timestep = self.end_timestep_decay
         
         #TODO enable stores to be initialised not empty
         self.storage = self.v_change_vqip(self.empty_vqip(), self.unavailable_to_evap)
@@ -652,7 +654,13 @@ class Tank(WSIObj):
     
     def end_timestep(self):
         self.storage_ = self.copy_vqip(self.storage)
-    
+        
+    def end_timestep_decay(self):
+        temperature = self.parent.data_input_dict[('temperature', self.parent.t)]
+        #TODO: this decay is not in mass balance
+        self.storage, _ = self.generic_temperature_decay(self.storage, self.decays, temperature)
+        self.storage_ = self.copy_vqip(self.storage)
+        
     def reinit(self):
         self.storage = self.empty_vqip()
         self.storage_ = self.empty_vqip()
@@ -669,9 +677,14 @@ class QueueTank(Tank):
         
         self.out_arcs = {}
         self.in_arcs = {}
-        self.internal_arc = AltQueueArc(in_port = self, 
+        if self.decays:
+            self.internal_arc = DecayArc(in_port = self, 
                                         out_port = self,
                                         number_of_timesteps = self.number_of_timesteps)
+        else:
+            self.internal_arc = AltQueueArc(in_port = self, 
+                                            out_port = self,
+                                            number_of_timesteps = self.number_of_timesteps)
     
     def get_avail(self):
         return self.copy_vqip(self.active_storage)

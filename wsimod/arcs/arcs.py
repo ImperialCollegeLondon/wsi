@@ -331,14 +331,16 @@ class DecayArc(QueueArc):
             
     def enter_queue(self, vqtip, direction = None, tag = 'default'):
         temperature = self.data_input_object.data_input_dict[('temperature', self.data_input_object.t)]
-        vqtip, diff = self.generic_temperature_decay(vqtip, self.decays, temperature)
+        vqtip_, diff = self.generic_temperature_decay(vqtip, self.decays, temperature)
+        
+        #TODO: mass balance isn't tracked within in arc, so vqtip_ is the decayed value sent onwards, but is less than the actual vqip_in
         
         #diff contains total gain(+)/loss(-) of pollutants due to decay
         #ignored for now because mass balance within arcs isn't tracked
         
         #Form as request and append to queue
-        request = {'vqtip' : vqtip,
-                   'average_flow' : vqtip['volume'] / (vqtip['time'] + 1),
+        request = {'vqtip' : vqtip_,
+                   'average_flow' : vqtip_['volume'] / (vqtip_['time'] + 1),
                    'direction' : direction,
                    'tag' : tag}
         
@@ -356,7 +358,7 @@ class DecayArc(QueueArc):
         # self.update_queue(direction = 'pull') # TODO Is this needed? - probably
         # self.update_queue(direction = 'push') # TODO Is this needed? - probably
         for request in self.queue:
-            temperature = self.data_input_dict[('temperature', self.in_port.t)]
+            temperature = self.data_input_object.data_input_dict[('temperature', self.data_input_object.t)]
             request['vqtip'], diff = self.generic_temperature_decay(request['vqtip'], self.decays, temperature)
             request['vqtip']['time'] = max(request['vqtip']['time'] - 1, 0)
     
