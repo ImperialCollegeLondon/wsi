@@ -318,13 +318,19 @@ class AltQueueArc(QueueArc):
         self.end_timestep()
         self.queue = {0 : self.empty_vqip(), 1 : self.empty_vqip()}
 
-class DecayRiver(QueueArc):
+class DecayArc(QueueArc):
     def __init__(self, **kwargs):
         self.decays = {}
         super().__init__(**kwargs)
-    
+        if 'parent' in dir(self):
+            self.data_input_object = self.parent
+        elif 'in_port' in dir(self):
+            self.data_input_object = self.in_port
+        else:
+            print('warning: decay arc cannot access temperature data')
+            
     def enter_queue(self, vqtip, direction = None, tag = 'default'):
-        temperature = self.data_input_dict[('temperature', self.in_port.t)]
+        temperature = self.data_input_object.data_input_dict[('temperature', self.data_input_object.t)]
         vqtip, diff = self.generic_temperature_decay(vqtip, self.decays, temperature)
         
         #diff contains total gain(+)/loss(-) of pollutants due to decay
