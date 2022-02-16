@@ -7,7 +7,7 @@ Created on Wed Apr  7 08:43:32 2021
 from wsimod.nodes import nodes
 from wsimod.core import constants, WSIObj
 from wsimod.arcs import AltQueueArc, DecayArc
-
+from math import log10
 class Node(WSIObj):
     """
     Base class for CWSD nodes.
@@ -176,7 +176,20 @@ class Node(WSIObj):
                 ds_[v] += ds_f[v]
         
         for v in constants.ADDITIVE_POLLUTANTS + ['volume']:
-            if abs(in_[v] - ds_[v] - out_[v]) > constants.FLOAT_ACCURACY:
+            
+            largest = max(in_[v], out_[v], ds_[v])
+
+            if largest > constants.FLOAT_ACCURACY:
+                magnitude = 10**int(log10(largest))
+                in_10 = in_[v] / magnitude
+                out_10 = out_[v] / magnitude
+                ds_10 = ds_[v] / magnitude
+            else:
+                in_10 = in_[v]
+                ds_10 = ds_[v]
+                out_10 = out_[v]
+            
+            if abs(in_10 - ds_10 - out_10) > constants.FLOAT_ACCURACY:
                 print("mass balance error for " + v)
         return in_, ds_, out_
         
