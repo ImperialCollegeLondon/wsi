@@ -203,7 +203,7 @@ class Surface(Tank):
         return self.pollutant_dict
     
     
-    def apply_precipitation_infiltration_evaporation_old(self):
+    def apply_precipitation_infiltration_evaporation(self):
         #Apply pollutants
         _ = self.push_storage(self.get_deposition(), force = True)
         
