@@ -18,7 +18,7 @@ class Land(Node):
         surfaces_ = kwargs['surfaces'].copy()
         surfaces = {}
         for sname, surface in surfaces_.items():
-            surfaces[sname] = DepositionSurface(**surface)
+            surfaces[sname] = Surface(**surface)
             surfaces[sname].parent = self
             
         super().__init__(**kwargs)
