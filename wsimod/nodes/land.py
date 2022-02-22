@@ -8,206 +8,23 @@ from wsimod.nodes.nodes import Node, Tank, QueueTank
 from wsimod.core import constants
 
 class Land(Node):
-    
-    def __init__(self, **kwargs):
-        #Default parameters
-        self.surface_timearea = {0 : 1}
-        
-        self.garden_storage = 0
-        self.garden_area = 0
-        self.garden_elevation = 10
-        
-        self.greenspace_storage = 0
-        self.greenspace_area = 0
-        self.greenspace_elevation = 10
-        
-        self.impervious_storage = 0
-        self.impervious_area = 0
-        self.impervious_elevation = 10
-        
-        #Vol. of water in a tank that is unavailable to evaporation. Must be >0
-        #Otherwise, evaporation will remove pollutants if it drops a tank to 0.
-        self.unavailable_to_evap = 0.01 
-        
-        self.tanks = {}
-        
-        
-        #Update args
-        super().__init__(**kwargs)
-        
-        #Update handlers
-        self.push_set_handler['Sewer'] = self.push_set_flood
-        self.push_set_handler[('Demand','Garden')] = self.push_set_garden
-        self.push_check_handler[('Demand','Garden')] = self.push_check_garden
-        self.pull_set_handler[('Demand','RWH')] = self.pull_set_rwh
-        
-        #Create tanks
-        #TODO elegance
-        if self.garden_storage > 0:
-            self.tanks['garden'] = Tank(capacity = self.garden_storage,
-                                        area = self.garden_area,
-                                        datum = self.garden_elevation,
-                                        unavailable_to_evap = self.unavailable_to_evap)
-        
-        if self.greenspace_storage > 0:
-            self.tanks['greenspace'] = Tank(capacity = self.greenspace_storage,
-                                            area = self.greenspace_area,
-                                            datum = self.greenspace_elevation,
-                                            unavailable_to_evap = self.unavailable_to_evap)
-            
-        if self.impervious_storage > 0:
-            self.tanks['impervious'] = Tank(capacity = self.impervious_storage,
-                                            area = self.impervious_area,
-                                            datum = self.impervious_elevation,
-                                            unavailable_to_evap = self.unavailable_to_evap)
-        
-        #Initiliase values
-        self.total_evaporation = 0
-        self.total_runoff = self.empty_vqip()
-        
-        #Mass balance
-        for tank in self.tanks.values():
-            self.mass_balance_ds.append(tank.ds)
-        self.mass_balance_in.append(lambda : self.total_runoff)
-        self.mass_balance_out.append(lambda : self.v_change_vqip(self.empty_vqip(),
-                                                                 self.total_evaporation))
-        
-    def get_runoff(self, surface):
-        #surface can be 'garden', 'impervious', 'greenspace'
-        precipitation_mm = self.data_input_dict[(self.name, 'precipitation', self.t)]
-        total_runoff = self.tanks[surface].area * precipitation_mm * constants.MM_M2_TO_M3
-        return self.v_change_vqip(self.pollutant_dict, total_runoff)
-    
-    def get_evaporation(self, surface = None):
-        #surface can be 'garden', 'impervious', 'greenspace'
-        #TODO read/gen evap
-        depth = 0 #mm
-        return depth
-    
-    def get_infiltration(self, surface = None):
-        #surface can be 'garden', 'impervious', 'greenspace'
-        #TODO read/gen infiltraiton
-        depth = 0 #mm
-        return depth
-    
-    def create_runoff(self):
-        #Creates runoff on various surfaces
-        
-        # 1. Apply rainfall to different surfaces
-        # 2. Input pollutants
-        # 3. Update tanks
-        # 4. Infiltrate
-        # 5. Push excess from impervious
-                
-        for surface, tank in self.tanks.items():
-            
-            #TODO issue occurs during impervious tank
-            
-            #Get runoff
-            runoff = self.get_runoff(surface)
-            self.total_runoff = self.blend_vqip(self.total_runoff, runoff)
-            
-            
-            #Update tanks
-            _ = tank.push_storage(runoff, force = True)
-            
-            #Apply infiltration
-            infil = self.get_infiltration(surface)
-            #TODO assumes m3 and mm
-            infil = {'volume' : infil * tank.area * constants.MM_M2_TO_M3}
-            infil = self.v_change_vqip(tank.storage, 
-                                       min(tank.get_avail()['volume'],
-                                           infil['volume'])
-                                       ) #TODO This should probably be done in get_infiltration
-            remaining = self.push_distributed(infil,
-                                            of_type = ['Groundwater'])
-            to_pull = self.v_change_vqip(tank.storage, 
-                                         infil['volume'] - remaining['volume'])
-            reply = tank.pull_storage(to_pull)
-            
-            if (reply['volume'] - to_pull['volume']) > constants.FLOAT_ACCURACY:
-                print("Error in calculating available tank capacity or pulling from a tank")
-                
-            #Apply evaporation
-            evap = self.get_evaporation(surface)
-            evap = evap * tank.area * constants.MM_M2_TO_M3
-            evap = tank.evaporate(evap)
-            self.total_evaporation += evap
-                
-        #Drain impervious
-        connected = self.get_connected(direction = 'push',
-                                       of_type = 'Sewer')
-        
-        if connected['avail'] > 0:
-            total_ponded = self.tanks['impervious'].pull_ponded()
-            for key, arc in self.out_arcs_type['Sewer'].items():
-                volume_to_arc = total_ponded['volume'] *\
-                                connected['allocation'][key] /\
-                                connected['priority']
-                
-                runoff_to_sewer = self.v_change_vqip(total_ponded, 
-                                                     volume_to_arc)
-                
-                leftover = self.empty_vqip()
-                for time, normalised in self.surface_timearea.items():
-                    runoff_to_sewer_ = self.v_change_vqip(runoff_to_sewer, 
-                                                          runoff_to_sewer['volume'] * normalised)
-                    runoff_to_sewer_['time'] = time
-                    reply = arc.send_push_request(runoff_to_sewer_, tag = 'Land')
-                    leftover = self.blend_vqip(leftover, reply)
-                
-                _ = self.tanks['impervious'].push_storage(leftover, force = True)
-        
-
-    
-    def push_set_flood(self, vqip):
-        #Update flooded volume
-        return self.tanks['impervious'].push_storage(vqip, force=True)
-    
-    def push_set_garden(self, vqip):
-        #Respond to a demand node filling excess garden demand
-        return self.tanks['garden'].push_storage(vqip, force = True)
-    
-    def push_check_garden(self, vqip = None):
-        #Respond to a garden checking excess before sending water
-        excess = self.tanks['garden'].get_excess()
-        if vqip is not None:
-            excess['volume'] = min(excess['volume'], vqip['volume'])
-        return excess
-        
-    
-    def pull_set_rwh(self, vqip):
-        #Respond to a pull from demand for RWH
-        pass
-    
-    def end_timestep(self):
-        self.total_evaporation = 0
-        self.total_runoff = self.empty_vqip()
-        
-        for tank in self.tanks.values():
-            tank.end_timestep()
-            
-    def reinit(self):
-        for tank in self.tanks.values():
-            tank.end_timestep()
-            tank.reinit()
-
-class Land_(Node):
     def __init__(self, **kwargs):
         self.subsurface_timearea = {0 : 0.3,
                                     1 : 0.3,
                                     2 : 0.2,
                                     3 : 0.1,
                                     4 : 0.1}
+        
+        surfaces_ = kwargs['surfaces'].copy()
+        surfaces = {}
+        for sname, surface in surfaces_.items():
+            surfaces[sname] = DepositionSurface(**surface)
+            surfaces[sname].parent = self
+            
         super().__init__(**kwargs)
+
         
-        self.__class__.__name__ = 'Land'
-        
-        surfaces = self.surfaces.copy()
-        self.surfaces = {}
-        for sname, surface in surfaces.items():
-            self.surfaces[sname] = Surface(**surface)
-            self.surfaces[sname].parent = self
+        self.surfaces = surfaces
 
         #Update handlers
         self.push_set_handler['Sewer'] = self.push_set_flood
@@ -221,24 +38,28 @@ class Land_(Node):
         self.total_percolation = self.empty_vqip()
         self.total_subsurface_runoff = self.empty_vqip()
         self.total_surface_runoff = self.empty_vqip()
-        # self.total_decay = self.empty_vqip()
         
         self.subsurface_flow = QueueTank(capacity = constants.UNBOUNDED_CAPACITY,
-                                             area = constants.UNBOUNDED_CAPACITY,
-                                             datum = 0,
-                                             number_of_timesteps = 0
-                                             )
-        #Mass balance
+                                              area = constants.UNBOUNDED_CAPACITY,
+                                              datum = 0,
+                                              number_of_timesteps = 0
+                                              )
+        
+        
+         
+        #Mass balance (this is so untidy... must be a better way)
+        self.mass_balance_in = [self.total_in]
+        self.mass_balance_out = [self.total_out]
+        self.mass_balance_ds = [lambda : self.empty_vqip()]
+        
         for surface in self.surfaces.values():
             self.mass_balance_ds.append(surface.ds)
+            self.mass_balance_in.append(surface.get_deposition)
+            
         self.mass_balance_ds.append(self.subsurface_flow.ds)
         self.mass_balance_in.append(lambda : self.total_precipitation)
         self.mass_balance_out.append(lambda : self.v_change_vqip(self.empty_vqip(), self.total_evaporation))
         
-
-        
-
-
     def create_runoff(self):
         #Temporary variable to keep track of everything
         temp_tracking = {'precipitation' : {},
@@ -261,12 +82,9 @@ class Land_(Node):
             # subsurface_runoff = self.v_change_vqip(ponded,ponded['volume'] * (1 - surface.percolation_coefficient))
             # surface_runoff = surface_excess
             
-            # #Get percolation
-            percolation = surface.pull_percolation()
+            # Get percolation (slow flow) and subsurface runoff (quick flow)
+            percolation, subsurface_runoff = surface.pull_outflows()
             temp_tracking['percolation'][sname] = percolation
-
-            # #Get subsurface_runoff
-            subsurface_runoff = surface.pull_subsurface_runoff()
             temp_tracking['subsurface_runoff'][sname] = subsurface_runoff
             
             # #Get runoff
@@ -368,16 +186,27 @@ class Surface(Tank):
         self.area = 0
         self.capacity = 0
         self.datum = 10
-        self.subsurface_runoff_coefficient = 0.001
-        self.percolation_coefficient = 0.001
-        self.evaporation_t = 1 #mm
-        self.infiltration_t = 1 #mm
+        self.quick_slow_split = 0.5 #Higher number increases quick flow, lower number increases slow flow
+        self.infiltration_t = 50 #mm
+        self.wilting_point = 100 #mm
         self.crop_coeffient = 1
+        self.decays = {}
         super().__init__(**kwargs)
         
-        # self.pollutant_dict = self.empty_vqip()
-
-    def apply_precipitation_infiltration_evaporation(self):
+        #Convert wilting point to amount that storage must be exceeded to generate quick/fast flow
+        self.wilting_point *= (self.area * constants.MM_TO_M)
+        
+        #Give deposition pollutant dict negligible volume
+        self.pollutant_dict = self.total_to_concentration(self.v_change_vqip(self.pollutant_dict, self.unavailable_to_evap/10))
+    
+    def get_deposition(self):
+        return self.pollutant_dict
+    
+    
+    def apply_precipitation_infiltration_evaporation_old(self):
+        #Apply pollutants
+        _ = self.push_storage(self.get_deposition(), force = True)
+        
         #Read data
         precipitation_mm = self.parent.data_input_dict[('precipitation', self.parent.t)]
         
@@ -394,151 +223,6 @@ class Surface(Tank):
         if evaporation_mm < evaporation_t:
             #Take water from tank
             evap_from_tank = (evaporation_t - evaporation_mm) * self.area * constants.MM_M2_TO_M3
-            evap_from_tank = self.evaporate(evap_from_tank)
-            
-            #Combine to calculate total evaporation
-            evaporation = evap_from_tank + evaporation_mm * self.area * constants.MM_M2_TO_M3
-            
-            #No water entering tank
-            infiltration = self.empty_vqip()
-            
-            #No excess
-            excess = self.empty_vqip()
-            
-            
-            
-        else:
-            #Calculate evaporation
-            evaporation = evaporation_mm * self.area * constants.MM_M2_TO_M3
-            
-            #Calculate infiltration
-            infiltration = precipitation_mm * self.area * constants.MM_M2_TO_M3
-            infiltration = self.v_change_vqip(self.pollutant_dict, infiltration)
-            
-            #Update tank
-            _ = self.push_storage(infiltration, force = True)
-            
-            #Calculate excess
-            excess = excess_mm * self.area * constants.MM_M2_TO_M3
-            excess = self.v_change_vqip(self.pollutant_dict, excess)
-            
-        #evaporation_mm is the portion of water that enters the model and is then evaporated, so it generates no pollution
-        evaporation_from_precipitation = evaporation_mm * self.area * constants.MM_M2_TO_M3
-        water_entering_model = self.v_change_vqip(self.empty_vqip(), evaporation_from_precipitation)
-        
-        #Infiltration and excess are the portions of water that enter the model and generate pollution
-        water_entering_model = self.blend_vqip(water_entering_model, infiltration)
-        water_entering_model = self.blend_vqip(water_entering_model, excess)
-        
-        return excess, infiltration, evaporation, water_entering_model
-    
-    def pull_percolation(self):
-        #Convert to an amount
-        percolation = self.storage['volume'] * self.percolation_coefficient
-
-        #Update tank
-        percolation = self.pull_storage({'volume' : percolation})
-
-        return percolation
-
-    def pull_subsurface_runoff(self):
-        #Get subsurface_runoff
-        subsurface_runoff = self.storage['volume'] * self.subsurface_runoff_coefficient
-
-        #Update tank
-        subsurface_runoff = self.pull_storage({'volume' : subsurface_runoff})
-
-        return subsurface_runoff
-
-class DepositionLand(Land_):
-    def __init__(self, **kwargs):
-        #TODO this is so untidy OOP... must be a better way
-        self.subsurface_timearea = {0 : 0.3,
-                                    1 : 0.3,
-                                    2 : 0.2,
-                                    3 : 0.1,
-                                    4 : 0.1}
-        
-        surfaces_ = kwargs['surfaces'].copy()
-        surfaces = {}
-        for sname, surface in surfaces_.items():
-            surfaces[sname] = DepositionSurface(**surface)
-            surfaces[sname].parent = self
-            
-        super().__init__(**kwargs)
-
-        
-        self.surfaces = surfaces
-        
-        self.__class__.__name__ = 'Land'
-        
-        
-
-        #Update handlers
-        self.push_set_handler['Sewer'] = self.push_set_flood
-        self.push_set_handler[('Demand','Garden')] = self.push_set_garden
-        self.push_check_handler[('Demand','Garden')] = self.push_check_garden
-        
-        #Initiliase values
-        self.total_evaporation = 0
-        self.total_precipitation = self.empty_vqip()
-        self.total_infiltration = self.empty_vqip()
-        self.total_percolation = self.empty_vqip()
-        self.total_subsurface_runoff = self.empty_vqip()
-        self.total_surface_runoff = self.empty_vqip()
-        
-        self.subsurface_flow = QueueTank(capacity = constants.UNBOUNDED_CAPACITY,
-                                              area = constants.UNBOUNDED_CAPACITY,
-                                              datum = 0,
-                                              number_of_timesteps = 0
-                                              )
-        
-        
-         
-        #Mass balance (this is so untidy... must be a better way)
-        self.mass_balance_in = [self.total_in]
-        self.mass_balance_out = [self.total_out]
-        self.mass_balance_ds = [lambda : self.empty_vqip()]
-        
-        for surface in self.surfaces.values():
-            self.mass_balance_ds.append(surface.ds)
-            self.mass_balance_in.append(surface.get_deposition)
-            
-        self.mass_balance_ds.append(self.subsurface_flow.ds)
-        self.mass_balance_in.append(lambda : self.total_precipitation)
-        self.mass_balance_out.append(lambda : self.v_change_vqip(self.empty_vqip(), self.total_evaporation))
-        
-class DepositionSurface(Surface):
-    
-    def __init__(self, **kwargs):
-        self.decays = {}
-        super().__init__(**kwargs)
-        
-        #Give deposition pollutant dict 0 volume
-        self.pollutant_dict = self.total_to_concentration(self.v_change_vqip(self.pollutant_dict, self.unavailable_to_evap/10))
-    
-    def get_deposition(self):
-        return self.pollutant_dict
-    
-    def apply_precipitation_infiltration_evaporation(self):
-        #Apply pollutants
-        _ = self.push_storage(self.get_deposition(), force = True)
-        
-        #Read data
-        precipitation_mm = self.parent.data_input_dict[('precipitation', self.parent.t)]
-        
-        #Apply evaporation
-        evaporation_mm = min(self.evaporation_t, precipitation_mm)
-        precipitation_mm -= evaporation_mm
-                
-        #Apply infiltration
-        excess_mm = max(precipitation_mm - self.infiltration_t, 0)
-        precipitation_mm -= excess_mm
-        
-        #If evaporation is less than evaporation_t, then no water is entering tank, no excess
-        if evaporation_mm < self.evaporation_t:
-            #Take water from tank
-            evap_from_tank = (self.evaporation_t - evaporation_mm) * self.area * constants.MM_M2_TO_M3
             evap_from_tank = self.evaporate(evap_from_tank)
             
             #Combine to calculate total evaporation
@@ -576,3 +260,16 @@ class DepositionSurface(Surface):
         water_entering_model = self.blend_vqip(water_entering_model, excess)
         
         return excess, infiltration, evaporation, water_entering_model
+    
+    def pull_outflows(self):
+        #Amount of water above wilting point
+        u = max(self.storage['volume'] - self.wilting_point, 0)
+        
+        #Convert to an amount
+        subsurface_runoff = u * self.quick_slow_split
+        percolation = u * (1 - self.quick_slow_split)
+        
+        #Update tank
+        percolation = self.pull_storage({'volume' : percolation})
+        subsurface_runoff = self.pull_storage({'volume' : subsurface_runoff})
+        return percolation, subsurface_runoff
