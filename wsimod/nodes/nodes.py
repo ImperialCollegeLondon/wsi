@@ -572,8 +572,12 @@ class Tank(WSIObj):
             self.end_timestep = self.end_timestep_decay
         
         #TODO enable stores to be initialised not empty
-        self.storage = self.v_change_vqip(self.empty_vqip(), self.unavailable_to_evap)
-        self.storage_ = self.v_change_vqip(self.empty_vqip(), self.unavailable_to_evap)
+        if 'initial_storage' in dir(self):
+            self.storage = self.copy_vqip(self.initial_storage)
+            self.storage_ = self.copy_vqip(self.initial_storage)
+        else:
+            self.storage = self.empty_vqip()
+            self.storage_ = self.empty_vqip()
     
     def ds(self):
         return self.ds_vqip(self.storage, self.storage_)
@@ -681,12 +685,12 @@ class Tank(WSIObj):
 class QueueTank(Tank):
     #A storage that can allow delay before parts of it are accessible
     def __init__(self, **kwargs):
-        self.number_of_timesteps = 1
+        self.number_of_timesteps = 0
         
         super().__init__(**kwargs)
         
         #TODO enable stores to be initialised not empty
-        self.active_storage = self.empty_vqip()
+        self.active_storage = self.copy_vqip(self.storage)
         
         self.out_arcs = {}
         self.in_arcs = {}
