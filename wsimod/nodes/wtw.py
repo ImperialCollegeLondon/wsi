@@ -21,10 +21,12 @@ class WWTW(Node):
         self.liquor_multiplier['volume'] = 0.03
         
         self.percent_solids = 0.0002
-        self.process_multiplier['volume'] = 1 - self.percent_solids - self.liquor_multiplier['volume']
+        
         
         #Update args
         super().__init__(**kwargs)
+        
+        self.process_multiplier['volume'] = 1 - self.percent_solids - self.liquor_multiplier['volume']
         
         #Update handlers
         self.pull_set_handler['default'] = self.pull_set_reuse
@@ -171,10 +173,13 @@ class FWTW(Node):
         self.liquor_multiplier['volume'] = 0.03
         
         self.percent_solids = 0.0002
-        self.process_multiplier['volume'] = 1 - self.percent_solids - self.liquor_multiplier['volume']
+        
         
         #Update args
         super().__init__(**kwargs)
+        
+        
+        self.process_multiplier['volume'] = 1 - self.percent_solids - self.liquor_multiplier['volume']
         
         #Update handlers
         self.pull_set_handler['default'] = self.pull_set_fwtw
