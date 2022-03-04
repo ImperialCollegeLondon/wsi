@@ -17,19 +17,19 @@ class Storage(Node):
         self.datum = 10
         self.decays = None
         self.travel_time = 0
-        
         super().__init__(**kwargs)
         
         #Create tank
+        if 'initial_storage' not in dir(self):
+            self.initial_storage = self.empty_vqip()
+            
         self.tank = Tank(capacity = self.storage,
                             area = self.area,
                             datum = self.datum,
                             decays = self.decays,
+                            initial_storage = self.initial_storage,
                             parent = self
                             )
-        
-        self.tank.storage['volume'] = self.initial_storage # TODO Automate this better
-        self.tank.storage_['volume'] = self.initial_storage # TODO Automate this better
         
         #Update handlers
         self.push_set_handler['default'] = self.push_set_storage
@@ -74,7 +74,8 @@ class Groundwater(Storage):
                                              area = self.area,
                                              datum = self.datum,
                                              decays = self.decays,
-                                             parent = self
+                                             parent = self,
+                                             initial_storage = self.initial_storage,
                                              )
     def push_set_timearea(self, vqip):
         reply = self.empty_vqip()
@@ -103,7 +104,36 @@ class Groundwater(Storage):
         reply = self.tank.pull_storage(sent)
         if (reply['volume'] - sent['volume']) > constants.FLOAT_ACCURACY:
             print('Miscalculated tank storage in discharge')
+
+class CamGroundwater(Groundwater):
+    def __init__(self, **kwargs):
+        self.groundwater_flow_threshold = 0
+        self.groundwater_flow_amount = 1
+        super().__init__(**kwargs)
         
+        #Treat as a regular GW node
+        self.__class__.__name__ = 'Groundwater'
+        
+    def distribute(self):
+        _ = self.tank.internal_arc.update_queue(direction = 'push')
+        
+        #Calculate amount to push
+        to_push = max(self.tank.active_storage['volume'] - self.tank.capacity * self.groundwater_flow_threshold, 0)
+        to_push *= self.groundwater_flow_amount
+        
+        remaining = self.push_distributed(self.v_change_vqip(self.tank.active_storage, to_push), of_type = ['Node'])
+        
+        if remaining['volume'] > constants.FLOAT_ACCURACY:
+            print('Groundwater couldnt push all')
+        
+        #Update tank
+        sent = to_push - remaining['volume']
+        sent = self.v_change_vqip(self.tank.active_storage,
+                                  sent)
+        reply = self.tank.pull_storage(sent)
+        if (reply['volume'] - sent['volume']) > constants.FLOAT_ACCURACY:
+            print('Miscalculated tank storage in discharge')
+
 class EnfieldGroundwater(Groundwater):
     #TODO: combine with regular GW
     def __init__(self, **kwargs):
