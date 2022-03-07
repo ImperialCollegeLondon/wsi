@@ -361,6 +361,64 @@ class DecayArc(QueueArc):
             temperature = self.data_input_object.data_input_dict[('temperature', self.data_input_object.t)]
             request['vqtip'], diff = self.generic_temperature_decay(request['vqtip'], self.decays, temperature)
             request['vqtip']['time'] = max(request['vqtip']['time'] - 1, 0)
+
+class DecayArcAlt(AltQueueArc):
+    def __init__(self, **kwargs):
+        self.decays = {}
+        super().__init__(**kwargs)
+        if 'parent' in dir(self):
+            self.data_input_object = self.parent
+        elif 'in_port' in dir(self):
+            self.data_input_object = self.in_port
+        else:
+            print('warning: decay arc cannot access temperature data')
+            
+    def enter_queue(self, vqtip, direction = None, tag = 'default'):
+        #NOTE- has no tags
+        
+        temperature = self.data_input_object.data_input_dict[('temperature', self.data_input_object.t)]
+        vqtip_, diff = self.generic_temperature_decay(vqtip, self.decays, temperature)
+        
+        #Form as request and append to queue
+        if vqtip['time'] in self.queue.keys():
+            self.queue[vqtip['time']]  = self.blend_vqip(self.queue[vqtip['time']], vqtip)
+        else:
+            self.queue[vqtip['time']]  = vqtip
+            self.max_travel = max(self.max_travel, vqtip['time'])
+        
+        #Update inflows
+        self.flow_in += vqtip['volume'] / (vqtip['time'] + 1)
+        self.vqip_in = self.blend_vqip(self.vqip_in, vqtip)
+
+    def end_timestep(self):
+        self.vqip_in = self.empty_vqip()
+        self.vqip_out = self.empty_vqip()
+        self.flow_in = 0
+        self.flow_out = 0
+        # self.update_queue(direction = 'pull') # TODO Is this needed? - probably
+        # self.update_queue(direction = 'push') # TODO Is this needed? - probably
+        for request in self.queue:
+            temperature = self.data_input_object.data_input_dict[('temperature', self.data_input_object.t)]
+            request['vqtip'], diff = self.generic_temperature_decay(request['vqtip'], self.decays, temperature)
+            request['vqtip']['time'] = max(request['vqtip']['time'] - 1, 0)
+    
+    def end_timestep(self):
+        self.vqip_in = self.empty_vqip()
+        self.vqip_out = self.empty_vqip()
+        self.flow_in = 0
+        self.flow_out = 0
+        # self.update_queue()
+
+        queue_ = self.queue.copy()
+        keys = self.queue.keys()
+        for i in range(self.max_travel):
+            if (i + 1) in keys:
+                temperature = self.data_input_object.data_input_dict[('temperature', self.data_input_object.t)]
+                vqip, diff = self.generic_temperature_decay(queue_[i+1], self.decays, temperature)
+                self.queue[i] = vqip
+                self.queue[i+1] = self.empty_vqip()
+
+        self.queue[0] = self.blend_vqip(queue_[0], queue_[1])
     
 class SewerArc(Arc):
     pass

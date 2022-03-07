@@ -6,7 +6,7 @@ Created on Wed Apr  7 08:43:32 2021
 """
 from wsimod.nodes import nodes
 from wsimod.core import constants, WSIObj
-from wsimod.arcs import AltQueueArc, DecayArc
+from wsimod.arcs import AltQueueArc, DecayArcAlt
 from math import log10
 class Node(WSIObj):
     """
@@ -699,10 +699,11 @@ class QueueTank(Tank):
         self.out_arcs = {}
         self.in_arcs = {}
         if self.decays:
-            self.internal_arc = DecayArc(in_port = self, 
-                                        out_port = self,
-                                        number_of_timesteps = self.number_of_timesteps,
-                                        parent = self.parent)
+            self.internal_arc = DecayArcAlt(in_port = self, 
+                                            out_port = self,
+                                            number_of_timesteps = self.number_of_timesteps,
+                                            parent = self.parent,
+                                            decays = self.decays)
         else:
             self.internal_arc = AltQueueArc(in_port = self, 
                                             out_port = self,
