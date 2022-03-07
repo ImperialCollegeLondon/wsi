@@ -564,7 +564,7 @@ class Tank(WSIObj):
         self.decays = None
         #Vol. of water in a tank that is unavailable to evaporation. Must be >0
         #Otherwise, evaporation will remove pollutants if it drops a tank to 0.
-        self.unavailable_to_evap = 0.000001
+        self.unavailable_to_evap = constants.FLOAT_ACCURACY/10
         
         super().__init__(**kwargs)
         
