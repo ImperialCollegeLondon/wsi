@@ -64,6 +64,21 @@ class Storage(Node):
         self.tank.storage['volume'] = self.initial_storage
         self.tank.storage_['volume'] = self.initial_storage 
 
+class CatchWatGroundwater(Storage):
+    def __init__(self, **kwargs):
+        self.residence_time = 500
+        self.__class__.__name__ = 'Groundwater'
+        super().__init__(**kwargs)
+        
+    def distribute(self):
+        avail = self.tank.get_avail()
+        avail['volume'] /= self.residence_time
+        to_send = self.tank.pull_storage(avail)
+        retained = self.push_distributed(to_send, of_type = ['Node'])
+        if retained['volume'] > constants.FLOAT_ACCURACY:
+            print('Storage unable to push')
+        
+    
 class Groundwater(Storage):
     def __init__(self, **kwargs):
         self.timearea = {0 : 1}
@@ -104,7 +119,10 @@ class Groundwater(Storage):
         reply = self.tank.pull_storage(sent)
         if (reply['volume'] - sent['volume']) > constants.FLOAT_ACCURACY:
             print('Miscalculated tank storage in discharge')
-            
+
+
+    
+    
 class CamGroundwater(Groundwater):
     def __init__(self, **kwargs):
         self.groundwater_flow_threshold = 0
@@ -134,11 +152,17 @@ class CamGroundwater(Groundwater):
         else:
             pulled = 0
             #Proportionally take from queue & active storage
-            for t, v in self.tank.internal_arc.queue.items():
-                t_pulled = v['volume'] * total_pull / total_storage
-                self.tank.internal_arc.queue[t]['volume'] -= t_pulled
-                pulled += t_pulled
-            
+            if isinstance(self.tank.internal_arc.queue, dict):
+                for t, v in self.tank.internal_arc.queue.items():
+                    t_pulled = v['volume'] * total_pull / total_storage
+                    self.tank.internal_arc.queue[t]['volume'] -= t_pulled
+                    pulled += t_pulled
+            elif isinstance(self.tank.internal_arc.queue, list):
+                for req in self.tank.internal_arc.queue:
+                    t_pulled = req['vqtip']['volume'] * total_pull / total_storage
+                    req['vqtip']['volume'] -= t_pulled
+                    pulled += t_pulled
+                    
             a_pulled = self.tank.active_storage['volume'] * total_pull / total_storage
             self.tank.active_storage['volume'] -= a_pulled
             pulled += a_pulled
@@ -190,6 +214,8 @@ class CamGroundwater(Groundwater):
 #         reply = self.tank.pull_storage(sent)
 #         if (reply['volume'] - sent['volume']) > constants.FLOAT_ACCURACY:
 #             print('Miscalculated tank storage in discharge')
+
+
 
 class EnfieldGroundwater(Groundwater):
     #TODO: combine with regular GW
