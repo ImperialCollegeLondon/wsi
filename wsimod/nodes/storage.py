@@ -104,35 +104,92 @@ class Groundwater(Storage):
         reply = self.tank.pull_storage(sent)
         if (reply['volume'] - sent['volume']) > constants.FLOAT_ACCURACY:
             print('Miscalculated tank storage in discharge')
-
+            
 class CamGroundwater(Groundwater):
     def __init__(self, **kwargs):
         self.groundwater_flow_threshold = 0
         self.groundwater_flow_amount = 1
         super().__init__(**kwargs)
         
+        self.pull_set_handler['default'] = self.pull_set_active
+        self.pull_check_handler['default'] = self.pull_check_active
+        
         #Treat as a regular GW node
         self.__class__.__name__ = 'Groundwater'
+    
+    def pull_check_active(self,vqip = None):
+        if vqip is None:
+            return self.tank.storage
+        else:
+            reply = min(vqip['volume'], self.tank.storage['volume'])
+            return self.v_change_vqip(self.tank.storage, reply)
         
+    def pull_set_active(self, vqip):
+        
+        total_storage = self.tank.storage['volume']
+        total_pull = min(self.tank.storage['volume'], vqip['volume'])
+        
+        if total_pull < constants.FLOAT_ACCURACY:
+            return self.empty_vqip()
+        else:
+            pulled = 0
+            #Proportionally take from queue & active storage
+            for t, v in self.tank.internal_arc.queue.items():
+                t_pulled = v['volume'] * total_pull / total_storage
+                self.tank.internal_arc.queue[t]['volume'] -= t_pulled
+                pulled += t_pulled
+            
+            a_pulled = self.tank.active_storage['volume'] * total_pull / total_storage
+            self.tank.active_storage['volume'] -= a_pulled
+            pulled += a_pulled
+            
+            self.tank.storage['volume'] -= pulled
+            return self.v_change_vqip(self.tank.storage, pulled)
+    
     def distribute(self):
         _ = self.tank.internal_arc.update_queue(direction = 'push')
         
-        #Calculate amount to push
-        to_push = max(self.tank.active_storage['volume'] - self.tank.capacity * self.groundwater_flow_threshold, 0)
-        to_push *= self.groundwater_flow_amount
-        
-        remaining = self.push_distributed(self.v_change_vqip(self.tank.active_storage, to_push), of_type = ['Node'])
+        remaining = self.push_distributed(self.tank.active_storage, of_type = ['Node'])
         
         if remaining['volume'] > constants.FLOAT_ACCURACY:
             print('Groundwater couldnt push all')
         
         #Update tank
-        sent = to_push - remaining['volume']
+        sent = self.tank.active_storage['volume'] - remaining['volume']
         sent = self.v_change_vqip(self.tank.active_storage,
                                   sent)
         reply = self.tank.pull_storage(sent)
         if (reply['volume'] - sent['volume']) > constants.FLOAT_ACCURACY:
             print('Miscalculated tank storage in discharge')
+            
+# class CamGroundwater(Groundwater):
+#     def __init__(self, **kwargs):
+#         self.groundwater_flow_threshold = 0
+#         self.groundwater_flow_amount = 1
+#         super().__init__(**kwargs)
+        
+#         #Treat as a regular GW node
+#         self.__class__.__name__ = 'Groundwater'
+        
+#     def distribute(self):
+#         _ = self.tank.internal_arc.update_queue(direction = 'push')
+        
+#         #Calculate amount to push
+#         to_push = max(self.tank.active_storage['volume'] - self.tank.capacity * self.groundwater_flow_threshold, 0)
+#         to_push *= self.groundwater_flow_amount
+        
+#         remaining = self.push_distributed(self.v_change_vqip(self.tank.active_storage, to_push), of_type = ['Node'])
+        
+#         if remaining['volume'] > constants.FLOAT_ACCURACY:
+#             print('Groundwater couldnt push all')
+        
+#         #Update tank
+#         sent = to_push - remaining['volume']
+#         sent = self.v_change_vqip(self.tank.active_storage,
+#                                   sent)
+#         reply = self.tank.pull_storage(sent)
+#         if (reply['volume'] - sent['volume']) > constants.FLOAT_ACCURACY:
+#             print('Miscalculated tank storage in discharge')
 
 class EnfieldGroundwater(Groundwater):
     #TODO: combine with regular GW
