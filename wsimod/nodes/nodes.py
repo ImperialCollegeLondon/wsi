@@ -701,7 +701,8 @@ class QueueTank(Tank):
         if self.decays:
             self.internal_arc = DecayArc(in_port = self, 
                                         out_port = self,
-                                        number_of_timesteps = self.number_of_timesteps)
+                                        number_of_timesteps = self.number_of_timesteps,
+                                        parent = self.parent)
         else:
             self.internal_arc = AltQueueArc(in_port = self, 
                                             out_port = self,
