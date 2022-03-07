@@ -191,6 +191,7 @@ class FWTW(Node):
         #Initialise parameters
         self.solids = self.empty_vqip()
         self.liquor = self.empty_vqip()
+        self.total_deficit = self.empty_vqip()
         
         #Create tanks
         self.service_reservoir_tank = Tank(capacity = self.service_reservoir_storage_capacity,
@@ -200,6 +201,7 @@ class FWTW(Node):
         self.service_reservoir_tank.storage_['volume'] = self.service_reservoir_inital_storage
         
         #Mass balance
+        self.mass_balance_in.append(lambda : self.total_deficit)
         self.mass_balance_ds.append(lambda : self.service_reservoir_tank.ds())
  
     def get_excess_throughput(self):
@@ -215,7 +217,13 @@ class FWTW(Node):
         target_throughput = min(target_throughput['volume'], self.treatment_throughput_capacity)
         
         throughput = self.pull_distributed({'volume' : target_throughput})
-  
+        
+        deficit = max(target_throughput - throughput['volume'], 0)
+        deficit = self.v_change_vqip(self.empty_vqip(), deficit)
+        
+        throughput = self.blend_vqip(throughput, deficit)
+        
+        self.total_deficit = self.blend_vqip(self.total_deficit, deficit)
         
         #Calculate effluent, liquor and solids
         discharge_holder = self.empty_vqip()
@@ -249,6 +257,7 @@ class FWTW(Node):
     
     def end_timestep(self):
         self.service_reservoir_tank.end_timestep()
+        self.total_deficit = self.empty_vqip()
     
     def reinit(self):
         self.service_reservoir_tank.reinit()
