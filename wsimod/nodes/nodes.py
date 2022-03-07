@@ -573,8 +573,12 @@ class Tank(WSIObj):
         
         #TODO enable stores to be initialised not empty
         if 'initial_storage' in dir(self):
-            self.storage = self.copy_vqip(self.initial_storage)
-            self.storage_ = self.copy_vqip(self.initial_storage)
+            if isinstance(self.initial_storage, dict):
+                self.storage = self.copy_vqip(self.initial_storage)
+                self.storage_ = self.copy_vqip(self.initial_storage)
+            else:
+                self.storage = self.v_change_vqip(self.empty_vqip(), self.initial_storage)
+                self.storage_ = self.v_change_vqip(self.empty_vqip(), self.initial_storage)
         else:
             self.storage = self.empty_vqip()
             self.storage_ = self.empty_vqip()
