@@ -6,7 +6,7 @@ Created on Wed Apr  7 08:43:32 2021
 """
 from wsimod.nodes import nodes
 from wsimod.core import constants, WSIObj
-from wsimod.arcs import AltQueueArc, DecayArcAlt
+from wsimod.arcs import AltQueueArc, DecayArcAlt, DecayArc
 from math import log10
 class Node(WSIObj):
     """
@@ -389,6 +389,8 @@ class Node(WSIObj):
         #Iterate over arcs, updating connected dict
         for arc in arcs:
             avail = getattr(arc, f)(tag = tag)['volume']
+            if avail < constants.FLOAT_ACCURACY:
+                avail = 0 #Improves convergence
             connected['avail'] += avail
             preference = arc.preference
             connected['priority'] += avail * preference
@@ -693,6 +695,7 @@ class QueueTank(Tank):
         
         super().__init__(**kwargs)
         
+        self.end_timestep = self._end_timestep
         #TODO enable stores to be initialised not empty
         self.active_storage = self.copy_vqip(self.storage)
         
@@ -713,7 +716,6 @@ class QueueTank(Tank):
         return self.copy_vqip(self.active_storage)
     
     def push_storage(self, vqip, time = None, force = False):
-        
         if time is None:
             vqip['time'] = self.number_of_timesteps
         else:
@@ -761,7 +763,8 @@ class QueueTank(Tank):
         
         return self.empty_vqip()
         
-    def end_timestep(self):
+    def _end_timestep(self):
+        #Should the active storage decay if decays are given?
         self.internal_arc.end_timestep()
         self.storage_ = self.copy_vqip(self.storage)
     
