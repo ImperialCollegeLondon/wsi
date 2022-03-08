@@ -229,6 +229,10 @@ class Surface(Tank):
         if evaporation_mm < evaporation_t:
             #Take water from tank
             evap_from_tank = (evaporation_t - evaporation_mm) * self.area * constants.MM_M2_TO_M3
+            
+            #Take water only above wilting point
+            # water_above_wilting = max(self.storage['volume'] - (self.capacity - self.wilting_point), 0)
+            # evap_from_tank = min(water_above_wilting, evap_from_tank)
             evap_from_tank = self.evaporate(evap_from_tank)
             
             #Combine to calculate total evaporation
@@ -269,7 +273,7 @@ class Surface(Tank):
     
     def pull_outflows(self):
         #Amount of water above wilting point
-        u = max(self.storage['volume'] - self.wilting_point, 0)
+        u = max(self.storage['volume'] - (self.capacity - self.wilting_point), 0)
         
         #Convert to an amount
         subsurface_runoff = u * self.quick_slow_split
