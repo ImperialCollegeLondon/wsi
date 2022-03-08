@@ -161,7 +161,7 @@ class Land(Node):
     
     def push_check_garden(self, vqip = None):
         #Respond to a garden checking excess before sending water
-        deficit = self.surfaces['garden'].capacity - self.surfaces['garden'].get_excess()['volume']
+        deficit = self.surfaces['garden'].capacity - self.surfaces['garden'].storage['volume']
         deficit = max(deficit - self.surfaces['garden'].wilting_point, 0)
         
         deficit = self.v_change_vqip(self.surfaces['garden'].storage, deficit)
