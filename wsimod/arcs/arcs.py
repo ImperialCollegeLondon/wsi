@@ -304,7 +304,6 @@ class AltQueueArc(QueueArc):
         self.flow_in = 0
         self.flow_out = 0
         # self.update_queue()
-
         queue_ = self.queue.copy()
         keys = self.queue.keys()
         for i in range(self.max_travel):
@@ -366,6 +365,7 @@ class DecayArcAlt(AltQueueArc):
     def __init__(self, **kwargs):
         self.decays = {}
         super().__init__(**kwargs)
+        self.end_timestep = self._end_timestep
         if 'parent' in dir(self):
             self.data_input_object = self.parent
         elif 'in_port' in dir(self):
@@ -377,8 +377,7 @@ class DecayArcAlt(AltQueueArc):
         #NOTE- has no tags
         
         temperature = self.data_input_object.data_input_dict[('temperature', self.data_input_object.t)]
-        vqtip_, diff = self.generic_temperature_decay(vqtip, self.decays, temperature)
-        
+        vqtip, diff = self.generic_temperature_decay(vqtip, self.decays, temperature)
         #Form as request and append to queue
         if vqtip['time'] in self.queue.keys():
             self.queue[vqtip['time']]  = self.blend_vqip(self.queue[vqtip['time']], vqtip)
@@ -390,25 +389,13 @@ class DecayArcAlt(AltQueueArc):
         self.flow_in += vqtip['volume'] / (vqtip['time'] + 1)
         self.vqip_in = self.blend_vqip(self.vqip_in, vqtip)
 
-    def end_timestep(self):
-        self.vqip_in = self.empty_vqip()
-        self.vqip_out = self.empty_vqip()
-        self.flow_in = 0
-        self.flow_out = 0
-        # self.update_queue(direction = 'pull') # TODO Is this needed? - probably
-        # self.update_queue(direction = 'push') # TODO Is this needed? - probably
-        for request in self.queue:
-            temperature = self.data_input_object.data_input_dict[('temperature', self.data_input_object.t)]
-            request['vqtip'], diff = self.generic_temperature_decay(request['vqtip'], self.decays, temperature)
-            request['vqtip']['time'] = max(request['vqtip']['time'] - 1, 0)
-    
-    def end_timestep(self):
+
+    def _end_timestep(self):
         self.vqip_in = self.empty_vqip()
         self.vqip_out = self.empty_vqip()
         self.flow_in = 0
         self.flow_out = 0
         # self.update_queue()
-
         queue_ = self.queue.copy()
         keys = self.queue.keys()
         for i in range(self.max_travel):
