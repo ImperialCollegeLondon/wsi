@@ -66,7 +66,7 @@ class Storage(Node):
 
 class CatchWatGroundwater(Storage):
     def __init__(self, **kwargs):
-        self.residence_time = 500
+        self.residence_time = 200
         self.__class__.__name__ = 'Groundwater'
         super().__init__(**kwargs)
         
@@ -82,7 +82,7 @@ class CatchWatGroundwater(Storage):
 class Groundwater(Storage):
     def __init__(self, **kwargs):
         self.timearea = {0 : 1}
-        
+
         super().__init__(**kwargs)
         self.push_set_handler['default'] = self.push_set_timearea
         self.tank = QueueTank(capacity = self.storage,
@@ -157,17 +157,29 @@ class CamGroundwater(Groundwater):
                     t_pulled = v['volume'] * total_pull / total_storage
                     self.tank.internal_arc.queue[t]['volume'] -= t_pulled
                     pulled += t_pulled
+                a_pulled = self.tank.active_storage['volume'] * total_pull / total_storage
+                self.tank.active_storage['volume'] -= a_pulled
+                pulled += a_pulled
+                
+                #Recalculate storage - doing this differently causes numerical errors
+                self.tank.storage['volume'] = sum([x['volume'] for x in self.tank.internal_arc.queue.values()])+ self.tank.active_storage['volume']
+                
+                
             elif isinstance(self.tank.internal_arc.queue, list):
                 for req in self.tank.internal_arc.queue:
                     t_pulled = req['vqtip']['volume'] * total_pull / total_storage
                     req['vqtip']['volume'] -= t_pulled
                     pulled += t_pulled
-                    
-            a_pulled = self.tank.active_storage['volume'] * total_pull / total_storage
-            self.tank.active_storage['volume'] -= a_pulled
-            pulled += a_pulled
+                a_pulled = self.tank.active_storage['volume'] * total_pull / total_storage
+                self.tank.active_storage['volume'] -= a_pulled
+                pulled += a_pulled
+                
+                #Recalculate storage - doing this differently causes numerical errors
+                self.tank.storage['volume'] = sum([x['vqtip']['volume'] for x in self.tank.internal_arc.queue])+ self.tank.active_storage['volume']
             
-            self.tank.storage['volume'] -= pulled
+            
+            
+            
             return self.v_change_vqip(self.tank.storage, pulled)
     
     def distribute(self):
