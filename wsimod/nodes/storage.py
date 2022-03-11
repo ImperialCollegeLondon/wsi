@@ -227,7 +227,29 @@ class CamGroundwater(Groundwater):
 #         if (reply['volume'] - sent['volume']) > constants.FLOAT_ACCURACY:
 #             print('Miscalculated tank storage in discharge')
 
-
+class EnfieldCatchWatGroundwater(CatchWatGroundwater):
+    def __init__(self, **kwargs):
+        self.residence_time = 10
+        super().__init__(**kwargs)
+    
+    def distribute(self):
+        avail = self.tank.get_avail()
+        
+        sewer_infiltration = max((avail['volume'] - self.tank.capacity * self.sewer_infiltration_threshold) * self.sewer_infiltration_amount, 0)
+        sewer_infiltration = self.v_change_vqip(avail,
+                                                sewer_infiltration)
+        remaining = self.push_distributed(sewer_infiltration, of_type = ['Sewer'])
+        sewer_infiltration['volume'] -= remaining['volume']
+        reply = self.tank.pull_storage(sewer_infiltration)
+        
+        avail['volume'] = avail['volume'] - sewer_infiltration['volume'] + reply['volume']
+        
+        avail['volume'] /= self.residence_time
+        to_send = self.tank.pull_storage(avail)
+        retained = self.push_distributed(to_send, of_type = ['Node'])
+        if retained['volume'] > constants.FLOAT_ACCURACY:
+            print('Storage unable to push')
+            
 
 class EnfieldGroundwater(Groundwater):
     #TODO: combine with regular GW
