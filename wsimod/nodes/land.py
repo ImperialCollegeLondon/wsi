@@ -277,7 +277,7 @@ class Surface(Tank):
     
     def pull_outflows(self):
         #Amount of water above FC
-        u = max(self.storage['volume'] - (self.capacity - self.field_capacity), 0)
+        u = max(self.storage['volume'] - (self.capacity - self.field_capacity), 0) * self.percolation_coefficient
         
         #Convert to an amount
         subsurface_runoff = u * self.quick_slow_split

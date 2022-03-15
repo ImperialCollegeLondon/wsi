@@ -236,6 +236,7 @@ class EnfieldCatchWatGroundwater(CatchWatGroundwater):
         avail = self.tank.get_avail()
         
         sewer_infiltration = max((avail['volume'] - self.tank.capacity * self.sewer_infiltration_threshold) * self.sewer_infiltration_amount, 0)
+        sewer_infiltration = sewer_infiltration ** 0.5 #SQRT because that's how the orifice equation works
         sewer_infiltration = self.v_change_vqip(avail,
                                                 sewer_infiltration)
         remaining = self.push_distributed(sewer_infiltration, of_type = ['Sewer'])
