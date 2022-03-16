@@ -328,7 +328,7 @@ class RiverReservoir(Reservoir):
         super().__init__(**kwargs)
         
         self.push_set_handler['default'] = self.push_set_river_reservoir
-        self.push_set_handler['default'] = self.push_check_river_reservoir
+        self.push_check_handler['default'] = self.push_check_river_reservoir
         self.end_timestep = self.end_timestep_
         
         self.__class__.__name__ = 'Reservoir'
@@ -346,9 +346,11 @@ class RiverReservoir(Reservoir):
     
     def push_check_river_reservoir(self, vqip = None):
         downstream_availability = self.get_connected(direction = 'push')['avail']
+        excess = self.tank.get_excess()
+        excess['volume'] += downstream_availability
         if vqip is not None:
-            downstream_availability = min(vqip['volume'], downstream_availability)
-        return {'volume' : downstream_availability}
+            excess['volume'] = min(vqip['volume'], excess['volume'])
+        return excess
         
     
     def satisfy_environmental(self):
