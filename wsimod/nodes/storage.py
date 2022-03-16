@@ -319,3 +319,47 @@ class Reservoir(Storage):
         spill = self.tank.push_storage(reply)
         if spill['volume'] > constants.FLOAT_ACCURACY:
             print('Spill at reservoir')
+
+class RiverReservoir(Reservoir):
+    def __init__(self, **kwargs):
+        self.environmental_flow = 0
+        self.total_environmental_satisfied = 0
+        
+        super().__init__(**kwargs)
+        
+        self.push_set_handler['default'] = self.push_set_river_reservoir
+        self.push_set_handler['default'] = self.push_check_river_reservoir
+        self.end_timestep = self.end_timestep_
+        
+        self.__class__.__name__ = 'Reservoir'
+        
+    def push_set_river_reservoir(self, vqip):
+        #Apply normal reservoir storage
+        spill = self.push_set_storage(vqip)
+        
+        #Send spill downstream
+        reply = self.push_distributed(spill) #of_type = Node?
+        
+        self.total_environmental_satisfied += (spill['volume'] - reply['volume'])
+        
+        return reply
+    
+    def push_check_river_reservoir(self, vqip = None):
+        downstream_availability = self.get_connected(direction = 'push')['avail']
+        if vqip is not None:
+            downstream_availability = min(vqip['volume'], downstream_availability)
+        return {'volume' : downstream_availability}
+        
+    
+    def satisfy_environmental(self):
+        to_satisfy = max(self.environmental_flow - self.total_environmental_satisfied, 0)
+        environmental = self.tank.pull_storage({'volume' : to_satisfy})
+        reply = self.push_distributed(environmental)
+        if reply['volume'] > 0:
+            print('warning: environmental not able to push')
+            
+        self.total_environmental_satisfied += environmental['volume']
+        
+    def end_timestep_(self):
+        self.tank.end_timestep()
+        self.total_environmental_satisfied = 0
