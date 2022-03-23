@@ -12,7 +12,11 @@ from wsimod.core import constants
 import numpy as np
 from copy import deepcopy
 import math
-
+def vqip_ml_to_m3(vqip):
+    # for key in constants.ADDITIVE_POLLUTANTS:
+    #     vqip[key] *= constants.MG_L_TO_KG_M3
+    vqip['volume'] *= constants.ML_TO_M3
+    return vqip
 class River(Node):
     def __init__(self, **kwargs):
         # parameters requiring input
@@ -77,7 +81,16 @@ class River(Node):
         self.pull_check_handler[('RiparianBuffer', 'volume')] = self.pull_check_fp
         
         #Mass balance
-        self.mass_balance_ds.append(lambda : self.river_tank.ds()) 
+        self.mass_balance_ds.append(lambda : vqip_ml_to_m3(self.river_tank.ds())) 
+        self.mass_balance_out.append(self.mass_balance_loss_processes)
+        
+    def mass_balance_loss_processes(self):
+        vq = self.empty_vqip()
+        vq['DIN'] = self.river_denitrification + self.macrophyte_uptake_N
+        vq['SRP'] = self.macrophyte_uptake_P
+        vq['volume'] = constants.FLOAT_ACCURACY / 100
+        vq = self.total_to_concentration(vq)
+        return vq
     
     def get_hydroclimatic(self, mean_temperature):
         #!!! read reference ET
