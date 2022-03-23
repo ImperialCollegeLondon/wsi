@@ -16,6 +16,12 @@ import math
 import numpy as np
 from copy import deepcopy
 
+def vqip_ml_to_m3(vqip):
+    for key in constants.ADDITIVE_POLLUTANTS:
+        vqip[key] *= constants.MG_L_TO_KG_M3
+    vqip['volume'] *= constants.ML_TO_M3
+    return vqip
+
 class RuralLand(Node):
     def __init__(self, **kwargs):
         # parameters required input
@@ -185,11 +191,13 @@ class RuralLand(Node):
                                         area = 1e9,
                                         datum = 1e9)
         self.recharge_storage.storage['volume'] = 15 * 1e4
+        self.recharge_storage.storage_['volume'] = 15 * 1e4
         self.soil_water = [Tank(capacity = 1e9, # vqip
                                         area = 1e9,
                                         datum = 1e9) for _ in range(self.no_HRUs)]
         for i in range(self.no_HRUs):
             self.soil_water[i].storage['volume'] = 250
+            self.soil_water[i].storage_['volume'] = 250
         
         self.runoff_flow = self.empty_vqip() # vqip
         self.recharge_flow = self.empty_vqip() # vqip
@@ -246,6 +254,13 @@ class RuralLand(Node):
             self.mass_balance_ds.append(l)
         self.mass_balance_ds.append(lambda : self.runoff_storage.ds())
         self.mass_balance_ds.append(lambda : self.recharge_storage.ds()) 
+        
+        
+        
+        self.mass_balance_in = [lambda : self.empty_vqip()]
+        self.mass_balance_out = [lambda : self.empty_vqip()]
+        self.mass_balance_ds = [lambda : self.empty_vqip()]
+    
     
     def get_input_variables(self, input_variables):
         #!!! read reference ET
@@ -866,18 +881,21 @@ class RuralLand(Node):
                 self.runoff_vqip[i]['SRP'] = self.runoff_conc_dissolved_inorganic_nutrients[i]['P']
                 self.runoff_vqip[i]['PP'] = self.runoff_conc_dissolved_organic_nutrients[i]['P'] + self.runoff_conc_eroded_phosphorus[i]
                 self.runoff_vqip[i]['SS'] = self.runoff_conc_sediment[i]
+                self.runoff_vqip[i]['rur'] = 100
                 # [mg/l]
                 self.recharge_vqip[i]['DIN'] = self.recharge_conc_dissolved_inorganic_nutrients[i]['N']
                 self.recharge_vqip[i]['DON'] = self.recharge_conc_dissolved_organic_nutrients[i]['N']
                 self.recharge_vqip[i]['SRP'] = self.recharge_conc_dissolved_inorganic_nutrients[i]['P']
                 self.recharge_vqip[i]['PP'] = self.recharge_conc_dissolved_organic_nutrients[i]['P'] + self.recharge_conc_eroded_phosphorus[i]
                 self.recharge_vqip[i]['SS'] = self.recharge_conc_sediment[i]
+                self.recharge_vqip[i]['rur'] = 100
                 # [mg/l]
                 self.percolation_vqip[i]['DIN'] = self.percolation_conc_dissolved_inorganic_nutrients[i]['N']
                 self.percolation_vqip[i]['DON'] = self.percolation_conc_dissolved_organic_nutrients[i]['N']
                 self.percolation_vqip[i]['SRP'] = self.percolation_conc_dissolved_inorganic_nutrients[i]['P']
                 self.percolation_vqip[i]['PP'] = self.percolation_conc_dissolved_organic_nutrients[i]['P'] + self.percolation_conc_eroded_phosphorus[i]
                 self.percolation_vqip[i]['SS'] = self.percolation_conc_sediment[i]
+                self.percolation_vqip[i]['rur'] = 100
         # blend all inflow to routing reservoirs
         self.total_runoff = self.empty_vqip()
         self.total_recharge = self.empty_vqip()
