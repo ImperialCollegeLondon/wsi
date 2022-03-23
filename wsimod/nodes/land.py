@@ -193,14 +193,17 @@ class Surface(Tank):
         self.capacity = 0
         self.datum = 10
         self.quick_slow_split = 0.5 #Higher number increases quick flow, lower number increases slow flow
-        self.infiltration_t = 50 #mm
-        self.wilting_point = 100 #mm
-        self.crop_coeffient = 1
-        self.decays = {}
-        super().__init__(**kwargs)
+        self.infiltration_t = 50 #mm	
+        self.wilting_point = 0.100 #M	
+        self.field_capacity = 0.050 #M	
+        self.percolation_coefficient = 0.5	
+        self.crop_coeffient = 1	
+        self.decays = {}	
+        super().__init__(**kwargs)	
         
-        #Convert wilting point to amount that storage must be exceeded to generate quick/fast flow
-        self.wilting_point *= (self.area * constants.MM_TO_M)
+        #Convert wilting point + FC to amount that storage must be exceeded to generate quick/fast flow	
+        self.wilting_point *= self.area	
+        self.field_capacity *= self.area
         
         #Give deposition pollutant dict negligible volume
         self.pollutant_dict = self.total_to_concentration(self.v_change_vqip(self.pollutant_dict, self.unavailable_to_evap/10))
@@ -273,7 +276,7 @@ class Surface(Tank):
     
     def pull_outflows(self):
         #Amount of water above wilting point
-        u = max(self.storage['volume'] - (self.capacity - self.wilting_point), 0)
+        u = max(self.storage['volume'] - (self.capacity - self.field_capacity), 0) * self.percolation_coefficient
         
         #Convert to an amount
         subsurface_runoff = u * self.quick_slow_split
