@@ -433,34 +433,45 @@ class Node(WSIObj):
     
     def pull_distributed(self, vqip, of_type = None, tag = 'default'):
         
-        #Pull in proportion from connected by priority
         
-        #Initialise pulled, deficit, connected, iter_
-        pulled = self.empty_vqip()
-        deficit = vqip['volume']
-        connected = self.get_connected(direction = 'pull', of_type = of_type, tag = tag)
-        iter_ = 0
-        
-        #Iterate over sending nodes until deficit met
-        while (((deficit > constants.FLOAT_ACCURACY) &
-                (connected['avail'] > constants.FLOAT_ACCURACY)) &
-                (iter_ < constants.MAXITER)):
+        if len(self.in_arcs) == 1:
+            #If only one out_arc, just send the water down that
+            if of_type == None:
+                pulled = next(iter(self.in_arcs.values())).send_pull_request(vqip, tag = tag)
+            elif any([x in of_type for x, y in self.in_arcs_type.items() if len(y) > 0]):
+                pulled = next(iter(self.in_arcs.values())).send_pull_request(vqip, tag = tag)
+            else:
+                #No viable out arcs
+                pulled = self.empty_vqip()
+        else:
+            #Pull in proportion from connected by priority
             
-            #Pull from connected
-            for key, allocation in connected['allocation'].items():
-                received = self.in_arcs[key].send_pull_request({'volume' : deficit *
-                                                                   allocation / 
-                                                                   connected['priority']},
-                                                               tag = tag)
-                pulled = self.blend_vqip(pulled, received)
-            
-            #Update deficit, connected and iter_
-            deficit = vqip['volume'] - pulled['volume']
+            #Initialise pulled, deficit, connected, iter_
+            pulled = self.empty_vqip()
+            deficit = vqip['volume']
             connected = self.get_connected(direction = 'pull', of_type = of_type, tag = tag)
-            iter_ += 1
-        
-        if iter_ == constants.MAXITER:
-            print('Maxiter reached')
+            iter_ = 0
+            
+            #Iterate over sending nodes until deficit met
+            while (((deficit > constants.FLOAT_ACCURACY) &
+                    (connected['avail'] > constants.FLOAT_ACCURACY)) &
+                    (iter_ < constants.MAXITER)):
+                
+                #Pull from connected
+                for key, allocation in connected['allocation'].items():
+                    received = self.in_arcs[key].send_pull_request({'volume' : deficit *
+                                                                       allocation / 
+                                                                       connected['priority']},
+                                                                   tag = tag)
+                    pulled = self.blend_vqip(pulled, received)
+                
+                #Update deficit, connected and iter_
+                deficit = vqip['volume'] - pulled['volume']
+                connected = self.get_connected(direction = 'pull', of_type = of_type, tag = tag)
+                iter_ += 1
+            
+            if iter_ == constants.MAXITER:
+                print('Maxiter reached')
         return pulled
     
     def push_distributed(self, vqip, of_type = None, tag = 'default'):
