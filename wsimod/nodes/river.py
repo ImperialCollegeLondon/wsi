@@ -76,8 +76,8 @@ class River(Node):
         #Update handlers
         self.push_set_handler['default'] = self.push_set_rw
         self.pull_set_handler['default'] = self.pull_set_rw
-        self.push_check_handler['default'] = self.river_tank.get_excess
-        self.pull_check_handler['default'] = self.river_tank.get_avail
+        self.push_check_handler['default'] = self.push_check_rw
+        self.pull_check_handler['default'] = self.pull_check_rw
         self.pull_check_handler[('RiparianBuffer', 'volume')] = self.pull_check_fp
         
         #Mass balance
@@ -277,13 +277,41 @@ class River(Node):
             reply[i] *= constants.MG_L_TO_KG_M3 # [mg/l -> kg/m3]
         return reply
     
+    def pull_check_rw(self, vqip = None):
+        if vqip is not None:
+            vqip = self.copy_vqip(vqip)
+            vqip['volume'] /= constants.ML_TO_M3 # [M3 -> Ml]
+            for i in set(vqip.keys()) - set(['volume']):
+                vqip[i] /= constants.MG_L_TO_KG_M3 # [kg/m3 -> mg/l]
+        reply = self.river_tank.get_avail(vqip)
+        reply['volume'] *= constants.ML_TO_M3 # [Ml -> M3]
+        for i in set(reply.keys()) - set(['volume']):
+            reply[i] *= constants.MG_L_TO_KG_M3 # [mg/l -> kg/m3]
+        return reply
+    
+    
     def push_set_rw(self, vqip):
         vqip = self.copy_vqip(vqip)
         vqip['volume'] /= constants.ML_TO_M3 # [M3 -> Ml]
         for i in set(vqip.keys()) - set(['volume']):
             vqip[i] /= constants.MG_L_TO_KG_M3 # [kg/m3 -> mg/l]
         reply = self.river_tank.push_storage(vqip)
-        
+        reply['volume'] *= constants.ML_TO_M3 # [Ml -> M3]
+        for i in set(reply.keys()) - set(['volume']):
+            reply[i] *= constants.MG_L_TO_KG_M3 # [mg/l -> kg/m3]
+        return reply
+    
+    def push_check_rw(self, vqip = None):
+        if vqip is not None:
+            vqip = self.copy_vqip(vqip)
+            vqip['volume'] /= constants.ML_TO_M3 # [M3 -> Ml]
+            for i in set(vqip.keys()) - set(['volume']):
+                vqip[i] /= constants.MG_L_TO_KG_M3 # [kg/m3 -> mg/l]
+            
+        reply = self.river_tank.get_excess(vqip)
+        reply['volume'] /= constants.ML_TO_M3 # [M3 -> Ml]
+        for i in set(reply.keys()) - set(['volume']):
+            reply[i] /= constants.MG_L_TO_KG_M3 # [kg/m3 -> mg/l]
         return reply
     
     def end_timestep(self):

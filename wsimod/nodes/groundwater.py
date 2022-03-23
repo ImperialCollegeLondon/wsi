@@ -34,8 +34,8 @@ class Groundwater(Node):
         #Update handlers
         self.push_set_handler['default'] = self.push_set_gw
         self.pull_set_handler['default'] = self.pull_set_gw
-        self.push_check_handler['default'] = self.gw_tank.get_excess
-        self.pull_check_handler['default'] = self.gw_tank.get_avail
+        self.push_check_handler['default'] = self.push_check_gw
+        self.pull_check_handler['default'] = self.pull_check_gw
         
         #Mass balance
         self.mass_balance_ds.append(lambda : self.gw_tank_ds_() )
@@ -80,8 +80,35 @@ class Groundwater(Node):
         for i in set(vqip.keys()) - set(['volume']):
             vqip[i] /= constants.MG_L_TO_KG_M3 # [kg/m3 -> mg/l]
         reply = self.gw_tank.push_storage(vqip)
-            
+        reply['volume'] *= constants.ML_TO_M3 # [Ml -> M3]
+        for i in set(reply.keys()) - set(['volume']):
+            reply[i] *= constants.MG_L_TO_KG_M3 # [mg/l -> kg/m3]    
         return reply            
+    
+    def pull_check_gw(self, vqip = None):
+        if vqip is not None:
+            vqip = self.copy_vqip(vqip)
+            vqip['volume'] /= constants.ML_TO_M3 # [M3 -> Ml]
+            for i in set(vqip.keys()) - set(['volume']):
+                vqip[i] /= constants.MG_L_TO_KG_M3 # [kg/m3 -> mg/l]
+        reply = self.gw_tank.get_avail(vqip)
+        reply['volume'] *= constants.ML_TO_M3 # [Ml -> M3]
+        for i in set(reply.keys()) - set(['volume']):
+            reply[i] *= constants.MG_L_TO_KG_M3 # [mg/l -> kg/m3]
+        return reply
+    
+
+    def push_check_gw(self, vqip = None):
+        if vqip is not None:
+            vqip = self.copy_vqip(vqip)
+            vqip['volume'] /= constants.ML_TO_M3 # [M3 -> Ml]
+            for i in set(vqip.keys()) - set(['volume']):
+                vqip[i] /= constants.MG_L_TO_KG_M3 # [kg/m3 -> mg/l]
+        reply = self.gw_tank.get_excess(vqip)
+        reply['volume'] /= constants.ML_TO_M3 # [M3 -> Ml]
+        for i in set(reply.keys()) - set(['volume']):
+            reply[i] /= constants.MG_L_TO_KG_M3 # [kg/m3 -> mg/l]
+        return reply
     
     def end_timestep(self):
         self.gw_tank.end_timestep()
