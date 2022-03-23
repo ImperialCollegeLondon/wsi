@@ -27,8 +27,10 @@ class Groundwater(Node):
         self.gw_tank = Tank(capacity = self.capacity,
                             area = self.area,
                             datum = self.datum,
+                            initial_storage = 0.1 * 1e4,
                             )
-        self.gw_tank.storage['volume'] = 0.1 * 1e4
+        
+        
         #Update handlers
         self.push_set_handler['default'] = self.push_set_gw
         self.pull_set_handler['default'] = self.pull_set_gw
@@ -36,7 +38,7 @@ class Groundwater(Node):
         self.pull_check_handler['default'] = self.gw_tank.get_avail
         
         #Mass balance
-        self.mass_balance_ds.append(lambda : self.gw_tank.ds())
+        self.mass_balance_ds.append(lambda : self.gw_tank_ds_() )
     
     def return_river_flow(self):
         self.baseflow = deepcopy(self.gw_tank.storage) # vqip
@@ -65,6 +67,13 @@ class Groundwater(Node):
             reply[i] *= constants.MG_L_TO_KG_M3 # [mg/l -> kg/m3]
         return reply    
     
+    def gw_tank_ds_(self):
+        ds = self.gw_tank.ds() 
+        for key in constants.ADDITIVE_POLLUTANTS:
+            ds[key] *= constants.MG_L_TO_KG_M3
+        ds['volume'] *= constants.ML_TO_M3
+        return ds
+        
     def push_set_gw(self, vqip):
         vqip = self.copy_vqip(vqip)
         vqip['volume'] /= constants.ML_TO_M3 # [M3 -> Ml]
