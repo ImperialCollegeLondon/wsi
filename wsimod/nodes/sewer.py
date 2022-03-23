@@ -80,7 +80,7 @@ class Sewer(Node):
                                         tag = 'Sewer')
         #CSO discharge
         remaining = self.push_distributed(remaining,
-                                          of_type = ['Node'])
+                                          of_type = ['Node', 'River'])
         
         #Update tank
         sent = self.sewer_tank.active_storage['volume'] - remaining['volume']
@@ -125,7 +125,7 @@ class EnfieldFoulSewer(Sewer):
             exchange_v = min((1 - self.storm_exchange) * self.sewer_tank.capacity, 
                              self.sewer_tank.active_storage['volume'])
             exchange = self.v_change_vqip(self.sewer_tank.active_storage, exchange_v)
-            remaining = self.push_distributed(exchange, of_type = ['Sewer'])
+            remaining = self.push_distributed(exchange)
             sent_to_exchange = self.v_change_vqip(self.sewer_tank.active_storage, exchange_v - remaining['volume'])
             sent_to_exchange_ = self.sewer_tank.pull_storage(sent_to_exchange)
             

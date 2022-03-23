@@ -123,17 +123,17 @@ class Land(Node):
         
         amount_entering_rivers = self.blend_vqip(self.total_surface_runoff, subsurface_runoff_leaving)
 
-        runoff_remaining = self.push_distributed(amount_entering_rivers, of_type = ['Node']) #TODO seems suspicious.. do I need 'not of type'?
+        runoff_remaining = self.push_distributed(amount_entering_rivers, of_type = ['Node', 'River']) #TODO seems suspicious.. do I need 'not of type'?
 
         #Redistribute unsent percolation
-        if percolation_remaining['volume'] > constants.FLOAT_ACCURACY:
+        if percolation_remaining['volume'] > constants.FLOAT_ACCURACY and self.total_percolation['volume'] > constants.FLOAT_ACCURACY:
             print('infiltraiton remaining')
             #Calculate proportion
             proportions = {sname : value['volume'] / self.total_percolation['volume'] for sname, value in temp_tracking['percolation'].items()}
             self.redistribute_to_surfaces(proportions, temp_tracking['percolation'], percolation_remaining['volume'])
             
         #Redistribute amount_entering rivers in proportion to subsurface_runoff and using subsurface_runoff concentrations
-        if runoff_remaining['volume'] > constants.FLOAT_ACCURACY:
+        if runoff_remaining['volume'] > constants.FLOAT_ACCURACY and self.total_subsurface_runoff['volume'] > constants.FLOAT_ACCURACY:
             print('runoff to river remaining')
             #Calculate proportion
             proportions = {sname : value['volume'] / self.total_subsurface_runoff['volume'] for sname, value in temp_tracking['subsurface_runoff'].items()}
@@ -194,17 +194,13 @@ class Surface(Tank):
         self.datum = 10
         self.quick_slow_split = 0.5 #Higher number increases quick flow, lower number increases slow flow
         self.infiltration_t = 50 #mm
-        self.wilting_point = 0.100 #M
-        self.field_capacity = 0.050 #M
-        # self.percolation_coefficient = 0.5
+        self.wilting_point = 100 #mm
         self.crop_coeffient = 1
         self.decays = {}
         super().__init__(**kwargs)
         
-        
-        #Convert wilting point + FC to amount that storage must be exceeded to generate quick/fast flow
-        self.wilting_point *= self.area
-        self.field_capacity *= self.area
+        #Convert wilting point to amount that storage must be exceeded to generate quick/fast flow
+        self.wilting_point *= (self.area * constants.MM_TO_M)
         
         #Give deposition pollutant dict negligible volume
         self.pollutant_dict = self.total_to_concentration(self.v_change_vqip(self.pollutant_dict, self.unavailable_to_evap/10))
@@ -276,8 +272,8 @@ class Surface(Tank):
         return excess, infiltration, evaporation, water_entering_model
     
     def pull_outflows(self):
-        #Amount of water above FC
-        u = max(self.storage['volume'] - (self.capacity - self.field_capacity), 0) * self.percolation_coefficient
+        #Amount of water above wilting point
+        u = max(self.storage['volume'] - (self.capacity - self.wilting_point), 0)
         
         #Convert to an amount
         subsurface_runoff = u * self.quick_slow_split
