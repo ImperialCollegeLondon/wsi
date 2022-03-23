@@ -903,7 +903,7 @@ class RuralLand(Node):
             outflow[i] *= constants.MG_L_TO_KG_M3 # [mg/l -> kg/m3]
         reply = self.push_distributed(outflow,
                                       of_type = ['River'
-                                                 #, 'Wetland'
+                                                 , 'Wetland'
                                                  ])
         if reply['volume'] > constants.FLOAT_ACCURACY:
             print('Cropland couldnt push')
