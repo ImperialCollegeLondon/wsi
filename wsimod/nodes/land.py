@@ -101,9 +101,10 @@ class Land(Node):
             self.total_subsurface_runoff = self.blend_vqip(self.total_subsurface_runoff, subsurface_runoff)
 
             #Drain sewers 
-            if surface == 'impervious':
-                reply = self.push_distributed(surface_runoff, of_type = ['Sewer'])
-                _ = surface.tank.push_storage(reply, force = True)
+            if sname == 'impervious':
+                if surface_runoff['volume'] > 0:
+                    reply = self.push_distributed(surface_runoff, of_type = ['Sewer'])
+                    _ = surface.tank.push_storage(reply, force = True)
             else:
                 self.total_surface_runoff = self.blend_vqip(self.total_surface_runoff, surface_runoff)
 
