@@ -69,8 +69,8 @@ class Groundwater(Node):
     
     def gw_tank_ds_(self):
         ds = self.gw_tank.ds() 
-        for key in constants.ADDITIVE_POLLUTANTS:
-            ds[key] *= constants.MG_L_TO_KG_M3
+        # for key in constants.ADDITIVE_POLLUTANTS:
+        #     ds[key] *= constants.MG_L_TO_KG_M3
         ds['volume'] *= constants.ML_TO_M3
         return ds
         
@@ -105,9 +105,9 @@ class Groundwater(Node):
             for i in set(vqip.keys()) - set(['volume']):
                 vqip[i] /= constants.MG_L_TO_KG_M3 # [kg/m3 -> mg/l]
         reply = self.gw_tank.get_excess(vqip)
-        reply['volume'] /= constants.ML_TO_M3 # [M3 -> Ml]
+        reply['volume'] *= constants.ML_TO_M3 # [Ml -> M3]
         for i in set(reply.keys()) - set(['volume']):
-            reply[i] /= constants.MG_L_TO_KG_M3 # [kg/m3 -> mg/l]
+            reply[i] *= constants.MG_L_TO_KG_M3 # [mg/l -> kg/m3]
         return reply
     
     def end_timestep(self):
