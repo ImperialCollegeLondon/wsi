@@ -81,13 +81,21 @@ class River(Node):
         self.pull_check_handler[('RiparianBuffer', 'volume')] = self.pull_check_fp
         
         #Mass balance
-        self.mass_balance_ds.append(lambda : vqip_ml_to_m3(self.river_tank.ds())) 
+        self.mass_balance_ds.append(self.rw_tank_ds_)
         self.mass_balance_out.append(self.mass_balance_loss_processes)
         
+    def rw_tank_ds_(self):
+        ds = self.river_tank.ds() 
+        # for key in constants.ADDITIVE_POLLUTANTS:
+        #     ds[key] *= constants.MG_L_TO_KG_M3
+        ds['volume'] *= constants.ML_TO_M3
+        return ds
     def mass_balance_loss_processes(self):
         vq = self.empty_vqip()
-        vq['DIN'] = self.river_denitrification + self.macrophyte_uptake_N
-        vq['SRP'] = self.macrophyte_uptake_P
+        vq['DIN'] = self.river_denitrification + self.macrophyte_uptake_N + self.minprodN
+        vq['DON'] = -self.minprodN
+        vq['SRP'] = self.macrophyte_uptake_P + self.minprodP
+        vq['PP'] = -self.minprodP
         vq['volume'] = constants.FLOAT_ACCURACY / 100
         vq = self.total_to_concentration(vq)
         return vq
@@ -148,21 +156,21 @@ class River(Node):
             if (TP_365 - self.limpppar + self.hsatTP) > 0:
                 TPfcn = (TP_365 - self.limpppar) / (TP_365 - self.limpppar + self.hsatTP)
             # minprodN
-            minprodN = self.prodNpar * TPfcn * tempfcn * self.river_area * self.depth # [kg N/day]
-            if minprodN > 0 : # production
-                minprodN = min(0.5 * river_DIN_pool, minprodN) # only half pool can be used for production
+            self.minprodN = self.prodNpar * TPfcn * tempfcn * self.river_area * self.depth # [kg N/day]
+            if self.minprodN > 0 : # production
+                self.minprodN = min(0.5 * river_DIN_pool, self.minprodN) # only half pool can be used for production
             else: # mineralisation
-                minprodN = max(-0.5 * river_DON_pool, minprodN)
-            river_DIN_pool -= minprodN
-            river_DON_pool += minprodN
+                self.minprodN = max(-0.5 * river_DON_pool, self.minprodN)
+            river_DIN_pool -= self.minprodN
+            river_DON_pool += self.minprodN
             # minprodP
-            minprodP = self.prodPpar * TPfcn * tempfcn * self.river_area * self.depth * self.uptake_PNratio # [kg N/day]
-            if minprodP > 0 : # production
-                minprodP = min(0.5 * river_SRP_pool, minprodP) # only half pool can be used for production
+            self.minprodP = self.prodPpar * TPfcn * tempfcn * self.river_area * self.depth * self.uptake_PNratio # [kg N/day]
+            if self.minprodP > 0 : # production
+                self.minprodP = min(0.5 * river_SRP_pool, self.minprodP) # only half pool can be used for production
             else: # mineralisation
-                minprodP = max(-0.5 * river_PP_pool, minprodP)
-            river_SRP_pool -= minprodP
-            river_PP_pool += minprodP
+                self.minprodP = max(-0.5 * river_PP_pool, self.minprodP)
+            river_SRP_pool -= self.minprodP
+            river_PP_pool += self.minprodP
         
             # macrophyte uptake
             # temperature dependence factor
@@ -178,9 +186,9 @@ class River(Node):
             self.macrophyte_uptake_P = min(0.5 * river_SRP_pool, macrouptP)
             river_SRP_pool -= self.macrophyte_uptake_P
             
-            self.river_tank.storage['DIN'] = river_DIN_pool / max(self.river_tank.storage['volume'], constants.FLOAT_ACCURACY)
-            self.river_tank.storage['SRP'] = river_SRP_pool / max(self.river_tank.storage['volume'], constants.FLOAT_ACCURACY)
-            self.river_tank.storage['DON'] = river_DON_pool / max(self.river_tank.storage['volume'], constants.FLOAT_ACCURACY)
+            self.river_tank.storage['DIN'] = river_DIN_pool / max(self.river_tank.storage['volume'], constants.FLOAT_ACCURACY/100)
+            self.river_tank.storage['SRP'] = river_SRP_pool / max(self.river_tank.storage['volume'], constants.FLOAT_ACCURACY/100)
+            self.river_tank.storage['DON'] = river_DON_pool / max(self.river_tank.storage['volume'], constants.FLOAT_ACCURACY/100)
             
         #
         # source/sink for benthos sediment P
@@ -309,9 +317,9 @@ class River(Node):
                 vqip[i] /= constants.MG_L_TO_KG_M3 # [kg/m3 -> mg/l]
             
         reply = self.river_tank.get_excess(vqip)
-        reply['volume'] /= constants.ML_TO_M3 # [M3 -> Ml]
+        reply['volume'] *= constants.ML_TO_M3 # [Ml -> M3]
         for i in set(reply.keys()) - set(['volume']):
-            reply[i] /= constants.MG_L_TO_KG_M3 # [kg/m3 -> mg/l]
+            reply[i] *= constants.MG_L_TO_KG_M3 # [mg/l -> kg/m3]
         return reply
     
     def end_timestep(self):
