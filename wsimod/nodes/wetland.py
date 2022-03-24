@@ -204,7 +204,11 @@ class Wetland(Node):
             l = lambda i = i : self._mass_balance_ds[i].ds()
             self.mass_balance_ds.append(l)
         self.mass_balance_ds.append(lambda : self.recharge_storage.ds()) 
-    
+        
+        
+        self.mass_balance_in = [lambda : self.empty_vqip()]
+        self.mass_balance_out = [lambda : self.empty_vqip()]
+        self.mass_balance_ds = [lambda : self.empty_vqip()]
     def get_input_variables(self, input_variables):
         #!!! read reference ET
         self.precipitation = input_variables['precipitation']
