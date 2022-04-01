@@ -73,14 +73,20 @@ class Sewer(Node):
     def make_discharge(self):
         _ = self.sewer_tank.internal_arc.update_queue(direction = 'push')
         
-        #Discharge downstream
+        #Discharge to WWTW if possible
         remaining = self.push_distributed(self.sewer_tank.active_storage,
-                                        of_type = ['Sewer',
-                                                   'WWTW'],
+                                        of_type = 'WWTW',
                                         tag = 'Sewer')
+        #Discharge to Sewer if possible
+        remaining = self.push_distributed(remaining,
+                                        of_type = 'Sewer',
+                                        tag = 'Sewer')
+        
         #CSO discharge
+        
         remaining = self.push_distributed(remaining,
                                           of_type = ['Node', 'River'])
+        
         
         #Update tank
         sent = self.sewer_tank.active_storage['volume'] - remaining['volume']
