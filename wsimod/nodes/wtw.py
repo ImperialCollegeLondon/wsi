@@ -170,7 +170,7 @@ class FWTW(Node):
         
         self.process_multiplier = {x : 0.5 for x in constants.ADDITIVE_POLLUTANTS}
         self.liquor_multiplier = {x : 5 for x in constants.ADDITIVE_POLLUTANTS}
-        self.liquor_multiplier['volume'] = 0.03
+        self.liquor_multiplier['volume'] = 0.01
         
         self.percent_solids = 0.0002
         
@@ -192,7 +192,8 @@ class FWTW(Node):
         self.solids = self.empty_vqip()
         self.liquor = self.empty_vqip()
         self.total_deficit = self.empty_vqip()
-        
+        self.total_pulled = self.empty_vqip()
+        self.previous_pulled = self.empty_vqip()
         #Create tanks
         self.service_reservoir_tank = Tank(capacity = self.service_reservoir_storage_capacity,
                                     area = self.service_reservoir_storage_area,
@@ -218,12 +219,17 @@ class FWTW(Node):
         
         throughput = self.pull_distributed({'volume' : target_throughput})
         
-        deficit = max(target_throughput - throughput['volume'], 0)
+        deficit = max(self.previous_pulled['volume'] - throughput['volume'], 0)
         deficit = self.v_change_vqip(self.empty_vqip(), deficit)
+        
+        
         
         throughput = self.blend_vqip(throughput, deficit)
         
         self.total_deficit = self.blend_vqip(self.total_deficit, deficit)
+        
+        if self.total_deficit['volume'] > constants.FLOAT_ACCURACY:
+            print('deficit')
         
         #Calculate effluent, liquor and solids
         discharge_holder = self.empty_vqip()
@@ -253,11 +259,15 @@ class FWTW(Node):
         return self.service_reservoir_tank.get_avail(vqip)
     
     def pull_set_fwtw(self, vqip):
-        return self.service_reservoir_tank.pull_storage(vqip)
+        pulled = self.service_reservoir_tank.pull_storage(vqip)
+        self.total_pulled = self.blend_vqip(self.total_pulled, pulled)
+        return pulled
     
     def end_timestep(self):
         self.service_reservoir_tank.end_timestep()
         self.total_deficit = self.empty_vqip()
-    
+        self.previous_pulled = self.copy_vqip(self.total_pulled)
+        self.total_pulled = self.empty_vqip()
+        
     def reinit(self):
         self.service_reservoir_tank.reinit()
