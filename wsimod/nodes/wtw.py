@@ -220,7 +220,7 @@ class FWTW(Node):
         throughput = self.pull_distributed({'volume' : target_throughput})
         
         deficit = max(self.previous_pulled['volume'] - throughput['volume'], 0)
-        deficit = self.v_change_vqip(self.empty_vqip(), deficit)
+        deficit = self.v_change_vqip(self.previous_pulled, deficit)
         
         
         
