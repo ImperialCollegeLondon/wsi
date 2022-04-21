@@ -48,8 +48,6 @@ class Arc(WSIObj):
         
         vqip = self.copy_vqip(vqip)
         
-        if vqip['volume'] < constants.FLOAT_ACCURACY:
-            return self.empty_vqip()
         
         #Apply pipe capacity
         if force:
@@ -61,22 +59,22 @@ class Arc(WSIObj):
         
         
         #Don't attempt to send volume that exceeds capacity
-        vqip['volume'] -= not_pushed['volume']
+        vqip = self.extract_vqip(vqip, not_pushed['volume'])
         
         #Set push
         reply = self.out_port.push_set(vqip, tag)
         
         #Update total amount successfully sent
-        vqip['volume'] -= reply['volume']
+        vqip = self.extract_vqip(vqip, reply)
         
         #Combine non-sent water
-        reply = self.blend_vqip(reply, not_pushed)
+        reply = self.sum_vqip(reply, not_pushed)
         
         #Update mass balance
         self.flow_in += vqip['volume']
         self.flow_out = self.flow_in
         
-        self.vqip_in = self.blend_vqip(self.vqip_in, vqip)
+        self.vqip_in = self.sum_vqip(self.vqip_in, vqip)
         self.vqip_out = self.vqip_in
         
         return reply
@@ -87,7 +85,7 @@ class Arc(WSIObj):
         excess_in = self.get_excess(direction = 'pull', vqip = vqip)['volume']
         not_pulled = max(volume - excess_in, 0)
         volume -= not_pulled
-        vqip['volume'] = volume
+        vqip = self.v_change_vqip(vqip,volume)
         
         #Make pull
         vqip = self.in_port.pull_set(vqip)
