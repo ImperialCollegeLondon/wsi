@@ -3,6 +3,9 @@
 Created on Wed Apr  7 15:44:48 2021
 
 @author: Barney
+
+Converted to totals on Thur Apr 21 2022
+
 """
 from wsimod.core import constants
 
@@ -26,16 +29,17 @@ class WSIObj:
     def empty_vqtip(self):
         return self.empty_vqtip_predefined.copy()
     
-    def copy_qip(self, c):
-        return c.copy()
+    def copy_qip(self, t):
+        return t.copy()
     
-    def copy_vqip(self, c):
-        return c.copy()
+    def copy_vqip(self, t):
+        return t.copy()
     
-    def copy_vqtip(self, c):
-        return c.copy()    
+    def copy_vqtip(self, t):
+        return tc.copy()    
     
     def blend_vqip(self, c1, c2):
+        #Blend two vqips given as concentrations
         c = self.empty_vqip()
         
         c['volume'] = c1['volume'] + c2['volume']
@@ -48,7 +52,7 @@ class WSIObj:
         return c
     
     def sum_vqip(self, t1, t2):
-        #Sum two vqips given as totals rather than concentrations
+        #Sum two vqips given as totals
         t = self.empty_vqip()
         t['volume'] = t1['volume'] + t2['volume']
         for pollutant in constants.POLLUTANTS:
@@ -61,13 +65,22 @@ class WSIObj:
             c[pollutant] *= c['volume']
         return c
     
-    def total_to_concentration(self, c):
-        c = self.copy_vqip(c)
+    def total_to_concentration(self, t):
+        c = self.copy_vqip(t)
         for pollutant in constants.ADDITIVE_POLLUTANTS:
             c[pollutant] /= c['volume']
         return c
     
-    def extract_vqip(self, c1, c2):
+    def extract_vqip(self, t1, t2):
+        #Directly subtract t2 from t1 for vol and additive pollutants
+        t = self.empty_vqip()
+        
+        for pol in constants.ADDITIVE_POLLUTANTS + ['volume']:
+            t[pol] = t1[pol] - t2[pol]
+            
+        return t
+    
+    def extract_vqip_c(self, c1, c2):
         #Directly subtract c2 from c1 for vol and additive pollutants
         c = self.empty_vqip()
         
@@ -80,9 +93,13 @@ class WSIObj:
             
         return c
     
-    
-    
-    def v_distill_vqip(self, c, v):
+    def v_distill_vqip(self, t, v):
+        #Distill v from t
+        t = self.copy_vqip(t)
+        t['volume'] -= v
+        return t
+        
+    def v_distill_vqip_c(self, c, v):
         #Distill v from c
         c = self.copy_vqip(c)
         d = self.empty_vqip()
@@ -92,23 +109,29 @@ class WSIObj:
             c_[pollutant] = c[pollutant]
         return c_
     
-    def v_change_vqip(self, c, v):
+    def v_change_vqip(self, t, v):
         #Change volume of vqip
-        c = self.copy_vqip(c)
-        c['volume'] = v
-        return c
+        t = self.copy_vqip(c)
+        t'volume'] = v
+        return t
     
-    def t_insert_vqip(self, c, t):
-        c = self.copy_vqip(c)
-        c['time'] = t
-        return c
+    def t_insert_vqip(self, t, t):
+        t = self.copy_vqip(t)
+        t['time'] = t
+        return t
     
-    def t_remove_vqtip(self, c):
-        c = self.copy_vqtip(c)
-        del c['time']
-        return c
+    def t_remove_vqtip(self, t):
+        c = self.copy_vqtip(t)
+        del t['time']
+        return t
     
-    def ds_vqip(self, c, c_):
+    def ds_vqip(self, t, t_):
+        ds = self.empty_vqip()
+        for pol in constants.ADDITIVE_POLLUTANTS + ['volume']:
+            ds[pol] = t[pol] - t_[pol]
+        return ds
+    
+    def ds_vqip_c(self, c, c_):
         ds = self.empty_vqip()
         ds['volume'] = c['volume'] - c_ ['volume']
         for pol in constants.ADDITIVE_POLLUTANTS:
@@ -117,7 +140,16 @@ class WSIObj:
         #TODO what about non-additive ...
         return ds
     
-    def generic_temperature_decay(self, c, d, temperature):
+    def generic_temperature_decay(self, t, d, temperature):
+        t = self.copy_vqip(t)
+        diff = self.empty_vqip()
+        for pol, pars in d.items():
+            diff[pol] = -t[pol] * min(pars['constant'] * pars['exponent'] ** (temperature - constants.DECAY_REFERENCE_TEMPERATURE), 1)
+            t[pol] += diff[pol]
+
+        return t, diff
+    
+    def generic_temperature_decay_c(self, c, d, temperature):
         c = self.copy_vqip(c)
         diff = self.empty_vqip()
         for pol, pars in d.items():
