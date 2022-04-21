@@ -3,6 +3,9 @@
 Created on Wed Apr  7 08:43:32 2021
 
 @author: Barney
+
+Converted to totals on Thur Apr 21 2022
+
 """
 from wsimod.nodes import nodes
 from wsimod.core import constants, WSIObj
@@ -772,7 +775,7 @@ class QueueTank(Tank):
         #vqtips after internal arc. To push to QueueTanks,
         #use push_storage
         
-        self.active_storage = self.blend_vqip(self.active_storage, vqip)
+        self.active_storage = self.sum_vqip(self.active_storage, vqip)
         
         return self.empty_vqip()
         
