@@ -3,6 +3,9 @@
 Created on Wed Apr  7 08:43:32 2021
 
 @author: Barney
+
+Converted to totals on Thur Apr 21 2022
+
 """
 
 from wsimod.core import constants, WSIObj
@@ -94,7 +97,7 @@ class Arc(WSIObj):
         self.flow_in += vqip['volume']
         self.flow_out = self.flow_in
         
-        self.vqip_in = self.blend_vqip(self.vqip_in, vqip)
+        self.vqip_in = self.sum_vqip(self.vqip_in, vqip)
         self.vqip_out = self.vqip_in
         
         return vqip
@@ -380,7 +383,7 @@ class DecayArcAlt(AltQueueArc):
         vqtip, diff = self.generic_temperature_decay(vqtip, self.decays, temperature)
         #Form as request and append to queue
         if vqtip['time'] in self.queue.keys():
-            self.queue[vqtip['time']]  = self.blend_vqip(self.queue[vqtip['time']], vqtip)
+            self.queue[vqtip['time']]  = self.sum_vqip(self.queue[vqtip['time']], vqtip)
         else:
             self.queue[vqtip['time']]  = vqtip
             self.max_travel = max(self.max_travel, vqtip['time'])
