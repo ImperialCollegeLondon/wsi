@@ -115,7 +115,7 @@ class Node(WSIObj):
         '''
         in_ = self.empty_vqip()
         for arc in self.in_arcs.values():
-            in_ = self.blend_vqip(in_, arc.vqip_out)
+            in_ = self.sum_vqip(in_, arc.vqip_out)
             
         return in_
     
@@ -133,7 +133,7 @@ class Node(WSIObj):
         '''
         out_ = self.empty_vqip()
         for arc in self.out_arcs.values():
-            out_ = self.blend_vqip(out_, arc.vqip_in)
+            out_ = self.sum_vqip(out_, arc.vqip_in)
             
         return out_
     
@@ -161,13 +161,11 @@ class Node(WSIObj):
         
         in_ = self.empty_vqip()
         for f in self.mass_balance_in:
-            in_ = self.blend_vqip(in_, f())
-        in_ = self.concentration_to_total(in_)
+            in_ = self.sum_vqip(in_, f())
         
         out_ = self.empty_vqip()
         for f in self.mass_balance_out:
-            out_ = self.blend_vqip(out_, f())
-        out_ = self.concentration_to_total(out_)
+            out_ = self.sum_vqip(out_, f())
             
         ds_ = self.empty_vqip()
         for f in self.mass_balance_ds:
@@ -463,7 +461,7 @@ class Node(WSIObj):
                                                                        allocation / 
                                                                        connected['priority']},
                                                                    tag = tag)
-                    pulled = self.blend_vqip(pulled, received)
+                    pulled = self.sum_vqip(pulled, received)
                 
                 #Update deficit, connected and iter_
                 deficit = vqip['volume'] - pulled['volume']
@@ -508,7 +506,7 @@ class Node(WSIObj):
                     to_send = amount_to_push * allocation / connected['priority']
                     to_send = self.v_change_vqip(vqip, to_send)
                     reply = self.out_arcs[key].send_push_request(to_send, tag = tag)
-                    not_pushed_['volume'] -= (to_send['volume'] - reply['volume'])
+                    not_pushed_ = self.v_change_vqip(not_pushed_,to_send['volume'] - reply['volume'])
                 
                 not_pushed = not_pushed_['volume']
                 connected = self.get_connected(direction = 'push', 
@@ -527,7 +525,7 @@ class Node(WSIObj):
         #Iterate over arcs, updating connected dict
         avail = self.empty_vqip()
         for arc in arcs:
-            avail = self.blend_vqip(avail, getattr(arc, f)(tag = tag))
+            avail = self.sum_vqip(avail, getattr(arc, f)(tag = tag))
             
         if vqip is not None:
             avail['volume'] = min(avail['volume'], vqip['volume'])
@@ -610,7 +608,7 @@ class Tank(WSIObj):
         if vqip is None:
             return reply
         else:
-            reply['volume'] = min(reply['volume'], vqip['volume'])
+            reply = self.v_change_vqip(reply, min(reply['volume'], vqip['volume']))
             return reply
     
     def get_excess(self, vqip = None):
@@ -624,7 +622,7 @@ class Tank(WSIObj):
         
         if force:
             #Directly add request to storage
-            self.storage = self.blend_vqip(self.storage, vqip)
+            self.storage = self.sum_vqip(self.storage, vqip)
             return self.empty_vqip()
         
         #Check whether request can be met
@@ -636,7 +634,7 @@ class Tank(WSIObj):
         entered = self.v_change_vqip(vqip, vqip['volume'] - reply['volume'])
         
         #Update storage
-        self.storage = self.blend_vqip(self.storage, entered)
+        self.storage = self.sum_vqip(self.storage, entered)
             
         return reply
     
@@ -649,7 +647,7 @@ class Tank(WSIObj):
             reply = max(reply - self.unavailable_to_evap, 0)
         
         #Extract from storage
-        self.storage['volume'] -= reply
+        self.storage = self.v_change_vqip(self.storage, self.storage['volume'] - reply)
         
         #Update reply to vqip
         reply = self.v_change_vqip(self.storage, reply)
@@ -679,10 +677,14 @@ class Tank(WSIObj):
         return evap
     
     def push_total(self, vqip):
-        
-        #Push vqip to storage where pollutants are given as a total rather than concentration
-        storage = self.concentration_to_total(self.storage)
-        self.storage = self.total_to_concentration(self.sum_vqip(storage, vqip))
+        #TODO not needed since everything is concentration based
+        self.storage = self.sum_vqip(storage, vqip)        
+        return self.empty_vqip()
+    
+    def push_total_c(self, vqip):
+        #Push vqip to storage where pollutants are given as a concentration rather than storage
+        vqip = self.concentration_to_total(self.vqip)
+        self.storage = self.sum_vqip(storage, vqip)
         
         return self.empty_vqip()
     
@@ -734,9 +736,9 @@ class QueueTank(Tank):
         
         #Push to QueueTank
         reply = self.internal_arc.send_push_request(vqip, force)
-        self.storage = self.blend_vqip(self.storage,
-                                       self.v_change_vqip(vqip, 
-                                                          vqip['volume'] - reply['volume']))
+        self.storage = self.sum_vqip(self.storage,
+                                     self.v_change_vqip(vqip, 
+                                                        vqip['volume'] - reply['volume']))
         return reply
     
     def pull_storage(self, vqip):
@@ -746,7 +748,7 @@ class QueueTank(Tank):
         reply = min(vqip['volume'], self.active_storage['volume'])
         
         #Extract from active_storage
-        self.active_storage['volume'] -= reply
+        self.active_storage = self.v_change_vqip(self.active_storage, self.active_storage['volume'] - reply)
         
         #Update reply to vqip
         reply = self.v_change_vqip(self.active_storage, reply)
