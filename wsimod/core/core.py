@@ -110,10 +110,14 @@ class WSIObj:
         return c_
     
     def v_change_vqip(self, t, v):
-        #Reduce all values of t by volume v in proportion to volume of t
-        ratio = v / t['volume']
-        for pol in constants.POLLUTANTS + ['volume']:
-            t[pol] *= ratio
+        if t['volume'] > 0:
+            #change all values of t by volume v in proportion to volume of t
+            ratio = v / t['volume']
+            for pol in constants.POLLUTANTS + ['volume']:
+                t[pol] *= ratio
+        else:
+            #Assign volume directly
+            t['volume'] = v
         return t
     
     def v_change_vqip_c(self, c, v):
