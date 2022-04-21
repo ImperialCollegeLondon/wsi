@@ -143,7 +143,8 @@ class QueueArc(Arc):
         excess_in = self.get_excess(direction = 'pull', vqip = vqip)['volume']
         not_pulled = max(volume - excess_in, 0)
         volume -= not_pulled
-        vqip['volume'] = volume
+        vqip = self.v_change_vqip(vqip,volume)
+        
         #Make pull
         vqip = self.in_port.pull_set(vqip)
         
@@ -172,8 +173,8 @@ class QueueArc(Arc):
             not_pushed = self.v_change_vqip(vqip, 
                                             max(vqip['volume'] - excess_in['volume'], 0))
         
-            
-        vqip['volume'] -= not_pushed['volume']
+        
+        vqip = self.extract_vqip(vqip, not_pushed)
         
         #Create vqtip
         if 'time' in vqip.keys():
@@ -201,7 +202,7 @@ class QueueArc(Arc):
         
         #Update inflows
         self.flow_in += request['average_flow']
-        self.vqip_in = self.blend_vqip(self.vqip_in, vqtip)
+        self.vqip_in = self.sum_vqip(self.vqip_in, vqtip)
         
     def update_queue(self, direction = None):
         
@@ -233,13 +234,14 @@ class QueueArc(Arc):
                     #Update outflows
                     self.flow_out += (request['average_flow'] * removed / vqip['volume'])
                     vqip_ = self.v_change_vqip(vqip, removed)
-                    total_removed = self.blend_vqip(total_removed, vqip_)
+                    total_removed = self.sum_vqip(total_removed, vqip_)
                     
                     
                     #Update request
-                    request['vqtip']['volume'] -= removed
+                    request['vqtip'] = self.v_change_vqip(request['vqtip'], request['vqtip']['volume'] - removed)
                     
-        self.vqip_out = self.blend_vqip(self.vqip_out, total_removed)                    
+                    
+        self.vqip_out = self.sum_vqip(self.vqip_out, total_removed)                    
         
         #Remove done requests
         for request in done_requests:
@@ -272,14 +274,14 @@ class AltQueueArc(QueueArc):
         
         #Form as request and append to queue
         if vqtip['time'] in self.queue.keys():
-            self.queue[vqtip['time']]  = self.blend_vqip(self.queue[vqtip['time']], vqtip)
+            self.queue[vqtip['time']]  = self.sum_vqip(self.queue[vqtip['time']], vqtip)
         else:
             self.queue[vqtip['time']]  = vqtip
             self.max_travel = max(self.max_travel, vqtip['time'])
         
         #Update inflows
         self.flow_in += vqtip['volume'] / (vqtip['time'] + 1)
-        self.vqip_in = self.blend_vqip(self.vqip_in, vqtip)
+        self.vqip_in = self.sum_vqip(self.vqip_in, vqtip)
         
     def update_queue(self, direction = None):
         #NOTE - has no direction
@@ -288,11 +290,11 @@ class AltQueueArc(QueueArc):
 
         #Push 0 travel time water
         reply = self.out_port.push_set(self.queue[0])
-        self.queue[0]['volume'] = reply['volume']
-        total_removed['volume'] -= reply['volume']
+        self.queue[0] = self.v_change_vqip(self.queue[0], reply['volume'])
+        total_removed = self.v_change_vqip(total_removed, total_removed['volume'] - reply['volume'])
 
         self.flow_out += total_removed['volume']
-        self.vqip_out = self.blend_vqip(self.vqip_out, total_removed)
+        self.vqip_out = self.sum_vqip(self.vqip_out, total_removed)
         
         return total_removed
 
@@ -309,7 +311,7 @@ class AltQueueArc(QueueArc):
                 self.queue[i] = queue_[i+1]
                 self.queue[i+1] = self.empty_vqip()
 
-        self.queue[0] = self.blend_vqip(queue_[0], queue_[1])
+        self.queue[0] = self.sum_vqip(queue_[0], queue_[1])
     
     def reinit(self):
         self.end_timestep()
@@ -345,7 +347,7 @@ class DecayArc(QueueArc):
         
         #Update inflows
         self.flow_in += request['average_flow']
-        self.vqip_in = self.blend_vqip(self.vqip_in, vqtip)
+        self.vqip_in = self.sum_vqip(self.vqip_in, vqtip)
 
     def end_timestep(self):
         self.vqip_in = self.empty_vqip()
@@ -385,7 +387,7 @@ class DecayArcAlt(AltQueueArc):
         
         #Update inflows
         self.flow_in += vqtip['volume'] / (vqtip['time'] + 1)
-        self.vqip_in = self.blend_vqip(self.vqip_in, vqtip)
+        self.vqip_in = self.sum_vqip(self.vqip_in, vqtip)
 
 
     def _end_timestep(self):
@@ -403,7 +405,7 @@ class DecayArcAlt(AltQueueArc):
                 self.queue[i] = vqip
                 self.queue[i+1] = self.empty_vqip()
 
-        self.queue[0] = self.blend_vqip(queue_[0], queue_[1])
+        self.queue[0] = self.sum_vqip(queue_[0], queue_[1])
     
 class SewerArc(Arc):
     pass
