@@ -161,7 +161,7 @@ class FWTW(Node):
         self.service_reservoir_storage_capacity = 10
         self.service_reservoir_storage_area = 1
         self.service_reservoir_storage_elevation = 10
-        self.service_reservoir_inital_storage = 0
+        self.service_reservoir_initial_storage = 0
         self.treatment_throughput_capacity = 10
         
         
@@ -194,9 +194,10 @@ class FWTW(Node):
         #Create tanks
         self.service_reservoir_tank = Tank(capacity = self.service_reservoir_storage_capacity,
                                     area = self.service_reservoir_storage_area,
-                                    datum = self.service_reservoir_storage_elevation)
-        self.service_reservoir_tank.storage['volume'] = self.service_reservoir_inital_storage
-        self.service_reservoir_tank.storage_['volume'] = self.service_reservoir_inital_storage
+                                    datum = self.service_reservoir_storage_elevation,
+                                    initial_storage = self.service_reservoir_initial_storage)
+        # self.service_reservoir_tank.storage['volume'] = self.service_reservoir_inital_storage
+        # self.service_reservoir_tank.storage_['volume'] = self.service_reservoir_inital_storage
         
         #Mass balance
         self.mass_balance_in.append(lambda : self.total_deficit)

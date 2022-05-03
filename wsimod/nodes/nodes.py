@@ -509,7 +509,7 @@ class Node(WSIObj):
                     to_send = amount_to_push * allocation / connected['priority']
                     to_send = self.v_change_vqip(vqip, to_send)
                     reply = self.out_arcs[key].send_push_request(to_send, tag = tag)
-                    not_pushed_ = self.v_change_vqip(not_pushed_,to_send['volume'] - reply['volume'])
+                    not_pushed_ = self.v_change_vqip(not_pushed_,not_pushed_['volume'] - to_send['volume'] - reply['volume'])
                 
                 not_pushed = not_pushed_['volume']
                 connected = self.get_connected(direction = 'push', 

@@ -114,7 +114,7 @@ class WSIObj:
         if t['volume'] > 0:
             #change all values of t by volume v in proportion to volume of t
             ratio = v / t['volume']
-            for pol in constants.POLLUTANTS + ['volume']:
+            for pol in t.keys():
                 t[pol] *= ratio
         else:
             #Assign volume directly
