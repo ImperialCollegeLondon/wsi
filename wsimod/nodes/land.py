@@ -169,8 +169,9 @@ class Land(Node):
         deficit = self.surfaces['garden'].capacity - self.surfaces['garden'].storage['volume']
         deficit = max(deficit - self.surfaces['garden'].wilting_point, 0)
         
+        min_v = deficit
         if vqip is not None:
-            min_v = min(deficit, vqip['volume'])
+            min_v = min(min_v, vqip['volume'])
         
         deficit = self.v_change_vqip(self.surfaces['garden'].storage, min_v)
         
@@ -217,7 +218,9 @@ class Surface(Tank):
         # self.pollutant_dict = self.total_to_concentration(self.v_change_vqip(self.pollutant_dict, self.unavailable_to_evap/10))
     
     def get_deposition(self):
-        return self.pollutant_dict
+        pollution = self.copy_vqip(self.pollutant_dict)
+        pollution['volume'] = 0
+        return pollution
     
     
     def apply_precipitation_infiltration_evaporation(self):

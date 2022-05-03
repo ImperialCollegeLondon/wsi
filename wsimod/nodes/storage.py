@@ -24,7 +24,8 @@ class Storage(Node):
         #Create tank
         if 'initial_storage' not in dir(self):
             self.initial_storage = self.empty_vqip()
-            
+        
+        #TODO... renaming storage to capacity here is confusing
         self.tank = Tank(capacity = self.storage,
                             area = self.area,
                             datum = self.datum,

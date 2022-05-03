@@ -62,7 +62,7 @@ class Arc(WSIObj):
         
         
         #Don't attempt to send volume that exceeds capacity
-        vqip = self.extract_vqip(vqip, not_pushed['volume'])
+        vqip = self.extract_vqip(vqip, not_pushed)
         
         #Set push
         reply = self.out_port.push_set(vqip, tag)

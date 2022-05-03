@@ -122,7 +122,8 @@ class ResidentialDemand(Demand):
     def apply_gardening_pollutants(self, excess):
         #TODO do
         vqip = self.empty_vqip()
-        return self.v_change_vqip(vqip, excess)
+        vqip['volume'] = excess
+        return vqip
         
         
     def excess_to_garden_demand(self, excess):
@@ -132,6 +133,7 @@ class ResidentialDemand(Demand):
         return excess * self.gardening_efficiency
     
     def get_house_demand(self):
-        #TODO Deposition rather than concentration based... does that even go here?
         consumption = self.population * self.per_capita
-        return self.v_change_vqip(self.pollutant_dict, consumption)
+        foul = self.copy_vqip(self.pollutant_dict)
+        foul['volume'] = consumption
+        return foul

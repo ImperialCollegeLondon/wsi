@@ -46,7 +46,7 @@ class Catchment(Node):
         avail = self.get_flow()
         
         for name, arc in self.out_arcs.items():
-            avail['volume'] = self.v_change_vqip(avail, avail['volume'] - arc.vqip_in['volume'])
+            avail = self.v_change_vqip(avail, avail['volume'] - arc.vqip_in['volume'])
         
         return avail
     
