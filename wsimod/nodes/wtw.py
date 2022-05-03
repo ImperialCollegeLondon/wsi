@@ -117,8 +117,8 @@ class WWTW(Node):
         
         sent_direct = self.v_change_vqip(vqip, sent_direct)
         
-        self.current_input = self.blend_vqip(self.current_input,
-                                             sent_direct)
+        self.current_input = self.sum_vqip(self.current_input,
+                                           sent_direct)
         
         if sent_direct['volume'] == vqip['volume']:
             #If all added to input, no problem
