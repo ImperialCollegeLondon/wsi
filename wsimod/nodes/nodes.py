@@ -754,17 +754,18 @@ class QueueTank(Tank):
                                                         vqip['volume'] - reply['volume']))
         return reply
     
-    def pull_storage(self, vqip):
+    def pull_storage(self, vqip):        
         #Pull from QueueTank
         
         #Adjust based on available volume
         reply = min(vqip['volume'], self.active_storage['volume'])
         
-        #Extract from active_storage
-        self.active_storage = self.v_change_vqip(self.active_storage, self.active_storage['volume'] - reply)
-        
         #Update reply to vqip
         reply = self.v_change_vqip(self.active_storage, reply)
+        
+        #Extract from active_storage
+        # self.active_storage = self.v_change_vqip(self.active_storage, self.active_storage['volume'] - reply['volume'])
+        self.active_storage = self.extract_vqip(self.active_storage, reply)
         
         #Extract from storage
         self.storage = self.extract_vqip(self.storage, reply)
