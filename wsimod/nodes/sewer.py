@@ -3,6 +3,8 @@
 Created on Mon Nov 15 14:20:36 2021
 
 @author: bdobson
+Converted to totals on 2022-05-03
+
 """
 from wsimod.nodes.nodes import Node, QueueTank
 from wsimod.core import constants
@@ -45,7 +47,8 @@ class Sewer(Node):
         if vqip is None:
             return excess
         
-        excess['volume'] = min(excess['volume'], vqip['volume'])
+        excess = self.v_change_vqip(excess, 
+                                       min(excess['volume'], vqip['volume']))
         return excess
         
     def push_set_sewer(self, vqip):
@@ -66,7 +69,7 @@ class Sewer(Node):
             reply_ = self.sewer_tank.push_storage(vqip_,
                                                   time = time,
                                                   force = True) # TODO Should this be forced?
-            reply = self.blend_vqip(reply, reply_)
+            reply = self.sum_vqip(reply, reply_)
         
         return reply
     

@@ -3,6 +3,8 @@
 Created on Mon Nov 15 14:20:36 2021
 
 @author: bdobson
+Converted to totals on 2022-05-03
+
 """
 from wsimod.nodes.nodes import Node, Tank
 from wsimod.core import constants
@@ -70,12 +72,12 @@ class WWTW(Node):
             to_pull = min(excess,self.stormwater_tank.get_avail()['volume'])
             to_pull = self.v_change_vqip(self.stormwater_tank.storage, to_pull)
             cleared_stormwater = self.stormwater_tank.pull_storage(to_pull)
-            self.current_input = self.blend_vqip(self.current_input, 
-                                                 cleared_stormwater)
+            self.current_input = self.sum_vqip(self.current_input, 
+                                               cleared_stormwater)
         
         #Run processes
-        influent = self.blend_vqip(self.current_input,
-                                   self.liquor)
+        influent = self.sum_vqip(self.current_input,
+                                 self.liquor)
         
         #Calculate effluent, liquor and solids
         discharge_holder = self.empty_vqip()
@@ -86,16 +88,10 @@ class WWTW(Node):
         self.losses['volume'] = influent['volume'] * self.percent_solids
         
         for key in constants.ADDITIVE_POLLUTANTS:
-            self.losses[key] = (influent[key] * influent['volume'] - \
-                                discharge_holder[key] * discharge_holder['volume'] - \
-                                self.liquor[key] * self.liquor['volume'])
-            self.losses[key] /= self.losses['volume']
+            self.losses[key] = (influent[key] - discharge_holder[key] - self.liquor[key])
         
         #Blend with any existing discharge
-        self.discharge = self.blend_vqip(self.discharge, discharge_holder)
-    
-    
-        
+        self.discharge = self.sum_vqip(self.discharge, discharge_holder)
     
     def make_discharge(self):
         reply = self.push_distributed(self.discharge)
@@ -126,6 +122,7 @@ class WWTW(Node):
         
         if sent_direct['volume'] == vqip['volume']:
             #If all added to input, no problem
+            #TODO check if this actually gets triggered... might be need to compare against float accuracy
             return self.empty_vqip()
         
         #Next try temporary storage
@@ -145,7 +142,7 @@ class WWTW(Node):
         reply_vol = min(vqip['volume'], 
                         self.discharge['volume'])
         reply = self.v_change_vqip(self.discharge, reply_vol)
-        self.discharge['volume'] -= reply_vol
+        self.discharge = self.v_chang_vqip(self.discharge, self.discharge['volume'] - reply_vol)
         return reply
 
     def pull_check_reuse(self, vqip = None):
@@ -224,9 +221,9 @@ class FWTW(Node):
         
         
         
-        throughput = self.blend_vqip(throughput, deficit)
+        throughput = self.sum_vqip(throughput, deficit)
         
-        self.total_deficit = self.blend_vqip(self.total_deficit, deficit)
+        self.total_deficit = self.sum_vqip(self.total_deficit, deficit)
         
         if self.total_deficit['volume'] > constants.FLOAT_ACCURACY:
             print('deficit')
@@ -240,13 +237,10 @@ class FWTW(Node):
         self.solids['volume'] = throughput['volume'] * self.percent_solids
         
         for key in constants.ADDITIVE_POLLUTANTS:
-            self.solids[key] = (throughput[key] * throughput['volume'] - \
-                                discharge_holder[key] * discharge_holder['volume'] - \
-                                self.liquor[key] * self.liquor['volume'])
-            self.solids[key] /= self.solids['volume']
+            self.solids[key] = (throughput[key] - discharge_holder[key] - self.liquor[key])
         
         #Discharge liquor and solids to sewers
-        push_back = self.blend_vqip(self.liquor, self.solids)
+        push_back = self.sum_vqip(self.liquor, self.solids)
         self.push_distributed(push_back, of_type = 'Sewer')
         
         #Send water to service reservoirs
@@ -260,7 +254,7 @@ class FWTW(Node):
     
     def pull_set_fwtw(self, vqip):
         pulled = self.service_reservoir_tank.pull_storage(vqip)
-        self.total_pulled = self.blend_vqip(self.total_pulled, pulled)
+        self.total_pulled = self.sum_vqip(self.total_pulled, pulled)
         return pulled
     
     def end_timestep(self):

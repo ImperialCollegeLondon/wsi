@@ -3,6 +3,8 @@
 Created on Mon Nov 15 14:20:36 2021
 
 @author: bdobson
+Converted to totals on 2022-05-03
+
 """
 from wsimod.nodes.nodes import Node, Tank, QueueTank
 from wsimod.core import constants
@@ -72,7 +74,9 @@ class CatchWatGroundwater(Storage):
         
     def distribute(self):
         avail = self.tank.get_avail()
-        avail['volume'] /= self.residence_time
+        
+        avail = self.v_change_vqip(avail, avail['volume'] / self.residence_time)
+    
         to_send = self.tank.pull_storage(avail)
         retained = self.push_distributed(to_send, of_type = ['Node'])
         if retained['volume'] > constants.FLOAT_ACCURACY:
@@ -155,28 +159,28 @@ class CamGroundwater(Groundwater):
             if isinstance(self.tank.internal_arc.queue, dict):
                 for t, v in self.tank.internal_arc.queue.items():
                     t_pulled = v['volume'] * total_pull / total_storage
-                    self.tank.internal_arc.queue[t]['volume'] -= t_pulled
+                    self.tank.internal_arc.queue[t] = self.v_change_vqip(self.tank.internal_arc.queue[t], self.tank.internal_arc.queue[t]['volume'] - t_pulled)
                     pulled += t_pulled
                 a_pulled = self.tank.active_storage['volume'] * total_pull / total_storage
-                self.tank.active_storage['volume'] -= a_pulled
+                self.tank.active_storage = self.v_change_vqip(self.tank.active_storage, self.tank.active_storage['volume'] - a_pulled)
                 pulled += a_pulled
                 
                 #Recalculate storage - doing this differently causes numerical errors
-                self.tank.storage['volume'] = sum([x['volume'] for x in self.tank.internal_arc.queue.values()])+ self.tank.active_storage['volume']
-                
+                new_v = sum([x['volume'] for x in self.tank.internal_arc.queue.values()])+ self.tank.active_storage['volume']
+                self.tank.storage = self.v_change_vqip(self.tank.storage, new_v)
                 
             elif isinstance(self.tank.internal_arc.queue, list):
                 for req in self.tank.internal_arc.queue:
                     t_pulled = req['vqtip']['volume'] * total_pull / total_storage
-                    req['vqtip']['volume'] -= t_pulled
+                    req['vqtip'] = self.v_change_vqip(req['vqtip'], req['vqtip']['volume'] - t_pulled)
                     pulled += t_pulled
                 a_pulled = self.tank.active_storage['volume'] * total_pull / total_storage
-                self.tank.active_storage['volume'] -= a_pulled
+                self.tank.active_storage = self.v_change_vqip(self.tank.active_storage, self.tank.active_storage['volume'] - a_pulled)
                 pulled += a_pulled
                 
                 #Recalculate storage - doing this differently causes numerical errors
-                self.tank.storage['volume'] = sum([x['vqtip']['volume'] for x in self.tank.internal_arc.queue])+ self.tank.active_storage['volume']
-            
+                new_v = sum([x['vqtip']['volume'] for x in self.tank.internal_arc.queue])+ self.tank.active_storage['volume']
+                self.tank.storage = self.v_change_vqip(self.tank.storage, new_v)
             
             
             
@@ -240,12 +244,12 @@ class EnfieldCatchWatGroundwater(CatchWatGroundwater):
         sewer_infiltration = self.v_change_vqip(avail,
                                                 sewer_infiltration)
         remaining = self.push_distributed(sewer_infiltration, of_type = ['Sewer'])
-        sewer_infiltration['volume'] -= remaining['volume']
+        sewer_infiltration = self.v_change_vqip(sewer_infiltration, sewer_infiltration['volume'] - remaining['volume'])
         reply = self.tank.pull_storage(sewer_infiltration)
         
         avail['volume'] = avail['volume'] - sewer_infiltration['volume'] + reply['volume']
         
-        avail['volume'] /= self.residence_time
+        avail = self.v_change_vqip(avail, avail['volume'] / self.residence_time)
         to_send = self.tank.pull_storage(avail)
         retained = self.push_distributed(to_send, of_type = ['Node'])
         if retained['volume'] > constants.FLOAT_ACCURACY:
@@ -275,7 +279,7 @@ class EnfieldGroundwater(Groundwater):
         sewer_infiltration = self.v_change_vqip(self.tank.active_storage,
                                                 sewer_infiltration)
         remaining = self.push_distributed(sewer_infiltration, of_type = ['Sewer'])
-        sewer_infiltration['volume'] -= remaining['volume']
+        sewer_infiltration = self.v_change_vqip(sewer_infiltration, sewer_infiltration['volume'] - remaining['volume'])
         reply = self.tank.pull_storage(sewer_infiltration)
         if (reply['volume'] - sewer_infiltration['volume']) > constants.FLOAT_ACCURACY:
             print('Miscalculated tank storage in sewer infiltration')
@@ -347,9 +351,13 @@ class RiverReservoir(Reservoir):
     def push_check_river_reservoir(self, vqip = None):
         downstream_availability = self.get_connected(direction = 'push')['avail']
         excess = self.tank.get_excess()
-        excess['volume'] += downstream_availability
+        
+        new_v = excess['volume'] + downstream_availability
         if vqip is not None:
-            excess['volume'] = min(vqip['volume'], excess['volume'])
+            new_v = min(vqip['volume'], new_v)
+            
+        excess = self.v_change_vqip(excess, new_v)
+        
         return excess
         
     

@@ -127,9 +127,9 @@ class WSIObj:
         c['volume'] = c
         return t
     
-    def t_insert_vqip(self, t, t):
+    def t_insert_vqip(self, t, time):
         t = self.copy_vqip(t)
-        t['time'] = t
+        t['time'] = time
         return t
     
     def t_remove_vqtip(self, t):

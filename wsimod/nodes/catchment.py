@@ -3,6 +3,9 @@
 Created on Mon Nov 15 14:20:36 2021
 
 @author: bdobson
+
+Converted to totals on 2022-05-03
+
 """
 from wsimod.nodes.nodes import Node
 from wsimod.core import constants
@@ -22,12 +25,13 @@ class Catchment(Node):
         self.mass_balance_in.append(lambda : self.get_flow())
         
     def get_flow(self):
+        
         vqip = {'volume' : self.data_input_dict[('flow',
                                                self.t)]}
         vqip['volume'] *= constants.M3_S_TO_M3_DT
         for pollutant in constants.POLLUTANTS:
             vqip[pollutant] = self.data_input_dict[(pollutant,
-                                                   self.t)]
+                                                   self.t)] * vqip['volume']
         return vqip
     
     def route(self):
@@ -42,7 +46,7 @@ class Catchment(Node):
         avail = self.get_flow()
         
         for name, arc in self.out_arcs.items():
-            avail['volume'] -= arc.vqip_in['volume']
+            avail['volume'] = self.v_change_vqip(avail, avail['volume'] - arc.vqip_in['volume'])
         
         return avail
     
@@ -51,13 +55,15 @@ class Catchment(Node):
         avail = self.pull_avail()
         
         if vqip:
-            avail['volume'] = min(avail['volume'], vqip['volume'])
+            avail = self.v_change_vqip(avail, 
+                                       min(avail['volume'], vqip['volume']))
         
         return avail
     
     def pull_set_abstraction(self, vqip):
         #Respond to abstraction set request
         avail = self.pull_avail()
-        avail['volume'] = min(avail['volume'], vqip['volume'])
+        avail = self.v_change_vqip(avail, 
+                                       min(avail['volume'], vqip['volume']))
         
         return avail

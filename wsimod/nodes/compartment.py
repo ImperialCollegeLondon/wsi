@@ -3,6 +3,7 @@
 Created on Mon Nov 15 14:20:36 2021
 
 @author: bdobson
+Converted to totals on 2022-05-03
 """
 from wsimod.nodes.nodes import Node, QueueTank
 from wsimod.core import constants
@@ -43,7 +44,7 @@ class Compartment(Node):
             reply_ = self.tank.push_storage(vqip_,
                                                   time = time,
                                                   force = True) # TODO Should this be forced?
-            reply = self.blend_vqip(reply, reply_)
+            reply = self.sum_vqip(reply, reply_)
         
         return reply
     #THIS IS WELL UNFINISHED...
