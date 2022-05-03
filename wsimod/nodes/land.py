@@ -3,6 +3,10 @@
 Created on Mon Nov 15 14:20:36 2021
 
 @author: bdobson
+
+
+Converted to totals on May 3rd 2022
+
 """
 from wsimod.nodes.nodes import Node, Tank, QueueTank
 from wsimod.core import constants
@@ -90,15 +94,15 @@ class Land(Node):
             temp_tracking['subsurface_runoff'][sname] = subsurface_runoff
             
             # #Get runoff
-            surface_runoff = self.blend_vqip(surface.pull_ponded(), surface_excess)
+            surface_runoff = self.sum_vqip(surface.pull_ponded(), surface_excess)
             temp_tracking['surface_runoff'][sname] = surface_runoff
             
             #Update totals
-            self.total_percolation = self.blend_vqip(self.total_percolation, percolation)
-            self.total_infiltration = self.blend_vqip(self.total_infiltration, infiltration)
+            self.total_percolation = self.sum_vqip(self.total_percolation, percolation)
+            self.total_infiltration = self.sum_vqip(self.total_infiltration, infiltration)
             self.total_evaporation += evaporation
-            self.total_precipitation = self.blend_vqip(self.total_precipitation, precipitation)
-            self.total_subsurface_runoff = self.blend_vqip(self.total_subsurface_runoff, subsurface_runoff)
+            self.total_precipitation = self.sum_vqip(self.total_precipitation, precipitation)
+            self.total_subsurface_runoff = self.sum_vqip(self.total_subsurface_runoff, subsurface_runoff)
 
             #Drain sewers 
             if sname == 'impervious':
@@ -106,7 +110,7 @@ class Land(Node):
                     reply = self.push_distributed(surface_runoff, of_type = ['Sewer'])
                     _ = surface.push_storage(reply, force = True)
             else:
-                self.total_surface_runoff = self.blend_vqip(self.total_surface_runoff, surface_runoff)
+                self.total_surface_runoff = self.sum_vqip(self.total_surface_runoff, surface_runoff)
 
         
         for time, normalised in self.subsurface_timearea.items():
@@ -165,10 +169,12 @@ class Land(Node):
         deficit = self.surfaces['garden'].capacity - self.surfaces['garden'].storage['volume']
         deficit = max(deficit - self.surfaces['garden'].wilting_point, 0)
         
-        deficit = self.v_change_vqip(self.surfaces['garden'].storage, deficit)
-        
         if vqip is not None:
-            deficit['volume'] = min(deficit['volume'], vqip['volume'])
+            min_v = min(deficit, vqip['volume'])
+        
+        deficit = self.v_change_vqip(self.surfaces['garden'].storage, min_v)
+        
+        
         return deficit
     
     def reinit(self):
@@ -206,8 +212,9 @@ class Surface(Tank):
         self.wilting_point *= self.area	
         self.field_capacity *= self.area
         
-        #Give deposition pollutant dict negligible volume
-        self.pollutant_dict = self.total_to_concentration(self.v_change_vqip(self.pollutant_dict, self.unavailable_to_evap/10))
+        # Edit 2022-05-03, BD, no longer needed since change to total-based vqip
+        # #Give deposition pollutant dict negligible volume
+        # self.pollutant_dict = self.total_to_concentration(self.v_change_vqip(self.pollutant_dict, self.unavailable_to_evap/10))
     
     def get_deposition(self):
         return self.pollutant_dict

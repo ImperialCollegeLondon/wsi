@@ -3,6 +3,9 @@
 Created on Mon Nov 15 14:20:36 2021
 
 @author: bdobson
+
+Converted to totals BD 2022-05-03
+
 """
 from wsimod.nodes.nodes import Node
 from wsimod.core import constants
@@ -59,12 +62,12 @@ class Demand(Node):
             
             if remaining['volume'] > constants.FLOAT_ACCURACY:
                 print('Demand not able to push')
-                self.total_backup = self.blend_vqip(self.total_backup, remaining)
+                self.total_backup = self.sum_vqip(self.total_backup, remaining)
                 
         #Update for mass balance
         for dem in demand.values():
-            self.total_demand = self.blend_vqip(self.total_demand, 
-                                                dem)
+            self.total_demand = self.sum_vqip(self.total_demand, 
+                                              dem)
                 
     def get_constant_demand(self):
         #TODO read/gen demand
@@ -129,5 +132,6 @@ class ResidentialDemand(Demand):
         return excess * self.gardening_efficiency
     
     def get_house_demand(self):
+        #TODO Deposition rather than concentration based... does that even go here?
         consumption = self.population * self.per_capita
         return self.v_change_vqip(self.pollutant_dict, consumption)

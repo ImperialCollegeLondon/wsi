@@ -110,6 +110,7 @@ class WSIObj:
         return c_
     
     def v_change_vqip(self, t, v):
+        t = self.copy_vqip(t)
         if t['volume'] > 0:
             #change all values of t by volume v in proportion to volume of t
             ratio = v / t['volume']

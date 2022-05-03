@@ -576,9 +576,12 @@ class Tank(WSIObj):
         self.area = 1
         self.datum = 10
         self.decays = None
-        #Vol. of water in a tank that is unavailable to evaporation. Must be >0
-        #Otherwise, evaporation will remove pollutants if it drops a tank to 0.
-        self.unavailable_to_evap = constants.FLOAT_ACCURACY/100000
+        
+        
+        # Edit BD 2022-05-03 - should be no longer needed after change to total-based
+        # #Vol. of water in a tank that is unavailable to evaporation. Must be >0
+        # #Otherwise, evaporation will remove pollutants if it drops a tank to 0.
+        # self.unavailable_to_evap = constants.FLOAT_ACCURACY/100000
         
         super().__init__(**kwargs)
         
@@ -646,8 +649,11 @@ class Tank(WSIObj):
         
         #Adjust based on available volume
         reply = min(vqip['volume'], self.storage['volume'])
-        if (self.storage['volume'] - reply) < self.unavailable_to_evap:
-            reply = max(reply - self.unavailable_to_evap, 0)
+        
+        
+        # Edit BD 2022-05-03 - should be no longer needed after change to total-based
+        # if (self.storage['volume'] - reply) < self.unavailable_to_evap:
+        #     reply = max(reply - self.unavailable_to_evap, 0)
         
         #Extract from storage
         self.storage = self.v_change_vqip(self.storage, self.storage['volume'] - reply)
@@ -674,7 +680,11 @@ class Tank(WSIObj):
         return head
     
     def evaporate(self, evap):
-        avail = max(self.get_avail()['volume'] - self.unavailable_to_evap, 0)
+        # Edit BD 2022-05-03 - should be no longer needed after change to total-based
+        # avail = max(self.get_avail()['volume'] - self.unavailable_to_evap, 0)
+        
+        avail = self.get_avail()['volume']
+        
         evap = min(evap, avail)
         self.storage = self.v_distill_vqip(self.storage, evap)
         return evap
