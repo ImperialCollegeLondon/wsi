@@ -65,6 +65,7 @@ class Land(Node):
         self.mass_balance_ds.append(self.subsurface_flow.ds)
         self.mass_balance_in.append(lambda : self.total_precipitation)
         self.mass_balance_out.append(lambda : self.v_change_vqip(self.empty_vqip(), self.total_evaporation))
+        #TODO move decay into mass balance checking
         
     def create_runoff(self):
         #Temporary variable to keep track of everything
@@ -294,6 +295,14 @@ class Surface(Tank):
         percolation = u * (1 - self.quick_slow_split)
         
         #Update tank
-        percolation = self.pull_storage({'volume' : percolation})
-        subsurface_runoff = self.pull_storage({'volume' : subsurface_runoff})
+        if percolation > constants.FLOAT_ACCURACY:
+            percolation = self.pull_storage({'volume' : percolation})
+        else:
+            percolation = self.empty_vqip()
+        if subsurface_runoff > constants.FLOAT_ACCURACY:
+            subsurface_runoff = self.pull_storage({'volume' : subsurface_runoff})
+        else:
+            subsurface_runoff = self.empty_vqip()
+        
+            
         return percolation, subsurface_runoff
