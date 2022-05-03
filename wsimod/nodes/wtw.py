@@ -19,7 +19,7 @@ class WWTW(Node):
         
         
         self.process_multiplier = {x : 0.2 for x in constants.ADDITIVE_POLLUTANTS}
-        self.liquor_multiplier = {x : 5 for x in constants.ADDITIVE_POLLUTANTS}
+        self.liquor_multiplier = {x : 0.7 for x in constants.ADDITIVE_POLLUTANTS}
         self.liquor_multiplier['volume'] = 0.03
         
         self.percent_solids = 0.0002
