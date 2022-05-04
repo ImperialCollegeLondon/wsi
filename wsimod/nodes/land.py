@@ -44,6 +44,7 @@ class Land(Node):
         self.total_percolation = self.empty_vqip()
         self.total_subsurface_runoff = self.empty_vqip()
         self.total_surface_runoff = self.empty_vqip()
+        self.total_deposition = self.empty_vqip()
         
         self.subsurface_flow = QueueTank(capacity = constants.UNBOUNDED_CAPACITY,
                                               area = constants.UNBOUNDED_CAPACITY,
@@ -60,10 +61,11 @@ class Land(Node):
         
         for surface in self.surfaces.values():
             self.mass_balance_ds.append(surface.ds)
-            self.mass_balance_in.append(surface.get_deposition)
+            # self.mass_balance_in.append(surface.get_deposition)
             
         self.mass_balance_ds.append(self.subsurface_flow.ds)
         self.mass_balance_in.append(lambda : self.total_precipitation)
+        self.mass_balance_in.append(lambda : self.total_deposition)
         self.mass_balance_out.append(lambda : self.v_change_vqip(self.empty_vqip(), self.total_evaporation))
         #TODO move decay into mass balance checking
         
@@ -127,7 +129,7 @@ class Land(Node):
         
         percolation_remaining = self.push_distributed(self.total_percolation, of_type = ['Groundwater'])
         
-        amount_entering_rivers = self.blend_vqip(self.total_surface_runoff, subsurface_runoff_leaving)
+        amount_entering_rivers = self.sum_vqip(self.total_surface_runoff, subsurface_runoff_leaving)
 
         runoff_remaining = self.push_distributed(amount_entering_rivers, of_type = ['Node', 'River']) #TODO seems suspicious.. do I need 'not of type'?
 
@@ -191,6 +193,7 @@ class Land(Node):
         self.total_percolation = self.empty_vqip()
         self.total_subsurface_runoff = self.empty_vqip()
         self.total_surface_runoff = self.empty_vqip()
+        self.total_deposition = self.empty_vqip()
         
         for surface in self.surfaces.values():
             surface.end_timestep()
@@ -227,6 +230,7 @@ class Surface(Tank):
     def apply_precipitation_infiltration_evaporation(self):
         #Apply pollutants
         _ = self.push_storage(self.get_deposition(), force = True)
+        self.parent.total_deposition = self.sum_vqip(self.parent.total_deposition, self.get_deposition())
         
         #Read data
         precipitation_mm = self.parent.data_input_dict[('precipitation', self.parent.t)]
@@ -281,8 +285,8 @@ class Surface(Tank):
         water_entering_model = self.v_change_vqip(self.empty_vqip(), evaporation_from_precipitation)
         
         #Infiltration and excess are the portions of water that enter the model and generate pollution
-        water_entering_model = self.blend_vqip(water_entering_model, infiltration)
-        water_entering_model = self.blend_vqip(water_entering_model, excess)
+        water_entering_model = self.sum_vqip(water_entering_model, infiltration)
+        water_entering_model = self.sum_vqip(water_entering_model, excess)
         
         return excess, infiltration, evaporation, water_entering_model
     

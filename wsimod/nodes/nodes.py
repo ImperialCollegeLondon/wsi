@@ -176,7 +176,7 @@ class Node(WSIObj):
             for v in constants.ADDITIVE_POLLUTANTS + ['volume']:
                 ds_[v] += ds_f[v]
         
-        for v in constants.ADDITIVE_POLLUTANTS + ['volume']:
+        for v in ['volume'] + constants.ADDITIVE_POLLUTANTS:
             
             largest = max(in_[v], out_[v], ds_[v])
 
@@ -606,7 +606,8 @@ class Tank(WSIObj):
     
     def pull_ponded(self):
         ponded = max(self.storage['volume'] - self.capacity, 0)
-        ponded = self.pull_storage(self.v_change_vqip(self.storage, ponded) )
+        
+        ponded = self.pull_storage({'volume' : ponded})
         return ponded
     
     def get_avail(self, vqip = None):
@@ -647,6 +648,10 @@ class Tank(WSIObj):
     def pull_storage(self, vqip):
         #Pull from Tank
         
+        if self.storage['volume'] == 0:
+            #TODO people may want to pull pollutants and no volume from storage..
+            return self.empty_vqip()
+        
         #Adjust based on available volume
         reply = min(vqip['volume'], self.storage['volume'])
         
@@ -655,12 +660,12 @@ class Tank(WSIObj):
         # if (self.storage['volume'] - reply) < self.unavailable_to_evap:
         #     reply = max(reply - self.unavailable_to_evap, 0)
         
-        #Extract from storage
-        self.storage = self.v_change_vqip(self.storage, self.storage['volume'] - reply)
-        
         #Update reply to vqip
         reply = self.v_change_vqip(self.storage, reply)
         
+        #Extract from storage
+        self.storage = self.extract_vqip(self.storage, reply)
+                
         return reply
         
 

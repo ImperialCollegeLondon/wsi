@@ -55,6 +55,11 @@ class Demand(Node):
         
         #Send water where it needs to go
         for key, item in demand.items():
+            #Ensure water has the concentration that was received
+            item = self.v_change_vqip(self.total_received, item['volume'])
+            demand[key] = item #put back in dict for mass balance checking
+            
+            #Distribute
             remaining = self.push_distributed(item,
                                               of_type = directions[key]['of_type'],
                                               tag = directions[key]['tag']
@@ -113,7 +118,7 @@ class ResidentialDemand(Demand):
                                     of_type = 'Land', 
                                     tag = ('Demand', 
                                            'Garden')
-                                    )['priority']
+                                    )['avail']
         
         excess = self.excess_to_garden_demand(excess)
         vqip = self.apply_gardening_pollutants(excess)

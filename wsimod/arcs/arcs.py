@@ -88,7 +88,12 @@ class Arc(WSIObj):
         excess_in = self.get_excess(direction = 'pull', vqip = vqip)['volume']
         not_pulled = max(volume - excess_in, 0)
         volume -= not_pulled
-        vqip = self.v_change_vqip(vqip,volume)
+        
+        for pol in constants.ADDITIVE_POLLUTANTS:
+            if pol in vqip.keys():
+                vqip[pol] *= volume / vqip['volume']
+            
+        vqip['volume'] = volume
         
         #Make pull
         vqip = self.in_port.pull_set(vqip)

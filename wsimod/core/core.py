@@ -53,10 +53,10 @@ class WSIObj:
     
     def sum_vqip(self, t1, t2):
         #Sum two vqips given as totals
-        t = self.empty_vqip()
-        t['volume'] = t1['volume'] + t2['volume']
+        t = self.copy_vqip(t1)
+        t['volume'] += t2['volume']
         for pollutant in constants.POLLUTANTS:
-            t[pollutant] = t1[pollutant] + t2[pollutant]
+            t[pollutant] += t2[pollutant]
         return t
         
     def concentration_to_total(self, c):
@@ -73,10 +73,10 @@ class WSIObj:
     
     def extract_vqip(self, t1, t2):
         #Directly subtract t2 from t1 for vol and additive pollutants
-        t = self.empty_vqip()
+        t = self.copy_vqip(t1)
         
         for pol in constants.ADDITIVE_POLLUTANTS + ['volume']:
-            t[pol] = t1[pol] - t2[pol]
+            t[pol] -= t2[pol]
             
         return t
     
@@ -114,8 +114,11 @@ class WSIObj:
         if t['volume'] > 0:
             #change all values of t by volume v in proportion to volume of t
             ratio = v / t['volume']
-            for pol in t.keys():
+            t['volume'] *= ratio
+            for pol in constants.ADDITIVE_POLLUTANTS:
+            # for pol in set(t.keys()).intersection(constants.ADDITIVE_POLLUTANTS):
                 t[pol] *= ratio
+                
         else:
             #Assign volume directly
             t['volume'] = v
@@ -124,7 +127,7 @@ class WSIObj:
     def v_change_vqip_c(self, c, v):
         #Change volume of vqip
         c = self.copy_vqip(c)
-        c['volume'] = c
+        c['volume'] = v
         return t
     
     def t_insert_vqip(self, t, time):

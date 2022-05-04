@@ -85,6 +85,8 @@ class CatchWatGroundwater(Storage):
         
     
 class Groundwater(Storage):
+    #TODO - if we end up using this groundwater node - it seems that the push checks don't match the push sets
+    
     def __init__(self, **kwargs):
         self.timearea = {0 : 1}
 
@@ -106,7 +108,7 @@ class Groundwater(Storage):
             reply_ = self.tank.push_storage(vqip_,
                                             time = time,
                                             force = True) # TODO Should this be forced?
-            reply = self.blend_vqip(reply, reply_)
+            reply = self.sum_vqip(reply, reply_)
         return reply
         
     def distribute(self):
