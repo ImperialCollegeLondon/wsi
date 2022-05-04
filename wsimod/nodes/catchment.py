@@ -25,7 +25,8 @@ class Catchment(Node):
         self.mass_balance_in.append(lambda : self.get_flow())
         
     def get_flow(self):
-        
+        #TODO (if used) - note that if flow is < float accuracy then it won't 
+        #get pushed, and the pollutants will 'disappear', causing a mass balance error
         vqip = {'volume' : self.data_input_dict[('flow',
                                                self.t)]}
         vqip['volume'] *= constants.M3_S_TO_M3_DT
