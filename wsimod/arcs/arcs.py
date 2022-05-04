@@ -221,10 +221,10 @@ class QueueArc(Arc):
         for request in self.queue:
             if request['direction'] == direction:
                 vqtip = request['vqtip']
+                
                 if vqtip['volume'] < constants.FLOAT_ACCURACY:
                     #Add to queue for removal
                     done_requests.append(request)
-                    
                 elif vqtip['time'] == 0:
                     vqip = self.t_remove_vqtip(vqtip)
                     if direction == 'push':
@@ -243,10 +243,15 @@ class QueueArc(Arc):
                     self.flow_out += (request['average_flow'] * removed / vqip['volume'])
                     vqip_ = self.v_change_vqip(vqip, removed)
                     total_removed = self.sum_vqip(total_removed, vqip_)
-                    
-                    
+
                     #Update request
                     request['vqtip'] = self.v_change_vqip(request['vqtip'], request['vqtip']['volume'] - removed)
+                    
+                    if request['vqtip']['volume'] > constants.FLOAT_ACCURACY:
+                        print('warning queued request with no time and nonzero volume')
+                    else:
+                        done_requests.append(request)
+                
                     
                     
         self.vqip_out = self.sum_vqip(self.vqip_out, total_removed)                    
@@ -344,7 +349,8 @@ class DecayArc(QueueArc):
         
         #diff contains total gain(+)/loss(-) of pollutants due to decay
         #ignored for now because mass balance within arcs isn't tracked
-        
+        if not 'time' in vqtip.keys():
+            flag = 1
         #Form as request and append to queue
         request = {'vqtip' : vqtip_,
                    'average_flow' : vqtip_['volume'] / (vqtip_['time'] + 1),
@@ -368,6 +374,8 @@ class DecayArc(QueueArc):
             temperature = self.data_input_object.data_input_dict[('temperature', self.data_input_object.t)]
             request['vqtip'], diff = self.generic_temperature_decay(request['vqtip'], self.decays, temperature)
             request['vqtip']['time'] = max(request['vqtip']['time'] - 1, 0)
+            if not 'time' in request['vqtip'].keys():
+                flag = 1
 
 class DecayArcAlt(AltQueueArc):
     def __init__(self, **kwargs):

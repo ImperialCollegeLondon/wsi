@@ -36,7 +36,7 @@ class WSIObj:
         return t.copy()
     
     def copy_vqtip(self, t):
-        return tc.copy()    
+        return t.copy()    
     
     def blend_vqip(self, c1, c2):
         #Blend two vqips given as concentrations
