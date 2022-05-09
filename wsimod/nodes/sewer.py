@@ -75,28 +75,27 @@ class Sewer(Node):
     
     def make_discharge(self):
         backflow = self.sewer_tank.internal_arc.update_queue(direction = 'push')
-        #TODO... do I need to do anything with this... does it ever happen?
+        #TODO... do I need to do anything with this backflow... does it ever happen?
         
         #Discharge to WWTW if possible
         remaining = self.push_distributed(self.sewer_tank.active_storage,
                                         of_type = 'WWTW',
                                         tag = 'Sewer')
+        
         #Discharge to Sewer if possible
         remaining = self.push_distributed(remaining,
                                         of_type = 'Sewer',
                                         tag = 'Sewer')
         
         #CSO discharge
-        
         remaining = self.push_distributed(remaining,
                                           of_type = ['Node', 'River'])
         
+        #TODO backflow can (but doens't always) cause mass balance errors here
         
         #Update tank
-        sent = self.sewer_tank.active_storage['volume'] - remaining['volume']
-        sent = self.v_change_vqip(self.sewer_tank.active_storage,
-                                  sent)
-        reply = self.sewer_tank.pull_storage(sent)
+        sent = self.extract_vqip(self.sewer_tank.active_storage, remaining)
+        reply = self.sewer_tank.pull_storage_exact(sent)
         if (reply['volume'] - sent['volume']) > constants.FLOAT_ACCURACY:
             print('Miscalculated tank storage in discharge')
             

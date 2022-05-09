@@ -115,7 +115,7 @@ class Land(Node):
             else:
                 self.total_surface_runoff = self.sum_vqip(self.total_surface_runoff, surface_runoff)
 
-        
+        #Wouldn't it be better to do all of this stuff by surface???
         for time, normalised in self.subsurface_timearea.items():
             subsurface_runoff_ = self.v_change_vqip(self.total_subsurface_runoff, 
                                                     self.total_subsurface_runoff['volume'] * normalised)
@@ -138,7 +138,15 @@ class Land(Node):
             print('infiltraiton remaining')
             #Calculate proportion
             proportions = {sname : value['volume'] / self.total_percolation['volume'] for sname, value in temp_tracking['percolation'].items()}
-            self.redistribute_to_surfaces(proportions, temp_tracking['percolation'], percolation_remaining['volume'])
+            
+            #using percolation_remaining rather than self.total_percolation or temp_tracking might enable
+            #mixing/redistribution between surfaces.. but if I don't use it then I'm not quite sure how else
+            #to handle backflow.. (if you want to prevent this redistribution then use temp_tracking['percolation']
+            #and use concentrations[sname] in redistribute_to_surfaces)
+            
+            # self.redistribute_to_surfaces(proportions, temp_tracking['percolation'], percolation_remaining['volume'])
+            self.redistribute_to_surfaces(proportions, percolation_remaining, percolation_remaining['volume'])
+            
             
         #Redistribute amount_entering rivers in proportion to subsurface_runoff and using subsurface_runoff concentrations
         if runoff_remaining['volume'] > constants.FLOAT_ACCURACY and self.total_subsurface_runoff['volume'] > constants.FLOAT_ACCURACY:
@@ -154,8 +162,8 @@ class Land(Node):
         for sname, surface in self.surfaces.items():
             #Calculate amount and concentration
             to_send = amount * proportions[sname]
-            to_send = self.v_change_vqip(concentrations[sname], to_send)
-
+            # to_send = self.v_change_vqip(concentrations[sname], to_send)
+            to_send = self.v_change_vqip(concentrations, to_send)
             #Update tank
             _ = surface.push_storage(to_send, force = True)
 

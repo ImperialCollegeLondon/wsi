@@ -741,7 +741,7 @@ class QueueTank(Tank):
         return reply
     
     def pull_storage(self, vqip):        
-        #Pull from QueueTank
+        #Pull from QueueTank using only the 'volume' entry in vqip
         
         #Adjust based on available volume
         reply = min(vqip['volume'], self.active_storage['volume'])
@@ -757,7 +757,20 @@ class QueueTank(Tank):
         self.storage = self.extract_vqip(self.storage, reply)
         
         return reply
+    
+    def pull_storage_exact(self, vqip):
+        #Adjust based on available
+        reply = self.copy_vqip(vqip)
+        for pol in ['volume'] + constants.ADDITIVE_POLLUTANTS:
+            reply[pol] = min(reply[pol], self.active_storage[pol])
         
+        #Pull from QueueTank
+        self.active_storage = self.extract_vqip(self.active_storage, reply)
+        
+        #Extract from storage
+        self.storage = self.extract_vqip(self.storage, reply)
+        return reply
+    
     def push_check(self, vqip = None, tag = 'default'):
         #TODO does behaviour for volume = None need to be defined?
         excess = self.get_excess()

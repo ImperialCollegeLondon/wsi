@@ -77,7 +77,7 @@ class Arc(WSIObj):
         return in_, ds_, out_
     
     def send_push_request(self, vqip, tag = 'default', force = False):
-        
+        #TODO force doesn't appear to do anything here
         vqip = self.copy_vqip(vqip)
         
         
@@ -211,7 +211,7 @@ class QueueArc(Arc):
         return reply
         
     def send_push_request(self, vqip_, tag = 'default', force = False):
-        
+        #TODO force doesn't appear to do anything here
         vqip = self.copy_vqip(vqip_)
         
         if vqip['volume'] < constants.FLOAT_ACCURACY:
