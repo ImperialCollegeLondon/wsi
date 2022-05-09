@@ -8,6 +8,7 @@ Converted to totals on Thur Apr 21 2022
 
 """
 from wsimod.core import constants
+from math import log10
 
 class WSIObj:
     
@@ -128,7 +129,7 @@ class WSIObj:
         #Change volume of vqip
         c = self.copy_vqip(c)
         c['volume'] = v
-        return t
+        return c
     
     def t_insert_vqip(self, t, time):
         t = self.copy_vqip(t)
@@ -173,3 +174,36 @@ class WSIObj:
 
             diff[pol] *= c['volume']        
         return c, diff
+    
+    def mass_balance(self):
+        in_ = self.empty_vqip()
+        for f in self.mass_balance_in:
+            in_ = self.sum_vqip(in_, f())
+        
+        out_ = self.empty_vqip()
+        for f in self.mass_balance_out:
+            out_ = self.sum_vqip(out_, f())
+            
+        ds_ = self.empty_vqip()
+        for f in self.mass_balance_ds:
+            ds_f = f()
+            for v in constants.ADDITIVE_POLLUTANTS + ['volume']:
+                ds_[v] += ds_f[v]
+        
+        for v in ['volume'] + constants.ADDITIVE_POLLUTANTS:
+            
+            largest = max(in_[v], out_[v], ds_[v])
+
+            if largest > constants.FLOAT_ACCURACY:
+                magnitude = 10**int(log10(largest))
+                in_10 = in_[v] / magnitude
+                out_10 = out_[v] / magnitude
+                ds_10 = ds_[v] / magnitude
+            else:
+                in_10 = in_[v]
+                ds_10 = ds_[v]
+                out_10 = out_[v]
+            
+            if abs(in_10 - ds_10 - out_10) > constants.FLOAT_ACCURACY:
+                print("mass balance error for " + v)
+        return in_, ds_, out_

@@ -10,7 +10,6 @@ Converted to totals on Thur Apr 21 2022
 from wsimod.nodes import nodes
 from wsimod.core import constants, WSIObj
 from wsimod.arcs import AltQueueArc, DecayArcAlt, DecayArc
-from math import log10
 class Node(WSIObj):
     """
     Base class for CWSD nodes.
@@ -149,9 +148,9 @@ class Node(WSIObj):
         Note: pollutants in return vqips are take absolute values, 
               not concentrations
         
-        in_ (vqip) Blended vqip of in_arcs and other inputs
-        out_ (vqip): Blended vqip of out_arcs and other outputs
-        ds_ (vqip): Blended vqip of change in node tanks
+        in_ (vqip) Total vqip of in_arcs and other inputs
+        out_ (vqip): Total vqip of out_arcs and other outputs
+        ds_ (vqip): Total vqip of change in node tanks
         
         Example
         -------
@@ -162,36 +161,7 @@ class Node(WSIObj):
         Message if mass balance does not close to constants.FLOAT_ACCURACY
         '''
         
-        in_ = self.empty_vqip()
-        for f in self.mass_balance_in:
-            in_ = self.sum_vqip(in_, f())
-        
-        out_ = self.empty_vqip()
-        for f in self.mass_balance_out:
-            out_ = self.sum_vqip(out_, f())
-            
-        ds_ = self.empty_vqip()
-        for f in self.mass_balance_ds:
-            ds_f = f()
-            for v in constants.ADDITIVE_POLLUTANTS + ['volume']:
-                ds_[v] += ds_f[v]
-        
-        for v in ['volume'] + constants.ADDITIVE_POLLUTANTS:
-            
-            largest = max(in_[v], out_[v], ds_[v])
-
-            if largest > constants.FLOAT_ACCURACY:
-                magnitude = 10**int(log10(largest))
-                in_10 = in_[v] / magnitude
-                out_10 = out_[v] / magnitude
-                ds_10 = ds_[v] / magnitude
-            else:
-                in_10 = in_[v]
-                ds_10 = ds_[v]
-                out_10 = out_[v]
-            
-            if abs(in_10 - ds_10 - out_10) > constants.FLOAT_ACCURACY:
-                print("mass balance error for " + v)
+        in_, ds_, out_ = self.mass_balance()
         return in_, ds_, out_
         
             
@@ -509,7 +479,9 @@ class Node(WSIObj):
                     to_send = amount_to_push * allocation / connected['priority']
                     to_send = self.v_change_vqip(vqip, to_send)
                     reply = self.out_arcs[key].send_push_request(to_send, tag = tag)
-                    not_pushed_ = self.v_change_vqip(not_pushed_,not_pushed_['volume'] - to_send['volume'] - reply['volume'])
+                    
+                    sent = self.extract_vqip(to_send, reply)
+                    not_pushed_ = self.extract_vqip(not_pushed_, sent)
                 
                 not_pushed = not_pushed_['volume']
                 connected = self.get_connected(direction = 'push', 
@@ -696,13 +668,13 @@ class Tank(WSIObj):
     
     def push_total(self, vqip):
         #TODO not needed since everything is concentration based
-        self.storage = self.sum_vqip(storage, vqip)        
+        self.storage = self.sum_vqip(self.storage, vqip)        
         return self.empty_vqip()
     
     def push_total_c(self, vqip):
         #Push vqip to storage where pollutants are given as a concentration rather than storage
         vqip = self.concentration_to_total(self.vqip)
-        self.storage = self.sum_vqip(storage, vqip)
+        self.storage = self.sum_vqip(self.storage, vqip)
         
         return self.empty_vqip()
     
@@ -742,7 +714,7 @@ class QueueTank(Tank):
             self.internal_arc = AltQueueArc(in_port = self, 
                                             out_port = self,
                                             number_of_timesteps = self.number_of_timesteps)
-    
+            #TODO should mass balance call internal arc?
     def get_avail(self):
         return self.copy_vqip(self.active_storage)
     

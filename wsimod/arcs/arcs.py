@@ -45,8 +45,37 @@ class Arc(WSIObj):
    
         if hasattr(self.out_port, "in_arcs_type"):
             self.out_port.in_arcs_type[in_type][self.name] = self
-
         
+        #Mass balance checking
+        self.mass_balance_in = [lambda : self.vqip_in]
+        self.mass_balance_out = [lambda : self.vqip_out]
+        self.mass_balance_ds = [lambda : self.empty_vqip()]
+
+    def arc_mass_balance(self):
+        '''
+        Checks mass balance for inflows/outflows/storage change in an arc
+
+        Returns
+        -------
+        Note: pollutants in return vqips are take absolute values, 
+              not concentrations
+        
+        in_ (vqip) Total vqip of vqip_in and other inputs
+        out_ (vqip): Total vqip of vqip_out and other outputs
+        ds_ (vqip): Total vqip of change in arc
+        
+        Example
+        -------
+        arc_in, arc_out, arc_ds = my_arc.arc_mass_balance()
+        
+        Raises
+        ------
+        Message if mass balance does not close to constants.FLOAT_ACCURACY
+        '''
+        
+        in_, ds_, out_ = self.mass_balance()
+        return in_, ds_, out_
+    
     def send_push_request(self, vqip, tag = 'default', force = False):
         
         vqip = self.copy_vqip(vqip)
@@ -145,6 +174,21 @@ class QueueArc(Arc):
         self.queue = []
         super().__init__(**kwargs)
         
+        self.queue_storage = self.empty_vqip()
+        self.queue_storage_ = self.empty_vqip()
+        
+        self.mass_balance_ds.append(lambda : self.queue_arc_ds())
+        
+    def queue_arc_ds(self):
+        self.queue_storage = self.queue_arc_sum()
+        return self.extract_vqip(self.queue_storage, self.queue_storage_)
+        
+    def queue_arc_sum(self):
+        queue_storage = self.empty_vqip()
+        for request in self.queue:
+            queue_storage = self.sum_vqip(queue_storage, request['vqtip'])
+        return queue_storage
+    
     def send_pull_request(self, vqip, tag = 'default'):
         volume = vqip['volume']
         #Apply pipe capacity
@@ -166,9 +210,9 @@ class QueueArc(Arc):
         reply = self.update_queue(direction = 'pull')
         return reply
         
-    def send_push_request(self, vqip, tag = 'default', force = False):
+    def send_push_request(self, vqip_, tag = 'default', force = False):
         
-        vqip = self.copy_vqip(vqip)
+        vqip = self.copy_vqip(vqip_)
         
         if vqip['volume'] < constants.FLOAT_ACCURACY:
             return self.empty_vqip()
@@ -195,7 +239,14 @@ class QueueArc(Arc):
         self.enter_queue(vqtip, direction = 'push', tag = tag)
         
         #Update request queue
-        _ = self.update_queue(direction = 'push')
+        backflow = self.update_queue(direction = 'push')
+        not_pushed = self.sum_vqip(not_pushed, backflow)
+        # _ = self.update_queue(direction = 'push')
+        
+        if backflow['volume'] > vqip_['volume']:
+            print('more backflow than vqip...')
+        
+        self.vqip_in = self.extract_vqip(self.vqip_in, backflow)
         
         return not_pushed
     
@@ -217,6 +268,7 @@ class QueueArc(Arc):
         done_requests = []
         
         total_removed = self.empty_vqip()
+        total_backflow = self.empty_vqip()
         #Iterate over requests
         for request in self.queue:
             if request['direction'] == direction:
@@ -244,13 +296,11 @@ class QueueArc(Arc):
                     vqip_ = self.v_change_vqip(vqip, removed)
                     total_removed = self.sum_vqip(total_removed, vqip_)
 
-                    #Update request
-                    request['vqtip'] = self.v_change_vqip(request['vqtip'], request['vqtip']['volume'] - removed)
+                    #Assume that any water that cannot arrive at destination this timestep is backflow
+                    rejected = self.v_change_vqip(request['vqtip'], request['vqtip']['volume'] - removed)
+                    total_backflow = self.sum_vqip(rejected, total_backflow)
                     
-                    if request['vqtip']['volume'] > constants.FLOAT_ACCURACY:
-                        print('warning queued request with no time and nonzero volume')
-                    else:
-                        done_requests.append(request)
+                    done_requests.append(request)
                 
                     
                     
@@ -259,14 +309,22 @@ class QueueArc(Arc):
         #Remove done requests
         for request in done_requests:
             self.queue.remove(request)
-        
-        return total_removed
-    
+            
+        # return total_removed
+        if direction == 'pull':
+            return total_removed
+        elif direction == 'push':
+            return total_backflow
+        else:
+            print('No direction')
     def end_timestep(self):
         self.vqip_in = self.empty_vqip()
         self.vqip_out = self.empty_vqip()
         self.flow_in = 0
         self.flow_out = 0
+        
+        self.queue_storage_ = self.copy_vqip(self.queue_storage)
+        self.queue_storage = self.empty_vqip()
         # self.update_queue(direction = 'pull') # TODO Is this needed? - probably
         # self.update_queue(direction = 'push') # TODO Is this needed? - probably
         for request in self.queue:
@@ -278,10 +336,20 @@ class QueueArc(Arc):
         
 class AltQueueArc(QueueArc):
     def __init__(self, **kwargs):
+        self.queue_arc_sum = self.alt_queue_arc_sum
+        
         super().__init__(**kwargs)
         self.queue = {0 : self.empty_vqip(), 1 : self.empty_vqip()}
         self.max_travel = 1
         
+        
+        
+    def alt_queue_arc_sum(self):
+        queue_storage = self.empty_vqip()
+        for request in self.queue.values():
+            queue_storage = self.sum_vqip(queue_storage, request)
+        return queue_storage
+    
     def enter_queue(self, vqtip, direction = None, tag = 'default'):
         #NOTE- has no tags
         
@@ -300,22 +368,24 @@ class AltQueueArc(QueueArc):
         #NOTE - has no direction
 
         total_removed = self.copy_vqip(self.queue[0])
-
+        
         #Push 0 travel time water
-        reply = self.out_port.push_set(self.queue[0])
-        self.queue[0] = self.v_change_vqip(self.queue[0], reply['volume'])
-        total_removed = self.v_change_vqip(total_removed, total_removed['volume'] - reply['volume'])
+        backflow = self.out_port.push_set(self.queue[0])
+        self.queue[0] = self.v_change_vqip(self.queue[0], backflow['volume'])
+        total_removed = self.v_change_vqip(total_removed, total_removed['volume'] - backflow['volume'])
 
         self.flow_out += total_removed['volume']
         self.vqip_out = self.sum_vqip(self.vqip_out, total_removed)
         
-        return total_removed
+        return backflow
 
     def end_timestep(self):
         self.vqip_in = self.empty_vqip()
         self.vqip_out = self.empty_vqip()
         self.flow_in = 0
         self.flow_out = 0
+        self.queue_storage_ = self.copy_vqip(self.queue_storage)
+        self.queue_storage = self.empty_vqip()
         # self.update_queue()
         queue_ = self.queue.copy()
         keys = self.queue.keys()

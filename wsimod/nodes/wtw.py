@@ -109,7 +109,7 @@ class WWTW(Node):
     
     def push_set_sewer(self, vqip):
         #Receive water from sewers
-        
+        vqip_ = self.copy_vqip(vqip)
         #Check if can directly be treated
         sent_direct = self.get_excess_throughput()
         
@@ -122,7 +122,6 @@ class WWTW(Node):
         
         if sent_direct['volume'] == vqip['volume']:
             #If all added to input, no problem
-            #TODO check if this actually gets triggered... might be need to compare against float accuracy
             return self.empty_vqip()
         
         #Next try temporary storage
@@ -131,11 +130,11 @@ class WWTW(Node):
         
         vqip = self.stormwater_tank.push_storage(vqip)
         
-        if vqip['volume'] > constants.FLOAT_ACCURACY:
+        if vqip['volume'] < constants.FLOAT_ACCURACY:
             return self.empty_vqip()
-        
-        #TODO what to do here ???
-        return vqip
+        else:
+            #TODO what to do here ???
+            return vqip
     
     def pull_set_reuse(self, vqip):
         #Respond to request of water for reuse/MRF
