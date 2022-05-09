@@ -160,8 +160,8 @@ class WSIObj:
         t = self.copy_vqip(t)
         diff = self.empty_vqip()
         for pol, pars in d.items():
-            diff[pol] = -t[pol] * min(pars['constant'] * pars['exponent'] ** (temperature - constants.DECAY_REFERENCE_TEMPERATURE), 1)
-            t[pol] += diff[pol]
+            diff[pol] = t[pol] * min(pars['constant'] * pars['exponent'] ** (temperature - constants.DECAY_REFERENCE_TEMPERATURE), 1)
+            t[pol] -= diff[pol]
 
         return t, diff
     
@@ -169,8 +169,8 @@ class WSIObj:
         c = self.copy_vqip(c)
         diff = self.empty_vqip()
         for pol, pars in d.items():
-            diff[pol] = -c[pol] * min(pars['constant'] * pars['exponent'] ** (temperature - constants.DECAY_REFERENCE_TEMPERATURE), 1)
-            c[pol] += diff[pol]
+            diff[pol] = c[pol] * min(pars['constant'] * pars['exponent'] ** (temperature - constants.DECAY_REFERENCE_TEMPERATURE), 1)
+            c[pol] -= diff[pol]
 
             diff[pol] *= c['volume']        
         return c, diff

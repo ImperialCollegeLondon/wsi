@@ -403,6 +403,7 @@ class AltQueueArc(QueueArc):
 class DecayArc(QueueArc):
     def __init__(self, **kwargs):
         self.decays = {}
+        
         super().__init__(**kwargs)
         if 'parent' in dir(self):
             self.data_input_object = self.parent
@@ -411,11 +412,13 @@ class DecayArc(QueueArc):
         else:
             print('warning: decay arc cannot access temperature data')
             
+        self.total_decayed = self.empty_vqip()
+        self.mass_balance_out.append(lambda : self.total_decayed)
+        
     def enter_queue(self, vqtip, direction = None, tag = 'default'):
         temperature = self.data_input_object.data_input_dict[('temperature', self.data_input_object.t)]
         vqtip_, diff = self.generic_temperature_decay(vqtip, self.decays, temperature)
-        
-        #TODO: mass balance isn't tracked within in arc, so vqtip_ is the decayed value sent onwards, but is less than the actual vqip_in
+        self.total_decayed = self.sum_vqip(self.total_decayed, diff)
         
         #diff contains total gain(+)/loss(-) of pollutants due to decay
         #ignored for now because mass balance within arcs isn't tracked
@@ -436,6 +439,7 @@ class DecayArc(QueueArc):
     def end_timestep(self):
         self.vqip_in = self.empty_vqip()
         self.vqip_out = self.empty_vqip()
+        self.total_decayed = self.empty_vqip()
         self.flow_in = 0
         self.flow_out = 0
         # self.update_queue(direction = 'pull') # TODO Is this needed? - probably
@@ -443,6 +447,7 @@ class DecayArc(QueueArc):
         for request in self.queue:
             temperature = self.data_input_object.data_input_dict[('temperature', self.data_input_object.t)]
             request['vqtip'], diff = self.generic_temperature_decay(request['vqtip'], self.decays, temperature)
+            self.total_decayed = self.sum_vqip(self.total_decayed, diff)
             request['vqtip']['time'] = max(request['vqtip']['time'] - 1, 0)
             if not 'time' in request['vqtip'].keys():
                 flag = 1
@@ -450,6 +455,7 @@ class DecayArc(QueueArc):
 class DecayArcAlt(AltQueueArc):
     def __init__(self, **kwargs):
         self.decays = {}
+        
         super().__init__(**kwargs)
         self.end_timestep = self._end_timestep
         if 'parent' in dir(self):
@@ -459,11 +465,16 @@ class DecayArcAlt(AltQueueArc):
         else:
             print('warning: decay arc cannot access temperature data')
             
+        self.total_decayed = self.empty_vqip()
+        self.mass_balance_out.append(lambda : self.total_decayed)
+        
     def enter_queue(self, vqtip, direction = None, tag = 'default'):
         #NOTE- has no tags
         
         temperature = self.data_input_object.data_input_dict[('temperature', self.data_input_object.t)]
         vqtip, diff = self.generic_temperature_decay(vqtip, self.decays, temperature)
+        self.total_decayed = self.sum_vqip(self.total_decayed, diff)
+        
         #Form as request and append to queue
         if vqtip['time'] in self.queue.keys():
             self.queue[vqtip['time']]  = self.sum_vqip(self.queue[vqtip['time']], vqtip)
@@ -479,6 +490,7 @@ class DecayArcAlt(AltQueueArc):
     def _end_timestep(self):
         self.vqip_in = self.empty_vqip()
         self.vqip_out = self.empty_vqip()
+        self.total_decayed = self.empty_vqip()
         self.flow_in = 0
         self.flow_out = 0
         # self.update_queue()
@@ -488,6 +500,7 @@ class DecayArcAlt(AltQueueArc):
             if (i + 1) in keys:
                 temperature = self.data_input_object.data_input_dict[('temperature', self.data_input_object.t)]
                 vqip, diff = self.generic_temperature_decay(queue_[i+1], self.decays, temperature)
+                self.total_decayed = self.sum_vqip(self.total_decayed, diff)
                 self.queue[i] = vqip
                 self.queue[i+1] = self.empty_vqip()
 
