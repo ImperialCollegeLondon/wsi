@@ -558,7 +558,9 @@ class Tank(WSIObj):
         super().__init__(**kwargs)
         
         if self.decays:
+            self.total_decayed = self.empty_vqip()
             self.end_timestep = self.end_timestep_decay
+            self.ds = self.decay_ds
         
         #TODO enable stores to be initialised not empty
         if 'initial_storage' in dir(self):
@@ -574,7 +576,11 @@ class Tank(WSIObj):
     
     def ds(self):
         return self.ds_vqip(self.storage, self.storage_)
-        
+    
+    def decay_ds(self):
+        ds = self.ds_vqip(self.storage, self.storage_)
+        ds = self.sum_vqip(ds, self.total_decayed)
+        return ds
     
     def pull_ponded(self):
         ponded = max(self.storage['volume'] - self.capacity, 0)
@@ -682,10 +688,13 @@ class Tank(WSIObj):
         self.storage_ = self.copy_vqip(self.storage)
         
     def end_timestep_decay(self):
-        temperature = self.parent.data_input_dict[('temperature', self.parent.t)]
-        #TODO: this decay is not in mass balance
-        self.storage, _ = self.generic_temperature_decay(self.storage, self.decays, temperature)
+        self.total_decayed = self.empty_vqip()
         self.storage_ = self.copy_vqip(self.storage)
+        
+        temperature = self.parent.data_input_dict[('temperature', self.parent.t)]
+        self.storage, diff = self.generic_temperature_decay(self.storage, self.decays, temperature)
+        self.total_decayed = self.sum_vqip(self.total_decayed, diff)
+        
         
     def reinit(self):
         self.storage = self.empty_vqip()
