@@ -138,8 +138,8 @@ class WSIObj:
     
     def t_remove_vqtip(self, t):
         c = self.copy_vqtip(t)
-        del t['time']
-        return t
+        del c['time']
+        return c
     
     def ds_vqip(self, t, t_):
         ds = self.empty_vqip()
