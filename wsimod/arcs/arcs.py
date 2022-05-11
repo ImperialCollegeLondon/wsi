@@ -415,7 +415,6 @@ class DecayArc(QueueArc):
         self.mass_balance_out.append(lambda : self.total_decayed)
         
     def enter_queue(self, request, direction = None, tag = 'default'):
-        
         vqip = request['vqip'].copy()
         temperature = self.data_input_object.data_input_dict[('temperature', self.data_input_object.t)]
         vqip_, diff = self.generic_temperature_decay(vqip, self.decays, temperature)
@@ -444,6 +443,10 @@ class DecayArc(QueueArc):
         self.total_decayed = self.empty_vqip()
         self.flow_in = 0
         self.flow_out = 0
+        
+        self.queue_storage_ = self.copy_vqip(self.queue_storage)
+        self.queue_storage = self.empty_vqip()
+        
         # self.update_queue(direction = 'pull') # TODO Is this needed? - probably
         # self.update_queue(direction = 'push') # TODO Is this needed? - probably
         for request in self.queue:
@@ -473,7 +476,7 @@ class DecayArcAlt(AltQueueArc):
         
         vqip = request['vqip'].copy()
         
-        request['average_flow'] =  request['vqip']['volume'] / (request['vqip']['time'] + 1)
+        request['average_flow'] =  request['vqip']['volume'] / (request['time'] + 1)
         request['direction'] = direction
         request['tag'] = tag
         
@@ -502,6 +505,9 @@ class DecayArcAlt(AltQueueArc):
         self.total_decayed = self.empty_vqip()
         self.flow_in = 0
         self.flow_out = 0
+        
+        self.queue_storage_ = self.copy_vqip(self.queue_storage)
+        self.queue_storage = self.empty_vqip()
         # self.update_queue()
         queue_ = self.queue.copy()
         keys = self.queue.keys()
