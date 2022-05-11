@@ -14,30 +14,16 @@ class WSIObj:
     
     def __init__(self, **kwargs):
         #Predefine empty concentrations because copying is quicker than defining
-        self.empty_qip_predefined = dict.fromkeys(constants.POLLUTANTS,0)
         self.empty_vqip_predefined = dict.fromkeys(constants.POLLUTANTS + ['volume'],0)
-        self.empty_vqtip_predefined = dict.fromkeys(constants.POLLUTANTS + ['volume', 'time'],0)
         
         #Update args
         self.__dict__.update(kwargs)
 
-    def empty_qip(self):
-        return self.empty_qip_predefined.copy()
-    
     def empty_vqip(self):
         return self.empty_vqip_predefined.copy()
     
-    def empty_vqtip(self):
-        return self.empty_vqtip_predefined.copy()
-    
-    def copy_qip(self, t):
-        return t.copy()
-    
     def copy_vqip(self, t):
         return t.copy()
-    
-    def copy_vqtip(self, t):
-        return t.copy()    
     
     def blend_vqip(self, c1, c2):
         #Blend two vqips given as concentrations
@@ -129,16 +115,6 @@ class WSIObj:
         #Change volume of vqip
         c = self.copy_vqip(c)
         c['volume'] = v
-        return c
-    
-    def t_insert_vqip(self, t, time):
-        t = self.copy_vqip(t)
-        t['time'] = time
-        return t
-    
-    def t_remove_vqtip(self, t):
-        c = self.copy_vqtip(t)
-        del c['time']
         return c
     
     def ds_vqip(self, t, t_):

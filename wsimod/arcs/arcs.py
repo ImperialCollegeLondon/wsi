@@ -186,10 +186,10 @@ class QueueArc(Arc):
     def queue_arc_sum(self):
         queue_storage = self.empty_vqip()
         for request in self.queue:
-            queue_storage = self.sum_vqip(queue_storage, request['vqtip'])
+            queue_storage = self.sum_vqip(queue_storage, request['vqip'])
         return queue_storage
     
-    def send_pull_request(self, vqip, tag = 'default'):
+    def send_pull_request(self, vqip, tag = 'default', time = 0):
         volume = vqip['volume']
         #Apply pipe capacity
         excess_in = self.get_excess(direction = 'pull', vqip = vqip)['volume']
@@ -200,17 +200,18 @@ class QueueArc(Arc):
         #Make pull
         vqip = self.in_port.pull_set(vqip)
         
-        #Update to vqtip
-        vqtip = self.t_insert_vqip(vqip, self.number_of_timesteps)
+        #Update to queue request
+        request = {'time' : time + self.number_of_timesteps,
+                   'vqip' : vqip}
         
         #vqtip enters arc as a request
-        self.enter_queue(vqtip, direction = 'pull')
+        self.enter_queue(request, direction = 'pull')
         
         #Update request queue and return pulls from queue
         reply = self.update_queue(direction = 'pull')
         return reply
         
-    def send_push_request(self, vqip_, tag = 'default', force = False):
+    def send_push_request(self, vqip_, tag = 'default', force = False, time = 0):
         #TODO force doesn't appear to do anything here
         vqip = self.copy_vqip(vqip_)
         
@@ -228,15 +229,12 @@ class QueueArc(Arc):
         
         vqip = self.extract_vqip(vqip, not_pushed)
         
-        #Create vqtip
-        if 'time' in vqip.keys():
-            vqtip = vqip
-        else:
-            vqtip = self.t_insert_vqip(vqip, 0)
-        vqtip['time'] += self.number_of_timesteps
+        #Update to queue request
+        request = {'time' : time + self.number_of_timesteps,
+                   'vqip' : vqip}
         
         #vqtip enters arc as a request
-        self.enter_queue(vqtip, direction = 'push', tag = tag)
+        self.enter_queue(request, direction = 'push', tag = tag)
         
         #Update request queue
         backflow = self.update_queue(direction = 'push')
@@ -250,18 +248,19 @@ class QueueArc(Arc):
         
         return not_pushed
     
-    def enter_queue(self, vqtip, direction = None, tag = 'default'):
+    def enter_queue(self, request, direction = None, tag = 'default'):
+        
         #Form as request and append to queue
-        request = {'vqtip' : vqtip,
-                   'average_flow' : vqtip['volume'] / (vqtip['time'] + 1),
-                   'direction' : direction,
-                   'tag' : tag}
+        request['average_flow'] =  request['vqip']['volume'] / (request['time'] + 1)
+        request['direction'] = direction
+        request['tag'] = tag
+        
         
         self.queue.append(request)
         
         #Update inflows
         self.flow_in += request['average_flow']
-        self.vqip_in = self.sum_vqip(self.vqip_in, vqtip)
+        self.vqip_in = self.sum_vqip(self.vqip_in, request['vqip'])
         
     def update_queue(self, direction = None):
         
@@ -272,13 +271,13 @@ class QueueArc(Arc):
         #Iterate over requests
         for request in self.queue:
             if request['direction'] == direction:
-                vqtip = request['vqtip']
+                vqip = request['vqip']
                 
-                if vqtip['volume'] < constants.FLOAT_ACCURACY:
+                if vqip['volume'] < constants.FLOAT_ACCURACY:
                     #Add to queue for removal
                     done_requests.append(request)
-                elif vqtip['time'] == 0:
-                    vqip = self.t_remove_vqtip(vqtip)
+                elif request['time'] == 0:
+                    
                     if direction == 'push':
                         #Attempt to push request
                         reply = self.out_port.push_set(vqip, request['tag'])
@@ -286,7 +285,7 @@ class QueueArc(Arc):
                         
                     elif direction == 'pull':
                         #Water has already been pulled, so assume all received
-                        removed = vqtip['volume']
+                        removed = vqip['volume']
                     
                     else:
                         print('No direction')
@@ -297,7 +296,7 @@ class QueueArc(Arc):
                     total_removed = self.sum_vqip(total_removed, vqip_)
 
                     #Assume that any water that cannot arrive at destination this timestep is backflow
-                    rejected = self.v_change_vqip(request['vqtip'], request['vqtip']['volume'] - removed)
+                    rejected = self.v_change_vqip(vqip, vqip['volume'] - removed)
                     total_backflow = self.sum_vqip(rejected, total_backflow)
                     
                     done_requests.append(request)
@@ -328,7 +327,7 @@ class QueueArc(Arc):
         # self.update_queue(direction = 'pull') # TODO Is this needed? - probably
         # self.update_queue(direction = 'push') # TODO Is this needed? - probably
         for request in self.queue:
-            request['vqtip']['time'] = max(request['vqtip']['time'] - 1, 0)
+            request['time'] = max(request['time'] - 1, 0)
     
     def reinit(self):
         self.end_timestep()
@@ -350,19 +349,19 @@ class AltQueueArc(QueueArc):
             queue_storage = self.sum_vqip(queue_storage, request)
         return queue_storage
     
-    def enter_queue(self, vqtip, direction = None, tag = 'default'):
+    def enter_queue(self, request, direction = None, tag = 'default'):
         #NOTE- has no tags
         
         #Form as request and append to queue
-        if vqtip['time'] in self.queue.keys():
-            self.queue[vqtip['time']]  = self.sum_vqip(self.queue[vqtip['time']], vqtip)
+        if request['time'] in self.queue.keys():
+            self.queue[request['time']]  = self.sum_vqip(self.queue[request['time']], request['vqip'])
         else:
-            self.queue[vqtip['time']]  = vqtip
-            self.max_travel = max(self.max_travel, vqtip['time'])
+            self.queue[request['time']] = request['vqip']
+            self.max_travel = max(self.max_travel, request['time'])
         
         #Update inflows
-        self.flow_in += vqtip['volume'] / (vqtip['time'] + 1)
-        self.vqip_in = self.sum_vqip(self.vqip_in, vqtip)
+        self.flow_in += request['vqip']['volume'] / (request['time'] + 1)
+        self.vqip_in = self.sum_vqip(self.vqip_in, request['vqip'])
         
     def update_queue(self, direction = None):
         #NOTE - has no direction
@@ -415,26 +414,29 @@ class DecayArc(QueueArc):
         self.total_decayed = self.empty_vqip()
         self.mass_balance_out.append(lambda : self.total_decayed)
         
-    def enter_queue(self, vqtip, direction = None, tag = 'default'):
+    def enter_queue(self, request, direction = None, tag = 'default'):
+        
+        vqip = request['vqip'].copy()
         temperature = self.data_input_object.data_input_dict[('temperature', self.data_input_object.t)]
-        vqtip_, diff = self.generic_temperature_decay(vqtip, self.decays, temperature)
+        vqip_, diff = self.generic_temperature_decay(vqip, self.decays, temperature)
         self.total_decayed = self.sum_vqip(self.total_decayed, diff)
         
         #diff contains total gain(+)/loss(-) of pollutants due to decay
         #ignored for now because mass balance within arcs isn't tracked
-        if not 'time' in vqtip.keys():
-            flag = 1
+
         #Form as request and append to queue
-        request = {'vqtip' : vqtip_,
-                   'average_flow' : vqtip_['volume'] / (vqtip_['time'] + 1),
-                   'direction' : direction,
-                   'tag' : tag}
+        request['vqip'] = vqip_
+        
+        request['average_flow'] =  request['vqip']['volume'] / (request['time'] + 1)
+        request['direction'] = direction
+        request['tag'] = tag
+        
         
         self.queue.append(request)
         
         #Update inflows
         self.flow_in += request['average_flow']
-        self.vqip_in = self.sum_vqip(self.vqip_in, vqtip)
+        self.vqip_in = self.sum_vqip(self.vqip_in, vqip)
 
     def end_timestep(self):
         self.vqip_in = self.empty_vqip()
@@ -446,11 +448,9 @@ class DecayArc(QueueArc):
         # self.update_queue(direction = 'push') # TODO Is this needed? - probably
         for request in self.queue:
             temperature = self.data_input_object.data_input_dict[('temperature', self.data_input_object.t)]
-            request['vqtip'], diff = self.generic_temperature_decay(request['vqtip'], self.decays, temperature)
+            request['vqip'], diff = self.generic_temperature_decay(request['vqip'], self.decays, temperature)
             self.total_decayed = self.sum_vqip(self.total_decayed, diff)
-            request['vqtip']['time'] = max(request['vqtip']['time'] - 1, 0)
-            if not 'time' in request['vqtip'].keys():
-                flag = 1
+            request['time'] = max(request['time'] - 1, 0)
 
 class DecayArcAlt(AltQueueArc):
     def __init__(self, **kwargs):
@@ -468,24 +468,33 @@ class DecayArcAlt(AltQueueArc):
         self.total_decayed = self.empty_vqip()
         self.mass_balance_out.append(lambda : self.total_decayed)
         
-    def enter_queue(self, vqtip, direction = None, tag = 'default'):
-        #NOTE- has no tags
+    def enter_queue(self, request, direction = None, tag = 'default'):
+        #TODO- has no tags
+        
+        vqip = request['vqip'].copy()
+        
+        request['average_flow'] =  request['vqip']['volume'] / (request['vqip']['time'] + 1)
+        request['direction'] = direction
+        request['tag'] = tag
         
         temperature = self.data_input_object.data_input_dict[('temperature', self.data_input_object.t)]
-        vqtip, diff = self.generic_temperature_decay(vqtip, self.decays, temperature)
+        vqip_, diff = self.generic_temperature_decay(vqip, self.decays, temperature)
+        
+        request['vqip'] = vqip_
+        
         self.total_decayed = self.sum_vqip(self.total_decayed, diff)
         
         #Form as request and append to queue
-        if vqtip['time'] in self.queue.keys():
-            self.queue[vqtip['time']]  = self.sum_vqip(self.queue[vqtip['time']], vqtip)
+        if request['time'] in self.queue.keys():
+            self.queue[request['time']]  = self.sum_vqip(self.queue[request['time']], vqip_)
         else:
-            self.queue[vqtip['time']]  = vqtip
-            self.max_travel = max(self.max_travel, vqtip['time'])
+            self.queue[request['time']]  = vqip_
+            self.max_travel = max(self.max_travel, request['time'])
         
         #Update inflows
-        self.flow_in += vqtip['volume'] / (vqtip['time'] + 1)
-        self.vqip_in = self.sum_vqip(self.vqip_in, vqtip)
-
+        self.flow_in += vqip_['volume'] / (request['time'] + 1)
+        self.vqip_in = self.sum_vqip(self.vqip_in, vqip)
+        
 
     def _end_timestep(self):
         self.vqip_in = self.empty_vqip()
