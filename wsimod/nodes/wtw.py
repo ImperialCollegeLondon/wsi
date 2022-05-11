@@ -9,14 +9,10 @@ Converted to totals on 2022-05-03
 from wsimod.nodes.nodes import Node, Tank
 from wsimod.core import constants
 
-class WWTW(Node):
+class WTW(Node):
     def __init__(self, **kwargs):
         #Default parameters
-        self.stormwater_storage_capacity = 10
-        self.stormwater_storage_area = 1
-        self.stormwater_storage_elevation = 10
         self.treatment_throughput_capacity = 10
-        
         
         self.process_multiplier = {x : 0.2 for x in constants.ADDITIVE_POLLUTANTS}
         self.liquor_multiplier = {x : 0.7 for x in constants.ADDITIVE_POLLUTANTS}
@@ -24,44 +20,79 @@ class WWTW(Node):
         
         self.percent_solids = 0.0002
         
-        
         #Update args
         super().__init__(**kwargs)
         
         self.process_multiplier['volume'] = 1 - self.percent_solids - self.liquor_multiplier['volume']
         
-        #Update handlers
-        self.pull_set_handler['default'] = self.pull_set_reuse
-        self.pull_check_handler['default'] = self.pull_check_reuse
-        self.push_set_handler['Sewer'] = self.push_set_sewer
-        
+        #Update handlers        
         self.push_set_handler['default'] = self.push_set_deny
-        self.push_check_handler['Sewer'] = self.push_check_sewer
+        self.push_set_handler['default'] = self.push_check_deny
         
         #Initialise parameters
         self.current_input = self.empty_vqip()
-        self.throughput = self.empty_vqip()
-        self.liquor_ = self.empty_vqip()
-        self.losses = self.empty_vqip()
-        self.discharge = self.empty_vqip()
+        self.treated = self.empty_vqip()
         self.liquor = self.empty_vqip()
-        
-        #Create tanks
-        self.stormwater_tank = Tank(capacity = self.stormwater_storage_capacity,
-                                    area = self.stormwater_storage_area,
-                                    datum = self.stormwater_storage_elevation)
-        
-        #Mass balance
-        self.mass_balance_out.append(lambda : self.losses)
-        self.mass_balance_ds.append(lambda : self.stormwater_tank.ds())
-        self.mass_balance_ds.append(lambda : self.ds_vqip(self.liquor,
-                                                          self.liquor_))
+        self.solids = self.empty_vqip()
         
     def get_excess_throughput(self):
         return max(self.treatment_throughput_capacity -\
                    self.current_input['volume'], 
                    0)
     
+    def treat_current_input(self):
+        #Treat current input
+        influent = self.copy_vqip(self.current_input)
+        
+        #Calculate effluent, liquor and solids
+        discharge_holder = self.empty_vqip()
+        for key in constants.ADDITIVE_POLLUTANTS + ['volume']:
+            discharge_holder[key] = influent[key] * self.process_multiplier[key]
+            self.liquor[key] = influent[key] * self.liquor_multiplier[key]
+            
+        self.solids['volume'] = influent['volume'] * self.percent_solids
+        
+        for key in constants.ADDITIVE_POLLUTANTS:
+            self.solids[key] = (influent[key] - discharge_holder[key] - self.liquor[key])
+        
+        #Blend with any existing discharge
+        self.treated = self.sum_vqip(self.treated, discharge_holder)
+
+    
+    def end_timestep(self):
+        self.current_input = self.empty_vqip()
+        self.treated = self.empty_vqip()
+        
+class WWTW(WTW):
+    def __init__(self, **kwargs):
+        self.tank_parameters = {}
+        self.stormwater_storage_capacity = 10
+        self.stormwater_storage_area = 1
+        self.stormwater_storage_elevation = 10
+        #Update args
+        super().__init__(**kwargs)
+        
+        self.end_timestep = self.end_timestep_
+        
+        #Update handlers
+        self.pull_set_handler['default'] = self.pull_set_reuse
+        self.pull_check_handler['default'] = self.pull_check_reuse
+        self.push_set_handler['Sewer'] = self.push_set_sewer
+        self.push_check_handler['Sewer'] = self.push_check_sewer
+        
+        #Create tanks
+        self.stormwater_tank = Tank(capacity = self.stormwater_storage_capacity,
+                                    area = self.stormwater_storage_area,
+                                    datum = self.stormwater_storage_elevation)
+        
+        #Initialise parameters
+        self.liquor_ = self.empty_vqip()
+        
+        #Mass balance
+        self.mass_balance_out.append(lambda : self.solids) # Assume these go to landfill
+        self.mass_balance_ds.append(lambda : self.stormwater_tank.ds())
+        self.mass_balance_ds.append(lambda : self.ds_vqip(self.liquor,
+                                                          self.liquor_)) #Change in liquor
     def calculate_discharge(self):
         #Run WWTW model
         
@@ -76,25 +107,12 @@ class WWTW(Node):
                                                cleared_stormwater)
         
         #Run processes
-        influent = self.sum_vqip(self.current_input,
-                                 self.liquor)
-        
-        #Calculate effluent, liquor and solids
-        discharge_holder = self.empty_vqip()
-        for key in constants.ADDITIVE_POLLUTANTS + ['volume']:
-            discharge_holder[key] = influent[key] * self.process_multiplier[key]
-            self.liquor[key] = influent[key] * self.liquor_multiplier[key]
-            
-        self.losses['volume'] = influent['volume'] * self.percent_solids
-        
-        for key in constants.ADDITIVE_POLLUTANTS:
-            self.losses[key] = (influent[key] - discharge_holder[key] - self.liquor[key])
-        
-        #Blend with any existing discharge
-        self.discharge = self.sum_vqip(self.discharge, discharge_holder)
+        self.current_input = self.sum_vqip(self.current_input,
+                                           self.liquor)
+        self.treat_current_input()
     
     def make_discharge(self):
-        reply = self.push_distributed(self.discharge)
+        reply = self.push_distributed(self.treated)
         if reply['volume'] > constants.FLOAT_ACCURACY:
             print('WWTW couldnt push')
     
@@ -140,43 +158,33 @@ class WWTW(Node):
         #Respond to request of water for reuse/MRF
         reply_vol = min(vqip['volume'], 
                         self.discharge['volume'])
-        reply = self.v_change_vqip(self.discharge, reply_vol)
-        self.discharge = self.v_chang_vqip(self.discharge, self.discharge['volume'] - reply_vol)
+        reply = self.v_change_vqip(self.treated, reply_vol)
+        self.treated = self.v_chang_vqip(self.treated, self.treated['volume'] - reply_vol)
         return reply
 
     def pull_check_reuse(self, vqip = None):
         #Respond to request of water for reuse/MRF
         return self.copy_vqip(self.discharge)
     
-    def end_timestep(self):
+    def end_timestep_(self):
         self.liquor_ = self.copy_vqip(self.liquor)
         self.current_input = self.empty_vqip()
-        self.discharge = self.empty_vqip()
+        self.treated = self.empty_vqip()
         self.stormwater_tank.end_timestep()
-
-class FWTW(Node):
+        
+class FWTW(WTW):
     def __init__(self, **kwargs):
         #Default parameters
         self.service_reservoir_storage_capacity = 10
         self.service_reservoir_storage_area = 1
         self.service_reservoir_storage_elevation = 10
         self.service_reservoir_initial_storage = 0
-        self.treatment_throughput_capacity = 10
-        
-        
-        self.process_multiplier = {x : 0.5 for x in constants.ADDITIVE_POLLUTANTS}
-        self.liquor_multiplier = {x : 5 for x in constants.ADDITIVE_POLLUTANTS}
-        self.liquor_multiplier['volume'] = 0.01
-        
-        self.percent_solids = 0.0002
         
         
         #Update args
         super().__init__(**kwargs)
-        
-        
-        self.process_multiplier['volume'] = 1 - self.percent_solids - self.liquor_multiplier['volume']
-        
+        self.end_timestep = self.end_timestep_
+                
         #Update handlers
         self.pull_set_handler['default'] = self.pull_set_fwtw
         self.pull_check_handler['default'] = self.pull_check_fwtw
@@ -185,11 +193,10 @@ class FWTW(Node):
         self.push_set_handler['default'] = self.push_check_deny
         
         #Initialise parameters
-        self.solids = self.empty_vqip()
-        self.liquor = self.empty_vqip()
         self.total_deficit = self.empty_vqip()
         self.total_pulled = self.empty_vqip()
         self.previous_pulled = self.empty_vqip()
+        
         #Create tanks
         self.service_reservoir_tank = Tank(capacity = self.service_reservoir_storage_capacity,
                                     area = self.service_reservoir_storage_area,
@@ -201,15 +208,9 @@ class FWTW(Node):
         #Mass balance
         self.mass_balance_in.append(lambda : self.total_deficit)
         self.mass_balance_ds.append(lambda : self.service_reservoir_tank.ds())
- 
-    def get_excess_throughput(self):
-        return max(self.treatment_throughput_capacity -\
-                   self.current_input['volume'], 
-                   0)
     
     def treat_water(self):
         #Run WWTW model
-        
         target_throughput = self.service_reservoir_tank.get_excess()
         
         target_throughput = min(target_throughput['volume'], self.treatment_throughput_capacity)
@@ -219,32 +220,24 @@ class FWTW(Node):
         deficit = max(self.previous_pulled['volume'] - throughput['volume'], 0)
         deficit = self.v_change_vqip(self.previous_pulled, deficit)
         
-        
-        
-        throughput = self.sum_vqip(throughput, deficit)
+        self.current_input = self.sum_vqip(throughput, deficit)
         
         self.total_deficit = self.sum_vqip(self.total_deficit, deficit)
         
         if self.total_deficit['volume'] > constants.FLOAT_ACCURACY:
             print('deficit')
         
-        #Calculate effluent, liquor and solids
-        discharge_holder = self.empty_vqip()
-        for key in constants.ADDITIVE_POLLUTANTS + ['volume']:
-            discharge_holder[key] = throughput[key] * self.process_multiplier[key]
-            self.liquor[key] = throughput[key] * self.liquor_multiplier[key]
-            
-        self.solids['volume'] = throughput['volume'] * self.percent_solids
-        
-        for key in constants.ADDITIVE_POLLUTANTS:
-            self.solids[key] = (throughput[key] - discharge_holder[key] - self.liquor[key])
+        self.treat_current_input()
         
         #Discharge liquor and solids to sewers
         push_back = self.sum_vqip(self.liquor, self.solids)
-        self.push_distributed(push_back, of_type = 'Sewer')
+        rejected = self.push_distributed(push_back, of_type = 'Sewer')
+        
+        if rejected['volume'] > constants.FLOAT_ACCURACY:
+            print('nowhere for sludge to go')
         
         #Send water to service reservoirs
-        excess = self.service_reservoir_tank.push_storage(discharge_holder)
+        excess = self.service_reservoir_tank.push_storage(self.treated)
         
         if excess['volume'] > 0:
             print("excess treated water")
@@ -257,11 +250,12 @@ class FWTW(Node):
         self.total_pulled = self.sum_vqip(self.total_pulled, pulled)
         return pulled
     
-    def end_timestep(self):
+    def end_timestep_(self):
         self.service_reservoir_tank.end_timestep()
         self.total_deficit = self.empty_vqip()
         self.previous_pulled = self.copy_vqip(self.total_pulled)
         self.total_pulled = self.empty_vqip()
+        self.treated = self.empty_vqip()
         
     def reinit(self):
         self.service_reservoir_tank.reinit()
