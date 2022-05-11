@@ -729,12 +729,10 @@ class QueueTank(Tank):
     
     def push_storage(self, vqip, time = None, force = False):
         if time is None:
-            vqip['time'] = self.number_of_timesteps
-        else:
-            vqip['time'] = time
+            time = self.number_of_timesteps
         
         #Push to QueueTank
-        reply = self.internal_arc.send_push_request(vqip, force)
+        reply = self.internal_arc.send_push_request(vqip, force = force, time = time)
         self.storage = self.sum_vqip(self.storage,
                                      self.v_change_vqip(vqip, 
                                                         vqip['volume'] - reply['volume']))
