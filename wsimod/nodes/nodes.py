@@ -609,7 +609,6 @@ class Tank(WSIObj):
         self.capacity = 0
         self.area = 1
         self.datum = 10
-        self.decays = None
         
         
         # Edit BD 2022-05-03 - should be no longer needed after change to total-based
@@ -619,10 +618,6 @@ class Tank(WSIObj):
         
         super().__init__(**kwargs)
         
-        if self.decays:
-            self.total_decayed = self.empty_vqip()
-            self.end_timestep = self.end_timestep_decay
-            self.ds = self.decay_ds
         
         #TODO enable stores to be initialised not empty
         if 'initial_storage' in dir(self):
@@ -638,11 +633,6 @@ class Tank(WSIObj):
     
     def ds(self):
         return self.ds_vqip(self.storage, self.storage_)
-    
-    def decay_ds(self):
-        ds = self.ds_vqip(self.storage, self.storage_)
-        ds = self.sum_vqip(ds, self.total_decayed)
-        return ds
     
     def pull_ponded(self):
         ponded = max(self.storage['volume'] - self.capacity, 0)
@@ -743,12 +733,25 @@ class Tank(WSIObj):
         #Push vqip to storage where pollutants are given as a concentration rather than storage
         vqip = self.concentration_to_total(self.vqip)
         self.storage = self.sum_vqip(self.storage, vqip)
-        
         return self.empty_vqip()
     
     def end_timestep(self):
         self.storage_ = self.copy_vqip(self.storage)
         
+    def reinit(self):
+        self.storage = self.empty_vqip()
+        self.storage_ = self.empty_vqip()
+
+class DecayTank(Tank):
+    def __init__(self,**kwargs):
+        self.parent = None
+        self.decays = None
+        super().__init__(**kwargs)
+        
+        self.total_decayed = self.empty_vqip()
+        self.end_timestep = self.end_timestep_decay
+        self.ds = self.decay_ds
+    
     def end_timestep_decay(self):
         self.total_decayed = self.empty_vqip()
         self.storage_ = self.copy_vqip(self.storage)
@@ -756,11 +759,11 @@ class Tank(WSIObj):
         temperature = self.parent.data_input_dict[('temperature', self.parent.t)]
         self.storage, diff = self.generic_temperature_decay(self.storage, self.decays, temperature)
         self.total_decayed = self.sum_vqip(self.total_decayed, diff)
-        
-        
-    def reinit(self):
-        self.storage = self.empty_vqip()
-        self.storage_ = self.empty_vqip()
+    
+    def decay_ds(self):
+        ds = self.ds_vqip(self.storage, self.storage_)
+        ds = self.sum_vqip(ds, self.total_decayed)
+        return ds
     
 class QueueTank(Tank):
     #A storage that can allow delay before parts of it are accessible
@@ -775,16 +778,9 @@ class QueueTank(Tank):
         
         self.out_arcs = {}
         self.in_arcs = {}
-        if self.decays:
-            self.internal_arc = DecayArcAlt(in_port = self, 
-                                            out_port = self,
-                                            number_of_timesteps = self.number_of_timesteps,
-                                            parent = self.parent,
-                                            decays = self.decays)
-        else:
-            self.internal_arc = AltQueueArc(in_port = self, 
-                                            out_port = self,
-                                            number_of_timesteps = self.number_of_timesteps)
+        self.internal_arc = AltQueueArc(in_port = self, 
+                                        out_port = self,
+                                        number_of_timesteps = self.number_of_timesteps)
             #TODO should mass balance call internal arc?
     def get_avail(self):
         return self.copy_vqip(self.active_storage)
@@ -859,4 +855,13 @@ class QueueTank(Tank):
         self.storage = self.empty_vqip()
         self.storage_ = self.empty_vqip()
         self.active_storage = self.empty_vqip()
-        
+
+class DecayQueueTank(DecayTank, QueueTank):
+    def __init__(self,**kwargs):
+
+        super().__init__(**kwargs)
+        self.internal_arc = DecayArcAlt(in_port = self, 
+                                            out_port = self,
+                                            number_of_timesteps = self.number_of_timesteps,
+                                            parent = self.parent,
+                                            decays = self.decays)

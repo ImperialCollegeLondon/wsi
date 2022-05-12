@@ -8,7 +8,7 @@ Created on Mon Nov 15 14:20:36 2021
 Converted to totals on May 3rd 2022
 
 """
-from wsimod.nodes.nodes import Node, Tank, QueueTank
+from wsimod.nodes.nodes import Node, Tank, DecayTank, QueueTank
 from wsimod.core import constants
 
 class Land(Node):
@@ -207,7 +207,7 @@ class Land(Node):
             surface.end_timestep()
         self.subsurface_flow.end_timestep()
         
-class Surface(Tank):
+class Surface(DecayTank):
     def __init__(self, **kwargs):
         self.area = 0
         self.capacity = 0

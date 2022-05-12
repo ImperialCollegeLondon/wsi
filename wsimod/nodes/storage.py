@@ -6,7 +6,7 @@ Created on Mon Nov 15 14:20:36 2021
 Converted to totals on 2022-05-03
 
 """
-from wsimod.nodes.nodes import Node, Tank, QueueTank
+from wsimod.nodes.nodes import Node, Tank, QueueTank, DecayTank
 from wsimod.core import constants
 
 class Storage(Node):
@@ -25,15 +25,21 @@ class Storage(Node):
         if 'initial_storage' not in dir(self):
             self.initial_storage = self.empty_vqip()
         
-        #TODO... renaming storage to capacity here is confusing
-        self.tank = Tank(capacity = self.storage,
-                            area = self.area,
-                            datum = self.datum,
-                            decays = self.decays,
-                            initial_storage = self.initial_storage,
-                            parent = self
-                            )
-        
+        if self.decays is None:
+            #TODO... renaming storage to capacity here is confusing
+            self.tank = Tank(capacity = self.storage,
+                                area = self.area,
+                                datum = self.datum,
+                                initial_storage = self.initial_storage,
+                                )
+        else:
+            self.tank = DecayTank(capacity = self.storage,
+                                area = self.area,
+                                datum = self.datum,
+                                initial_storage = self.initial_storage,
+                                decays = self.decays,
+                                parent = self,
+                                )
         #Update handlers
         self.push_set_handler['default'] = self.push_set_storage
         self.pull_set_handler['default'] = lambda vol : self.tank.pull_storage(vol)
