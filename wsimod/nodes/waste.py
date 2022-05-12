@@ -19,7 +19,7 @@ class Waste(Node):
         self.push_check_handler['default'] = self.push_check_accept
         
         #Mass balance
-        self.mass_balance_out = [lambda : self.total_in()]
+        self.mass_balance_out.append(self.total_in)
         
     def push_set_accept(self, vqip):
         #Returns all request accepted
