@@ -5,6 +5,11 @@ Created on Thu Nov 18 09:28:59 2021
 @author: leyan
 """
 
+"""TODO
+NOTE
+THIS IS JUST A ML/MG_ML VERSION OF CatchWatGroundwater from storage.py
+can safely be deleted once not used by other functions
+"""
 
 from wsimod.nodes.nodes import Node
 from wsimod.nodes.nodes import Tank
