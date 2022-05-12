@@ -493,7 +493,69 @@ class Node(WSIObj):
                 print('Maxiter reached')
                 
         return not_pushed_
+    
+    """
+    This is an attempt to generalise the behaviour of pull/push_distributed
+    It doesn't yet work...
+    
+    def general_distribute(self, vqip, of_type = None, tag = 'default', direction = None):
+        if direction == 'push':
+            arcs = self.out_arcs
+            arcs_type = self.out_arcs_type
+            tracker = self.copy_vqip(vqip)
+            requests = {x.name : lambda y : x.send_push_request(y, tag) for x in arcs.values()}
+        elif direction == 'pull':
+            arcs = self.in_arcs
+            arcs_type = self.in_arcs_type
+            tracker = self.empty_vqip()
+            requests = {x.name : lambda y : x.send_pull_request(y, tag) for x in arcs.values()}
+        else:
+            print('No direction')
+    
+        if len(arcs) == 1:
+            if (of_type == None) | any([x in of_type for x, y in arcs_type.items() if len(y) > 0]):
+                arc = next(iter(arcs.keys()))
+                return requests[arc](vqip)
+            else:
+                #No viable arcs
+                return tracker
         
+        connected = self.get_connected(direction = direction,
+                                                                of_type = of_type,
+                                                                tag = tag)
+        
+        iter_ = 0
+        
+        target = self.copy_vqip(vqip)
+        #Iterate over sending nodes until deficit met	
+        while (((target['volume'] > constants.FLOAT_ACCURACY) &	
+                (connected['avail'] > constants.FLOAT_ACCURACY)) &	
+                (iter_ < constants.MAXITER)):
+    
+                amount = min(connected['avail'], target['volume']) #Deficit or amount still to push
+                replies = self.empty_vqip()
+                
+                for key, allocation in connected['allocation'].items():
+                    to_request = amount * allocation / connected['priority']
+                    to_request = self.v_change_vqip(target, to_request)
+                    reply = requests[key](to_request)
+                    replies = self.sum_vqip(replies, reply)
+                
+                if direction == 'pull':
+                    target = self.extract_vqip(target, replies)
+                elif direction == 'push':
+                    target = replies
+    
+                connected = self.get_connected(direction = direction,
+                                                                of_type = of_type,
+                                                                tag = tag)
+                iter_ += 1	
+                	
+                if iter_ == constants.MAXITER:	
+                    print('Maxiter reached')
+        return target"""
+
+
     def check_basic(self, direction, vqip = None, of_type = None, tag = 'default'):
         f, arcs = self.get_direction_arcs(direction, of_type)
         
