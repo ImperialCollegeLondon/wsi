@@ -6,7 +6,7 @@ Created on Mon Nov 15 14:20:36 2021
 Converted to totals on 2022-05-03
 
 """
-from wsimod.nodes.nodes import Node, Tank, QueueTank, DecayTank
+from wsimod.nodes.nodes import Node, Tank, QueueTank, DecayTank, DecayQueueTank
 from wsimod.core import constants
 
 class Storage(Node):
@@ -98,7 +98,16 @@ class Groundwater(Storage):
 
         super().__init__(**kwargs)
         self.push_set_handler['default'] = self.push_set_timearea
-        self.tank = QueueTank(capacity = self.storage,
+        
+        if self.decays is None:
+            #TODO... renaming storage to capacity here is confusing
+            self.tank = QueueTank(capacity = self.storage,
+                                             area = self.area,
+                                             datum = self.datum,
+                                             initial_storage = self.initial_storage,
+                                             )
+        else:
+            self.tank = DecayQueueTank(capacity = self.storage,
                                              area = self.area,
                                              datum = self.datum,
                                              decays = self.decays,
