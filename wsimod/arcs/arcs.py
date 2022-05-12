@@ -248,19 +248,22 @@ class QueueArc(Arc):
         
         return not_pushed
     
-    def enter_queue(self, request, direction = None, tag = 'default'):
-        
-        #Form as request and append to queue
+    def enter_arc(self, request, direction, tag):
         request['average_flow'] =  request['vqip']['volume'] / (request['time'] + 1)
         request['direction'] = direction
         request['tag'] = tag
-        
-        
-        self.queue.append(request)
-        
-        #Update inflows
+
         self.flow_in += request['average_flow']
         self.vqip_in = self.sum_vqip(self.vqip_in, request['vqip'])
+        
+        return request
+        
+    def enter_queue(self, request, direction = None, tag = 'default'):
+        #Update inflows and format request
+        request = self.enter_arc(request, direction, tag)
+
+        #Enter queue
+        self.queue.append(request)
         
     def update_queue(self, direction = None):
         
@@ -352,16 +355,17 @@ class AltQueueArc(QueueArc):
     def enter_queue(self, request, direction = None, tag = 'default'):
         #NOTE- has no tags
         
-        #Form as request and append to queue
+        #Update inflows and format request
+        request = self.enter_arc(request, direction, tag)
+        
+        #Sum into queue
         if request['time'] in self.queue.keys():
             self.queue[request['time']]  = self.sum_vqip(self.queue[request['time']], request['vqip'])
         else:
             self.queue[request['time']] = request['vqip']
             self.max_travel = max(self.max_travel, request['time'])
         
-        #Update inflows
-        self.flow_in += request['vqip']['volume'] / (request['time'] + 1)
-        self.vqip_in = self.sum_vqip(self.vqip_in, request['vqip'])
+
         
     def update_queue(self, direction = None):
         #NOTE - has no direction
@@ -408,20 +412,16 @@ class DecayArc(QueueArc, DecayObj):
         self.mass_balance_out.append(lambda : self.total_decayed)
         
     def enter_queue(self, request, direction = None, tag = 'default'):
-        vqip = self.copy_vqip(request['vqip'])
-        vqip_ = self.make_decay(vqip)
-
-        #Form as request and append to queue
-        request['vqip'] = vqip_
-        request['average_flow'] =  request['vqip']['volume'] / (request['time'] + 1)
-        request['direction'] = direction
-        request['tag'] = tag
+        #Update inflows and format
+        request = self.enter_arc(request, direction, tag)
         
+        #Decay on entry
+        request['vqip'] = self.make_decay(request['vqip'])
+        
+        #Append to queue
         self.queue.append(request)
         
-        #Update inflows
-        self.flow_in += request['average_flow']
-        self.vqip_in = self.sum_vqip(self.vqip_in, vqip)
+        
 
     def end_timestep(self):
         self.vqip_in = self.empty_vqip()
@@ -451,20 +451,20 @@ class DecayArcAlt(AltQueueArc, DecayObj):
     def enter_queue(self, request, direction = None, tag = 'default'):
         #TODO- has no tags
         
-        vqip = self.copy_vqip(request['vqip'])
-        vqip_ = self.make_decay(vqip)
-        request['vqip'] = vqip_
+        #Update inflows and format
+        request = self.enter_arc(request, direction, tag)
         
-        #Form as request and append to queue
+        #Decay on entry
+        request['vqip'] = self.make_decay(request['vqip'])
+        
+        #Sum into queue
         if request['time'] in self.queue.keys():
-            self.queue[request['time']]  = self.sum_vqip(self.queue[request['time']], vqip_)
+            self.queue[request['time']]  = self.sum_vqip(self.queue[request['time']], request['vqip'])
         else:
-            self.queue[request['time']]  = vqip_
+            self.queue[request['time']]  = request['vqip']
             self.max_travel = max(self.max_travel, request['time'])
         
-        #Update inflows
-        self.flow_in += vqip_['volume'] / (request['time'] + 1)
-        self.vqip_in = self.sum_vqip(self.vqip_in, vqip)
+        
         
 
     def _end_timestep(self):
