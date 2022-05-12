@@ -91,7 +91,7 @@ class Sewer(Node):
         remaining = self.push_distributed(remaining,
                                           of_type = ['Node', 'River'])
         
-        #TODO backflow can (but doens't always) cause mass balance errors here
+        #TODO backflow can cause mass balance errors here 
         
         #Update tank
         sent = self.extract_vqip(self.sewer_tank.active_storage, remaining)
@@ -102,18 +102,13 @@ class Sewer(Node):
         #Flood excess
         ponded = self.sewer_tank.pull_ponded()
         if ponded['volume'] > constants.FLOAT_ACCURACY:
-            n_out_arcs = len(self.out_arcs_type['Land'])
-            for key, arc in self.out_arcs_type['Land'].items():
-                #This just pushes sequentially
-                to_flood = self.v_change_vqip(ponded, 
-                                              ponded['volume'] / n_out_arcs)
-                reply_ = arc.send_push_request(to_flood,
-                                                 direction = 'push',
-                                                 tag = 'Sewer')
-            
-                if reply_['volume'] > constants.FLOAT_ACCURACY:
-                    print('Land rejected a sewer push')
-        
+            reply_ = self.push_distributed(ponded, 
+                                           of_type=['Land'], 
+                                           tag = 'Sewer')
+            reply_ = self.sewer_tank.push_storage(reply_, time = 0, force = True)
+            if reply_['volume']:
+                print('ponded water cant reenter')
+                
     def end_timestep(self):
         self.sewer_tank.end_timestep()
     

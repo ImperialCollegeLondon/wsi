@@ -477,7 +477,7 @@ class Node(WSIObj):
                 for key, allocation in connected['allocation'].items():
                     
                     to_send = amount_to_push * allocation / connected['priority']
-                    to_send = self.v_change_vqip(vqip, to_send)
+                    to_send = self.v_change_vqip(not_pushed_, to_send)
                     reply = self.out_arcs[key].send_push_request(to_send, tag = tag)
                     
                     sent = self.extract_vqip(to_send, reply)
@@ -784,6 +784,12 @@ class QueueTank(Tank):
     def push_storage(self, vqip, time = None, force = False):
         if time is None:
             time = self.number_of_timesteps
+        
+        if force:
+            #Directly add request to storage
+            self.storage = self.sum_vqip(self.storage, vqip)
+            self.active_storage = self.sum_vqip(self.active_storage, vqip)
+            return self.empty_vqip()
         
         #Push to QueueTank
         reply = self.internal_arc.send_push_request(vqip, force = force, time = time)
