@@ -868,7 +868,6 @@ class DecayQueueTank(QueueTank):
                                             parent = self.parent,
                                             decays = self.decays)
         self.end_timestep = self._end_timestep
-        self.ds = self.decay_ds
 
     def _end_timestep(self):
         #TODO Should the active storage decay if decays are given?
@@ -876,7 +875,3 @@ class DecayQueueTank(QueueTank):
         self.storage_ = self.copy_vqip(self.storage)
         self.internal_arc.end_timestep()
         
-    def decay_ds(self):
-        ds = self.ds_vqip(self.storage, self.storage_)
-        ds = self.sum_vqip(ds, self.internal_arc.total_decayed)
-        return ds
