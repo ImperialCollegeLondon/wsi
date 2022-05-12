@@ -55,10 +55,6 @@ class Land(Node):
         
          
         #Mass balance (this is so untidy... must be a better way)
-        self.mass_balance_in = [self.total_in]
-        self.mass_balance_out = [self.total_out]
-        self.mass_balance_ds = [lambda : self.empty_vqip()]
-        
         for surface in self.surfaces.values():
             self.mass_balance_ds.append(surface.ds)
             # self.mass_balance_in.append(surface.get_deposition)

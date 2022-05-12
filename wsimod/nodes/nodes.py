@@ -9,7 +9,8 @@ Converted to totals on Thur Apr 21 2022
 """
 from wsimod.nodes import nodes
 from wsimod.core import constants, WSIObj, DecayObj
-from wsimod.arcs import AltQueueArc, DecayArcAlt, DecayArc
+from wsimod.arcs import AltQueueArc, DecayArcAlt
+
 class Node(WSIObj):
     """
     Base class for CWSD nodes.
