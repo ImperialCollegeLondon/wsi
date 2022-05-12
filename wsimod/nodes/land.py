@@ -22,8 +22,8 @@ class Land(Node):
         surfaces_ = kwargs['surfaces'].copy()
         surfaces = {}
         for sname, surface in surfaces_.items():
+            surface['parent'] = self
             surfaces[sname] = Surface(**surface)
-            surfaces[sname].parent = self
             
         super().__init__(**kwargs)
         

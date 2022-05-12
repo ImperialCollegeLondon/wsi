@@ -8,7 +8,7 @@ Converted to totals on Thur Apr 21 2022
 
 """
 from wsimod.nodes import nodes
-from wsimod.core import constants, WSIObj
+from wsimod.core import constants, WSIObj, DecayObj
 from wsimod.arcs import AltQueueArc, DecayArcAlt, DecayArc
 class Node(WSIObj):
     """
@@ -742,13 +742,11 @@ class Tank(WSIObj):
         self.storage = self.empty_vqip()
         self.storage_ = self.empty_vqip()
 
-class DecayTank(Tank):
+class DecayTank(Tank, DecayObj):
     def __init__(self,**kwargs):
         self.parent = None
-        self.decays = None
         super().__init__(**kwargs)
         
-        self.total_decayed = self.empty_vqip()
         self.end_timestep = self.end_timestep_decay
         self.ds = self.decay_ds
     
@@ -756,9 +754,7 @@ class DecayTank(Tank):
         self.total_decayed = self.empty_vqip()
         self.storage_ = self.copy_vqip(self.storage)
         
-        temperature = self.parent.data_input_dict[('temperature', self.parent.t)]
-        self.storage, diff = self.generic_temperature_decay(self.storage, self.decays, temperature)
-        self.total_decayed = self.sum_vqip(self.total_decayed, diff)
+        self.storage = self.make_decay(self.storage)
     
     def decay_ds(self):
         ds = self.ds_vqip(self.storage, self.storage_)
@@ -855,7 +851,7 @@ class QueueTank(Tank):
         self.storage_ = self.empty_vqip()
         self.active_storage = self.empty_vqip()
 
-class DecayQueueTank(DecayTank, QueueTank):
+class DecayQueueTank(QueueTank):
     def __init__(self,**kwargs):
 
         super().__init__(**kwargs)

@@ -8,7 +8,7 @@ Converted to totals on Thur Apr 21 2022
 
 """
 
-from wsimod.core import constants, WSIObj
+from wsimod.core import constants, WSIObj, DecayObj
 from wsimod.nodes import nodes
 
 class Arc(WSIObj):
@@ -399,37 +399,23 @@ class AltQueueArc(QueueArc):
         self.end_timestep()
         self.queue = {0 : self.empty_vqip(), 1 : self.empty_vqip()}
 
-class DecayArc(QueueArc):
+class DecayArc(QueueArc, DecayObj):
     def __init__(self, **kwargs):
         self.decays = {}
         
         super().__init__(**kwargs)
-        if 'parent' in dir(self):
-            self.data_input_object = self.parent
-        elif 'in_port' in dir(self):
-            self.data_input_object = self.in_port
-        else:
-            print('warning: decay arc cannot access temperature data')
-            
-        self.total_decayed = self.empty_vqip()
+
         self.mass_balance_out.append(lambda : self.total_decayed)
         
     def enter_queue(self, request, direction = None, tag = 'default'):
-        vqip = request['vqip'].copy()
-        temperature = self.data_input_object.data_input_dict[('temperature', self.data_input_object.t)]
-        vqip_, diff = self.generic_temperature_decay(vqip, self.decays, temperature)
-        self.total_decayed = self.sum_vqip(self.total_decayed, diff)
-        
-        #diff contains total gain(+)/loss(-) of pollutants due to decay
-        #ignored for now because mass balance within arcs isn't tracked
+        vqip = self.copy_vqip(request['vqip'])
+        vqip_ = self.make_decay(vqip)
 
         #Form as request and append to queue
         request['vqip'] = vqip_
-        
         request['average_flow'] =  request['vqip']['volume'] / (request['time'] + 1)
         request['direction'] = direction
         request['tag'] = tag
-        
         
         self.queue.append(request)
         
@@ -450,42 +436,24 @@ class DecayArc(QueueArc):
         # self.update_queue(direction = 'pull') # TODO Is this needed? - probably
         # self.update_queue(direction = 'push') # TODO Is this needed? - probably
         for request in self.queue:
-            temperature = self.data_input_object.data_input_dict[('temperature', self.data_input_object.t)]
-            request['vqip'], diff = self.generic_temperature_decay(request['vqip'], self.decays, temperature)
-            self.total_decayed = self.sum_vqip(self.total_decayed, diff)
+            request['vqip'] = self.make_decay(request['vqip'])
             request['time'] = max(request['time'] - 1, 0)
 
-class DecayArcAlt(AltQueueArc):
+class DecayArcAlt(AltQueueArc, DecayObj):
     def __init__(self, **kwargs):
         self.decays = {}
         
         super().__init__(**kwargs)
         self.end_timestep = self._end_timestep
-        if 'parent' in dir(self):
-            self.data_input_object = self.parent
-        elif 'in_port' in dir(self):
-            self.data_input_object = self.in_port
-        else:
-            print('warning: decay arc cannot access temperature data')
-            
-        self.total_decayed = self.empty_vqip()
+
         self.mass_balance_out.append(lambda : self.total_decayed)
         
     def enter_queue(self, request, direction = None, tag = 'default'):
         #TODO- has no tags
         
-        vqip = request['vqip'].copy()
-        
-        request['average_flow'] =  request['vqip']['volume'] / (request['time'] + 1)
-        request['direction'] = direction
-        request['tag'] = tag
-        
-        temperature = self.data_input_object.data_input_dict[('temperature', self.data_input_object.t)]
-        vqip_, diff = self.generic_temperature_decay(vqip, self.decays, temperature)
-        
+        vqip = self.copy_vqip(request['vqip'])
+        vqip_ = self.make_decay(vqip)
         request['vqip'] = vqip_
-        
-        self.total_decayed = self.sum_vqip(self.total_decayed, diff)
         
         #Form as request and append to queue
         if request['time'] in self.queue.keys():
@@ -513,10 +481,7 @@ class DecayArcAlt(AltQueueArc):
         keys = self.queue.keys()
         for i in range(self.max_travel):
             if (i + 1) in keys:
-                temperature = self.data_input_object.data_input_dict[('temperature', self.data_input_object.t)]
-                vqip, diff = self.generic_temperature_decay(queue_[i+1], self.decays, temperature)
-                self.total_decayed = self.sum_vqip(self.total_decayed, diff)
-                self.queue[i] = vqip
+                self.queue[i] = self.make_decay(queue_[i+1])
                 self.queue[i+1] = self.empty_vqip()
 
         self.queue[0] = self.sum_vqip(queue_[0], queue_[1])
