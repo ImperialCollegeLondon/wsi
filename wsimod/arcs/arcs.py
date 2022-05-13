@@ -239,7 +239,6 @@ class QueueArc(Arc):
         #Update request queue
         backflow = self.update_queue(direction = 'push')
         not_pushed = self.sum_vqip(not_pushed, backflow)
-        # _ = self.update_queue(direction = 'push')
         
         if backflow['volume'] > vqip_['volume']:
             print('more backflow than vqip...')
@@ -266,7 +265,6 @@ class QueueArc(Arc):
         self.queue.append(request)
         
     def update_queue(self, direction = None):
-        
         done_requests = []
         
         total_removed = self.empty_vqip()
@@ -319,6 +317,7 @@ class QueueArc(Arc):
             return total_backflow
         else:
             print('No direction')
+            
     def end_timestep(self):
         self.vqip_in = self.empty_vqip()
         self.vqip_out = self.empty_vqip()
@@ -327,11 +326,10 @@ class QueueArc(Arc):
         
         self.queue_storage_ = self.copy_vqip(self.queue_storage)
         self.queue_storage = self.empty_vqip()
-        # self.update_queue(direction = 'pull') # TODO Is this needed? - probably
-        # self.update_queue(direction = 'push') # TODO Is this needed? - probably
+        
         for request in self.queue:
             request['time'] = max(request['time'] - 1, 0)
-    
+
     def reinit(self):
         self.end_timestep()
         self.queue = []
@@ -339,7 +337,7 @@ class QueueArc(Arc):
 class AltQueueArc(QueueArc):
     def __init__(self, **kwargs):
         self.queue_arc_sum = self.alt_queue_arc_sum
-        
+                
         super().__init__(**kwargs)
         self.queue = {0 : self.empty_vqip(), 1 : self.empty_vqip()}
         self.max_travel = 1
@@ -369,7 +367,7 @@ class AltQueueArc(QueueArc):
         
     def update_queue(self, direction = None):
         #NOTE - has no direction
-
+   
         total_removed = self.copy_vqip(self.queue[0])
         
         #Push 0 travel time water
@@ -389,7 +387,7 @@ class AltQueueArc(QueueArc):
         self.flow_out = 0
         self.queue_storage_ = self.copy_vqip(self.queue_storage)
         self.queue_storage = self.empty_vqip()
-        # self.update_queue()
+
         queue_ = self.queue.copy()
         keys = self.queue.keys()
         for i in range(self.max_travel):
@@ -398,7 +396,7 @@ class AltQueueArc(QueueArc):
                 self.queue[i+1] = self.empty_vqip()
 
         self.queue[0] = self.sum_vqip(queue_[0], queue_[1])
-    
+        
     def reinit(self):
         self.end_timestep()
         self.queue = {0 : self.empty_vqip(), 1 : self.empty_vqip()}
@@ -433,11 +431,11 @@ class DecayArc(QueueArc, DecayObj):
         self.queue_storage_ = self.copy_vqip(self.queue_storage)
         self.queue_storage = self.empty_vqip()
         
-        # self.update_queue(direction = 'pull') # TODO Is this needed? - probably
-        # self.update_queue(direction = 'push') # TODO Is this needed? - probably
+        
         for request in self.queue:
             request['vqip'] = self.make_decay(request['vqip'])
             request['time'] = max(request['time'] - 1, 0)
+
 
 class DecayArcAlt(AltQueueArc, DecayObj):
     def __init__(self, **kwargs):
@@ -476,7 +474,7 @@ class DecayArcAlt(AltQueueArc, DecayObj):
         
         self.queue_storage_ = self.copy_vqip(self.queue_storage)
         self.queue_storage = self.empty_vqip()
-        # self.update_queue()
+
         queue_ = self.queue.copy()
         keys = self.queue.keys()
         for i in range(self.max_travel):
