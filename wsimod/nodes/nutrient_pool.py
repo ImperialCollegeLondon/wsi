@@ -56,6 +56,12 @@ class NutrientPool(NutrientStore):
     #     self.empty_nutrient = {x : 0 for x in constants.NUTRIENTS}
     #     self.storage = self.get_empty_nutrient()
     
+    def allocate_inorganic_irrigation(self, irrigation):
+        self.dissolved_inorganic_pool.receive(irrigation)
+        
+    def allocate_organic_irrigation(self, irrigation):
+        self.dissolved_organic_pool.receive(irrigation)
+    
     def allocate_dry_deposition(self, deposition):
         self.fast_pool.storage['N'] += deposition['N'] * self.fraction_dry_n_to_fast
         self.dissolved_inorganic_pool.storage['N'] += deposition['N'] * self.fraction_dry_n_to_dissolved_inorganic
@@ -108,6 +114,11 @@ class NutrientPool(NutrientStore):
             self.storage[nutrient] -= reply[nutrient]
 
         return reply
+    
+#TODO: Adsorption/desorption, denitification, erosion, suspension/runoff/etc.
+ 
+"""CAN DELETE PAST HERE
+"""
 
 class FastPool(NutrientPool):
     def __init__(self,**kwargs):
