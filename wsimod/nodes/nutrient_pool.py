@@ -6,18 +6,11 @@ Created on Thu May 19 16:42:20 2022
 """
 from wsimod.core import constants
 
-class NutrientStore():
-    def __init__(self):
-        self.empty_nutrient = {x : 0 for x in constants.NUTRIENTS}
-        self.storage = self.empty_nutrient.copy()
-    
-    def multiply_nutrients(self, nutrient, factor):
-        return {x : nutrient[x] * factor[x] for x in constants.NUTRIENTS}
-
-class NutrientPool(NutrientStore):
+class NutrientPool():
     def __init__(self, **kwargs):
-        super().__init__()
-        self.temperature_dependence_factor = 0 # only one of these per land node...
+        self.init_empty()
+        
+        self.temperature_dependence_factor = 0
         self.soil_moisture_dependence_factor = 0
         
         self.fraction_manure_to_dissolved_inorganic = self.get_empty_nutrient()
@@ -42,19 +35,13 @@ class NutrientPool(NutrientStore):
         self.dissolved_inorganic_pool = NutrientStore()
         self.dissolved_organic_pool = NutrientStore()
         self.adsorbed_inorganic_pool = NutrientStore()
-
-        # self.fast_pool = FastPool(pool = self, disfpar = self.disfpar, minfpar = self.minfpar)
-        # self.humus_pool = HumusPool(pool = self, degrhpar = self.degrhpar, dishpar = self.dishpar)
-        # self.dissolved_inorganic_pool = DisolvedInorganicPool(pool = self, immobdpar = self.immobdpar)
-        # self.fast_pool = FastPool(pool = self)
-        # self.humus_pool = HumusPool(pool = self)
-        # self.dissolved_inorganic_pool = DissolvedInorganicPool(pool = self)
-        # self.dissolved_organic_pool = DissolvedOrganicPool(pool = self)
-        # self.adsorbed_inorganic_pool  = AdsorbedInorganicPool(pool = self)
-
-    # def init_store(self):
-    #     self.empty_nutrient = {x : 0 for x in constants.NUTRIENTS}
-    #     self.storage = self.get_empty_nutrient()
+        
+    def init_empty(self):
+        self.empty_nutrient = {x : 0 for x in constants.NUTRIENTS}
+        
+    def init_store(self):
+        self.init_empty()
+        self.storage = self.get_empty_nutrient()
     
     def allocate_inorganic_irrigation(self, irrigation):
         self.dissolved_inorganic_pool.receive(irrigation)
@@ -102,7 +89,10 @@ class NutrientPool(NutrientStore):
 
     def get_empty_nutrient(self):
         return self.empty_nutrient.copy()
-
+    
+    def multiply_nutrients(self, nutrient, factor):
+        return {x : nutrient[x] * factor[x] for x in constants.NUTRIENTS}
+    
     def receive(self, nutrients):
         for nutrient, amount in nutrients.items():
             self.storage[nutrient] += amount
@@ -114,50 +104,10 @@ class NutrientPool(NutrientStore):
             self.storage[nutrient] -= reply[nutrient]
 
         return reply
-    
+
+class NutrientStore(NutrientPool):
+    def __init__(self, **kwargs):
+        super().init_store()
+
 #TODO: Adsorption/desorption, denitification, erosion, suspension/runoff/etc.
  
-"""CAN DELETE PAST HERE
-"""
-
-class FastPool(NutrientPool):
-    def __init__(self,**kwargs):
-        super().init_store()
-
-        # self.disfpar = self.get_empty_nutrient()
-        # self.minfpar = self.get_empty_nutrient()
-
-        # self.__dict__.update(kwargs)
-    
-    
-class HumusPool(NutrientPool):
-    def __init__(self,**kwargs):
-        super().init_store()
-
-        # self.dishpar = self.get_empty_nutrient()
-        # self.degrhpar = self.get_empty_nutrient()
-
-        # self.__dict__.update(kwargs)
-
-    # def degradh_to_fast(self):
-    #     degradh = self.temp_soil_process(self.degrhpar)
-    #     degradh = self.extract(degradh)
-    #     self.pool.fast_pool.receive(degradh)
-
-class DissolvedInorganicPool(NutrientPool):
-    def __init__(self,**kwargs):
-        super().init_store()
-
-        # self.immobdpar = self.get_empty_nutrient()
-
-        # self.__dict__.update(kwargs)
-
-class DissolvedOrganicPool(NutrientPool):
-    def __init__(self,**kwargs):
-            super().init_store()
-            # self.__dict__.update(kwargs)
-
-class AdsorbedInorganicPool(NutrientPool):
-    def __init__(self,**kwargs):
-            super().init_store()
-            # self.__dict__.update(kwargs)

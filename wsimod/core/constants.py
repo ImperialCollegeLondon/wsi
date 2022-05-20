@@ -22,6 +22,7 @@ DT_DAYS = 1
 POLLUTANTS = ['do','phosphorus','phosphate','ammonia','solids','bod','cod','ph','temp','nitrate','nitrite'] # All assume mg/l
 NON_ADDITIVE_POLLUTANTS = ['temp', 'ph'] # e.g. pollutants whose concentration in a vqip should not increase if volume is distilled out
 ADDITIVE_POLLUTANTS = ['do','phosphorus','phosphate','ammonia','solids','bod','cod','nitrate','nitrite'] # All assume mg/l
+NUTRIENTS = ['N','P']
 PCT_GARDENS = 0.1 # Percentage of area that is people's gardens
 PI = 3.141592653589793
 PER_DAY_TO_PER_SECOND = 1/(60*60*24)
