@@ -4,7 +4,8 @@ Created on Fri May 20 08:58:58 2022
 
 @author: Barney
 """
-from wsimod.nodes.nodes import Node, Tank, DecayTank, QueueTank, NutrientPool
+from wsimod.nodes.nodes import Node, Tank, DecayTank, QueueTank
+from wsimod.nodes.nutrient_pool import NutrientPool
 from wsimod.core import constants
 import sys
 
@@ -15,8 +16,8 @@ class Land_(Node):
         for sname, surface in surfaces_.items():
             surface['parent'] = self
             surfaces[sname] = getattr(sys.modules[__name__], surface['type'])(**surface)
-    
-    
+
+
     def run(self):
         for surface in self.surfaces:
             surface.run()
