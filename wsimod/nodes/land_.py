@@ -12,11 +12,11 @@ import sys
 class Land_(Node):
     def __init__(self, **kwargs):
         surfaces_ = kwargs['surfaces'].copy()
-        surfaces = {}
-        for sname, surface in surfaces_.items():
+        surfaces = []
+        for surface in surfaces_:
             surface['parent'] = self
-            surfaces[sname] = getattr(sys.modules[__name__], surface['type'])(**surface)
-
+            surfaces.append(getattr(sys.modules[__name__], surface['type'])(**surface))
+        self.surfaces = surfaces
 
     def run(self):
         for surface in self.surfaces:
@@ -24,7 +24,7 @@ class Land_(Node):
     
 class Surface(Tank):
     def __init__(self, **kwargs):
-        
+        #TODO EVERYONE INHERITS THIS DEPTH VALUE... FIX THAT
         self.depth = 0
         self.capacity = kwargs['depth'] * kwargs['area']
         
@@ -48,7 +48,7 @@ class Surface(Tank):
 class ImperviousSurface(Surface):
     def __init__(self, **kwargs):
         self.pore_depth = 0 #Need a way to say 'depth means pore depth'
-        self.depth = kwargs['pore_depth'] # TODO Need better way to handle this
+        kwargs['depth'] = kwargs['pore_depth'] # TODO Need better way to handle this
         
         super().__init__(**kwargs)
         
@@ -75,7 +75,7 @@ class PerviousSurface(Surface):
         self.decays = 0 #generic decay parameters
         self.soil_temp_parameters = 0 #previous timestep weighting, air temperature weighting, constant (accounting for deep soil temperature + weighting)
         
-        self.depth = kwargs['field_capacity'] # TODO Need better way to handle this
+        kwargs['depth'] = kwargs['field_capacity'] # TODO Need better way to handle this
         
         super().__init__(**kwargs)
         
@@ -85,7 +85,7 @@ class PerviousSurface(Surface):
         self.processes.append(self.decay) #apply generic decay
         self.processes.append(self.hydrology) #work out how much is going to subsurface flow/percolation
         
-        self.outflows(self.push_to_rivers)
+        self.outflows.append(self.push_to_rivers)
 
     def precipitation_infiltration_evaporation(self):
         pass
@@ -112,14 +112,14 @@ class CropSurface(PerviousSurface):
         
         self.nutrient_parameters = {}
         
-        self.depth = kwargs['field_capacity'] + kwargs['wilting_point'] # TODO Need better way to handle this
+        kwargs['depth'] = kwargs['field_capacity'] + kwargs['wilting_point'] # TODO Need better way to handle this
         
         self.atmospheric_deposition = self._atmospheric_deposition
         self.precipitation_deposition = self._precipitation_deposition
         
         super().__init__(**kwargs)
         
-        self.nutrient_pool = NutrientPool(self.nutrient_parameters)
+        self.nutrient_pool = NutrientPool(**self.nutrient_parameters)
         
         self.inflows.append(self.fertiliser)
         self.inflows.append(self.manure)
@@ -134,6 +134,12 @@ class CropSurface(PerviousSurface):
         self.processes.append(self.adsorption)
     
     def soil_moisture_dependence_factor(self):
+        pass
+    
+    def fertiliser(self):
+        pass
+    
+    def manure(self):
         pass
     
     def suspension(self):

@@ -6,7 +6,7 @@ Created on Thu May 19 16:42:20 2022
 """
 from wsimod.core import constants
 
-class NutrientPool():
+class NutrientPool:
     def __init__(self, **kwargs):
         self.init_empty()
         
