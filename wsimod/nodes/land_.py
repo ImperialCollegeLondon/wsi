@@ -31,14 +31,16 @@ class Surface(Tank):
         self.depth = 0
         
         #Parameters
-        self.fraction_dry_deposition_to_DIN = 0.9 #TODO may or may not be handled in preprocessing
+        
         
         super().__init__(**kwargs)
         
         
         self.capacity = self.depth * self.area
 
-        self.fraction_dry_deposition_to_DON = 1 - self.fraction_dry_deposition_to_DIN
+
+    
+        
         
         self.inflows = [self.atmospheric_deposition,
                         self.precipitation_deposition]
@@ -53,37 +55,42 @@ class Surface(Tank):
     def get_data_input(self, var):
         return self.parent.get_data_input(var)
     
-    def deposition_to_tank(self, vqip):
+    def dry_deposition_to_tank(self, vqip):
         _ = self.push_storage(vqip, force = True)
         
-    
+    def wet_deposition_to_tank(self, vqip):
+        _ = self.push_storage(vqip, force = True)
+        
     def atmospheric_deposition(self):
+        #TODO double check units - is weight of N or weight of NHX/NOX?
         nhx = self.get_data_input('nhx-dry') * self.area
         nox = self.get_data_input('nox-dry') * self.area
         
         vqip = self.empty_vqip()
-        #TODO convert to nitrate/nitrite/ammonia and push to tank. See SWAT
-        vqip['ammonia'] = nhx
-        vqip['nitrogen'] = nox
+        vqip['ammonium'] = nhx
+        vqip['nitrate'] = nox
         
-        self.deposition_to_tank(vqip)
+        self.dry_deposition_to_tank(vqip)
         
         
     def precipitation_deposition(self):
+        #TODO double check units - is weight of N or weight of NHX/NOX?
         nhx = self.get_data_input('nhx-wet') * self.area
         nox = self.get_data_input('nox-wet') * self.area
         
         vqip = self.empty_vqip()
-        #TODO convert to nitrate/nitrite/ammonia and push to tank. See SWAT
         vqip['ammonia'] = nhx
-        vqip['nitrogen'] = nox
+        vqip['nitrate'] = nox
         
-        self.deposition_to_tank(vqip)
+        self.wet_deposition_to_tank(vqip)
         
 class ImperviousSurface(Surface):
     def __init__(self, **kwargs):
         self.pore_depth = 0 #Need a way to say 'depth means pore depth'
         kwargs['depth'] = kwargs['pore_depth'] # TODO Need better way to handle this
+        
+        #Default parameters 
+        self.et0_to_e = 0.1 #Total evaporation (ignoring transpiration)
         
         super().__init__(**kwargs)
         
@@ -96,7 +103,10 @@ class ImperviousSurface(Surface):
         pass
     
     def precipitation_evaporation(self):
-        pass
+        precipitation_depth = self.get_data_input('precipitation')
+        evaporation_depth = self.get_data_input('et0') * self.et0_to_e
+        
+        
     
     def push_to_sewers(self):
         pass
@@ -151,6 +161,7 @@ class CropSurface(PerviousSurface):
         self.rooting_depth = 0 #To do with water availability, Zr from FAOSTAT
         self.wilting_point = 0 #Depth of water when added to field capacity, water is available for plants+evaporation but not drainage
         
+        self.fraction_dry_deposition_to_DIN = 0.9 #TODO may or may not be handled in preprocessing
         self.nutrient_parameters = {}
         
         kwargs['depth'] = kwargs['field_capacity'] + kwargs['wilting_point'] # TODO Need better way to handle this
@@ -158,7 +169,7 @@ class CropSurface(PerviousSurface):
         super().__init__(**kwargs)
         
         self.nutrient_pool = NutrientPool(**self.nutrient_parameters)
-        
+        self.fraction_dry_deposition_to_fast = 1 - self.fraction_dry_deposition_to_DIN
         self.inflows.append(self.fertiliser)
         self.inflows.append(self.manure)
         
@@ -192,10 +203,16 @@ class CropSurface(PerviousSurface):
     def adsorption(self):
         pass
     
-    def deposition_to_tank(self, vqip):
+    def dry_deposition_to_tank(self, vqip):
         #Distribute between surfaces
+        #TODO INCLUDE P AND AMMONIA
+        
+        nitrate_to_din = vqip['nitrate'] * self.fraction_dry_deposition_to_DIN
+        nitrate_to_fast = vqip['nitrate'] * self.fraction_dry_deposition_to_fast
         pass
     
+    def wet_deposition_to_tank(self, vqip):
+        pass
 
     
 class IrrigationSurface(CropSurface):
