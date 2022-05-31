@@ -22,14 +22,24 @@ class Land_(Node):
         for surface in self.surfaces:
             surface.run()
     
+    def get_data_input(self, var):
+        return self.data_input_dict[(var, self.t)]
+    
 class Surface(Tank):
     def __init__(self, **kwargs):
         #TODO EVERYONE INHERITS THIS DEPTH VALUE... FIX THAT
         self.depth = 0
-        self.capacity = kwargs['depth'] * kwargs['area']
+        
+        #Parameters
+        self.fraction_dry_deposition_to_DIN = 0.9 #TODO may or may not be handled in preprocessing
         
         super().__init__(**kwargs)
-                
+        
+        
+        self.capacity = self.depth * self.area
+
+        self.fraction_dry_deposition_to_DON = 1 - self.fraction_dry_deposition_to_DIN
+        
         self.inflows = [self.atmospheric_deposition,
                         self.precipitation_deposition]
         self.processes = [lambda x: None]
@@ -38,13 +48,38 @@ class Surface(Tank):
     def run(self):
         for f in self.inflows + self.processes + self.outflows:
             f()
+        #TODO can probably incorporate mass balance here?
+    
+    def get_data_input(self, var):
+        return self.parent.get_data_input(var)
+    
+    def deposition_to_tank(self, vqip):
+        _ = self.push_storage(vqip, force = True)
+        
     
     def atmospheric_deposition(self):
-        pass
-    
+        nhx = self.get_data_input('nhx-dry') * self.area
+        nox = self.get_data_input('nox-dry') * self.area
+        
+        vqip = self.empty_vqip()
+        #TODO convert to nitrate/nitrite/ammonia and push to tank. See SWAT
+        vqip['ammonia'] = nhx
+        vqip['nitrogen'] = nox
+        
+        self.deposition_to_tank(vqip)
+        
+        
     def precipitation_deposition(self):
-        pass
-
+        nhx = self.get_data_input('nhx-wet') * self.area
+        nox = self.get_data_input('nox-wet') * self.area
+        
+        vqip = self.empty_vqip()
+        #TODO convert to nitrate/nitrite/ammonia and push to tank. See SWAT
+        vqip['ammonia'] = nhx
+        vqip['nitrogen'] = nox
+        
+        self.deposition_to_tank(vqip)
+        
 class ImperviousSurface(Surface):
     def __init__(self, **kwargs):
         self.pore_depth = 0 #Need a way to say 'depth means pore depth'
@@ -73,7 +108,11 @@ class PerviousSurface(Surface):
         self.percolation_coefficient = 0 #proportion of water above field capacity that can goes to percolation
         self.subsurface_coefficient = 0 #proportion of water above field capacity that can goes to subsurface flow
         self.decays = 0 #generic decay parameters
-        self.soil_temp_parameters = 0 #previous timestep weighting, air temperature weighting, constant (accounting for deep soil temperature + weighting)
+        
+        #TODO what should these params be?
+        self.soil_temp_w_prev = 0.3 #previous timestep weighting
+        self.soil_temp_w_air = 0.3 #air temperature weighting
+        self.soil_temp_cons = 3 #deep soil temperature * weighting
         
         kwargs['depth'] = kwargs['field_capacity'] # TODO Need better way to handle this
         
@@ -91,7 +130,9 @@ class PerviousSurface(Surface):
         pass
     
     def calculate_soil_temperature(self):
-        pass
+        auto = self.storage['temperature'] * self.soil_temp_w_prev
+        air = self.get_data_input('temperature') * self.soil_temp_w_air
+        self.soil_storage['temperature'] = auto + air + self.soil_temp_cons
     
     def decay(self):
         pass
@@ -113,9 +154,6 @@ class CropSurface(PerviousSurface):
         self.nutrient_parameters = {}
         
         kwargs['depth'] = kwargs['field_capacity'] + kwargs['wilting_point'] # TODO Need better way to handle this
-        
-        self.atmospheric_deposition = self._atmospheric_deposition
-        self.precipitation_deposition = self._precipitation_deposition
         
         super().__init__(**kwargs)
         
@@ -154,10 +192,8 @@ class CropSurface(PerviousSurface):
     def adsorption(self):
         pass
     
-    def _atmospheric_deposition(self):
-        pass
-    
-    def _precipitation_deposition(self):
+    def deposition_to_tank(self, vqip):
+        #Distribute between surfaces
         pass
     
 
@@ -184,6 +220,7 @@ class IrrigationSurface(CropSurface):
         pass
 
 class GardenSurface(IrrigationSurface):
+    #TODO - probably a simplier version of this is useful, building just on pervioussurface
     def __init__(self, **kwargs):
         self.satisfy_irrigation = self.pull_from_distribution
         
