@@ -94,15 +94,15 @@ class Surface(DecayTank):
         
         self.inflows = [self.atmospheric_deposition,
                         self.precipitation_deposition]
-        self.processes = [lambda x: None]
-        self.outflows = [lambda x: None]
+        self.processes = [lambda : None]
+        self.outflows = [lambda : None]
         
     def run(self):
         
         for f in self.inflows:
             in_, out_ = f()
-            self.running_inflow_mb = self.sum_vqip(self.running_inflow_mb, in_)
-            self.running_outflow_mb = self.sum_vqip(self.running_outflow_mb, out_)
+            self.parent.running_inflow_mb = self.sum_vqip(self.parent.running_inflow_mb, in_)
+            self.parent.running_outflow_mb = self.sum_vqip(self.parent.running_outflow_mb, out_)
         
         for f in self.processes + self.outflows:
             f()
@@ -219,7 +219,7 @@ class PerviousSurface(Surface):
         
         self.processes.append(self.calculate_soil_temperature) # Calculate soil temp + dependence factor
         # self.processes.append(self.decay) #apply generic decay (currently handled by decaytank at end of timestep)
-        
+        #TODO decaytank uses air temperature not soil temperature... probably need to just give it the decay function
         # self.outflows.append(self.push_to_rivers)
     
     def ihacres(self):
@@ -233,7 +233,7 @@ class PerviousSurface(Surface):
         infiltration_excess = precipitation_depth - evaporation_depth - infiltrated_precipitation
         
         #Formulate in terms of (m) moisture deficit
-        current_moisture_deficit_depth = self.get_excess() / self.area
+        current_moisture_deficit_depth = self.get_excess()['volume'] / self.area
         
         #IHACRES equations
         evaporation = evaporation_depth * min(1, exp(2 * (1 - current_moisture_deficit_depth / self.wilting_point)))
@@ -251,8 +251,8 @@ class PerviousSurface(Surface):
         total_water_passing_through_soil_tank = tank_recharge + subsurface_flow + percolation
         total_water_passing_through_soil_tank = self.v_change_vqip(self.empty_vqip(), total_water_passing_through_soil_tank)
         _ = self.push_storage(total_water_passing_through_soil_tank, force = True)
-        subsurface_flow = self.pull_storage(subsurface_flow)
-        percolation = self.pull_storage(percolation)
+        subsurface_flow = self.pull_storage({'volume': subsurface_flow})
+        percolation = self.pull_storage({'volume':percolation})
         
         #Convert to VQIPs
         infiltration_excess = self.v_change_vqip(self.empty_vqip(), infiltration_excess)
@@ -302,7 +302,7 @@ class PerviousSurface(Surface):
     def calculate_soil_temperature(self):
         auto = self.storage['temperature'] * self.soil_temp_w_prev
         air = self.get_data_input('temperature') * self.soil_temp_w_air
-        self.soil_storage['temperature'] = auto + air + self.soil_temp_cons
+        self.storage['temperature'] = auto + air + self.soil_temp_cons
     
     # def decay(self):
     #     pass
