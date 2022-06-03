@@ -743,6 +743,19 @@ class Tank(WSIObj):
         self.storage = self.empty_vqip()
         self.storage_ = self.empty_vqip()
 
+class ResidenceTank(Tank):
+    
+    def __init__(self,**kwargs):
+        self.residence_time = 2
+        super().__init__(**kwargs)
+    
+    def pull_outflow(self):
+        outflow = self.storage['volume'] / self.residence_time
+        outflow = self.v_change_vqip(self.storage, outflow)
+        outflow = self.pull_storage(outflow)
+        return outflow
+    
+    
 class DecayTank(Tank, DecayObj):
     def __init__(self,**kwargs):
         self.parent = None

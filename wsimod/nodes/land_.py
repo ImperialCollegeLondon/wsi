@@ -4,7 +4,7 @@ Created on Fri May 20 08:58:58 2022
 
 @author: Barney
 """
-from wsimod.nodes.nodes import Node, Tank, DecayTank, QueueTank
+from wsimod.nodes.nodes import Node, Tank, DecayTank, QueueTank, ResidenceTank
 from wsimod.nodes.nutrient_pool import NutrientPool
 from wsimod.core import constants
 from math import exp
@@ -12,7 +12,9 @@ import sys
 
 class Land_(Node):
     def __init__(self, **kwargs):
-        
+        self.subsurface_residence_time = 2
+        self.percolation_residence_time = 10
+        self.surface_residence_time = 1
         
         super().__init__(**kwargs)
         
@@ -24,15 +26,15 @@ class Land_(Node):
             self.mass_balance_ds.append(surfaces[-1].ds)
         
         #Can also do as timearea if this seems dodge (that is how it is done in IHACRES)
-        #TODO should these all just be tanks?
-        self.subsurface_residence_time = 2
-        self.subsurface_runoff = self.empty_vqip()
+        #TODO should these be decayresidencetanks?
         
-        self.percolation_residence_time = 10
-        self.percolation = self.empty_vqip()
         
-        self.surface_residence_time = 1
-        self.surface_runoff = self.empty_vqip()
+        self.subsurface_runoff = ResidenceTank(residence_time = self.subsurface_residence_time, 
+                                               capacity = constants.UNBOUNDED_CAPACITY)
+        self.percolation = ResidenceTank(residence_time = self.percolation_residence_time,
+                                         capacity = constants.UNBOUNDED_CAPACITY)
+        self.surface_runoff = ResidenceTank(residence_time = self.surface_residence_time,
+                                            capacity = constants.UNBOUNDED_CAPACITY)
         
         
         self.surfaces = surfaces
@@ -42,37 +44,43 @@ class Land_(Node):
         
         self.mass_balance_in.append(lambda : self.running_inflow_mb)
         self.mass_balance_out.append(lambda : self.running_outflow_mb)
-
-    def run(self):
+        self.mass_balance_ds.append(self.surface_runoff.ds)
+        self.mass_balance_ds.append(self.subsurface_runoff.ds)
+        self.mass_balance_ds.append(self.percolation.ds)
+        
+    def run(self):  
         for surface in self.surfaces:
             surface.run()
             
         #Apply residence time to percolation
-        percolation = self.percolation
-        percolation = self.v_change_vqip(percolation, percolation['volume'] / self.percolation_residence_time)
+        percolation = self.percolation.pull_outflow()
         
         #Distribute percolation
         reply = self.push_distributed(percolation, of_type = ['Groundwater'])
         
-        #Update percolation 'tank'
-        net_percolation = self.extract_vqip(percolation, reply)
-        self.percolation = self.extract_vqip(self.percolation, net_percolation)
+        if reply['volume'] > 0:
+            #Update percolation 'tank'
+            _ = self.percolation.push_storage(reply, force = True)
         
         #Apply residence time to subsurface/surface runoff
-        surface_runoff = self.surface_runoff
-        surface_runoff = self.v_change_vqip(surface_runoff, surface_runoff['volume'] / self.surface_runoff_residence_time)
-        subsurface_runoff = self.subsurface_runoff
-        subsurface_runoff = self.v_change_vqip(subsurface_runoff, subsurface_runoff['volume'] / self.subsurface_runoff_residence_time)
+        surface_runoff = self.surface_runoff.pull_outflow()
+        subsurface_runoff = self.subsurface_runoff.pull_outflow()
         
-        #Distributed total runoff
+        #Total runoff
         total_runoff = self.sum_vqip(surface_runoff, subsurface_runoff)
-        reply = self.push_distributed(total_runoff, of_type = ['River','Node'])
-        
-        #Update surface/subsurface runoff 'tanks'
-        net_surface_runoff = self.extract_vqip(surface_runoff, self.v_change_vqip(reply, reply['volume'] * surface_runoff['volume'] / total_runoff['volume']) )
-        net_subsurface_runoff = self.extract_vqip(subsurface_runoff, self.v_change_vqip(reply, reply['volume'] * subsurface_runoff['volume'] / total_runoff['volume']) )
-        self.surface_runoff = self.extract_vqip(self.surface_runoff, net_surface_runoff)
-        self.subsurface_runoff = self.extract_vqip(self.subsurface_runoff, net_subsurface_runoff)        
+        if total_runoff['volume'] > 0:
+            reply = self.push_distributed(total_runoff, of_type = ['River','Node'])
+            
+            #Redistribute total_runoff not sent
+            if reply['volume'] > 0:
+                reply_surface = self.v_change_vqip(reply, reply['volume'] * surface_runoff['volume'] / total_runoff['volume'])
+                reply_subsurface = self.v_change_vqip(reply, reply['volume'] * subsurface_runoff['volume'] / total_runoff['volume'])
+                
+                #Update surface/subsurface runoff 'tanks'
+                if reply_surface['volume'] > 0:
+                    self.surface_runoff.push_storage(reply_surface, force = True)
+                if reply_subsurface['volume'] > 0:
+                    self.subsurface_runoff.push_storage(reply_subsurface, force = True)
         
     def get_data_input(self, var):
         return self.data_input_dict[(var, self.t)]
@@ -80,6 +88,10 @@ class Land_(Node):
     def end_timestep(self):
         self.running_inflow_mb = self.empty_vqip()
         self.running_outflow_mb = self.empty_vqip()
+        for tanks in self.surfaces + [self.surface_runoff, self.subsurface_runoff, self.percolation]:
+            tanks.end_timestep()
+            
+        
         
 class Surface(DecayTank):
     def __init__(self, **kwargs):
@@ -179,7 +191,7 @@ class ImperviousSurface(Surface):
             net_precipitation = precipitation_depth - evaporation_depth
             net_precipitation *= self.area
             net_precipitation = self.v_change_vqip(self.empty_vqip(), net_precipitation)
-            _ = self.push_storage(net_precipitation)
+            _ = self.push_storage(net_precipitation, force = True)
             total_evaporation = evaporation_depth * self.area
         
         total_evaporation = self.v_change_vqip(self.empty_vqip(), total_evaporation)
@@ -230,7 +242,7 @@ class PerviousSurface(Surface):
         
         #Apply infiltration
         infiltrated_precipitation = min(precipitation_depth, self.infiltration_capacity)
-        infiltration_excess = precipitation_depth - evaporation_depth - infiltrated_precipitation
+        infiltration_excess = max(precipitation_depth - evaporation_depth - infiltrated_precipitation, 0)
         
         #Formulate in terms of (m) moisture deficit
         current_moisture_deficit_depth = self.get_excess()['volume'] / self.area
@@ -260,9 +272,9 @@ class PerviousSurface(Surface):
         evaporation = self.v_change_vqip(self.empty_vqip(), evaporation)
         
         #Send water 
-        self.parent.surface_runoff = self.sum_vqip(self.parent.surface_runoff, infiltration_excess)
-        self.parent.subsurface_runoff = self.sum_vqip(self.parent.subsurface_runoff, subsurface_flow)
-        self.parent.percolation = self.sum_vqip(self.parent.surface_runoff, percolation)
+        self.parent.surface_runoff.push_storage(infiltration_excess, force = True)
+        self.parent.subsurface_runoff.push_storage(subsurface_flow, force = True)
+        self.parent.percolation.push_storage(percolation, force = True)
         
         #Mass balance
         in_ = precipitation
