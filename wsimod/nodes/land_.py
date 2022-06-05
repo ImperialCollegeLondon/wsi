@@ -337,12 +337,16 @@ class CropSurface(PerviousSurface):
         self.fraction_dry_deposition_to_DIN = 0.9 #TODO may or may not be handled in preprocessing
         self.nutrient_parameters = {}
         
-        #Parameters (TODO source)
+        #Parameters (TODO source and check units)
         self.satact = 0.6
         self.tawfract_p = 0.5 # Fraction of TAW that a crop can extract from the root zone without suffering water stress
-        self.thetaupp = 0.6
-        self.thetalow = 0.4
-        self.thetapow = 0.5
+        self.thetaupp = 0.12 # [-] for calculating soil_moisture_dependence_factor
+        self.thetalow = 0.08 # [-] for calculating soil_moisture_dependence_factor
+        self.thetapow = 1 # [-] for calculating soil_moisture_dependence_factor
+        self.uptake1 = 15 # [g/m2/y] shape factor for crop (Dissolved) Inorganic nitrogen uptake
+        self.uptake2 = 1 # [-] shape factor for crop (Dissolved) Inorganic nitrogen uptake
+        self.uptake3 = 0.02 # [1/day] shape factor for crop (Dissolved) Inorganic nitrogen uptake
+        self.uptake_PNratio = 1/7.2 # [-] P:N during crop uptake
         
         super().__init__(**kwargs)
         
@@ -390,10 +394,28 @@ class CropSurface(PerviousSurface):
             wp_diff = current_soil_moisture - self.wilting_point
             wp_comp = (wp_diff / (self.thetalow * self.rooting_depth)) ** self.thetapow
             self.nutrient_pool.soil_moisture_dependence_factor = min(1, wp_comp, fc_comp)
-            
-    def get_potential_crop_uptake(self):
-        pass
     
+    def help_function(self, dayno):
+        return (self.uptake1 - self.uptake2) * exp(-self.uptake3 * dayno)
+    
+    def get_potential_crop_uptake(self):
+        #TODO insert parameters and convert to kg/m2/dt
+        #Initialise N_common_uptake
+        N_common_uptake = 0
+        P_common_uptake = 0
+        
+        #Calculate if fallow
+        
+        if not self.fallow:
+            #Calculate dayno
+            dayno = 0
+            
+            #Calculate uptake
+            help_ = self.help_function(dayno)
+            if (help_ + self.uptake2) > 0 :
+                N_common_uptake = self.uptake1 * self.uptake2 * self.uptake3 * help_ / (self.uptake2 + help_) / (self.uptake2 + help_)
+            P_common_uptake = N_common_uptake * self.uptake_PNratio
+            
     def fertiliser(self):
         pass
     
