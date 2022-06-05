@@ -232,7 +232,12 @@ class PerviousSurface(Surface):
         self.processes.append(self.calculate_soil_temperature) # Calculate soil temp + dependence factor
         # self.processes.append(self.decay) #apply generic decay (currently handled by decaytank at end of timestep)
         #TODO decaytank uses air temperature not soil temperature... probably need to just give it the decay function
-        # self.outflows.append(self.push_to_rivers)
+    
+    def get_cmd(self):
+        return self.get_excess()['volume'] / self.area
+    
+    def get_smc(self):
+        return self.storage['volume'] / self.area
     
     def ihacres(self):
         
@@ -245,7 +250,7 @@ class PerviousSurface(Surface):
         infiltration_excess = max(precipitation_depth - evaporation_depth - infiltrated_precipitation, 0)
         
         #Formulate in terms of (m) moisture deficit
-        current_moisture_deficit_depth = self.get_excess()['volume'] / self.area
+        current_moisture_deficit_depth = self.get_cmd()
         
         #IHACRES equations
         evaporation = evaporation_depth * min(1, exp(2 * (1 - current_moisture_deficit_depth / self.wilting_point)))
@@ -321,28 +326,39 @@ class PerviousSurface(Surface):
     
     
 
-    def push_to_rivers(self):
-        pass
-
 class CropSurface(PerviousSurface):
     def __init__(self, **kwargs):
         self.stage_dates = [] #dates when crops are planted/growing/harvested
         self.crop_factor = [] #coefficient to do with ET, associated with stages
         self.ET_depletion_factor = 0 #To do with water availability, p from FAOSTAT
-        self.rooting_depth = 0 #To do with water availability, Zr from FAOSTAT
+        self.rooting_depth = 0 #maximum depth that plants can absorb, Zr from FAOSTAT
+        kwargs['depth'] = kwargs['rooting_depth']
         
         self.fraction_dry_deposition_to_DIN = 0.9 #TODO may or may not be handled in preprocessing
         self.nutrient_parameters = {}
         
+        #Parameters (TODO source)
+        self.satact = 0.6
+        self.tawfract_p = 0.5 # Fraction of TAW that a crop can extract from the root zone without suffering water stress
+        self.thetaupp = 0.6
+        self.thetalow = 0.4
+        self.thetapow = 0.5
+        
         super().__init__(**kwargs)
+        
+        self.total_available_water = self.field_capacity - self.wilting_point
+        if self.total_available_water < 0:
+            print('warning: TAW < 0...')
         
         self.nutrient_pool = NutrientPool(**self.nutrient_parameters)
         self.fraction_dry_deposition_to_fast = 1 - self.fraction_dry_deposition_to_DIN
         self.inflows.append(self.fertiliser)
         self.inflows.append(self.manure)
         
-        self.processes.append(self.soil_moisture_dependence_factor)
+        self.processes.append(self.calc_temperature_dependence_factor)
+        self.processes.append(self.calc_soil_moisture_dependence_factor)
         self.processes.append(self.nutrient_pool.soil_pool_transformation)
+        self.processes.append(self.calc_potential_crop_uptake)
         
         #TODO possibly move these into nutrient pool
         self.processes.append(self.suspension)
@@ -350,7 +366,32 @@ class CropSurface(PerviousSurface):
         self.processes.append(self.denitrification)
         self.processes.append(self.adsorption)
     
-    def soil_moisture_dependence_factor(self):
+    def calc_temperature_dependence_factor(self):
+        #TODO parameterise/find sources for data (HYPE)
+        if self.storage['temperature'] > 5:
+            temperature_dependence_factor = 2 ** ((self.storage['temperature'] - 20) / 10)
+        elif self.storage['temperature'] > 0:
+            temperature_dependence_factor = self.storage['temperature'] / 5
+        else:
+            temperature_dependence_factor = 0
+        self.nutrient_pool.temperature_dependence_factor = temperature_dependence_factor
+    
+    def calc_soil_moisture_dependence_factor(self):        
+        #TODO parameterise/find sources for data (HYPE)
+        current_soil_moisture = self.get_smc()
+        if current_soil_moisture  >= self.field_capacity: 
+            self.nutrient_pool.soil_moisture_dependence_factor = self.satact
+        elif current_soil_moisture <= self.wilting_point: 
+            self.nutrient_pool.soil_moisture_dependence_factor = 0
+        else:
+            fc_diff = self.field_capacity - current_soil_moisture
+            fc_comp = (fc_diff / (self.thetaupp * self.rooting_depth)) ** self.thetapow
+            fc_comp = (1 - self.satact) * fc_comp + self.satact
+            wp_diff = current_soil_moisture - self.wilting_point
+            wp_comp = (wp_diff / (self.thetalow * self.rooting_depth)) ** self.thetapow
+            self.nutrient_pool.soil_moisture_dependence_factor = min(1, wp_comp, fc_comp)
+            
+    def get_potential_crop_uptake(self):
         pass
     
     def fertiliser(self):
