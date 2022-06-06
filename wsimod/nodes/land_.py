@@ -223,6 +223,15 @@ class PerviousSurface(Surface):
         #IHACRES is a deficit not a tank, so doesn't really have a capacity in this way... and if it did.. it probably wouldn't be the sum of these
         kwargs['depth'] = kwargs['field_capacity'] + kwargs['wilting_point'] # TODO Need better way to handle this
         
+        #Initiliase flows
+        self.infiltration_excess = self.empty_vqip()
+        self.subsurface_flow = self.empty_vqip()
+        self.percolation = self.empty_vqip()
+        self.tank_recharge = self.empty_vqip()
+        self.evaporation = self.empty_vqip()
+        self.precipitation = self.empty_vqip()
+        
+        
         super().__init__(**kwargs)
         
         self.subsurface_coefficient = 1 - self.percolation_coefficient #proportion of water above field capacity that can goes to subsurface flow
@@ -280,6 +289,14 @@ class PerviousSurface(Surface):
         self.parent.surface_runoff.push_storage(infiltration_excess, force = True)
         self.parent.subsurface_runoff.push_storage(subsurface_flow, force = True)
         self.parent.percolation.push_storage(percolation, force = True)
+        
+        #Track flows
+        self.infiltration_excess = infiltration_excess
+        self.subsurface_flow = subsurface_flow
+        self.percolation = percolation
+        self.tank_recharge = tank_recharge
+        self.evaporation = evaporation
+        self.precipitation = precipitation
         
         #Mass balance
         in_ = precipitation
@@ -365,13 +382,19 @@ class CropSurface(PerviousSurface):
         self.processes.append(self.calc_temperature_dependence_factor)
         self.processes.append(self.calc_soil_moisture_dependence_factor)
         self.processes.append(self.nutrient_pool.soil_pool_transformation)
-        self.processes.append(self.calc_potential_crop_uptake)
+        self.processes.append(self.calc_crop_uptake)
         
         #TODO possibly move these into nutrient pool
         self.processes.append(self.suspension)
         self.processes.append(self.erosion)
         self.processes.append(self.denitrification)
         self.processes.append(self.adsorption)
+    
+    def fertiliser(self):
+        pass
+    
+    def manure(self):
+        pass
     
     def calc_temperature_dependence_factor(self):
         #TODO parameterise/find sources for data (HYPE)
@@ -397,10 +420,8 @@ class CropSurface(PerviousSurface):
             wp_diff = current_soil_moisture - self.wilting_point
             wp_comp = (wp_diff / (self.thetalow * self.rooting_depth)) ** self.thetapow
             self.nutrient_pool.soil_moisture_dependence_factor = min(1, wp_comp, fc_comp)
-    
-    
-    
-    def get_potential_crop_uptake(self):
+
+    def calc_crop_uptake(self):
         #TODO insert parameters and convert to kg/m2/dt
         #Initialise N_common_uptake
         N_common_uptake = 0
@@ -432,14 +453,12 @@ class CropSurface(PerviousSurface):
                 N_common_uptake = self.uptake1 * self.uptake2 * self.uptake3 * uptake_par / ((self.uptake2 + uptake_par) ** 2)
             N_common_uptake *= constants.G_M2_TO_KG_M2
             P_common_uptake = N_common_uptake * self.uptake_PNratio
-        self.common_uptake['N'] = N_common_uptake
-        self.common_uptake['P'] = P_common_uptake
-            
-    def fertiliser(self):
-        pass
-    
-    def manure(self):
-        pass
+            # self.common_uptake['N'] = N_common_uptake
+            # self.common_uptake['P'] = P_common_uptake
+            uptake = {'P' : P_common_uptake,
+                      'N' : N_common_uptake}
+            crop_uptake = self.nutrient_pool.dissolved_inorganic_pool.extract(uptake)
+            #TODO - I guess these nutrients just leave the model? If so need to mass include in balance
     
     def suspension(self):
         pass
