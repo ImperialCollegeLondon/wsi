@@ -15,7 +15,7 @@ class NutrientPool:
         
         self.fraction_manure_to_dissolved_inorganic = self.get_empty_nutrient()
         self.fraction_residue_to_fast = self.get_empty_nutrient()
-        self.fraction_dry_n_to_dissolved_inorganic = 0
+        self.fraction_dry_n_to_dissolved_inorganic = 0.9
         
         self.degrhpar = self.get_empty_nutrient()
         self.dishpar = self.get_empty_nutrient()
@@ -69,6 +69,13 @@ class NutrientPool:
                                                        self.fraction_residue_to_fast))    
     def allocate_fertiliser(self, fertiliser):
         self.dissolved_inorganic_pool.receive(fertiliser)
+    
+    def extract_dissolved(self, proportion):
+        reply_di = self.dissolved_inorganic_pool.extract({'N' : self.dissolved_inorganic_pool['N'] * proportion,
+                                                          'P' : self.dissolved_inorganic_pool['P'] * proportion})
+        reply_do = self.dissolved_organic_pool.extract({'N' : self.dissolved_organic_pool['N'] * proportion,
+                                                        'P' : self.dissolved_organic_pool['P'] * proportion})
+        return {'organic' : reply_do, 'inorganic' : reply_di}
         
     def soil_pool_transformation(self):
         self.temp_soil_process(self.degrhpar, self.humus_pool, self.fast_pool)
