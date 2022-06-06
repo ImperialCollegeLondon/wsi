@@ -430,7 +430,10 @@ class CropSurface(PerviousSurface):
             uptake_par = (self.uptake1 - self.uptake2) * exp(-self.uptake3 * days_after_sow) * temp_func
             if (uptake_par + self.uptake2) > 0 :
                 N_common_uptake = self.uptake1 * self.uptake2 * self.uptake3 * uptake_par / ((self.uptake2 + uptake_par) ** 2)
+            N_common_uptake *= constants.G_M2_TO_KG_M2
             P_common_uptake = N_common_uptake * self.uptake_PNratio
+        self.common_uptake['N'] = N_common_uptake
+        self.common_uptake['P'] = P_common_uptake
             
     def fertiliser(self):
         pass

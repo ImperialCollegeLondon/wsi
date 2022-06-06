@@ -46,6 +46,7 @@ KM2_TO_M2 = 1e6
 M2_TO_KM2 = 1e-6
 
 G_M2_TO_KG_KM2 = 1e3
+G_M2_TO_KG_M2 = 1e-3
 MGMM_L_TO_KG_KM2 = 1e-6 * 1e3 * 1e-3 * 1e6
 
 D_TO_S = 3600 * 24
