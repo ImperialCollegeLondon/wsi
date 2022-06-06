@@ -347,6 +347,9 @@ class CropSurface(PerviousSurface):
         self.uptake2 = 1 # [-] shape factor for crop (Dissolved) Inorganic nitrogen uptake
         self.uptake3 = 0.02 # [1/day] shape factor for crop (Dissolved) Inorganic nitrogen uptake
         self.uptake_PNratio = 1/7.2 # [-] P:N during crop uptake
+        self.days_after_sow = None
+        self.harvest_day = 300
+        self.sowing_day = 50
         
         super().__init__(**kwargs)
         
@@ -395,8 +398,7 @@ class CropSurface(PerviousSurface):
             wp_comp = (wp_diff / (self.thetalow * self.rooting_depth)) ** self.thetapow
             self.nutrient_pool.soil_moisture_dependence_factor = min(1, wp_comp, fc_comp)
     
-    def help_function(self, dayno):
-        return (self.uptake1 - self.uptake2) * exp(-self.uptake3 * dayno)
+    
     
     def get_potential_crop_uptake(self):
         #TODO insert parameters and convert to kg/m2/dt
@@ -404,16 +406,30 @@ class CropSurface(PerviousSurface):
         N_common_uptake = 0
         P_common_uptake = 0
         
-        #Calculate if fallow
-        
-        if not self.fallow:
-            #Calculate dayno
-            dayno = 0
+        #Calculate days after sow
+        #TODO leap year? Or cba?
+        if self.days_after_sow is None:
+            if self.parent.t.dayofyear == self.sowing_day:
+                self.days_after_sow = 0
+        else:
+            if self.parent.t.dayofyear == self.harvest_day:
+                self.days_after_sow = None
+            else:
+                self.days_after_sow += 1
+            
+        if self.days_after_sow:
+            days_after_sow = self.days_after_sow
+            
+            if self.autumn_sow:
+                temp_func = max(0, min(1, (self.storage['temperature'] - 5) / 20))
+                days_after_sow -= 25 #Not sure why this is
+            else:
+                temp_func = 1
             
             #Calculate uptake
-            help_ = self.help_function(dayno)
-            if (help_ + self.uptake2) > 0 :
-                N_common_uptake = self.uptake1 * self.uptake2 * self.uptake3 * help_ / (self.uptake2 + help_) / (self.uptake2 + help_)
+            uptake_par = (self.uptake1 - self.uptake2) * exp(-self.uptake3 * days_after_sow) * temp_func
+            if (uptake_par + self.uptake2) > 0 :
+                N_common_uptake = self.uptake1 * self.uptake2 * self.uptake3 * uptake_par / ((self.uptake2 + uptake_par) ** 2)
             P_common_uptake = N_common_uptake * self.uptake_PNratio
             
     def fertiliser(self):
