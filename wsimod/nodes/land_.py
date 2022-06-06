@@ -8,6 +8,7 @@ from wsimod.nodes.nodes import Node, Tank, DecayTank, QueueTank, ResidenceTank
 from wsimod.nodes.nutrient_pool import NutrientPool
 from wsimod.core import constants
 from math import exp
+from bisect import bisect_left
 import sys
 
 class Land_(Node):
@@ -243,9 +244,11 @@ class PerviousSurface(Surface):
         #TODO decaytank uses air temperature not soil temperature... probably need to just give it the decay function
     
     def get_cmd(self):
+        #Depth of moisture deficit
         return self.get_excess()['volume'] / self.area
     
     def get_smc(self):
+        #Depth of soil moisture
         return self.storage['volume'] / self.area
     
     def ihacres(self):
@@ -345,8 +348,6 @@ class PerviousSurface(Surface):
 
 class CropSurface(PerviousSurface):
     def __init__(self, **kwargs):
-        self.stage_dates = [] #dates when crops are planted/growing/harvested
-        self.crop_factor = [] #coefficient to do with ET, associated with stages
         self.ET_depletion_factor = 0 #To do with water availability, p from FAOSTAT
         self.rooting_depth = 0 #maximum depth that plants can absorb, Zr from FAOSTAT
         kwargs['depth'] = kwargs['rooting_depth']
@@ -356,19 +357,39 @@ class CropSurface(PerviousSurface):
         
         #Parameters (TODO source and check units)
         self.satact = 0.6
+        
         self.tawfract_p = 0.5 # Fraction of TAW that a crop can extract from the root zone without suffering water stress
+        
         self.thetaupp = 0.12 # [-] for calculating soil_moisture_dependence_factor
         self.thetalow = 0.08 # [-] for calculating soil_moisture_dependence_factor
         self.thetapow = 1 # [-] for calculating soil_moisture_dependence_factor
+        
         self.uptake1 = 15 # [g/m2/y] shape factor for crop (Dissolved) Inorganic nitrogen uptake
         self.uptake2 = 1 # [-] shape factor for crop (Dissolved) Inorganic nitrogen uptake
         self.uptake3 = 0.02 # [1/day] shape factor for crop (Dissolved) Inorganic nitrogen uptake
         self.uptake_PNratio = 1/7.2 # [-] P:N during crop uptake
-        self.days_after_sow = None
-        self.harvest_day = 300
-        self.sowing_day = 50
+        
+        self.crop_factor_stages = [0,0,0,0,0,0] #coefficient to do with ET, associated with stages
+        self.crop_factor_stage_dates = [0, 50, 200, 300, 301, 365] #dates when crops are planted/growing/harvested
+        
+        self.crop_cover_max = 0.9 # [-] 0~1
+        self.ground_cover_max = 0.3 # [-]
         
         super().__init__(**kwargs)
+        
+        #Infer basic sow/harvest calendar
+        #TODO It might be easier to infer everything - but could be risky if people want to change calendars on the fly
+        self.harvest_day = self.crop_factor_stage_dates[-3]
+        self.sow_day = self.crop_factor_stage_dates[1]
+        self.harvest_sow_calendar = [0, self.sow_day, self.harvest_day, self.harvest_day + 1, 365]
+        self.ground_cover_stages = [0,0,self.ground_cover_max,0,0]
+        self.crop_cover_stages = [0,0,self.crop_cover_max,0,0]
+        
+        #State variables
+        self.days_after_sow = None
+        self.crop_cover = 0
+        self.ground_cover = 0
+        self.crop_factor = 0
         
         self.total_available_water = self.field_capacity - self.wilting_point
         if self.total_available_water < 0:
@@ -376,6 +397,7 @@ class CropSurface(PerviousSurface):
         
         self.nutrient_pool = NutrientPool(**self.nutrient_parameters)
         self.fraction_dry_deposition_to_fast = 1 - self.fraction_dry_deposition_to_DIN
+        self.inflows.insert(0, self.calc_crop_cover)
         self.inflows.append(self.fertiliser)
         self.inflows.append(self.manure)
         
@@ -390,6 +412,39 @@ class CropSurface(PerviousSurface):
         self.processes.append(self.denitrification)
         self.processes.append(self.adsorption)
     
+    def quick_interp(self, x, xp, yp):
+        #Restrained version of np.interp
+        x_ind = bisect_left(xp, x)
+        x_left = xp[x_ind - 1]
+        x_right = xp[x_ind]
+        dif = x - x_left
+        y_left = yp[x_ind - 1]
+        y_right = yp[x_ind]
+        y = y_left + (y_right - y_left) * dif / (x_right - x_left)
+        return y
+    
+    def calc_crop_cover(self):
+        #Calculate calendar
+        #TODO leap year? Or cba?
+        doy = self.t.dayofyear
+        
+        if self.days_after_sow is None:
+            if self.parent.t.dayofyear == self.sowing_day:
+                self.days_after_sow = 0
+        else:
+            if self.parent.t.dayofyear == self.harvest_day:
+                self.days_after_sow = None
+                self.crop_factor = self.crop_factor_stages[0]
+                self.crop_cover = 0
+                self.ground_cover = 0
+            else:
+                self.days_after_sow += 1
+        
+        if self.days_after_sow:
+            self.crop_factor = self.quick_interp(doy, self.crop_stage_dates, self.crop_factor_stages)
+            self.crop_cover = self.quick_interp(doy, self.harvest_sow_calendar, self.crop_cover_stages)
+            self.ground_cover = self.quick_interp(doy, self.harvest_sow_calendar, self.ground_cover_stages)
+                
     def fertiliser(self):
         pass
     
@@ -427,17 +482,6 @@ class CropSurface(PerviousSurface):
         N_common_uptake = 0
         P_common_uptake = 0
         
-        #Calculate days after sow
-        #TODO leap year? Or cba?
-        if self.days_after_sow is None:
-            if self.parent.t.dayofyear == self.sowing_day:
-                self.days_after_sow = 0
-        else:
-            if self.parent.t.dayofyear == self.harvest_day:
-                self.days_after_sow = None
-            else:
-                self.days_after_sow += 1
-            
         if self.days_after_sow:
             days_after_sow = self.days_after_sow
             
