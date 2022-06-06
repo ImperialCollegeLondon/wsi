@@ -7,7 +7,7 @@ Created on Fri May 20 08:58:58 2022
 from wsimod.nodes.nodes import Node, Tank, DecayTank, QueueTank, ResidenceTank
 from wsimod.nodes.nutrient_pool import NutrientPool
 from wsimod.core import constants
-from math import exp
+from math import exp, log10, sin
 from bisect import bisect_left
 import sys
 
@@ -96,9 +96,11 @@ class Land_(Node):
         
 class Surface(DecayTank):
     def __init__(self, **kwargs):
-        #TODO EVERYONE INHERITS THIS DEPTH VALUE... FIX THAT
         self.depth = 0
         self.decays = {} #generic decay parameters
+        
+        
+        #TODO interception if I hate myself enough?
         
         #Parameters
         super().__init__(**kwargs)        
@@ -134,10 +136,12 @@ class Surface(DecayTank):
         #TODO double check units - is weight of N or weight of NHX/NOX?
         nhx = self.get_data_input('nhx-dry') * self.area
         nox = self.get_data_input('nox-dry') * self.area
+        srp = self.get_data_input('srp-dry') * self.area
         
         vqip = self.empty_vqip()
         vqip['ammonia'] = nhx
         vqip['nitrate'] = nox
+        vqip['phosphate'] = srp
         
         self.dry_deposition_to_tank(vqip)
         return (vqip, self.empty_vqip())
@@ -146,10 +150,12 @@ class Surface(DecayTank):
         #TODO double check units - is weight of N or weight of NHX/NOX?
         nhx = self.get_data_input('nhx-wet') * self.area
         nox = self.get_data_input('nox-wet') * self.area
+        srp = self.get_data_input('srp-wet') * self.area
         
         vqip = self.empty_vqip()
         vqip['ammonia'] = nhx
         vqip['nitrate'] = nox
+        vqip['phosphate'] = srp
         
         self.wet_deposition_to_tank(vqip)
         return (vqip, self.empty_vqip())
@@ -216,6 +222,8 @@ class PerviousSurface(Surface):
         self.et0_coefficient = 0.5 #proportion of et0 that goes to evapotranspiration
         self.ihacres_p = 0.5
         
+        
+        
         #TODO what should these params be?
         self.soil_temp_w_prev = 0.3 #previous timestep weighting
         self.soil_temp_w_air = 0.3 #air temperature weighting
@@ -242,7 +250,8 @@ class PerviousSurface(Surface):
         self.processes.append(self.calculate_soil_temperature) # Calculate soil temp + dependence factor
         # self.processes.append(self.decay) #apply generic decay (currently handled by decaytank at end of timestep)
         #TODO decaytank uses air temperature not soil temperature... probably need to just give it the decay function
-    
+        
+        self.outflows.append(self.route)
     def get_cmd(self):
         #Depth of moisture deficit
         return self.get_excess()['volume'] / self.area
@@ -288,11 +297,6 @@ class PerviousSurface(Surface):
         precipitation = self.v_change_vqip(self.empty_vqip(), precipitation)
         evaporation = self.v_change_vqip(self.empty_vqip(), evaporation)
         
-        #Send water 
-        self.parent.surface_runoff.push_storage(infiltration_excess, force = True)
-        self.parent.subsurface_runoff.push_storage(subsurface_flow, force = True)
-        self.parent.percolation.push_storage(percolation, force = True)
-        
         #Track flows
         self.infiltration_excess = infiltration_excess
         self.subsurface_flow = subsurface_flow
@@ -306,34 +310,12 @@ class PerviousSurface(Surface):
         out_ = evaporation
         
         return (in_, out_)
-        
-    # def precipitation_infiltration_evaporation(self):
-    #     precipitation_depth = self.get_data_input('precipitation')
-    #     evaporation_depth = self.get_data_input('et0') * self.et0_coefficient
-        
-    #     if precipitation_depth < evaporation_depth:
-    #         net_precipitation = 0
-    #         evaporation_from_soil = evaporation_depth - precipitation_depth
-    #         evaporation_from_soil *= self.area
-    #         evaporation_from_soil = self.evaporate(evaporation_from_soil)
-    #         total_evaporation = evaporation_from_soil + precipitation_depth * self.area
-    #     else:
-    #         net_precipitation = precipitation_depth - evaporation_depth
-    #         infiltrated_precipitation = min(net_precipitation, self.infiltration_capacity)
-    #         infiltration_excess = net_precipitation - infiltrated_precipitation
-            
-    #         infiltrated_precipitation *= self.area
-    #         infiltrated_precipitation = self.v_change_vqip(self.empty_vqip(), infiltrated_precipitation)
-    #         _ = self.push_storage(infiltrated_precipitation)
-    #         total_evaporation = evaporation_depth * self.area
-            
-    #         #TODO - what to do with this
-    #         infiltration_excess *= self.area
-        
-    #     total_evaporation = self.v_change_vqip(self.empty_vqip(), total_evaporation)
-    #     total_precipitation = self.v_change_vqip(self.empty_vqip(), precipitation_depth * self.area)
-        
-    #     return (total_precipitation, total_evaporation)
+    
+    def route(self):
+        #Send water 
+        self.parent.surface_runoff.push_storage(self.infiltration_excess, force = True)
+        self.parent.subsurface_runoff.push_storage(self.subsurface_flow, force = True)
+        self.parent.percolation.push_storage(self.percolation, force = True)
         
     
     def calculate_soil_temperature(self):
@@ -368,6 +350,9 @@ class CropSurface(PerviousSurface):
         self.uptake2 = 1 # [-] shape factor for crop (Dissolved) Inorganic nitrogen uptake
         self.uptake3 = 0.02 # [1/day] shape factor for crop (Dissolved) Inorganic nitrogen uptake
         self.uptake_PNratio = 1/7.2 # [-] P:N during crop uptake
+        
+        #TODO check units (WIMS is based on mg/l of N)
+        self.nh3_no3_ratio = 1/10 # [-] NH3:NO3 ratio for soil water abstractions of N in nutrient pool (averaged from WIMS)
         
         self.crop_factor_stages = [0,0,0,0,0,0] #coefficient to do with ET, associated with stages
         self.crop_factor_stage_dates = [0, 50, 200, 300, 301, 365] #dates when crops are planted/growing/harvested
@@ -407,10 +392,45 @@ class CropSurface(PerviousSurface):
         self.processes.append(self.calc_crop_uptake)
         
         #TODO possibly move these into nutrient pool
-        self.processes.append(self.suspension)
         self.processes.append(self.erosion)
         self.processes.append(self.denitrification)
         self.processes.append(self.adsorption)
+    
+    
+    
+    def pull_storage(self, vqip):
+        #Pull from Tank
+        
+        if self.storage['volume'] == 0:
+            #TODO people may want to pull pollutants and no volume from storage..
+            return self.empty_vqip()
+        
+        #Adjust based on available volume
+        reply = min(vqip['volume'], self.storage['volume'])
+        
+        
+        # Edit BD 2022-05-03 - should be no longer needed after change to total-based
+        # if (self.storage['volume'] - reply) < self.unavailable_to_evap:
+        #     reply = max(reply - self.unavailable_to_evap, 0)
+        
+        #Update reply to vqip (get concentration for non-nutrients)
+        reply = self.v_change_vqip(self.storage, reply)
+        
+        #Update nutrient pool and get concentration for nutrients
+        prop = reply['volume'] / self.storage['volume']
+        nutrients = self.nutrient_pool.extract_dissolved(prop)
+
+        
+        #Extract from storage
+        self.storage = self.extract_vqip(self.storage, reply)
+        
+        #For now assume organic and inorganic go to the same place to maintain mass balance
+        total_N = nutrients['inorganic']['N'] + nutrients['organic']['N']
+        reply['nitrate'] = total_N * (1 - self.nh3_no3_ratio)
+        reply['ammonia'] = total_N * self.nh3_no3_ratio
+        reply['phosphate'] = nutrients['inorganic']['P'] + nutrients['organic']['P']        
+        
+        return reply
     
     def quick_interp(self, x, xp, yp):
         #Restrained version of np.interp
@@ -424,7 +444,7 @@ class CropSurface(PerviousSurface):
         return y
     
     def calc_crop_cover(self):
-        #Calculate calendar
+        #Calculate crop calendar and cover
         #TODO leap year? Or cba?
         doy = self.t.dayofyear
         
@@ -439,9 +459,9 @@ class CropSurface(PerviousSurface):
                 self.ground_cover = 0
             else:
                 self.days_after_sow += 1
-        
+        self.crop_factor = self.quick_interp(doy, self.crop_stage_dates, self.crop_factor_stages)
         if self.days_after_sow:
-            self.crop_factor = self.quick_interp(doy, self.crop_stage_dates, self.crop_factor_stages)
+            #Move outside of this if, if you want nonzero crop/ground cover outside of season
             self.crop_cover = self.quick_interp(doy, self.harvest_sow_calendar, self.crop_cover_stages)
             self.ground_cover = self.quick_interp(doy, self.harvest_sow_calendar, self.ground_cover_stages)
                 
@@ -497,19 +517,43 @@ class CropSurface(PerviousSurface):
                 N_common_uptake = self.uptake1 * self.uptake2 * self.uptake3 * uptake_par / ((self.uptake2 + uptake_par) ** 2)
             N_common_uptake *= constants.G_M2_TO_KG_M2
             P_common_uptake = N_common_uptake * self.uptake_PNratio
-            # self.common_uptake['N'] = N_common_uptake
-            # self.common_uptake['P'] = P_common_uptake
             uptake = {'P' : P_common_uptake,
                       'N' : N_common_uptake}
             crop_uptake = self.nutrient_pool.dissolved_inorganic_pool.extract(uptake)
             #TODO - I guess these nutrients just leave the model? If so need to mass include in balance
-    
-    def suspension(self):
-        pass
+            #LEON CONFIRMED
     
     def erosion(self):
-        pass
-    
+        #TODO source parameters
+        precipitation_depth = self.get_data_input('precipitation') * constants.M_TO_MM
+        if precipitation_depth > 5:
+            rainfall_energy = 8.95 + 8.44 * log10(precipitation_depth * (0.257 + sin(2 * 3.14 * ((self.parent.t.dayofyear - 70) / 365)) * 0.09) * 2)
+            rainfall_energy *= precipitation_depth
+            mobilised_rain = rainfall_energy * (1 - self.crop_cover) * self.erodibility
+        else:
+            mobilised_rain = 0
+        if self.infiltration_excess['volume'] > 0:
+            mobilised_flow = (self.infiltration_excess['volume'] / self.area * constants.M_TO_MM * 365) ** self.sreroexp
+            mobilised_flow *= (1 - self.ground_cover) * (1/(0.5 * self.cohesion)) * sin(self.slope / 100) / 365
+        else:
+            mobilised_flow = 0
+        erodingflow = (self.infiltration_excess['volume'] + self.tank_recharge['volume'] + self.subsurface_flow['volume'] + self.percolation['volume']) / self.area * constants.M_TO_MM
+        transportfactor = min(1, (erodingflow / 4) ** 1.3)
+        erodedsed = 1000 * (mobilised_flow +  mobilised_rain) * transportfactor * constants.KM2_TO_M2# [kg/m2]
+        #TODO not sure what conversion this HYPE 1000 is referring to
+        
+        # soil erosion with adsorbed inorganic phosphorus and humus phosphorus (erodedP as P in eroded sediments and effect of enrichment)
+        if erodingflow > 4 :
+            enrichment = 1.5
+        else:
+            enrichment = 4 - (4 - 1.5) * erodingflow / 4
+        
+        adsorbed_P = self.nutrient_pool.adsorbed_inorganic_pool['P'] / self.storage['volume'] * constants.MG_L_TO_KG_M3
+        humus_P = self.nutrient_pool.adsorbed_inorganic_pool['P'] / self.storage['volume'] * constants.MG_L_TO_KG_M3
+        erodedP = 1e-6 * erodedsed * ((adsorbed_P + humus_P) / self.rooting_depth / self.bulk_density) * enrichment # [kg/km2]
+        fracminP = adsorbed_P / (adsorbed_P + humus_P) # [-] fraction of adsorbed inorganic P in the total P removed
+            
+        
     def denitrification(self):
         pass
     
@@ -518,14 +562,16 @@ class CropSurface(PerviousSurface):
     
     def dry_deposition_to_tank(self, vqip):
         #Distribute between surfaces
-        #TODO INCLUDE P AND AMMONIA
+        deposition = self.nutrient_pool.get_empty_nutrient()
+        deposition['N'] = vqip['nitrate'] + vqip['ammonia']
+        deposition['P'] = vqip['phosphate']
+        self.nutrient_pool.allocate_dry_deposition(deposition)
         
-        nitrate_to_din = vqip['nitrate'] * self.fraction_dry_deposition_to_DIN
-        nitrate_to_fast = vqip['nitrate'] * self.fraction_dry_deposition_to_fast
-        pass
-    
     def wet_deposition_to_tank(self, vqip):
-        pass
+        deposition = self.nutrient_pool.get_empty_nutrient()
+        deposition['N'] = vqip['nitrate'] + vqip['ammonia']
+        deposition['P'] = vqip['phosphate']
+        self.nutrient_pool.allocate_wet_deposition(deposition)
 
     
 class IrrigationSurface(CropSurface):
