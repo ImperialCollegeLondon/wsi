@@ -71,17 +71,17 @@ class NutrientPool:
         self.dissolved_inorganic_pool.receive(fertiliser)
     
     def extract_dissolved(self, proportion):
-        reply_di = self.dissolved_inorganic_pool.extract({'N' : self.dissolved_inorganic_pool['N'] * proportion,
-                                                          'P' : self.dissolved_inorganic_pool['P'] * proportion})
-        reply_do = self.dissolved_organic_pool.extract({'N' : self.dissolved_organic_pool['N'] * proportion,
-                                                        'P' : self.dissolved_organic_pool['P'] * proportion})
+        reply_di = self.dissolved_inorganic_pool.extract({'N' : self.dissolved_inorganic_pool.storage['N'] * proportion,
+                                                          'P' : self.dissolved_inorganic_pool.storage['P'] * proportion})
+        reply_do = self.dissolved_organic_pool.extract({'N' : self.dissolved_organic_pool.storage['N'] * proportion,
+                                                        'P' : self.dissolved_organic_pool.storage['P'] * proportion})
         return {'organic' : reply_do, 'inorganic' : reply_di}
     
     def get_erodable_P(self):
-        return self.adsorbed_inorganic_pool['P'] + self.humus_pool['P']
+        return self.adsorbed_inorganic_pool.storage['P'] + self.humus_pool.storage['P']
     
     def erode_P(self, amount_P):
-        fraction_adsorbed = self.adsorbed_inorganic_pool['P'] / (self.adsorbed_inorganic_pool['P'] + self.humus_pool['P'])
+        fraction_adsorbed = self.adsorbed_inorganic_pool.storage['P'] / (self.adsorbed_inorganic_pool.storage['P'] + self.humus_pool.storage['P'])
         
         request = self.empty_nutrient()
         request['P'] = amount_P * fraction_adsorbed
@@ -106,7 +106,7 @@ class NutrientPool:
             to_extract[nutrient] = parameter[nutrient] *\
                                             self.temperature_dependence_factor *\
                                             self.soil_moisture_dependence_factor *\
-                                            extract_pool[nutrient]
+                                            extract_pool.storage[nutrient]
         to_extract = extract_pool.extract(to_extract)
         receive_pool.receive(to_extract)
 
