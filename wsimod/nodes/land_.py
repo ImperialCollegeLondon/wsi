@@ -7,7 +7,7 @@ Created on Fri May 20 08:58:58 2022
 from wsimod.nodes.nodes import Node, Tank, DecayTank, QueueTank, ResidenceTank
 from wsimod.nodes.nutrient_pool import NutrientPool
 from wsimod.core import constants
-from math import exp, log10, sin
+from math import exp, log, log10, sin
 from bisect import bisect_left
 import sys
 
@@ -261,6 +261,7 @@ class PerviousSurface(Surface):
         return self.storage['volume'] / self.area
     
     def ihacres(self):
+        #TODO saturation excess
         
         #Read data
         precipitation_depth = self.get_data_input('precipitation')
@@ -330,6 +331,8 @@ class PerviousSurface(Surface):
 
 class CropSurface(PerviousSurface):
     def __init__(self, **kwargs):
+        #TODO Check that nitrate, ammonia, solids, phosphorus, phosphate are in POLLUTANTS
+        
         self.ET_depletion_factor = 0 #To do with water availability, p from FAOSTAT
         self.rooting_depth = 0 #maximum depth that plants can absorb, Zr from FAOSTAT
         kwargs['depth'] = kwargs['rooting_depth']
@@ -350,6 +353,20 @@ class CropSurface(PerviousSurface):
         self.uptake2 = 1 # [-] shape factor for crop (Dissolved) Inorganic nitrogen uptake
         self.uptake3 = 0.02 # [1/day] shape factor for crop (Dissolved) Inorganic nitrogen uptake
         self.uptake_PNratio = 1/7.2 # [-] P:N during crop uptake
+        
+        self.erodibility = 0.0025 # [g * d / (J * mm)]
+        self.sreroexp = 1.2 # [-] surface runoff erosion exponent
+        self.cohesion = 1 # [kPa]
+        self.slope = 5 # [-] every 100
+        self.srfilt = 0.95 # [-] ratio of eroded sediment left in surface runoff after filtration
+        self.macrofilt = 0.1 # [-] ratio of eroded sediment left in subsurface flow after filtration
+        
+        self.limpar = 0.7 # [-] above which denitrification begins
+        self.exppar = 2.5 # [-] exponential parameter for soil_moisture_dependence_factor_exp calculation
+        self.hsatINs = 1 # [mg/l] for calculation of half-saturation concentration dependence factor
+        self.denpar = 0.015 # [-] denitrification rate coefficient
+        
+        self.adosorption_nr_limit = 0.00001
         
         #TODO check units (WIMS is based on mg/l of N)
         self.nh3_no3_ratio = 1/10 # [-] NH3:NO3 ratio for soil water abstractions of N in nutrient pool (averaged from WIMS)
@@ -419,16 +436,16 @@ class CropSurface(PerviousSurface):
         #Update nutrient pool and get concentration for nutrients
         prop = reply['volume'] / self.storage['volume']
         nutrients = self.nutrient_pool.extract_dissolved(prop)
-
         
         #Extract from storage
         self.storage = self.extract_vqip(self.storage, reply)
         
-        #For now assume organic and inorganic go to the same place to maintain mass balance
+        #For now assume organic and inorganic N go to the same place to maintain mass balance
         total_N = nutrients['inorganic']['N'] + nutrients['organic']['N']
         reply['nitrate'] = total_N * (1 - self.nh3_no3_ratio)
         reply['ammonia'] = total_N * self.nh3_no3_ratio
-        reply['phosphate'] = nutrients['inorganic']['P'] + nutrients['organic']['P']        
+        reply['phosphate'] = nutrients['inorganic']['P']
+        reply['phosphorus'] = nutrients['organic']['P']
         
         return reply
     
@@ -537,28 +554,139 @@ class CropSurface(PerviousSurface):
             mobilised_flow *= (1 - self.ground_cover) * (1/(0.5 * self.cohesion)) * sin(self.slope / 100) / 365
         else:
             mobilised_flow = 0
-        erodingflow = (self.infiltration_excess['volume'] + self.tank_recharge['volume'] + self.subsurface_flow['volume'] + self.percolation['volume']) / self.area * constants.M_TO_MM
+        
+        total_flows = self.infiltration_excess['volume'] + self.subsurface_flow['volume'] + self.percolation['volume'] #m3/dt + self.tank_recharge['volume'] (guess not needed)
+        
+        erodingflow = total_flows / self.area * constants.M_TO_MM
         transportfactor = min(1, (erodingflow / 4) ** 1.3)
-        erodedsed = 1000 * (mobilised_flow +  mobilised_rain) * transportfactor * constants.KM2_TO_M2# [kg/m2]
+        erodedsed = 1000 * (mobilised_flow +  mobilised_rain) * transportfactor # [kg/km2]
         #TODO not sure what conversion this HYPE 1000 is referring to
         
         # soil erosion with adsorbed inorganic phosphorus and humus phosphorus (erodedP as P in eroded sediments and effect of enrichment)
         if erodingflow > 4 :
             enrichment = 1.5
-        else:
+        elif erodingflow > 0:
             enrichment = 4 - (4 - 1.5) * erodingflow / 4
+        else:
+            return
         
-        adsorbed_P = self.nutrient_pool.adsorbed_inorganic_pool['P'] / self.storage['volume'] * constants.MG_L_TO_KG_M3
-        humus_P = self.nutrient_pool.adsorbed_inorganic_pool['P'] / self.storage['volume'] * constants.MG_L_TO_KG_M3
-        erodedP = 1e-6 * erodedsed * ((adsorbed_P + humus_P) / self.rooting_depth / self.bulk_density) * enrichment # [kg/km2]
-        fracminP = adsorbed_P / (adsorbed_P + humus_P) # [-] fraction of adsorbed inorganic P in the total P removed
-            
+        #Eroding flow > 0
+        #
+        erodableP = self.get_erodable_P() / self.area * constants.KG_M2_TO_KG_KM2
+        erodedP = erodedsed * (erodableP / (self.rooting_depth * constants.M_TO_KM) / (self.bulk_density * constants.KG_M3_TO_KG_KM3)) * enrichment # [kg/km2]
+        
+        #Convert top kg
+        erodedP *= (self.area * constants.M2_TO_KM2) # [kg]
+        erodedsed *= (self.area * constants.M2_TO_KM2) # [kg]
+        
+        
+        surface_erodedP = self.srfilt * self.infiltration_excess['volume'] / total_flows * erodedP # [kg]
+        surface_erodedsed = self.srfilt * self.infiltration_excess['volume'] / total_flows * erodedsed # [kg]
+        
+        subsurface_erodedP = self.macrofilt * self.subsurface_flow['volume'] / total_flows * erodedP # [kg]
+        subsurface_erodedsed = self.macrofilt * self.self.subsurface_flow['volume'] / total_flows * erodedsed # [kg]
+        
+        percolation_erodedP = self.macrofilt * self.percolation['volume'] / total_flows * erodedP # [kg]
+        percolation_erodedsed = self.macrofilt * self.self.percolation['volume'] / total_flows * erodedsed # [kg]
+        
+        eff_erodedP = percolation_erodedP + surface_erodedP + subsurface_erodedP # [kg]
+        
+        reply = self.nutrient_pool.erode_P(eff_erodedP)
+        ratio_satisfied = reply['P'] / eff_erodedP
+        if ratio_satisfied != 1:
+            print('weird nutrients')
+        
+        self.infiltration_excess['phosphorus'] += (surface_erodedP * ratio_satisfied)
+        self.infiltration_excess['solids'] += surface_erodedsed
+        self.subsurface_flow['phosphorus'] += (subsurface_erodedP * ratio_satisfied)
+        self.subsurface_flow['solids'] += subsurface_erodedsed
+        self.percolation['phosphorus'] += (percolation_erodedP * ratio_satisfied)
+        self.percolation['solids'] += percolation_erodedsed
+        
+        #TODO mass balance - sediments entering here!
         
     def denitrification(self):
-        pass
-    
+        soil_moisture_content = self.get_smc()
+        if soil_moisture_content > self.field_capacity:
+            denitrifying_soil_moisture_dependence = 1
+        elif soil_moisture_content / self.field_capacity > self.limpar:
+            denitrifying_soil_moisture_dependence = (((soil_moisture_content / self.field_capacity) - self.limpar) / (1 - self.limpar)) ** self.exppar
+        else:
+            denitrifying_soil_moisture_dependence = 0
+            return
+        
+        #TODO should this be moved to NutrientPool
+        din_conc = self.nutrient_pool.dissolved_inorganic_pool['N'] / self.storage['volume'] # [kg/m3]
+        din_conc *= constants.KG_M3_TO_MG_L
+        half_saturation_concentration_dependence_factor = din_conc / (din_conc + self.hsatINs)
+        
+        denitrified_N = self.nutrient_pool.dissolved_inorganic_pool['N'] *\
+                            half_saturation_concentration_dependence_factor *\
+                                denitrifying_soil_moisture_dependence *\
+                                    self.nutrient_pool.temperature_dependence_factor *\
+                                        self.denpar
+        denitrified_request = self.nutrient_pool.empty_nutrient()
+        denitrified_request['N'] = denitrified_N
+        denitrified_N = self.nutrient_pool.dissolved_inorganic_pool.extract(denitrified_request)
+        #TODO mass balance - this either leaves the model, goes to nitrite or some mix
+        
     def adsorption(self):
-        pass
+        limit = self.adosorption_nr_limit
+        ad_de_P_pool = self.nutrient_pool.adsorbed_inorganic_pool['P'] + self.nutrient_pool.dissolved_inorganic_pool['P'] # [kg]
+        ad_de_P_pool /= (self.area * constants.M2_TO_KM2) # [kg/km2]
+        if ad_de_P_pool == 0:
+            return
+        
+        soil_moisture_content = self.get_smc() * constants.M_TO_MM # [mm] (not sure why HYPE has this in mm but whatever)
+        conc_sol = self.nutrient_pool.adsorbed_inorganic_pool['P'] * constants.KG_TO_MG / (self.bulk_density * self.rooting_depth * self.area)# [mg P/kg soil]
+        coeff = self.kfr * self.bulk_density * self.rooting_depth # [mm]
+        
+        # calculate equilibrium concentration
+        if conc_sol <= 0 :
+            #Not sure how this would happen
+            print('Warning: soil partP <=0. Freundlich will give error, take shortcut.')
+            xn_1 = ad_de_P_pool / (soil_moisture_content + coeff) # [mg/l]
+            ad_P_equi_conc = self.kfr * xn_1   # [mg/ kg]
+        else:
+            # Newton-Raphson method
+            x0 = exp((log(conc_sol) - log(self.kfr)) / self.nfr) # initial guess of equilibrium liquid concentration
+            fxn = x0 * soil_moisture_content + coeff * (x0 ** self.nfr) - ad_de_P_pool
+            xn = x0
+            xn_1 = xn
+            j = 0
+            while (abs(fxn) > limit and j < 20) : # iteration to calculate equilibrium concentations
+                fxn = xn * soil_moisture_content + coeff * (xn ** self.nfr) - ad_de_P_pool
+                fprimxn = soil_moisture_content + self.nfr * coeff * (xn ** (self.nfr - 1))
+                dx = fxn / fprimxn
+                if abs(dx) < (0.000001 * xn):
+                    #From HYPE... not sure what it means
+                    break
+                xn_1 = xn - dx
+                if xn_1 <= 0 :
+                    xn_1 = 1e-10
+                xn = xn_1
+                j += 1
+            ad_P_equi_conc = self.kfr * (xn_1 ** self.nfr)
+            #print(ad_P_equi_conc, conc_sol)
+        
+        # Calculate new pool and concentration, depends on the equilibrium concentration
+        if abs(ad_P_equi_conc - conc_sol) > 1e-6 :
+            request = self.nutrient_pool.empty_nutrient()
+            
+            #TODO not sure about this if statement, surely it would be triggered every time
+            adsdes = (ad_P_equi_conc - conc_sol) * (1 - exp(-self.kadsdes)) # kinetic adsorption/desorption
+            request['N'] = adsdes * self.bulk_density * self.rooting_depth * (self.area * constants.M2_TO_KM2) # [kg]
+            if request['N'] > 0:
+                adsorbed = self.nutrient_pool.dissolved_inorganic_pool.extract(request)
+                if (adsorbed['N'] - request['N']) > constants.FLOAT_ACCURACY:
+                    print('Warning: freundlich flow adjusted, was larger than pool')
+                self.nutrient_pool.adsorbed_inorganic_pool.receive(adsorbed)
+            else:
+                request['N'] = -request['N']
+                desorbed = self.nutrient_pool.adsorbed_inorganic_pool.extract(request)
+                if (desorbed['N'] - request['N']) > constants.FLOAT_ACCURACY:
+                    print('Warning: freundlich flow adjusted, was larger than pool')
+                self.nutrient_pool.dissolved_inorganic_pool.receive(adsorbed)
     
     def dry_deposition_to_tank(self, vqip):
         #Distribute between surfaces

@@ -76,7 +76,23 @@ class NutrientPool:
         reply_do = self.dissolved_organic_pool.extract({'N' : self.dissolved_organic_pool['N'] * proportion,
                                                         'P' : self.dissolved_organic_pool['P'] * proportion})
         return {'organic' : reply_do, 'inorganic' : reply_di}
+    
+    def get_erodable_P(self):
+        return self.adsorbed_inorganic_pool['P'] + self.humus_pool['P']
+    
+    def erode_P(self, amount_P):
+        fraction_adsorbed = self.adsorbed_inorganic_pool['P'] / (self.adsorbed_inorganic_pool['P'] + self.humus_pool['P'])
         
+        request = self.empty_nutrient()
+        request['P'] = amount_P * fraction_adsorbed
+        
+        reply_adsorbed = self.adsorbed_inorganic_pool.extract(request)
+        
+        request['P'] = amount_P * (1 - fraction_adsorbed)
+        reply_humus = self.humus_pool.extract(request)
+        
+        return reply_humus['P'] + reply_adsorbed['P']
+    
     def soil_pool_transformation(self):
         self.temp_soil_process(self.degrhpar, self.humus_pool, self.fast_pool)
         self.temp_soil_process(self.dishpar, self.humus_pool, self.dissolved_organic_pool)
