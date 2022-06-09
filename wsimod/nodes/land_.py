@@ -410,6 +410,11 @@ class CropSurface(PerviousSurface):
         
         super().__init__(**kwargs)
         
+        #If decays are defined for any modelled pollutants then remove that behaviour
+        for pollutant in ['nitrate','ammonia','org-phosphorus','phosphate']:
+            self.decays.pop(pollutant, None)
+        
+        
         #Infer basic sow/harvest calendar
         #TODO It might be easier to infer everything - but could be risky if people want to change calendars on the fly
         self.harvest_day = self.crop_factor_stage_dates[-3]
@@ -451,10 +456,6 @@ class CropSurface(PerviousSurface):
         self.processes.append(self.erosion)
         self.processes.append(self.denitrification)
         self.processes.append(self.adsorption)
-           
-    def soil_pool_transformation(self):
-        self.nutrient_pool.soil_pool_transformation()
-        return (self.empty_vqip(), self.empty_vqip())
     
     def pull_storage(self, vqip):
         #Pull from Tank
@@ -478,15 +479,18 @@ class CropSurface(PerviousSurface):
         prop = reply['volume'] / self.storage['volume']
         nutrients = self.nutrient_pool.extract_dissolved(prop)
         
+        #For now assume organic and inorganic N go to the same place to maintain mass balance
+        #TODO Also ignores ammonia -> nitrate transformation within soil - it would be easy enough to use a generic decay for this
+        total_N = nutrients['inorganic']['N'] + nutrients['organic']['N']
+        reply['nitrate'] = total_N * self.storage['nitrate'] / (self.storage['nitrate'] + self.storage['ammonia'])
+        reply['ammonia'] = total_N * self.storage['ammonia'] / (self.storage['nitrate'] + self.storage['ammonia'])
+        reply['phosphate'] = nutrients['inorganic']['P']
+        reply['org-phosphorus'] = nutrients['organic']['P']
+        
         #Extract from storage
         self.storage = self.extract_vqip(self.storage, reply)
         
-        #For now assume organic and inorganic N go to the same place to maintain mass balance
-        total_N = nutrients['inorganic']['N'] + nutrients['organic']['N']
-        reply['nitrate'] = total_N * (1 - self.nh3_no3_ratio)
-        reply['ammonia'] = total_N * self.nh3_no3_ratio
-        reply['phosphate'] = nutrients['inorganic']['P']
-        reply['org-phosphorus'] = nutrients['organic']['P']
+        
         
         return reply
     
@@ -548,6 +552,11 @@ class CropSurface(PerviousSurface):
         #TODO data reading
         return (self.empty_vqip(), self.empty_vqip())
     
+    def soil_pool_transformation(self):
+        #TODO mass balance? phosphate->org?
+        self.nutrient_pool.soil_pool_transformation()
+        return (self.empty_vqip(), self.empty_vqip())
+    
     def calc_temperature_dependence_factor(self):
         #TODO parameterise/find sources for data (HYPE)
         if self.storage['temperature'] > 5:
@@ -576,8 +585,7 @@ class CropSurface(PerviousSurface):
         return (self.empty_vqip(), self.empty_vqip())
     
     def calc_crop_uptake(self):
-        #TODO insert parameters and convert to kg/m2/dt
-        #Initialise N_common_uptake
+        #Initialise
         N_common_uptake = 0
         P_common_uptake = 0
         
@@ -600,9 +608,16 @@ class CropSurface(PerviousSurface):
                       'N' : N_common_uptake}
             crop_uptake = self.nutrient_pool.dissolved_inorganic_pool.extract(uptake)
             out_ = self.empty_vqip()
+            
             # Assuming plants eat N and P as nitrate and phosphate
             out_['nitrate'] = crop_uptake['N'] 
             out_['phosphate'] = crop_uptake['P'] 
+            
+            self.storage = self.extract_vqip(self.storage, out_)
+            for key, item in self.storage.items():
+                if item < constants.FLOAT_ACCURACY:
+                    print('nutrient pool not tracking soil tank')
+                    
             return (self.empty_vqip(), out_)
         else:
             return (self.empty_vqip(), self.empty_vqip())
@@ -670,8 +685,9 @@ class CropSurface(PerviousSurface):
         self.infiltration_excess['solids'] += surface_erodedsed
         self.subsurface_flow['solids'] += subsurface_erodedsed
         self.percolation['solids'] += percolation_erodedsed
+
+        #TODO: I don't think there are any mass balance P changes needed here..? Unless phosphate in the humus pool is getting converted to org
         
-        #TODO mass balance - sediments entering here!
         in_ = self.empty_vqip()
         in_['solids'] = surface_erodedsed + subsurface_erodedsed + percolation_erodedsed
         return (in_, self.empty_vqip())
@@ -703,6 +719,7 @@ class CropSurface(PerviousSurface):
         #Leon reckons this should leave the model (though I think technically some small amount nitrite)
         out_ = self.empty_vqip()
         out_['nitrate'] = denitrified_N['N'] 
+        #TODO if nitrate is tracked in the soil pool, it will also have to leave
         return (self.empty_vqip(), out_)
     
     def adsorption(self):
@@ -764,6 +781,7 @@ class CropSurface(PerviousSurface):
                     print('Warning: freundlich flow adjusted, was larger than pool')
                 self.nutrient_pool.dissolved_inorganic_pool.receive(adsorbed)
         
+        #TODO - I guess reduce/increase org-phosphorus/phosphate accordingly for mass balance
         return (self.empty_vqip(), self.empty_vqip())
     
     def dry_deposition_to_tank(self, vqip):
@@ -772,13 +790,14 @@ class CropSurface(PerviousSurface):
         deposition['N'] = vqip['nitrate'] + vqip['ammonia']
         deposition['P'] = vqip['phosphate']
         self.nutrient_pool.allocate_dry_deposition(deposition)
+        self.push_storage(vqip, force = True)
         
     def wet_deposition_to_tank(self, vqip):
         deposition = self.nutrient_pool.get_empty_nutrient()
         deposition['N'] = vqip['nitrate'] + vqip['ammonia']
         deposition['P'] = vqip['phosphate']
         self.nutrient_pool.allocate_wet_deposition(deposition)
-
+        self.push_storage(vqip, force = True)
     
 class IrrigationSurface(CropSurface):
     def __init__(self, **kwargs):

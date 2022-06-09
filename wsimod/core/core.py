@@ -59,6 +59,7 @@ class WSIObj:
         return c
     
     def extract_vqip(self, t1, t2):
+        #TODO should probably be called 'subtract_vqip'
         #Directly subtract t2 from t1 for vol and additive pollutants
         t = self.copy_vqip(t1)
         
@@ -131,6 +132,13 @@ class WSIObj:
                       c_['volume'] * c_[pol]
         #TODO what about non-additive ...
         return ds
+    
+    def compare_vqip(self, t1, t2):
+        reply = True
+        for v in t1.keys():
+            if abs(t1[v] - t2[v]) > constants.FLOAT_ACCURACY:
+                reply = False
+        return reply
     
     def mass_balance(self):
         in_ = self.empty_vqip()
