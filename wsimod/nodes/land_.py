@@ -118,6 +118,7 @@ class Surface(DecayTank):
             in_, out_ = f()
             self.parent.running_inflow_mb = self.sum_vqip(self.parent.running_inflow_mb, in_)
             self.parent.running_outflow_mb = self.sum_vqip(self.parent.running_outflow_mb, out_)
+
         
     def get_data_input(self, var):
         return self.parent.get_data_input(var)
@@ -358,6 +359,8 @@ class CropSurface(PerviousSurface):
                                     'fraction_residue_to_fast_nutrients' : {'N' : 0.1, 
                                                                             'P' : 0.1} # [-] dimension = N & P
         }
+        #TODO check units (WIMS is based on mg/l of N)
+        self.nh3_no3_ratio = 1/10 # [-] NH3:NO3 ratio for soil water abstractions of N in nutrient pool (averaged from WIMS)
         
         #Crop parameters
         self.crop_cover_max = 0.9 # [-] 0~1
@@ -394,8 +397,13 @@ class CropSurface(PerviousSurface):
         #Adsorption parameters
         self.adosorption_nr_limit = 0.00001
         self.adsorption_nr_maxiter = 20
-        #TODO check units (WIMS is based on mg/l of N)
-        self.nh3_no3_ratio = 1/10 # [-] NH3:NO3 ratio for soil water abstractions of N in nutrient pool (averaged from WIMS)
+        self.kfr = 153.7 # [1/kg] freundlich adsorption isoterm
+        self.nfr = 1/2.6 # [-] freundlich exponential coefficient
+        self.kadsdes = 0.03 # [1/day] adsorption/desorption coefficient
+        
+        
+        #Other soil parameters
+        self.bulk_density = 1300 # [kg/m3]
         
         
         
@@ -409,6 +417,12 @@ class CropSurface(PerviousSurface):
         self.harvest_sow_calendar = [0, self.sowing_day, self.harvest_day, self.harvest_day + 1, 365]
         self.ground_cover_stages = [0,0,self.ground_cover_max,0,0]
         self.crop_cover_stages = [0,0,self.crop_cover_max,0,0]
+        
+        #This is just based on googling when is autumn...
+        if self.sowing_day > 265:
+            self.autumn_sow = True
+        else:
+            self.autumn_sow = False
         
         #State variables
         self.days_after_sow = None
@@ -489,9 +503,13 @@ class CropSurface(PerviousSurface):
     
     def calc_crop_cover(self):
         #Calculate crop calendar and cover and adjust ET parameters
-        #TODO leap year? Or cba?
+
         doy = self.parent.t.dayofyear
         
+        if self.parent.t.is_leap_year:
+            if doy > 59:
+                doy -= 1
+            
         if self.days_after_sow is None:
             if self.parent.t.dayofyear == self.sowing_day:
                 self.days_after_sow = 0
@@ -582,7 +600,9 @@ class CropSurface(PerviousSurface):
                       'N' : N_common_uptake}
             crop_uptake = self.nutrient_pool.dissolved_inorganic_pool.extract(uptake)
             out_ = self.empty_vqip()
-            out_['nitrate'] = crop_uptake # According to the nitrogen cycle, plants eat nitrates (yum)
+            # Assuming plants eat N and P as nitrate and phosphate
+            out_['nitrate'] = crop_uptake['N'] 
+            out_['phosphate'] = crop_uptake['P'] 
             return (self.empty_vqip(), out_)
         else:
             return (self.empty_vqip(), self.empty_vqip())
@@ -619,7 +639,7 @@ class CropSurface(PerviousSurface):
         
         #Eroding flow > 0
         #
-        erodableP = self.get_erodable_P() / self.area * constants.KG_M2_TO_KG_KM2
+        erodableP = self.nutrient_pool.get_erodable_P() / self.area * constants.KG_M2_TO_KG_KM2
         erodedP = erodedsed * (erodableP / (self.rooting_depth * constants.M_TO_KM) / (self.bulk_density * constants.KG_M3_TO_KG_KM3)) * enrichment # [kg/km2]
         
         #Convert top kg
@@ -631,23 +651,24 @@ class CropSurface(PerviousSurface):
         surface_erodedsed = self.srfilt * self.infiltration_excess['volume'] / total_flows * erodedsed # [kg]
         
         subsurface_erodedP = self.macrofilt * self.subsurface_flow['volume'] / total_flows * erodedP # [kg]
-        subsurface_erodedsed = self.macrofilt * self.self.subsurface_flow['volume'] / total_flows * erodedsed # [kg]
+        subsurface_erodedsed = self.macrofilt * self.subsurface_flow['volume'] / total_flows * erodedsed # [kg]
         
         percolation_erodedP = self.macrofilt * self.percolation['volume'] / total_flows * erodedP # [kg]
-        percolation_erodedsed = self.macrofilt * self.self.percolation['volume'] / total_flows * erodedsed # [kg]
+        percolation_erodedsed = self.macrofilt * self.percolation['volume'] / total_flows * erodedsed # [kg]
         
         eff_erodedP = percolation_erodedP + surface_erodedP + subsurface_erodedP # [kg]
+        if eff_erodedP > 0:
+            reply = self.nutrient_pool.erode_P(eff_erodedP)
         
-        reply = self.nutrient_pool.erode_P(eff_erodedP)
-        ratio_satisfied = reply['P'] / eff_erodedP
-        if ratio_satisfied != 1:
-            print('weird nutrients')
-        
-        self.infiltration_excess['org-phosphorus'] += (surface_erodedP * ratio_satisfied)
+            ratio_satisfied = reply / eff_erodedP
+            if ratio_satisfied != 1:
+                print('weird nutrients')
+            self.infiltration_excess['org-phosphorus'] += (surface_erodedP * ratio_satisfied)
+            self.subsurface_flow['org-phosphorus'] += (subsurface_erodedP * ratio_satisfied)
+            self.percolation['org-phosphorus'] += (percolation_erodedP * ratio_satisfied)
+            
         self.infiltration_excess['solids'] += surface_erodedsed
-        self.subsurface_flow['org-phosphorus'] += (subsurface_erodedP * ratio_satisfied)
         self.subsurface_flow['solids'] += subsurface_erodedsed
-        self.percolation['org-phosphorus'] += (percolation_erodedP * ratio_satisfied)
         self.percolation['solids'] += percolation_erodedsed
         
         #TODO mass balance - sediments entering here!
@@ -675,13 +696,13 @@ class CropSurface(PerviousSurface):
                                 denitrifying_soil_moisture_dependence *\
                                     self.nutrient_pool.temperature_dependence_factor *\
                                         self.denpar
-        denitrified_request = self.nutrient_pool.empty_nutrient()
+        denitrified_request = self.nutrient_pool.get_empty_nutrient()
         denitrified_request['N'] = denitrified_N
         denitrified_N = self.nutrient_pool.dissolved_inorganic_pool.extract(denitrified_request)
         
         #Leon reckons this should leave the model (though I think technically some small amount nitrite)
         out_ = self.empty_vqip()
-        out_['nitrate'] = denitrified_N 
+        out_['nitrate'] = denitrified_N['N'] 
         return (self.empty_vqip(), out_)
     
     def adsorption(self):
@@ -726,7 +747,7 @@ class CropSurface(PerviousSurface):
         
         # Calculate new pool and concentration, depends on the equilibrium concentration
         if abs(ad_P_equi_conc - conc_sol) > 1e-6 :
-            request = self.nutrient_pool.empty_nutrient()
+            request = self.nutrient_pool.get_empty_nutrient()
             
             #TODO not sure about this if statement, surely it would be triggered every time
             adsdes = (ad_P_equi_conc - conc_sol) * (1 - exp(-self.kadsdes)) # kinetic adsorption/desorption

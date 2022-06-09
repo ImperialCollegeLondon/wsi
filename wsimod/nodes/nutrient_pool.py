@@ -83,7 +83,7 @@ class NutrientPool:
     def erode_P(self, amount_P):
         fraction_adsorbed = self.adsorbed_inorganic_pool.storage['P'] / (self.adsorbed_inorganic_pool.storage['P'] + self.humus_pool.storage['P'])
         
-        request = self.empty_nutrient()
+        request = self.get_empty_nutrient()
         request['P'] = amount_P * fraction_adsorbed
         
         reply_adsorbed = self.adsorbed_inorganic_pool.extract(request)
