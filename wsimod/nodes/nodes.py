@@ -677,7 +677,7 @@ class Tank(WSIObj):
         return reply
     
     def pull_storage(self, vqip):
-        #Pull from Tank
+        #Pull from Tank by volume (taking pollutants in proportion)
         
         if self.storage['volume'] == 0:
             #TODO people may want to pull pollutants and no volume from storage..
@@ -698,7 +698,17 @@ class Tank(WSIObj):
         self.storage = self.extract_vqip(self.storage, reply)
                 
         return reply
+    
+    def pull_pollutants(self, vqip):
+        #Pull from Tank by volume (taking pollutants according to defined in vqip)
         
+        #Adjust based on available mass
+        for pol in constants.ADDITIVE_POLLUTANTS + ['volume']:
+            vqip[pol] = min(self.storage[pol], vqip[pol])
+        
+        #Extract from storage
+        self.storage = self.extract_vqip(self.storage, vqip)
+        return vqip
 
     def get_head(self, datum = None, non_head_storage = 0):
         #Area-volume calc

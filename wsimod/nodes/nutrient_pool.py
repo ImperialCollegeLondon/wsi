@@ -91,15 +91,21 @@ class NutrientPool:
         request['P'] = amount_P * (1 - fraction_adsorbed)
         reply_humus = self.humus_pool.extract(request)
         
-        return reply_humus['P'] + reply_adsorbed['P']
+        return reply_humus['P'], reply_adsorbed['P']
     
     def soil_pool_transformation(self):
-        self.temp_soil_process(self.degrhpar, self.humus_pool, self.fast_pool)
-        self.temp_soil_process(self.dishpar, self.humus_pool, self.dissolved_organic_pool)
-        self.temp_soil_process(self.minfpar, self.fast_pool, self.dissolved_inorganic_pool)
-        self.temp_soil_process(self.disfpar, self.fast_pool, self.dissolved_organic_pool)
-        self.temp_soil_process(self.immobdpar, self.dissolved_organic_pool, self.fast_pool)
-
+        #For mass balance purposes, assume fast is inorganic and humus is organic
+        
+        increase_in_inorganic = self.get_empty_nutrient()
+        amount = self.temp_soil_process(self.degrhpar, self.humus_pool, self.fast_pool)
+        increase_in_inorganic = self.sum_nutrients(increase_in_inorganic, amount)
+        amount = self.temp_soil_process(self.dishpar, self.humus_pool, self.dissolved_organic_pool)
+        amount = self.temp_soil_process(self.minfpar, self.fast_pool, self.dissolved_inorganic_pool)
+        amount = self.temp_soil_process(self.disfpar, self.fast_pool, self.dissolved_organic_pool)
+        increase_in_inorganic = self.subtract_nutrients(increase_in_inorganic, amount)
+        amount = self.temp_soil_process(self.immobdpar, self.dissolved_organic_pool, self.fast_pool)
+        increase_in_inorganic = self.sum_nutrients(increase_in_inorganic, amount)
+        return increase_in_inorganic
     def temp_soil_process(self, parameter, extract_pool, receive_pool):
         to_extract = self.get_empty_nutrient()
         for nutrient in constants.NUTRIENTS:
@@ -109,6 +115,7 @@ class NutrientPool:
                                             extract_pool.storage[nutrient]
         to_extract = extract_pool.extract(to_extract)
         receive_pool.receive(to_extract)
+        return to_extract
 
     def get_empty_nutrient(self):
         return self.empty_nutrient.copy()
@@ -119,6 +126,18 @@ class NutrientPool:
     def receive(self, nutrients):
         for nutrient, amount in nutrients.items():
             self.storage[nutrient] += amount
+    
+    def sum_nutrients(self, n1, n2):
+        reply = self.get_empty_nutrient()
+        for nutrient in constants.NUTRIENTS:
+            reply[nutrient] = n1[nutrient] + n2[nutrient]
+        return reply
+    
+    def subtract_nutrients(self, n1, n2):
+        reply = self.get_empty_nutrient()
+        for nutrient in constants.NUTRIENTS:
+            reply[nutrient] = n1[nutrient] - n2[nutrient]
+        return reply
     
     def extract(self, nutrients):
         reply = self.get_empty_nutrient()

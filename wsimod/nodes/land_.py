@@ -458,10 +458,9 @@ class CropSurface(PerviousSurface):
         self.processes.append(self.adsorption)
     
     def pull_storage(self, vqip):
-        #Pull from Tank
+        #Pull from Tank by volume (taking pollutants in proportion)
         
         if self.storage['volume'] == 0:
-            #TODO people may want to pull pollutants and no volume from storage..
             return self.empty_vqip()
         
         #Adjust based on available volume
@@ -481,18 +480,18 @@ class CropSurface(PerviousSurface):
         
         #For now assume organic and inorganic N go to the same place to maintain mass balance
         #TODO Also ignores ammonia -> nitrate transformation within soil - it would be easy enough to use a generic decay for this
-        total_N = nutrients['inorganic']['N'] + nutrients['organic']['N']
-        reply['nitrate'] = total_N * self.storage['nitrate'] / (self.storage['nitrate'] + self.storage['ammonia'])
-        reply['ammonia'] = total_N * self.storage['ammonia'] / (self.storage['nitrate'] + self.storage['ammonia'])
+        reply['nitrate'] = nutrients['inorganic']['N'] * self.storage['nitrate'] / (self.storage['nitrate'] + self.storage['ammonia'])
+        reply['ammonia'] = nutrients['inorganic']['N'] * self.storage['ammonia'] / (self.storage['nitrate'] + self.storage['ammonia'])
         reply['phosphate'] = nutrients['inorganic']['P']
         reply['org-phosphorus'] = nutrients['organic']['P']
-        
+        reply['org-nitrogen'] = nutrients['organic']['N']
         #Extract from storage
         self.storage = self.extract_vqip(self.storage, reply)
-        
-        
+
         
         return reply
+    
+    
     
     def quick_interp(self, x, xp, yp):
         #Restrained version of np.interp
@@ -553,9 +552,35 @@ class CropSurface(PerviousSurface):
         return (self.empty_vqip(), self.empty_vqip())
     
     def soil_pool_transformation(self):
-        #TODO mass balance? phosphate->org?
-        self.nutrient_pool.soil_pool_transformation()
-        return (self.empty_vqip(), self.empty_vqip())
+        in_ = self.empty_vqip()
+        out_ = self.empty_vqip()
+        
+        nitrate_proportion = self.storage['nitrate'] / (self.storage['nitrate'] + self.storage['ammonia'])
+        
+        increase_in_inorganic = self.nutrient_pool.soil_pool_transformation()
+        if increase_in_inorganic['N'] > 0:
+            in_['nitrate'] = increase_in_inorganic['N'] * nitrate_proportion
+            in_['ammonia'] = increase_in_inorganic['N'] * (1 - nitrate_proportion)
+            out_['org-nitrogen'] = increase_in_inorganic['N']
+        else:
+            out_['nitrate'] = -increase_in_inorganic['N'] * nitrate_proportion
+            out_['ammonia'] = -increase_in_inorganic['N'] * (1 - nitrate_proportion)
+            in_['org-nitrogen'] = -increase_in_inorganic['N']
+        
+        if increase_in_inorganic['P'] > 0:
+            in_['phosphate'] = increase_in_inorganic['P']
+            out_['org-phosphorus'] = increase_in_inorganic['P']
+        else:
+            out_['phosphate'] = increase_in_inorganic['P']
+            in_['org-phosphorus'] = increase_in_inorganic['P']
+        
+        _ = self.push_storage(in_, force = True)
+        
+        out2_ = self.pull_pollutants(out_)
+        if not self.compare_vqip(out_, out2_):
+            print('nutrient pool not tracking soil tank')
+        
+        return (in_, out_)
     
     def calc_temperature_dependence_factor(self):
         #TODO parameterise/find sources for data (HYPE)
@@ -613,10 +638,9 @@ class CropSurface(PerviousSurface):
             out_['nitrate'] = crop_uptake['N'] 
             out_['phosphate'] = crop_uptake['P'] 
             
-            self.storage = self.extract_vqip(self.storage, out_)
-            for key, item in self.storage.items():
-                if item < constants.FLOAT_ACCURACY:
-                    print('nutrient pool not tracking soil tank')
+            out2_ = self.pull_pollutants(out_)
+            if not self.compare_vqip(out_, out2_):
+                print('nutrient pool not tracking soil tank')
                     
             return (self.empty_vqip(), out_)
         else:
@@ -671,25 +695,44 @@ class CropSurface(PerviousSurface):
         percolation_erodedP = self.macrofilt * self.percolation['volume'] / total_flows * erodedP # [kg]
         percolation_erodedsed = self.macrofilt * self.percolation['volume'] / total_flows * erodedsed # [kg]
         
+        
+        in_ = self.empty_vqip()
+        
+        
         eff_erodedP = percolation_erodedP + surface_erodedP + subsurface_erodedP # [kg]
         if eff_erodedP > 0:
-            reply = self.nutrient_pool.erode_P(eff_erodedP)
-        
-            ratio_satisfied = reply / eff_erodedP
+            org_removed, inorg_removed = self.nutrient_pool.erode_P(eff_erodedP)
+            total_removed = inorg_removed + org_removed # Assume adsorbed inorganic removed as particulate (organic)
+            
+            ratio_satisfied = total_removed / eff_erodedP
             if ratio_satisfied != 1:
                 print('weird nutrients')
-            self.infiltration_excess['org-phosphorus'] += (surface_erodedP * ratio_satisfied)
-            self.subsurface_flow['org-phosphorus'] += (subsurface_erodedP * ratio_satisfied)
-            self.percolation['org-phosphorus'] += (percolation_erodedP * ratio_satisfied)
+                
+            self.infiltration_excess['org-phosphorus'] += (surface_erodedP * org_removed / eff_erodedP)
+            self.subsurface_flow['org-phosphorus'] += (subsurface_erodedP * org_removed / eff_erodedP)
+            self.percolation['org-phosphorus'] += (percolation_erodedP * org_removed / eff_erodedP)
+            self.infiltration_excess['phosphate'] += (surface_erodedP * inorg_removed / eff_erodedP)
+            self.subsurface_flow['phosphate'] += (subsurface_erodedP * inorg_removed / eff_erodedP)
+            self.percolation['phosphate'] += (percolation_erodedP * inorg_removed / eff_erodedP)
+            
+            removed = self.empty_vqip()
+            removed['org-phosphorus'] = org_removed
+            removed['phosphate'] = inorg_removed
+            removed_ = self.pull_pollutants(removed)
+            
+            if not self.compare_vqip(removed, removed_):
+                print('nutrient pool not tracking soil tank')
+            
+        else:
+            inorg_to_org_P = 0
             
         self.infiltration_excess['solids'] += surface_erodedsed
         self.subsurface_flow['solids'] += subsurface_erodedsed
         self.percolation['solids'] += percolation_erodedsed
 
-        #TODO: I don't think there are any mass balance P changes needed here..? Unless phosphate in the humus pool is getting converted to org
         
-        in_ = self.empty_vqip()
         in_['solids'] = surface_erodedsed + subsurface_erodedsed + percolation_erodedsed
+            
         return (in_, self.empty_vqip())
     
     def denitrification(self):
@@ -716,10 +759,15 @@ class CropSurface(PerviousSurface):
         denitrified_request['N'] = denitrified_N
         denitrified_N = self.nutrient_pool.dissolved_inorganic_pool.extract(denitrified_request)
         
+        
         #Leon reckons this should leave the model (though I think technically some small amount nitrite)
         out_ = self.empty_vqip()
         out_['nitrate'] = denitrified_N['N'] 
-        #TODO if nitrate is tracked in the soil pool, it will also have to leave
+        
+        out2_ = self.pull_pollutants(out_)
+        if not self.compare_vqip(out_, out2_):
+            print('nutrient pool not tracking soil tank')
+
         return (self.empty_vqip(), out_)
     
     def adsorption(self):
@@ -768,16 +816,16 @@ class CropSurface(PerviousSurface):
             
             #TODO not sure about this if statement, surely it would be triggered every time
             adsdes = (ad_P_equi_conc - conc_sol) * (1 - exp(-self.kadsdes)) # kinetic adsorption/desorption
-            request['N'] = adsdes * self.bulk_density * self.rooting_depth * (self.area * constants.M2_TO_KM2) # [kg]
-            if request['N'] > 0:
+            request['P'] = adsdes * self.bulk_density * self.rooting_depth * (self.area * constants.M2_TO_KM2) # [kg]
+            if request['P'] > 0:
                 adsorbed = self.nutrient_pool.dissolved_inorganic_pool.extract(request)
-                if (adsorbed['N'] - request['N']) > constants.FLOAT_ACCURACY:
+                if (adsorbed['P'] - request['P']) > constants.FLOAT_ACCURACY:
                     print('Warning: freundlich flow adjusted, was larger than pool')
                 self.nutrient_pool.adsorbed_inorganic_pool.receive(adsorbed)
             else:
-                request['N'] = -request['N']
+                request['P'] = -request['P']
                 desorbed = self.nutrient_pool.adsorbed_inorganic_pool.extract(request)
-                if (desorbed['N'] - request['N']) > constants.FLOAT_ACCURACY:
+                if (desorbed['P'] - request['P']) > constants.FLOAT_ACCURACY:
                     print('Warning: freundlich flow adjusted, was larger than pool')
                 self.nutrient_pool.dissolved_inorganic_pool.receive(adsorbed)
         
