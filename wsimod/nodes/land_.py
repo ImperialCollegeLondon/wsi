@@ -29,6 +29,7 @@ class Land_(Node):
         #Can also do as timearea if this seems dodge (that is how it is done in IHACRES)
         #TODO should these be decayresidencetanks?
         
+        #TODO temperature is dodge!
         
         self.subsurface_runoff = ResidenceTank(residence_time = self.subsurface_residence_time, 
                                                capacity = constants.UNBOUNDED_CAPACITY)
@@ -269,7 +270,8 @@ class PerviousSurface(Surface):
         
         #Apply infiltration
         infiltrated_precipitation = min(precipitation_depth, self.infiltration_capacity)
-        infiltration_excess = max(precipitation_depth - evaporation_depth - infiltrated_precipitation, 0)
+        #Seems like evap should be here but it shouldn't because it comes out if total_water_passing..<0
+        infiltration_excess = max(precipitation_depth - infiltrated_precipitation, 0) 
         
         #Formulate in terms of (m) moisture deficit
         current_moisture_deficit_depth = self.get_cmd()
@@ -288,10 +290,19 @@ class PerviousSurface(Surface):
         
         #Mix in tank to calculate pollutant concentrations
         total_water_passing_through_soil_tank = tank_recharge + subsurface_flow + percolation
-        total_water_passing_through_soil_tank = self.v_change_vqip(self.empty_vqip(), total_water_passing_through_soil_tank)
-        _ = self.push_storage(total_water_passing_through_soil_tank, force = True)
-        subsurface_flow = self.pull_storage({'volume': subsurface_flow})
-        percolation = self.pull_storage({'volume':percolation})
+        
+        if total_water_passing_through_soil_tank > 0:
+            total_water_passing_through_soil_tank = self.v_change_vqip(self.empty_vqip(), total_water_passing_through_soil_tank)
+            _ = self.push_storage(total_water_passing_through_soil_tank, force = True)
+            subsurface_flow = self.pull_storage({'volume': subsurface_flow})
+            percolation = self.pull_storage({'volume':percolation})
+        else:
+            evap = self.evaporate(-total_water_passing_through_soil_tank)
+            subsurface_flow = self.empty_vqip()
+            percolation = self.empty_vqip()
+            
+            if abs(evap + infiltrated_precipitation * self.area - evaporation) > constants.FLOAT_ACCURACY:
+                print('inaccurate evaporation calculation')
         
         #Convert to VQIPs
         infiltration_excess = self.v_change_vqip(self.empty_vqip(), infiltration_excess)
@@ -702,7 +713,7 @@ class CropSurface(PerviousSurface):
         eff_erodedP = percolation_erodedP + surface_erodedP + subsurface_erodedP # [kg]
         if eff_erodedP > 0:
             org_removed, inorg_removed = self.nutrient_pool.erode_P(eff_erodedP)
-            total_removed = inorg_removed + org_removed # Assume adsorbed inorganic removed as particulate (organic)
+            total_removed = inorg_removed + org_removed 
             
             ratio_satisfied = total_removed / eff_erodedP
             if ratio_satisfied != 1:
@@ -760,7 +771,7 @@ class CropSurface(PerviousSurface):
         denitrified_N = self.nutrient_pool.dissolved_inorganic_pool.extract(denitrified_request)
         
         
-        #Leon reckons this should leave the model (though I think technically some small amount nitrite)
+        #Leon reckons this should leave the model (though I think technically some small amount goes to nitrite)
         out_ = self.empty_vqip()
         out_['nitrate'] = denitrified_N['N'] 
         
