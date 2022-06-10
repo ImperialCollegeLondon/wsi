@@ -13,8 +13,10 @@ class NutrientPool:
         self.temperature_dependence_factor = 0
         self.soil_moisture_dependence_factor = 0
         
-        self.fraction_manure_to_dissolved_inorganic = self.get_empty_nutrient()
-        self.fraction_residue_to_fast = self.get_empty_nutrient()
+        self.fraction_manure_to_dissolved_inorganic =  {'N' : 0.5, 
+                                                        'P' : 0.1}
+        self.fraction_residue_to_fast =  {'N' : 0.5, 
+                                          'P' : 0.1}
         self.fraction_dry_n_to_dissolved_inorganic = 0.9
         
         self.degrhpar = self.get_empty_nutrient()
@@ -63,7 +65,7 @@ class NutrientPool:
         self.fast_pool.receive(self.multiply_nutrients(manure,
                                                        self.fraction_manure_to_fast))
     def allocate_residue(self, residue):
-        self.humus.receive(self.multiply_nutrients(residue,
+        self.humus_pool.receive(self.multiply_nutrients(residue,
                                                    self.fraction_residue_to_humus))
         self.fast_pool.receive(self.multiply_nutrients(residue,
                                                        self.fraction_residue_to_fast))    

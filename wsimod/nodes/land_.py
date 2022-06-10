@@ -280,6 +280,9 @@ class PerviousSurface(Surface):
         evaporation = evaporation_depth * min(1, exp(2 * (1 - current_moisture_deficit_depth / self.wilting_point)))
         outflow = infiltrated_precipitation  * (1 - min(1, (current_moisture_deficit_depth / self.field_capacity) ** self.ihacres_p))
         
+        #Can't evaporate more than available moisture
+        evaporation = min(evaporation, precipitation_depth + self.get_smc())
+        
         #Convert to volumes
         percolation = outflow * self.percolation_coefficient * self.area
         subsurface_flow = outflow * self.subsurface_coefficient * self.area
@@ -457,6 +460,7 @@ class CropSurface(PerviousSurface):
         self.inflows.insert(0, self.calc_crop_cover)
         self.inflows.append(self.fertiliser)
         self.inflows.append(self.manure)
+        self.inflows.append(self.residue)
         
         self.processes.append(self.calc_temperature_dependence_factor)
         self.processes.append(self.calc_soil_moisture_dependence_factor)
@@ -554,13 +558,65 @@ class CropSurface(PerviousSurface):
         
         return (self.empty_vqip(), self.empty_vqip())
     
+    
+    
     def fertiliser(self):
-        #TODO data reading
-        return (self.empty_vqip(), self.empty_vqip())
+        #TODO tidy up fertiliser/manure/residue/deposition once preprocessing is sorted
+        #Distribute between surfaces
+        nhx = self.get_data_input('nhx-fertiliser') * self.area
+        nox = self.get_data_input('nox-fertiliser') * self.area
+        srp = self.get_data_input('srp-fertiliser') * self.area
+        
+        vqip = self.empty_vqip()
+        vqip['ammonia'] = nhx
+        vqip['nitrate'] = nox
+        vqip['phosphate'] = srp
+        
+        deposition = self.nutrient_pool.get_empty_nutrient()
+        deposition['N'] = vqip['nitrate'] + vqip['ammonia']
+        deposition['P'] = vqip['phosphate']
+        self.nutrient_pool.allocate_fertiliser(deposition)
+        self.push_storage(vqip, force = True)
+    
+        return (vqip, self.empty_vqip())
     
     def manure(self):
-        #TODO data reading
-        return (self.empty_vqip(), self.empty_vqip())
+        nhx = self.get_data_input('nhx-manure') * self.area
+        nox = self.get_data_input('nox-manure') * self.area
+        srp = self.get_data_input('srp-manure') * self.area
+        
+        vqip = self.empty_vqip()
+        vqip['ammonia'] = nhx
+        vqip['nitrate'] = nox
+        vqip['phosphate'] = srp
+        
+        deposition = self.nutrient_pool.get_empty_nutrient()
+        deposition['N'] = vqip['nitrate'] + vqip['ammonia']
+        deposition['P'] = vqip['phosphate']
+        self.nutrient_pool.allocate_manure(deposition)
+        self.push_storage(vqip, force = True)
+    
+        return (vqip, self.empty_vqip())
+    
+    def residue(self):
+        nhx = self.get_data_input('nhx-residue') * self.area
+        nox = self.get_data_input('nox-residue') * self.area
+        srp = self.get_data_input('srp-residue') * self.area
+        
+        vqip = self.empty_vqip()
+        vqip['ammonia'] = nhx * self.nutrient_pool.fraction_residue_to_fast['N']
+        vqip['nitrate'] = nox * self.nutrient_pool.fraction_residue_to_fast['N']
+        vqip['org-nitrogen'] = (nhx + nox) * self.nutrient_pool.fraction_residue_to_humus['N']
+        vqip['phosphate'] = srp * self.nutrient_pool.fraction_residue_to_fast['P']
+        vqip['org-phosphorus'] = srp * self.nutrient_pool.fraction_residue_to_humus['P']
+        
+        deposition = self.nutrient_pool.get_empty_nutrient()
+        deposition['N'] = vqip['nitrate'] + vqip['ammonia']
+        deposition['P'] = vqip['phosphate']
+        self.nutrient_pool.allocate_residue(deposition)
+        self.push_storage(vqip, force = True)
+    
+        return (vqip, self.empty_vqip())
     
     def soil_pool_transformation(self):
         in_ = self.empty_vqip()
@@ -715,8 +771,7 @@ class CropSurface(PerviousSurface):
             org_removed, inorg_removed = self.nutrient_pool.erode_P(eff_erodedP)
             total_removed = inorg_removed + org_removed 
             
-            ratio_satisfied = total_removed / eff_erodedP
-            if ratio_satisfied != 1:
+            if abs(total_removed - eff_erodedP) > constants.FLOAT_ACCURACY:
                 print('weird nutrients')
                 
             self.infiltration_excess['org-phosphorus'] += (surface_erodedP * org_removed / eff_erodedP)
@@ -857,7 +912,8 @@ class CropSurface(PerviousSurface):
         deposition['P'] = vqip['phosphate']
         self.nutrient_pool.allocate_wet_deposition(deposition)
         self.push_storage(vqip, force = True)
-    
+        
+        
 class IrrigationSurface(CropSurface):
     def __init__(self, **kwargs):
         self.irrigation_cover = 0 #proportion area irrigated
