@@ -264,7 +264,7 @@ class QueueArc(Arc):
         #Enter queue
         self.queue.append(request)
         
-    def update_queue(self, direction = None):
+    def update_queue(self, direction = None, backflow_enabled = True):
         done_requests = []
         
         total_removed = self.empty_vqip()
@@ -295,16 +295,19 @@ class QueueArc(Arc):
                     self.flow_out += (request['average_flow'] * removed / vqip['volume'])
                     vqip_ = self.v_change_vqip(vqip, removed)
                     total_removed = self.sum_vqip(total_removed, vqip_)
-
+                    
                     #Assume that any water that cannot arrive at destination this timestep is backflow
                     rejected = self.v_change_vqip(vqip, vqip['volume'] - removed)
-                    total_backflow = self.sum_vqip(rejected, total_backflow)
                     
-                    done_requests.append(request)
-                
+                    if backflow_enabled | (rejected['volume'] < constants.FLOAT_ACCURACY):
+                        total_backflow = self.sum_vqip(rejected, total_backflow)
+                        done_requests.append(request)
+                    else:
+                        request['vqip'] = rejected
                     
                     
-        self.vqip_out = self.sum_vqip(self.vqip_out, total_removed)                    
+        self.vqip_out = self.sum_vqip(self.vqip_out, total_removed)
+
         
         #Remove done requests
         for request in done_requests:
@@ -317,7 +320,7 @@ class QueueArc(Arc):
             return total_backflow
         else:
             print('No direction')
-            
+        
     def end_timestep(self):
         self.vqip_in = self.empty_vqip()
         self.vqip_out = self.empty_vqip()
@@ -365,21 +368,28 @@ class AltQueueArc(QueueArc):
         
 
         
-    def update_queue(self, direction = None):
+    def update_queue(self, direction = None, backflow_enabled = True):
         #NOTE - has no direction
    
+        
         total_removed = self.copy_vqip(self.queue[0])
         
         #Push 0 travel time water
-        backflow = self.out_port.push_set(self.queue[0])
-        self.queue[0] = self.v_change_vqip(self.queue[0], backflow['volume'])
-        total_removed = self.v_change_vqip(total_removed, total_removed['volume'] - backflow['volume'])
+        backflow = self.out_port.push_set(total_removed)
+        
+        if not backflow_enabled:
+            self.queue[0] = backflow
+            backflow = self.empty_vqip()
+        else:
+            self.queue[0] = self.empty_vqip()
 
-        self.flow_out += total_removed['volume']
-        self.vqip_out = self.sum_vqip(self.vqip_out, total_removed)
+        total_removed = self.v_change_vqip(total_removed, total_removed['volume'] - backflow['volume'])
+        
+        self.flow_out += total_removed['volume'] 
+        self.vqip_out = self.sum_vqip(self.vqip_out, total_removed) 
         
         return backflow
-
+        
     def end_timestep(self):
         self.vqip_in = self.empty_vqip()
         self.vqip_out = self.empty_vqip()
@@ -473,7 +483,7 @@ class DecayArcAlt(AltQueueArc, DecayObj):
         self.flow_out = 0
         
         self.queue_storage_ = self.copy_vqip(self.queue_storage)
-        self.queue_storage = self.empty_vqip()
+        self.queue_storage = self.empty_vqip() #TODO I don't think this (or any queue_storage=  empty) is necessary
 
         queue_ = self.queue.copy()
         keys = self.queue.keys()
@@ -482,7 +492,7 @@ class DecayArcAlt(AltQueueArc, DecayObj):
                 self.queue[i] = self.make_decay(queue_[i+1])
                 self.queue[i+1] = self.empty_vqip()
 
-        self.queue[0] = self.sum_vqip(queue_[0], queue_[1])
+        self.queue[0] = self.sum_vqip(self.queue[0], self.make_decay(queue_[0]))
     
 class SewerArc(Arc):
     pass

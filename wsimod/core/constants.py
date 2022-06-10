@@ -57,3 +57,5 @@ KG_M2_TO_KG_KM2 = 1e6
 KG_M3_TO_KG_KM3 = 1e9
 
 D_TO_S = 3600 * 24
+
+mass_balance_error = False

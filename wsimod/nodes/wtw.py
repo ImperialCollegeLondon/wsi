@@ -225,7 +225,8 @@ class FWTW(WTW):
         self.total_deficit = self.sum_vqip(self.total_deficit, deficit)
         
         if self.total_deficit['volume'] > constants.FLOAT_ACCURACY:
-            print('deficit')
+            # print('deficit')
+            pass
         
         self.treat_current_input()
         
