@@ -777,6 +777,8 @@ class CropSurface(PerviousSurface):
             self.infiltration_excess['org-phosphorus'] += (surface_erodedP * org_removed / eff_erodedP)
             self.subsurface_flow['org-phosphorus'] += (subsurface_erodedP * org_removed / eff_erodedP)
             self.percolation['org-phosphorus'] += (percolation_erodedP * org_removed / eff_erodedP)
+            
+            #TODO Leon reckons this should all go to org-phosphorus - but little pain to update mass balance
             self.infiltration_excess['phosphate'] += (surface_erodedP * inorg_removed / eff_erodedP)
             self.subsurface_flow['phosphate'] += (subsurface_erodedP * inorg_removed / eff_erodedP)
             self.percolation['phosphate'] += (percolation_erodedP * inorg_removed / eff_erodedP)
