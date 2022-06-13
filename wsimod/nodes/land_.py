@@ -17,6 +17,9 @@ class Land_(Node):
         self.percolation_residence_time = 10
         self.surface_residence_time = 1
         
+        
+        
+        
         super().__init__(**kwargs)
         
         surfaces_ = kwargs['surfaces'].copy()
@@ -25,6 +28,14 @@ class Land_(Node):
             surface['parent'] = self
             surfaces.append(getattr(sys.modules[__name__], surface['type'])(**surface))
             self.mass_balance_ds.append(surfaces[-1].ds)
+        
+        
+        #Update handlers
+        self.push_set_handler['default'] = self.push_set_deny
+        self.push_set_handler['default'] = self.push_check_deny
+        self.push_set_handler['Sewer'] = self.push_set_sewer
+        # self.push_set_handler[('Demand', 'Garden')] = self.push_check_deny
+        
         
         #Can also do as timearea if this seems dodge (that is how it is done in IHACRES)
         #TODO should these be decayresidencetanks?
@@ -81,7 +92,17 @@ class Land_(Node):
                     self.surface_runoff.push_storage(reply_surface, force = True)
                 if reply_subsurface['volume'] > 0:
                     self.subsurface_runoff.push_storage(reply_subsurface, force = True)
-        
+    
+    def push_set_sewer(self, vqip):
+        impervious_surfaces = []
+        #TODO could move to be a parameter..
+        #TODO currently just push to the first impervious surface... not sure if people will be having multiple impervious surfaces
+        for surface in self.surfaces:
+            if isinstance(surface.__class__, ImperviousSurface):
+                vqip = self.surface.push_storage(vqip, force = True)
+                break
+        return vqip
+    
     def get_data_input(self, var):
         return self.data_input_dict[(var, self.t)]
     
@@ -913,9 +934,7 @@ class IrrigationSurface(CropSurface):
         super().__init__(**kwargs)
         
         self.inflows.append(self.irrigation)
-        
-        self.processes.append(self.crop_uptake)
-        
+                
     def irrigation(self):
         if self.days_after_sow:
             irrigation_demand = max(self.evaporation['volume'] - self.precipitation['volume'], 0) * self.irrigation_coefficient
