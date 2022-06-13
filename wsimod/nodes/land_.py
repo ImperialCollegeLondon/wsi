@@ -18,7 +18,7 @@ class Land_(Node):
         self.surface_residence_time = 1
         
         
-        
+        self.irrigate = []
         
         super().__init__(**kwargs)
         
@@ -28,11 +28,17 @@ class Land_(Node):
             surface['parent'] = self
             surfaces.append(getattr(sys.modules[__name__], surface['type'])(**surface))
             self.mass_balance_ds.append(surfaces[-1].ds)
+            if isinstance(surface, IrrigationSurface):
+                self.irrigate.append(surface.irrigate)
         
+        if len(self.irrigate) > 0:
+            self.irrigate = [f() for f in self.irrigate]
+        else:
+            self.irrigate = lambda : None
         
         #Update handlers
         self.push_set_handler['default'] = self.push_set_deny
-        self.push_set_handler['default'] = self.push_check_deny
+        self.push_check_handler['default'] = self.push_check_deny
         self.push_set_handler['Sewer'] = self.push_set_sewer
         # self.push_set_handler[('Demand', 'Garden')] = self.push_check_deny
         
@@ -908,7 +914,6 @@ class CropSurface(PerviousSurface):
                     print('Warning: freundlich flow adjusted, was larger than pool')
                 self.nutrient_pool.dissolved_inorganic_pool.receive(adsorbed)
         
-        #TODO - I guess reduce/increase org-phosphorus/phosphate accordingly for mass balance
         return (self.empty_vqip(), self.empty_vqip())
     
     def dry_deposition_to_tank(self, vqip):
@@ -933,9 +938,9 @@ class IrrigationSurface(CropSurface):
         
         super().__init__(**kwargs)
         
-        self.inflows.append(self.irrigation)
+        # self.inflows.append(self.irrigation)
                 
-    def irrigation(self):
+    def irrigate(self):
         if self.days_after_sow:
             irrigation_demand = max(self.evaporation['volume'] - self.precipitation['volume'], 0) * self.irrigation_coefficient
             if irrigation_demand > 0:
@@ -943,12 +948,12 @@ class IrrigationSurface(CropSurface):
                 if root_zone_depletion <= constants.FLOAT_ACCURACY:
                     print('dont think irrigation should happen here')
                     
-                supplied = self.pull_distributed({'volume' : irrigation_demand}, 
-                                                 of_type = ['River',
-                                                            'Node',
-                                                            'Groundwater',
-                                                            'Reservoir'
-                                                            ])
+                supplied = self.parent.pull_distributed({'volume' : irrigation_demand}, 
+                                                         of_type = ['River',
+                                                                    'Node',
+                                                                    'Groundwater',
+                                                                    'Reservoir'
+                                                                    ])
                 
                 #update tank
                 _ = self.push_storage(supplied, force = True)

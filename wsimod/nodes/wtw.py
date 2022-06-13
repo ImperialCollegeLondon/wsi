@@ -72,7 +72,9 @@ class WWTW(WTW):
         #Update args
         super().__init__(**kwargs)
         
+        
         self.end_timestep = self.end_timestep_
+        
         
         #Update handlers
         self.pull_set_handler['default'] = self.pull_set_reuse
@@ -85,8 +87,10 @@ class WWTW(WTW):
                                     area = self.stormwater_storage_area,
                                     datum = self.stormwater_storage_elevation)
         
-        #Initialise parameters
+        #Initialise states 
         self.liquor_ = self.empty_vqip()
+        self.previous_input = self.empty_vqip()
+        self.current_input = self.empty_vqip()
         
         #Mass balance
         self.mass_balance_out.append(lambda : self.solids) # Assume these go to landfill
@@ -157,17 +161,18 @@ class WWTW(WTW):
     def pull_set_reuse(self, vqip):
         #Respond to request of water for reuse/MRF
         reply_vol = min(vqip['volume'], 
-                        self.discharge['volume'])
+                        self.treated['volume'])
         reply = self.v_change_vqip(self.treated, reply_vol)
-        self.treated = self.v_chang_vqip(self.treated, self.treated['volume'] - reply_vol)
+        self.treated = self.v_change_vqip(self.treated, self.treated['volume'] - reply_vol)
         return reply
 
     def pull_check_reuse(self, vqip = None):
         #Respond to request of water for reuse/MRF
-        return self.copy_vqip(self.discharge)
+        return self.copy_vqip(self.previous_input)
     
     def end_timestep_(self):
         self.liquor_ = self.copy_vqip(self.liquor)
+        self.previous_input = self.copy_vqip(self.current_input)
         self.current_input = self.empty_vqip()
         self.treated = self.empty_vqip()
         self.stormwater_tank.end_timestep()
@@ -190,7 +195,7 @@ class FWTW(WTW):
         self.pull_check_handler['default'] = self.pull_check_fwtw
         
         self.push_set_handler['default'] = self.push_set_deny
-        self.push_set_handler['default'] = self.push_check_deny
+        self.push_check_handler['default'] = self.push_check_deny
         
         #Initialise parameters
         self.total_deficit = self.empty_vqip()

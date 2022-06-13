@@ -48,9 +48,9 @@ class Node(WSIObj):
         self.name = None
         self.date = None
         self.pull_set_handler = {'default' : self.pull_distributed}
-        self.push_set_handler = {'default' : self.push_distributed}
+        self.push_set_handler = {'default' : lambda x : self.push_distributed(x, of_type = ['Node', 'River', 'Waste'])}
         self.pull_check_handler = {'default' : self.pull_check_basic}
-        self.push_check_handler = {'default' : self.push_check_basic}
+        self.push_check_handler = {'default' : lambda x : self.push_check_basic(x, of_type = ['Node', 'River', 'Waste'])}
         
         #Update args
         super().__init__(**kwargs)

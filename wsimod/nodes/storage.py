@@ -84,7 +84,7 @@ class Groundwater(Storage):
     def distribute(self):
         avail = self.tank.get_avail()['volume'] / self.residence_time
         to_send = self.tank.pull_storage({'volume' : avail})
-        retained = self.push_distributed(to_send)
+        retained = self.push_distributed(to_send, of_type = ['Node', 'River'])
         if retained['volume'] > constants.FLOAT_ACCURACY:
             print('Storage unable to push')
     

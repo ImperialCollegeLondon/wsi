@@ -6,7 +6,7 @@ Created on Mon Nov 15 14:20:36 2021
 """
 from wsimod.nodes.nodes import Node
 from wsimod.core import constants
-
+#TODO call this outlet not waste
 class Waste(Node):
     def __init__(self, **kwargs):
         #Update args
