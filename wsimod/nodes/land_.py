@@ -419,9 +419,6 @@ class CropSurface(PerviousSurface):
         #Other soil parameters
         self.bulk_density = 1300 # [kg/m3]
         
-        
-        
-        
         super().__init__(**kwargs)
         
         #If decays are defined for any modelled pollutants then remove that behaviour
@@ -481,11 +478,6 @@ class CropSurface(PerviousSurface):
         #Adjust based on available volume
         reply = min(vqip['volume'], self.storage['volume'])
         
-        
-        # Edit BD 2022-05-03 - should be no longer needed after change to total-based
-        # if (self.storage['volume'] - reply) < self.unavailable_to_evap:
-        #     reply = max(reply - self.unavailable_to_evap, 0)
-        
         #Update reply to vqip (get concentration for non-nutrients)
         reply = self.v_change_vqip(self.storage, reply)
         
@@ -500,13 +492,11 @@ class CropSurface(PerviousSurface):
         reply['phosphate'] = nutrients['inorganic']['P']
         reply['org-phosphorus'] = nutrients['organic']['P']
         reply['org-nitrogen'] = nutrients['organic']['N']
+        
         #Extract from storage
         self.storage = self.extract_vqip(self.storage, reply)
-
         
         return reply
-    
-    
     
     def quick_interp(self, x, xp, yp):
         #Restrained version of np.interp
@@ -714,7 +704,7 @@ class CropSurface(PerviousSurface):
             return (self.empty_vqip(), self.empty_vqip())
         
     def erosion(self):
-        #TODO source parameters
+        #TODO source parameters (HYPE)
         precipitation_depth = self.get_data_input('precipitation') * constants.M_TO_MM
         if precipitation_depth > 5:
             rainfall_energy = 8.95 + 8.44 * log10(precipitation_depth * (0.257 + sin(2 * 3.14 * ((self.parent.t.dayofyear - 70) / 365)) * 0.09) * 2)
@@ -918,24 +908,40 @@ class CropSurface(PerviousSurface):
         
 class IrrigationSurface(CropSurface):
     def __init__(self, **kwargs):
-        self.irrigation_cover = 0 #proportion area irrigated
-        self.irrigation_efficiency = 0 #proportion of demand met
+        self.irrigation_coefficient = 0 #proportion area irrigated * proportion of demand met
         
         super().__init__(**kwargs)
         
-        self.inflows.append(self.calculate_irrigation)
-        self.inflows.append(self.satisfy_irrigation)
+        self.inflows.append(self.irrigation)
         
         self.processes.append(self.crop_uptake)
         
-    def calculate_irrigation(self):
-        pass
-    
-    def crop_uptake(self):
-        pass
-    
-    def satisfy_irrigation(self):
-        pass
+    def irrigation(self):
+        if self.days_after_sow:
+            irrigation_demand = max(self.evaporation['volume'] - self.precipitation['volume'], 0) * self.irrigation_coefficient
+            if irrigation_demand > 0:
+                root_zone_depletion = self.get_cmd()
+                if root_zone_depletion <= constants.FLOAT_ACCURACY:
+                    print('dont think irrigation should happen here')
+                    
+                supplied = self.pull_distributed({'volume' : irrigation_demand}, 
+                                                 of_type = ['River',
+                                                            'Node',
+                                                            'Groundwater',
+                                                            'Reservoir'
+                                                            ])
+                
+                #update tank
+                _ = self.push_storage(supplied, force = True)
+                
+                #update nutrient pools
+                organic = {'N' : supplied['org-nitrogen'], 
+                           'P' : supplied['org-phosphorus']}
+                inorganic = {'N' : supplied['ammonia'] + supplied['nitrate'], 
+                             'P' : supplied['phosphate']}
+                self.nutrient_pool.allocate_organic_irrigation(organic)
+                self.nutrient_pool.allocate_inorganic_irrigation(inorganic)
+
 
 class GardenSurface(IrrigationSurface):
     #TODO - probably a simplier version of this is useful, building just on pervioussurface
