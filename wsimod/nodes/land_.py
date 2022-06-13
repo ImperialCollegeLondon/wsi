@@ -28,9 +28,7 @@ class Land_(Node):
         
         #Can also do as timearea if this seems dodge (that is how it is done in IHACRES)
         #TODO should these be decayresidencetanks?
-        
-        #TODO temperature is dodge!
-        
+                
         self.subsurface_runoff = ResidenceTank(residence_time = self.subsurface_residence_time, 
                                                capacity = constants.UNBOUNDED_CAPACITY)
         self.percolation = ResidenceTank(residence_time = self.percolation_residence_time,
@@ -196,6 +194,8 @@ class ImperviousSurface(Surface):
             net_precipitation = precipitation_depth - evaporation_depth
             net_precipitation *= self.area
             net_precipitation = self.v_change_vqip(self.empty_vqip(), net_precipitation)
+            net_precipitation['temperature'] = self.get_data_input('temperature')
+            
             _ = self.push_storage(net_precipitation, force = True)
             total_evaporation = evaporation_depth * self.area
         
@@ -267,6 +267,7 @@ class PerviousSurface(Surface):
         #Read data
         precipitation_depth = self.get_data_input('precipitation')
         evaporation_depth = self.get_data_input('et0') * self.et0_coefficient
+        temperature = self.get_data_input('temperature')
         
         #Apply infiltration
         infiltrated_precipitation = min(precipitation_depth, self.infiltration_capacity)
@@ -296,6 +297,7 @@ class PerviousSurface(Surface):
         
         if total_water_passing_through_soil_tank > 0:
             total_water_passing_through_soil_tank = self.v_change_vqip(self.empty_vqip(), total_water_passing_through_soil_tank)
+            total_water_passing_through_soil_tank['temperature'] = temperature
             _ = self.push_storage(total_water_passing_through_soil_tank, force = True)
             subsurface_flow = self.pull_storage({'volume': subsurface_flow})
             percolation = self.pull_storage({'volume':percolation})
@@ -309,6 +311,7 @@ class PerviousSurface(Surface):
         
         #Convert to VQIPs
         infiltration_excess = self.v_change_vqip(self.empty_vqip(), infiltration_excess)
+        infiltration_excess['temperature'] = temperature
         precipitation = self.v_change_vqip(self.empty_vqip(), precipitation)
         evaporation = self.v_change_vqip(self.empty_vqip(), evaporation)
         

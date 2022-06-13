@@ -42,8 +42,15 @@ class WSIObj:
         #Sum two vqips given as totals
         t = self.copy_vqip(t1)
         t['volume'] += t2['volume']
-        for pollutant in constants.POLLUTANTS:
+        for pollutant in constants.ADDITIVE_POLLUTANTS:
             t[pollutant] += t2[pollutant]
+        
+        if t['volume'] > 0:
+            #Assume proportional blending of non additive pollutants
+            for pollutant in constants.NON_ADDITIVE_POLLUTANTS:
+                t[pollutant] = (t2[pollutant] * t2['volume'] + t1[pollutant] * t1['volume']) / t['volume']
+        
+        
         return t
         
     def concentration_to_total(self, c):
