@@ -352,7 +352,7 @@ class PerviousSurface(Surface):
 
 class CropSurface(PerviousSurface):
     def __init__(self, **kwargs):
-        #TODO Check that nitrate, ammonia, solids, phosphorus, phosphate are in POLLUTANTS
+        #TODO Automatic check that nitrate, ammonia, solids, phosphorus, phosphate are in POLLUTANTS
         
         #Crop factors (set when creating object)
         self.ET_depletion_factor = 0 #To do with water availability, p from FAOSTAT
@@ -375,10 +375,7 @@ class CropSurface(PerviousSurface):
                                                                                           'P' : 0.1}, # [-] dimension = N & P
                                     'fraction_residue_to_fast_nutrients' : {'N' : 0.1, 
                                                                             'P' : 0.1} # [-] dimension = N & P
-        }
-        #TODO check units (WIMS is based on mg/l of N)
-        self.nh3_no3_ratio = 1/10 # [-] NH3:NO3 ratio for soil water abstractions of N in nutrient pool (averaged from WIMS)
-        
+        }        
         #Crop parameters
         self.crop_cover_max = 0.9 # [-] 0~1
         self.ground_cover_max = 0.3 # [-]
