@@ -8,7 +8,7 @@ Converted to totals on 2022-05-03
 """
 from wsimod.nodes.nodes import Node, Tank, QueueTank, DecayTank, DecayQueueTank
 from wsimod.core import constants
-
+from math import exp
 class Storage(Node):
     #Basically a wrapper for a tank
 
@@ -201,7 +201,228 @@ class QueueGroundwater(Storage):
             
             
                 # return self.v_change_vqip(self.tank.storage, pulled)
+
+class River(Storage):
+    #TODO non-day timestep
+    def __init__(self, **kwargs):
+        self.depth = 0 # [m]
+        self.area = 0 # [m2]
+        self.length = 0 # [m]
+        self.width = 0 # [m]
+        self.datum = 0 # [m]
+        self.velocity = 0.2 # [m/dt]
+        self.damp = 0.1 # [>=0] flow delay and attenuation
+        
+        super().__init__(**kwargs)
+        
+        #TODO convert units
+        self.uptake_PNratio = 1/7.2 # [-] P:N during crop uptake
+        self.bulk_density = 1300 # [kg/m3] soil density
+        self.denpar_w = 0.0015#0.001, # [kg/m2/day] reference denitrification rate in water course
+        self.T_wdays = 20 # [days] weighting constant for river temperature calculation (similar to moving average period)
+        self.halfsatINwater = 1.5 * constants.MG_L_TO_KG_M3 # [kg/m3] half saturation parameter for denitrification in river
+        self.T_10_days = [] # [degree C] average water temperature of 10 days
+        self.T_20_days = [] # [degree C] average water temperature of 20 days
+        self.TP_365_days = [] # [degree C] average water temperature of 20 days
+        self.hsatTP = 0.05 * constants.MG_L_TO_KG_M3  # [kg/m3] 
+        self.limpppar = 0.1 * constants.MG_L_TO_KG_M3  # [kg/m3]
+        self.prodNpar = 0.001 # [kg N/m3/day] nitrogen production/mineralisation rate
+        self.prodPpar = 0.0001 # [kg N/m3/day] phosphorus production/mineralisation rate
+        self.muptNpar = 0.001 # [kg/m2/day] nitrogen macrophyte uptake rate
+        self.muptPpar = 0.0001#0.01, # [kg/m2/day] phosphorus macrophyte uptake rate
+        self.qbank_365_days = [1e6, 1e6] # [m3/day] store outflow in the previous year
+        self.qbank = 1e6 # [m3/day] bankfull flow = second largest outflow in the previous year
+        self.qbankcorrpar = 0.001 # [-] correction coefficient for qbank flow
+        self.sedexppar = 1 # [-]
+        self.EPC0 = 0.05 # [mg/l]
+        self.kd_s = 0 * constants.MG_L_TO_KG_M3 #6 * 1e-6, # [kg/m3]
+        self.kadsdes_s = 2#0.9, # [-]
+        self.Dsed = 0.2 # [m]
+        
+        self.max_temp_lag = 20
+        self.lagged_temperatures = []
+        
+        self.max_phosphorus_lag = 365
+        self.lagged_total_phosphorus = []
+        
+        self.din_components = ['ammonia','nitrate'] # TODO need a cleaner way to do this depending on whether e.g., nitrite is included
+        
+        # Initialise paramters
+        self.current_depth = 0 # [m]
+        # self.river_temperature = 0 # [degree C]
+        # self.river_denitrification = 0 # [kg/day]
+        # self.macrophyte_uptake_N = 0 # [kg/day]
+        # self.macrophyte_uptake_P = 0 # [kg/day]
+        # self.sediment_particulate_phosphorus_pool = 60000 # [kg]
+        # self.sediment_pool = 1000000 # [kg]
+        # self.benthos_source_sink = 0 # [kg/day]
+        # self.t_res = 0 # [day]
+        # self.outflow = self.empty_vqip()
+        
+        #Update handlers
+        self.pull_check_handler[('RiparianBuffer', 'volume')] = self.pull_check_fp
+        
+        #Update mass balance
+        self.mass_balance_in(lambda : self.bio_in)
+        self.mass_balance_out(lambda : self.bio_out)
+        
+    def update_depth(self):
+        self.current_depth = self.storage['volume'] / self.area
+    
+    def get_din_pool(self):
+        return sum([self.storage[x] for x in self.din_components]) #TODO + self.storage['nitrite'] but nitrite might not be modelled... need some ways to address this
+    
+    def biochemical_processes(self):
+        #TODO make more modular
+        
+        #HYPE has a temperature equation that tends the tank storage to the mean... I'd sooner rely on decay or similar
+        
+        #Update lagged temperatures
+        if len(self.lagged_temperatures) > self.max_temp_lag
+            del self.lagged_temperatures[0]
+        self.lagged_temperatures.append(self.storage['temperature'])
+        
+        #Update lagged total phosphorus
+        if len(self.lagged_total_phosphorus) > self.max_phosphorus_lag
+            del self.lagged_total_phosphorus[0]
+        total_phosphorus = self.storage['phosphate'] + self.storage['org-phosphorus']
+        self.lagged_total_phosphorus.append(total_phosphorus)
+        
+        #Check if any water
+        if self.storage['volume'] < constants.FLOAT_ACCURACY:
+            #Assume these only do something when there is water
+            return (self.empty_vqip(), self.empty_vqip())
+        
+        if self.storage['temperature'] <= 0 :
+            #Seems that these things are only active when above freezing
+            return (self.empty_vqip(), self.empty_vqip())
+        
+        #Denitrification
+        tempfcn = 2 ** ((self.storage['temperature'] - 20) / 10)
+        if self.storage['temperature'] < 5 :
+            tempfcn *= (self.storage['temperature'] / 5)
+        
+        din = self.get_din_pool()
+        din_concentration = din / self.storage['volume']
+        confcn = din_concentration / (din_concentration + self.halfsatINwater) # [kg/m3]
+        denitri_water = self.denpar_w * self.area * tempfcn * confcn # [kg/day] #TODO convert to per DT
+        
+        river_denitrification = min(denitri_water, 0.5 * din) # [kg/day] max 50% kan be denitrified
+        din_ = (din - river_denitrification) # [kg]
+        
+        #Update mass balance
+        in_ = self.empty_vqip()
+        out_ = self.empty_vqip()
+        for pol in self.din_components:
+            #denitrification
+            loss = (din - din_) / din * self.storage[pol]
+            out_[pol] += loss
+            self.storage[pol] -= loss
+        
+        din = self.get_din_pool()
+        
+        #Calculate moving averages 
+        #TODO generalise
+        temp_10_day = sum(self.lagged_temperatures[-10:]) / 10
+        temp_20_day = sum(self.lagged_temperatures[-20:]) / 20
+        total_phos_365_day = sum(self.lagged_phosphorus) / self.max_lagged_phosphorus
+        
+        #Calculate coefficients
+        tempfcn = (self.storage['temperature']) / 20 * (temp_10_day - temp_20_day) / 5
+        if (total_phos_365_day - self.limpppar + self.hsatTP) > 0:
+            totalphosfcn = (total_phos_365_day - self.limpppar) / (total_phos_365_day - self.limpppar + self.hsatTP)
+        else:
+            totalphosfcn = 0
+        
+        #Mineralisation/production
+        #TODO this feels like it could be much tidier
+        minprodN = self.prodNpar * totalphosfcn * tempfcn * self.area * self.current_depth # [kg N/day]
+        minprodP = self.prodPpar * totalphosfcn * tempfcn * self.area * self.current_depth * self.uptake_PNratio # [kg N/day]
+        if minprodN > 0 : 
+            #production (inorg -> org)
+            minprodN = min(0.5 * din, minprodN) # only half pool can be used for production
+            minprodP = min(0.5 * self.storage['phosphate'], minprodP) # only half pool can be used for production
             
+            #Update mass balance
+            out_['phosphate'] = minprodP
+            self.storage['phosphate'] -= minprodP
+            in_['org-phosphorus'] = minprodP
+            self.storage['org-phosphorus'] += minprodP
+            
+            for pol in self.din_components:
+                loss = minprodN * self.storage[pol] / din
+                out_[pol] += loss
+                self.storage[pol] -= loss
+            
+            in_['org-nitrogen'] = minprodN
+            self.storage['org-nitrogen'] += minprodN
+            
+        else:  
+            #mineralisation (org -> inorg)
+            minprodN = min(0.5 * self.storage['org-nitrogen'], -minprodN)
+            minprodP = min(0.5 * self.storage['org-phosphorus'], -minprodP)
+            
+            #Update mass balance
+            in_['phosphate'] = minprodP
+            self.storage['phosphate'] += minprodP
+            out_['org-phosphorus'] = minprodP
+            self.storage['org-phosphorus'] -= minprodP
+            
+            for pol in self.din_components:
+                gain = minprodN * self.storage[pol] / din
+                in_[pol] += gain
+                self.storage[pol] += gain
+            
+            out_['org-nitrogen'] = minprodN
+            self.storage['org-nitrogen'] -= minprodN
+            
+        din = self.get_din_pool()
+        
+        # macrophyte uptake
+        # temperature dependence factor
+        tempfcn1 = (max(0, self.storage['temperature']) / 20) ** 0.3
+        tempfcn2 = (self.storage['temperature'] - temp_20_day) / 5
+        tempfcn = max(0, tempfcn1 * tempfcn2)
+    
+        macrouptN = self.muptNpar * tempfcn * self.area # [kg/day]
+        macrophyte_uptake_N = min(0.5 * din, macrouptN)
+        
+        for pol in self.din_components:
+            loss = macrophyte_uptake_N * self.storage[pol] / din
+            out_[pol] += loss
+            self.storage[pol] -= loss
+       
+        macrouptP = self.muptPpar * tempfcn * max(0, totalphosfcn) * self.area # [kg/day]
+        macrophyte_uptake_P = min(0.5 * self.storage['phosphate'], macrouptP) 
+        out_['phosphate'] = macrophyte_uptake_P
+        self.storage['phosphate'] -= macrophyte_uptake_P
+        
+        #TODO
+        #source/sink for benthos sediment P
+        #suspension/resuspension
+        
+    def distribute(self):
+        in_, out_ = self.biochemical_processes()
+        self.bio_in = in_
+        self.bio_out = out_
+        
+        total_time = self.length / (self.velocity) 
+        kt = self.damp * total_time # [day]
+        if kt != 0 :
+            riverrc = 1 - kt + kt * exp(-1 / kt) # [-]
+        else:
+            riverrc = 1
+        
+        outflow = self.pull_storage({'volume' : self.storage['volume'] * riverrc})
+        reply = self.push_distributed(outflow, of_type = ['River','Node','Waste'])
+        if reply['volume'] > 0 :
+            print('river cant push')
+        
+    def pull_check_fp(self, vqip = None):
+        # update river depth
+        self.update_depth()
+        return self.current_depth, self.area, self.width, self.river_tank.storage
+        
     
 class Abstraction(Storage):
     """
