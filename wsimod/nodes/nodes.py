@@ -680,18 +680,12 @@ class Tank(WSIObj):
         #Pull from Tank by volume (taking pollutants in proportion)
         
         if self.storage['volume'] == 0:
-            #TODO people may want to pull pollutants and no volume from storage..
             return self.empty_vqip()
         
         #Adjust based on available volume
         reply = min(vqip['volume'], self.storage['volume'])
         
-        
-        # Edit BD 2022-05-03 - should be no longer needed after change to total-based
-        # if (self.storage['volume'] - reply) < self.unavailable_to_evap:
-        #     reply = max(reply - self.unavailable_to_evap, 0)
-        
-        #Update reply to vqip
+        #Update reply to vqip (in proportion to concentration in storage)
         reply = self.v_change_vqip(self.storage, reply)
         
         #Extract from storage
