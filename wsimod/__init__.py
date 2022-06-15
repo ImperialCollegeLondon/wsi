@@ -6,3 +6,5 @@ from wsimod.arcs import *
 import wsimod.arcs
 from wsimod.orchestration import *
 import wsimod.orchestration
+from wsimod.preprocessing import *
+import wsimod.preprocessing
