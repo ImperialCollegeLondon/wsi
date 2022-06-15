@@ -240,7 +240,7 @@ class FWTW(WTW):
         rejected = self.push_distributed(push_back, of_type = 'Sewer')
         
         if rejected['volume'] > constants.FLOAT_ACCURACY:
-            print('nowhere for sludge to go')
+            print('nowhere for sludge to go - mass balance error incoming')
         
         #Send water to service reservoirs
         excess = self.service_reservoir_tank.push_storage(self.treated)
