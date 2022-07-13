@@ -967,12 +967,22 @@ class IrrigationSurface(CropSurface):
                 self.nutrient_pool.allocate_inorganic_irrigation(inorganic)
 
 
-class GardenSurface(IrrigationSurface):
+class GardenSurface(PerviousSurface):
     #TODO - probably a simplier version of this is useful, building just on pervioussurface
-    def __init__(self, **kwargs):
-        self.satisfy_irrigation = self.pull_from_distribution
-        
+    def __init__(self, **kwargs):  
+        self.irrigation_coefficient = 0
         super().__init__(**kwargs)
         
     def pull_from_distribution(self):
-        pass
+        irrigation_demand = max(self.evaporation['volume'] - self.precipitation['volume'], 0) * self.irrigation_coefficient
+        if irrigation_demand > 0:
+                root_zone_depletion = self.get_cmd()
+                if root_zone_depletion <= constants.FLOAT_ACCURACY:
+                    print('dont think irrigation should happen here')
+                    
+                supplied = self.parent.pull_distributed({'volume' : irrigation_demand}, 
+                                                         of_type = 'Demand')
+                
+                #update tank
+                _ = self.push_storage(supplied, force = True)
+            
