@@ -457,6 +457,7 @@ class CropSurface(PerviousSurface):
         #TODO It might be easier to infer everything - but could be risky if people want to change calendars on the fly
         self.harvest_day = self.crop_factor_stage_dates[-3]
         self.sowing_day = self.crop_factor_stage_dates[1]
+        
         self.harvest_sow_calendar = [0, self.sowing_day, self.harvest_day, self.harvest_day + 1, 365]
         self.ground_cover_stages = [0,0,self.ground_cover_max,0,0]
         self.crop_cover_stages = [0,0,self.crop_cover_max,0,0]
@@ -967,7 +968,7 @@ class IrrigationSurface(CropSurface):
                 self.nutrient_pool.allocate_inorganic_irrigation(inorganic)
 
 
-class GardenSurface(PerviousSurface):
+class GardenSurface(CropSurface):
     #TODO - probably a simplier version of this is useful, building just on pervioussurface
     def __init__(self, **kwargs):  
         self.irrigation_coefficient = 0
