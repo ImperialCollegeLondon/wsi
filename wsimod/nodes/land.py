@@ -377,7 +377,7 @@ class PerviousSurface(Surface):
     
     
 
-class CropSurface(PerviousSurface):
+class GrowingSurface(PerviousSurface):
     def __init__(self, **kwargs):
         #TODO Automatic check that nitrate, ammonia, solids, phosphorus, phosphate are in POLLUTANTS
         
@@ -929,7 +929,7 @@ class CropSurface(PerviousSurface):
         self.push_storage(vqip, force = True)
         
         
-class IrrigationSurface(CropSurface):
+class IrrigationSurface(GrowingSurface):
     def __init__(self, **kwargs):
         self.irrigation_coefficient = 0 #proportion area irrigated * proportion of demand met
         
@@ -964,7 +964,7 @@ class IrrigationSurface(CropSurface):
                 self.nutrient_pool.allocate_inorganic_irrigation(inorganic)
 
 
-class GardenSurface(CropSurface):
+class GardenSurface(GrowingSurface):
     #TODO - probably a simplier version of this is useful, building just on pervioussurface
     def __init__(self, **kwargs):  
         self.irrigation_coefficient = 0
