@@ -453,11 +453,7 @@ class CropSurface(PerviousSurface):
             self.decays.pop(pollutant, None)
         
         
-        #Infer basic sow/harvest calendar
-        #TODO It might be easier to infer everything - but could be risky if people want to change calendars on the fly
-        self.harvest_day = self.crop_factor_stage_dates[-3]
-        self.sowing_day = self.crop_factor_stage_dates[1]
-        
+        #Infer basic sow/harvest calendar        
         self.harvest_sow_calendar = [0, self.sowing_day, self.harvest_day, self.harvest_day + 1, 365]
         self.ground_cover_stages = [0,0,self.ground_cover_max,0,0]
         self.crop_cover_stages = [0,0,self.crop_cover_max,0,0]
