@@ -138,6 +138,7 @@ class Surface(DecayTank):
         self.processes = [lambda : (self.empty_vqip(), self.empty_vqip())]
         self.outflows = [lambda : (self.empty_vqip(), self.empty_vqip())]
         
+        
     def run(self):
         
         for f in self.inflows + self.processes + self.outflows:
@@ -149,6 +150,9 @@ class Surface(DecayTank):
     def get_data_input(self, var):
         return self.parent.get_data_input(var)
     
+    def get_data_input_surface(self, var):
+        return self.data_input_dict[(var, self.parent.t)]
+    
     def dry_deposition_to_tank(self, vqip):
         _ = self.push_storage(vqip, force = True)
         
@@ -157,9 +161,9 @@ class Surface(DecayTank):
 
     def atmospheric_deposition(self):
         #TODO double check units - is weight of N or weight of NHX/NOX?
-        nhx = self.get_data_input('nhx-dry') * self.area
-        nox = self.get_data_input('nox-dry') * self.area
-        srp = self.get_data_input('srp-dry') * self.area
+        nhx = self.get_data_input_surface('nhx-dry') * self.area
+        nox = self.get_data_input_surface('nox-dry') * self.area
+        srp = self.get_data_input_surface('srp-dry') * self.area
         
         vqip = self.empty_vqip()
         vqip['ammonia'] = nhx
@@ -171,9 +175,9 @@ class Surface(DecayTank):
         
     def precipitation_deposition(self):
         #TODO double check units - is weight of N or weight of NHX/NOX?
-        nhx = self.get_data_input('nhx-wet') * self.area
-        nox = self.get_data_input('nox-wet') * self.area
-        srp = self.get_data_input('srp-wet') * self.area
+        nhx = self.get_data_input_surface('nhx-wet') * self.area
+        nox = self.get_data_input_surface('nox-wet') * self.area
+        srp = self.get_data_input_surface('srp-wet') * self.area
         
         vqip = self.empty_vqip()
         vqip['ammonia'] = nhx
@@ -577,9 +581,9 @@ class GrowingSurface(PerviousSurface):
     def fertiliser(self):
         #TODO tidy up fertiliser/manure/residue/deposition once preprocessing is sorted
         #Distribute between surfaces
-        nhx = self.get_data_input('nhx-fertiliser') * self.area
-        nox = self.get_data_input('nox-fertiliser') * self.area
-        srp = self.get_data_input('srp-fertiliser') * self.area
+        nhx = self.get_data_input_surface('nhx-fertiliser') * self.area
+        nox = self.get_data_input_surface('nox-fertiliser') * self.area
+        srp = self.get_data_input_surface('srp-fertiliser') * self.area
         
         vqip = self.empty_vqip()
         vqip['ammonia'] = nhx
@@ -595,9 +599,9 @@ class GrowingSurface(PerviousSurface):
         return (vqip, self.empty_vqip())
     
     def manure(self):
-        nhx = self.get_data_input('nhx-manure') * self.area
-        nox = self.get_data_input('nox-manure') * self.area
-        srp = self.get_data_input('srp-manure') * self.area
+        nhx = self.get_data_input_surface('nhx-manure') * self.area
+        nox = self.get_data_input_surface('nox-manure') * self.area
+        srp = self.get_data_input_surface('srp-manure') * self.area
         
         vqip = self.empty_vqip()
         vqip['ammonia'] = nhx
@@ -613,9 +617,9 @@ class GrowingSurface(PerviousSurface):
         return (vqip, self.empty_vqip())
     
     def residue(self):
-        nhx = self.get_data_input('nhx-residue') * self.area
-        nox = self.get_data_input('nox-residue') * self.area
-        srp = self.get_data_input('srp-residue') * self.area
+        nhx = self.get_data_input_surface('nhx-residue') * self.area
+        nox = self.get_data_input_surface('nox-residue') * self.area
+        srp = self.get_data_input_surface('srp-residue') * self.area
         
         vqip = self.empty_vqip()
         vqip['ammonia'] = nhx * self.nutrient_pool.fraction_residue_to_fast['N']
