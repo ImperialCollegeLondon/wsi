@@ -13,7 +13,7 @@ class Sewer(Node):
     def __init__(self, **kwargs):
         #Default parameters
         self.capacity = 0
-        self.pipe_time = 1 #Sewer to sewer travel time
+        self.pipe_time = 0 #Sewer to sewer travel time
         self.pipe_timearea = {0 : 1}
         self.chamber_area = 1
         self.chamber_floor = 10
