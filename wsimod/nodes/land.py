@@ -935,7 +935,7 @@ class GrowingSurface(PerviousSurface):
         
 class IrrigationSurface(GrowingSurface):
     def __init__(self, **kwargs):
-        self.irrigation_coefficient = 0 #proportion area irrigated * proportion of demand met
+        self.irrigation_coefficient = 0.1 #proportion area irrigated * proportion of demand met
         
         super().__init__(**kwargs)
         
