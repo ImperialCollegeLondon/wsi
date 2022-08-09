@@ -206,9 +206,9 @@ class QueueGroundwater(Storage):
 class River(Storage):
     #TODO non-day timestep
     def __init__(self, **kwargs):
-        self.depth = 0 # [m]
-        self.length = 0 # [m]
-        self.width = 0 # [m]
+        self.depth = 1 # [m]
+        self.length = 200 # [m]
+        self.width = 10 # [m]
         self.datum = 0 # [m]
         self.velocity = 0.2 # [m/dt]
         self.damp = 0.1 # [>=0] flow delay and attenuation

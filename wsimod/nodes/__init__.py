@@ -18,5 +18,3 @@ from wsimod.nodes.waste import *
 import wsimod.nodes.waste
 from wsimod.nodes.wtw import *
 import wsimod.nodes.wtw
-from wsimod.nodes.river import *
-import wsimod.nodes.river
