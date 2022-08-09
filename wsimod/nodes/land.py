@@ -194,7 +194,7 @@ class ImperviousSurface(Surface):
         
         #Default parameters 
         self.et0_to_e = 0.1 #Total evaporation (ignoring transpiration)
-        self.deposition_dict = {x : 0.001 for x in constants.POLLUTANTS} #kg/m2/dt
+        self.pollutant_load = {x : 0.001 for x in constants.POLLUTANTS} #kg/m2/dt
         
         
         super().__init__(**kwargs)
@@ -205,7 +205,7 @@ class ImperviousSurface(Surface):
         self.outflows.append(self.push_to_sewers)
     
     def urban_deposition(self):
-        pollution = self.copy_vqip(self.pollutant_dict)
+        pollution = self.copy_vqip(self.pollutant_load)
         pollution['volume'] = 0
         _ = self.push_storage(pollution, force = True)
         
