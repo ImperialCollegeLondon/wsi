@@ -139,6 +139,6 @@ class ResidentialDemand(Demand):
     
     def get_house_demand(self):
         consumption = self.population * self.per_capita
-        foul = self.copy_vqip(self.pollutant_dict)
+        foul = self.copy_vqip(self.pollutant_load)
         foul['volume'] = consumption
         return foul
