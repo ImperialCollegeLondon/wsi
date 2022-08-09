@@ -12,8 +12,7 @@ from wsimod.core import constants
 class Sewer(Node):
     def __init__(self, **kwargs):
         #Default parameters
-        self.node_storage = 0
-        self.pipe_storage = 0
+        self.capacity = 0
         self.pipe_time = 1 #Sewer to sewer travel time
         self.pipe_timearea = {0 : 1}
         self.chamber_area = 1
@@ -34,7 +33,7 @@ class Sewer(Node):
         self.push_check_handler['Land'] = self.push_check_sewer
         
         #Create sewer tank
-        self.sewer_tank = QueueTank(capacity = self.node_storage + self.pipe_storage,
+        self.sewer_tank = QueueTank(capacity = self.capacity,
                                     number_of_timesteps = 0,
                                     datum = self.chamber_floor,
                                     area = self.chamber_area)
