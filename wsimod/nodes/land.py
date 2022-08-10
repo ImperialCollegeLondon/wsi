@@ -123,16 +123,24 @@ class Land(Node):
         
         
 class Surface(DecayTank):
-    def __init__(self, **kwargs):
-        self.depth = 0
-        self.decays = {} #generic decay parameters
+    def __init__(self,
+                 area = 0,
+                 depth = 1,
+                 decays = {},
+                 parent = None,
+                 **kwargs):
+        self.depth = depth
+        self.decays = area
         
         
         #TODO interception if I hate myself enough?
-        
+        capacity = area * depth
         #Parameters
-        super().__init__(**kwargs)        
-        
+        super().__init__(capacity = capacity,
+                         area = area,
+                         decays = decays,
+                         parent = parent)
+        self.__dict__.update(kwargs)
         self.capacity = self.depth * self.area   
         
         self.inflows = [self.atmospheric_deposition,

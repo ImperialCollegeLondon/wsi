@@ -21,7 +21,8 @@ class Arc(WSIObj):
         self.preference = 1
         
         #Update args
-        super().__init__(**kwargs)
+        WSIObj.__init__(self)
+        self.__dict__.update(kwargs)
         
         if self.name in dir(nodes):
             print('Warning: arc name should not take a node class name')
@@ -412,11 +413,12 @@ class AltQueueArc(QueueArc):
         self.queue = {0 : self.empty_vqip(), 1 : self.empty_vqip()}
 
 class DecayArc(QueueArc, DecayObj):
-    def __init__(self, **kwargs):
-        self.decays = {}
+    def __init__(self,decays = {}, **kwargs):
+        self.decays = decays
         
-        super().__init__(**kwargs)
-
+        QueueArc.__init__(self, **kwargs)
+        DecayObj.__init__(self, decays)
+        
         self.mass_balance_out.append(lambda : self.total_decayed)
         
     def enter_queue(self, request, direction = None, tag = 'default'):
@@ -448,10 +450,14 @@ class DecayArc(QueueArc, DecayObj):
 
 
 class DecayArcAlt(AltQueueArc, DecayObj):
-    def __init__(self, **kwargs):
+    def __init__(self, decays={}, **kwargs):
         self.decays = {}
         
-        super().__init__(**kwargs)
+        # super().__init__(**kwargs)
+        AltQueueArc.__init__(self, **kwargs)
+        DecayObj.__init__(self, decays)
+        
+        
         self.end_timestep = self._end_timestep
 
         self.mass_balance_out.append(lambda : self.total_decayed)

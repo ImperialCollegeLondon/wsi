@@ -51,10 +51,11 @@ class Node(WSIObj):
         self.push_set_handler = {'default' : lambda x : self.push_distributed(x, of_type = ['Node', 'River', 'Waste'])}
         self.pull_check_handler = {'default' : self.pull_check_basic}
         self.push_check_handler = {'default' : lambda x : self.push_check_basic(x, of_type = ['Node', 'River', 'Waste'])}
-        
+
         #Update args
-        super().__init__(**kwargs)
-        
+        super().__init__()
+        self.__dict__.update(kwargs)
+
         #Mass balance checking
         self.mass_balance_in = [self.total_in]
         self.mass_balance_out = [self.total_out]
@@ -605,11 +606,17 @@ class Node(WSIObj):
 
 class Tank(WSIObj):
     #A standard storage with capacity
-    def __init__(self,**kwargs):
+    def __init__(self,
+                 capacity = 0,
+                 area = 1,
+                 datum = 10,
+                 initial_storage = 0,
+                 **kwargs):
         
-        self.capacity = 0
-        self.area = 1
-        self.datum = 10
+        self.capacity = capacity
+        self.area = area
+        self.datum = datum
+        self.initial_storage = initial_storage
         
         
         # Edit BD 2022-05-03 - should be no longer needed after change to total-based
@@ -617,8 +624,9 @@ class Tank(WSIObj):
         # #Otherwise, evaporation will remove pollutants if it drops a tank to 0.
         # self.unavailable_to_evap = constants.FLOAT_ACCURACY/100000
         
-        super().__init__(**kwargs)
         
+        WSIObj.__init__(self)
+        self.__dict__.update(kwargs)
         
         #TODO enable stores to be initialised not empty
         if 'initial_storage' in dir(self):
@@ -749,8 +757,8 @@ class Tank(WSIObj):
 
 class ResidenceTank(Tank):
     
-    def __init__(self,**kwargs):
-        self.residence_time = 2
+    def __init__(self,residence_time = 2, **kwargs):
+        self.residence_time = residence_time 
         super().__init__(**kwargs)
     
     def pull_outflow(self):
@@ -761,9 +769,24 @@ class ResidenceTank(Tank):
     
     
 class DecayTank(Tank, DecayObj):
-    def __init__(self,**kwargs):
-        self.parent = None
-        super().__init__(**kwargs)
+    def __init__(self,
+                 capacity = 0,
+                 area = 1,
+                 datum = 10,
+                 initial_storage = 0,
+                 decays = {},
+                 parent = None):
+        
+        self.parent = parent
+        
+        Tank.__init__(self,
+                      capacity=capacity,
+                      area=area,
+                      initial_storage=initial_storage,
+                      datum=datum)
+        
+        DecayObj.__init__(self,
+                          decays)
         
         self.end_timestep = self.end_timestep_decay
         self.ds = self.decay_ds
@@ -781,8 +804,8 @@ class DecayTank(Tank, DecayObj):
     
 class QueueTank(Tank):
     #A storage that can allow delay before parts of it are accessible
-    def __init__(self, **kwargs):
-        self.number_of_timesteps = 0
+    def __init__(self, number_of_timesteps = 0,**kwargs):
+        self.number_of_timesteps = number_of_timesteps
         
         super().__init__(**kwargs)
         

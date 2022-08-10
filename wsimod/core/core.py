@@ -12,12 +12,9 @@ from math import log10
 
 class WSIObj:
     
-    def __init__(self, **kwargs):
+    def __init__(self):
         #Predefine empty concentrations because copying is quicker than defining
-        self.empty_vqip_predefined = dict.fromkeys(constants.POLLUTANTS + ['volume'],0)
-        
-        #Update args
-        self.__dict__.update(kwargs)
+        self.empty_vqip_predefined = dict.fromkeys(constants.POLLUTANTS + ['volume'],0)        
 
     def empty_vqip(self):
         return self.empty_vqip_predefined.copy()
@@ -187,10 +184,10 @@ class DecayObj(WSIObj):
     #a type of WSIObj inherits a DecayObj - also a type of WSIObj). The reason
     #diamonds are problems is because there can be conflicts in functions. But
     #I don't want anyone to overwrite WSIObj functions so I don't see an issue?
-    def __init__(self, **kwargs):
-        self.decays = {}
-        
-        super().__init__(**kwargs)
+    def __init__(self, decays):
+        self.decays = decays
+        super().__init__()
+
         if 'parent' in dir(self):
             self.data_input_object = self.parent
         elif 'in_port' in dir(self):
