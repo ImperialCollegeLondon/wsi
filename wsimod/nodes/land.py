@@ -28,8 +28,13 @@ class Land(Node):
             surface['parent'] = self
             surfaces.append(getattr(sys.modules[__name__], surface['type'])(**surface))
             self.mass_balance_ds.append(surfaces[-1].ds)
-            if isinstance(surface, IrrigationSurface):
-                self.irrigate.append(surface.irrigate)
+            if isinstance(surfaces[-1], IrrigationSurface):
+                self.irrigate.append(surfaces[-1].irrigate)
+            
+            if isinstance(surfaces[-1], GardenSurface):
+                self.push_check_handler[('Demand','Garden')] = surfaces[-1].calculate_irrigation_demand
+                self.push_set_handler[('Demand','Garden')] = surfaces[-1].receive_irrigation_demand
+                
         
         if len(self.irrigate) > 0:
             self.irrigate = [f() for f in self.irrigate]
@@ -40,7 +45,6 @@ class Land(Node):
         self.push_set_handler['default'] = self.push_set_deny
         self.push_check_handler['default'] = self.push_check_deny
         self.push_set_handler['Sewer'] = self.push_set_sewer
-        # self.push_set_handler[('Demand', 'Garden')] = self.push_check_deny
         
         
         #Can also do as timearea if this seems dodge (that is how it is done in IHACRES)
@@ -971,19 +975,17 @@ class IrrigationSurface(GrowingSurface):
 class GardenSurface(GrowingSurface):
     #TODO - probably a simplier version of this is useful, building just on pervioussurface
     def __init__(self, **kwargs):  
-        self.irrigation_coefficient = 0
         super().__init__(**kwargs)
         
-    def pull_from_distribution(self):
-        irrigation_demand = max(self.evaporation['volume'] - self.precipitation['volume'], 0) * self.irrigation_coefficient
+        
+    def calculate_irrigation_demand(self,ignore_vqip):
+        irrigation_demand = max(self.evaporation['volume'] - self.precipitation['volume'], 0)
         if irrigation_demand > 0:
-                root_zone_depletion = self.get_cmd()
-                if root_zone_depletion <= constants.FLOAT_ACCURACY:
-                    print('dont think irrigation should happen here')
-                    
-                supplied = self.parent.pull_distributed({'volume' : irrigation_demand}, 
-                                                         of_type = 'Demand')
-                
-                #update tank
-                _ = self.push_storage(supplied, force = True)
+            root_zone_depletion = self.get_cmd()
+            if root_zone_depletion <= constants.FLOAT_ACCURACY:
+                print('dont think irrigation should happen here')
+        return {'volume' : irrigation_demand}
+    def receive_irrigation_demand(self, vqip):
+        #update tank
+        _ = self.push_storage(vqip, force = True)
             

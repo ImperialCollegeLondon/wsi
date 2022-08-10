@@ -118,7 +118,7 @@ class QueueGroundwater(Storage):
                                              initial_storage = self.initial_storage,
                                              )
         else:
-            self.tank = DecayQueueTank(capacity = self.storage,
+            self.tank = DecayQueueTank(capacity = self.capacity,
                                              area = self.area,
                                              datum = self.datum,
                                              decays = self.decays,

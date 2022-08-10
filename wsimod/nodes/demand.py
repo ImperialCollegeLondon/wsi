@@ -13,7 +13,7 @@ from wsimod.core import constants
 class Demand(Node):
     def __init__(self, **kwargs):
         #Default parameters
-        self.gardening_efficiency = 0.6 * 0.7 #Watering efficiency by Crop factor
+        self.gardening_efficiency = 0.6 * 0.7 #Watering efficiency by irrigated area
 
         #Update args
         super().__init__(**kwargs)
