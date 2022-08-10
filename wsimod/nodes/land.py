@@ -18,7 +18,7 @@ class Land(Node):
         self.surface_residence_time = 1
         
         
-        self.irrigate = []
+        self.irrigation_functions = [lambda : None]
         
         super().__init__(**kwargs)
         
@@ -29,17 +29,11 @@ class Land(Node):
             surfaces.append(getattr(sys.modules[__name__], surface['type'])(**surface))
             self.mass_balance_ds.append(surfaces[-1].ds)
             if isinstance(surfaces[-1], IrrigationSurface):
-                self.irrigate.append(surfaces[-1].irrigate)
+                self.irrigation_functions.append(surfaces[-1].irrigate)
             
             if isinstance(surfaces[-1], GardenSurface):
                 self.push_check_handler[('Demand','Garden')] = surfaces[-1].calculate_irrigation_demand
                 self.push_set_handler[('Demand','Garden')] = surfaces[-1].receive_irrigation_demand
-                
-        
-        if len(self.irrigate) > 0:
-            self.irrigate = [f() for f in self.irrigate]
-        else:
-            self.irrigate = [lambda : None]
         
         #Update handlers
         self.push_set_handler['default'] = self.push_set_deny
@@ -68,7 +62,11 @@ class Land(Node):
         self.mass_balance_ds.append(self.surface_runoff.ds)
         self.mass_balance_ds.append(self.subsurface_runoff.ds)
         self.mass_balance_ds.append(self.percolation.ds)
-        
+    
+    def apply_irrigation(self):
+        for f in self.irrigation_functions:
+            f()
+            
     def run(self):  
         for surface in self.surfaces:
             surface.run()
@@ -948,10 +946,11 @@ class IrrigationSurface(GrowingSurface):
     def irrigate(self):
         if self.days_after_sow:
             irrigation_demand = max(self.evaporation['volume'] - self.precipitation['volume'], 0) * self.irrigation_coefficient
-            if irrigation_demand > 0:
+            if irrigation_demand > constants.FLOAT_ACCURACY:
                 root_zone_depletion = self.get_cmd()
                 if root_zone_depletion <= constants.FLOAT_ACCURACY:
-                    print('dont think irrigation should happen here')
+                    #TODO this isn't in FAO... but seems sensible
+                    irrigation_demand = 0
                     
                 supplied = self.parent.pull_distributed({'volume' : irrigation_demand}, 
                                                          of_type = ['River',
@@ -980,12 +979,16 @@ class GardenSurface(GrowingSurface):
         
     def calculate_irrigation_demand(self,ignore_vqip):
         irrigation_demand = max(self.evaporation['volume'] - self.precipitation['volume'], 0)
-        if irrigation_demand > 0:
-            root_zone_depletion = self.get_cmd()
-            if root_zone_depletion <= constants.FLOAT_ACCURACY:
-                print('dont think irrigation should happen here')
-        return {'volume' : irrigation_demand}
+        
+        root_zone_depletion = self.get_cmd()
+        if root_zone_depletion <= constants.FLOAT_ACCURACY:
+            #TODO this isn't in FAO... but seems sensible
+            irrigation_demand = 0
+        
+        reply = self.empty_vqip()
+        reply['volume'] = irrigation_demand
+        return reply
     def receive_irrigation_demand(self, vqip):
         #update tank
-        _ = self.push_storage(vqip, force = True)
+        return self.push_storage(vqip, force = True)
             
