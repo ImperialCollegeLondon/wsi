@@ -15,7 +15,7 @@ class Storage(Node):
     def __init__(self, **kwargs):
         #TODO call storage capacity...
         self.initial_storage = 0
-        self.storage = 0
+        self.capacity = 0
         self.area = 0
         self.datum = 10
         self.decays = None
@@ -28,13 +28,13 @@ class Storage(Node):
         
         if self.decays is None:
             #TODO... renaming storage to capacity here is confusing
-            self.tank = Tank(capacity = self.storage,
+            self.tank = Tank(capacity = self.capacity,
                                 area = self.area,
                                 datum = self.datum,
                                 initial_storage = self.initial_storage,
                                 )
         else:
-            self.tank = DecayTank(capacity = self.storage,
+            self.tank = DecayTank(capacity = self.capacity,
                                 area = self.area,
                                 datum = self.datum,
                                 initial_storage = self.initial_storage,
@@ -89,17 +89,16 @@ class Groundwater(Storage):
         if retained['volume'] > constants.FLOAT_ACCURACY:
             print('Storage unable to push')
     
-    def pull_active(self, volume):
-        pass
     def infiltrate(self):
         avail = self.tank.get_avail()['volume']
         avail = max(avail - self.tank.capacity * self.tank.infiltration_threshold, 0)
         avail = (avail * self.infiltration_pct) ** 0.5
         
-        to_send = self.pull_active({'volume' : avail})
-        retained = self.push_distributed(to_send)
+        to_send = self.tank.pull_storage({'volume' : avail})
+        retained = self.push_distributed(to_send, of_type = 'Sewer')
+
         if retained['volume'] > constants.FLOAT_ACCURACY:
-            print('Storage unable to push')
+            _ = self.tank.push_storage(retained, force = True)
     
 class QueueGroundwater(Storage):
     #TODO - no infiltration as yet
