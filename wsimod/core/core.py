@@ -179,6 +179,7 @@ class WSIObj:
             if abs(in_10 - ds_10 - out_10) > constants.FLOAT_ACCURACY:
                 print("mass balance error for {0} of {1} in {2}".format(v,in_[v] - ds_[v] - out_[v], self.name))
                 constants.mass_balance_error = True
+                constants.mass_balance_diff = max(constants.mass_balance_diff, in_[v] - ds_[v] - out_[v])
         return in_, ds_, out_
 
 class DecayObj(WSIObj):
