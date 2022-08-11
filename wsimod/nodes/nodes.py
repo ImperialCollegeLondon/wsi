@@ -609,8 +609,7 @@ class Tank(WSIObj):
                  capacity = 0,
                  area = 1,
                  datum = 10,
-                 initial_storage = 0,
-                 **kwargs):
+                 initial_storage = 0):
         
         self.capacity = capacity
         self.area = area

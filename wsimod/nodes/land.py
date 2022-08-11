@@ -32,7 +32,9 @@ class Land(Node):
         surfaces = []
         for surface in surfaces_:
             surface['parent'] = self
-            surfaces.append(getattr(sys.modules[__name__], surface['type'])(**surface))
+            type_ = surface['type']
+            del surface['type']
+            surfaces.append(getattr(sys.modules[__name__], type_)(**surface))
             self.mass_balance_ds.append(surfaces[-1].ds)
             if isinstance(surfaces[-1], IrrigationSurface):
                 self.irrigation_functions.append(surfaces[-1].irrigate)
