@@ -8,9 +8,9 @@ from wsimod.nodes.nodes import Node
 from wsimod.core import constants
 #TODO call this outlet not waste
 class Waste(Node):
-    def __init__(self, **kwargs):
+    def __init__(self, name):
         #Update args
-        super().__init__(**kwargs)
+        super().__init__(name)
         
         #Update handlers
         self.pull_set_handler['default'] = self.pull_set_deny

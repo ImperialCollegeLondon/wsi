@@ -11,12 +11,20 @@ from wsimod.nodes.nodes import Node
 from wsimod.core import constants
 
 class Demand(Node):
-    def __init__(self, **kwargs):
+    def __init__(self,
+                        name,
+                        population = 1,
+                        pollutant_load = {},
+                        per_capita = 0.12,
+                        gardening_efficiency = 0.6 * 0.7 #Watering efficiency by irrigated area
+                        ):
         #Default parameters
-        self.gardening_efficiency = 0.6 * 0.7 #Watering efficiency by irrigated area
-
+        self.gardening_efficiency = gardening_efficiency
+        self.population = population
+        self.per_capita = per_capita
+        self.pollutant_load = pollutant_load
         #Update args
-        super().__init__(**kwargs)
+        super().__init__(name)
         
         #Update handlers
         self.push_set_handler['default'] = self.push_set_deny

@@ -11,10 +11,15 @@ from wsimod.nodes.nodes import Node
 from wsimod.core import constants
 
 class Catchment(Node):
-    def __init__(self, **kwargs):
-        #Update args
-        super().__init__(**kwargs)
+    def __init__(self, 
+                        name,
+                        data_input_dict = {},
+                        ):
         
+        #Update args
+        super().__init__(name)
+        self.data_input_dict = data_input_dict
+
         #Update handlers
         self.pull_set_handler['default'] = self.pull_set_abstraction
         self.pull_check_handler['default'] = self.pull_check_abstraction
@@ -29,7 +34,7 @@ class Catchment(Node):
         #get pushed, and the pollutants will 'disappear', causing a mass balance error
         vqip = {'volume' : self.data_input_dict[('flow',
                                                self.t)]}
-        vqip['volume'] *= constants.M3_S_TO_M3_DT
+        vqip['volume'] *= constants.M3_S_TO_M3_DT #preprocess to SI
         for pollutant in constants.POLLUTANTS:
             vqip[pollutant] = self.data_input_dict[(pollutant,
                                                    self.t)] * vqip['volume']

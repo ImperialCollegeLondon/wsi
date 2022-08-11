@@ -7,26 +7,32 @@ Created on Thu May 19 16:42:20 2022
 from wsimod.core import constants
 
 class NutrientPool:
-    def __init__(self, **kwargs):
+    def __init__(self,
+                        fraction_dry_n_to_dissolved_inorganic = 0.9,
+                        degrhpar = {'N' : 7 * 1e-5, 'P' : 7 * 1e-6}, # [1/day] dimension = N & P
+                        dishpar = {'N' : 7 * 1e-5, 'P' : 7 * 1e-6}, # [1/day] dimension = N & P
+                        minfpar = {'N' : 0.00013, 'P' : 0.000003}, # [1/day] dimension = N & P
+                        disfpar = {'N' : 0.000003, 'P' : 0.0000001}, # [1/day] dimension = N & P
+                        immobdpar = {'N' : 0.0056, 'P' : 0.2866}, # [1/day] dimension = N & P
+                        fraction_manure_to_dissolved_inorganic = {'N' : 0.5, 'P' : 0.1}, # [-] dimension = N & P
+                        fraction_residue_to_fast = {'N' : 0.1, 'P' : 0.1}, # [-] dimension = N & P
+                        ):
+        #TODO I don't think anyone will change most of these params... they could maybe just be set here 
         self.init_empty()
         
         self.temperature_dependence_factor = 0
         self.soil_moisture_dependence_factor = 0
         
-        self.fraction_manure_to_dissolved_inorganic =  {'N' : 0.5, 
-                                                        'P' : 0.1}
-        self.fraction_residue_to_fast =  {'N' : 0.5, 
-                                          'P' : 0.1}
-        self.fraction_dry_n_to_dissolved_inorganic = 0.9
+        self.fraction_manure_to_dissolved_inorganic =  fraction_manure_to_dissolved_inorganic
+        self.fraction_residue_to_fast =  fraction_residue_to_fast
+        self.fraction_dry_n_to_dissolved_inorganic = fraction_dry_n_to_dissolved_inorganic
         
-        self.degrhpar = self.get_empty_nutrient()
-        self.dishpar = self.get_empty_nutrient()
-        self.minfpar = self.get_empty_nutrient()
-        self.disfpar = self.get_empty_nutrient()
-        self.immobdpar = self.get_empty_nutrient()
-        
-        self.__dict__.update(kwargs)
-        
+        self.degrhpar = degrhpar
+        self.dishpar = dishpar
+        self.minfpar = minfpar
+        self.disfpar = disfpar
+        self.immobdpar = immobdpar
+            
         self.fraction_manure_to_fast = {x : 1 - self.fraction_manure_to_dissolved_inorganic[x] for x in constants.NUTRIENTS}
         self.fraction_residue_to_humus = {x : 1 - self.fraction_residue_to_fast[x] for x in constants.NUTRIENTS}
         self.fraction_dry_n_to_fast = 1 - self.fraction_dry_n_to_dissolved_inorganic
@@ -150,7 +156,7 @@ class NutrientPool:
         return reply
 
 class NutrientStore(NutrientPool):
-    def __init__(self, **kwargs):
+    def __init__(self):
         super().init_store()
 
 #TODO: Adsorption/desorption, denitification, erosion, suspension/runoff/etc.

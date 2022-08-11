@@ -17,7 +17,7 @@ class Node(WSIObj):
     
     ...
     """
-    def __init__(self,**kwargs):
+    def __init__(self,name):
         """
         Constructs all the necessary attributes for the node object
 
@@ -45,8 +45,8 @@ class Node(WSIObj):
         
         self.in_arcs_type = {x : {} for x in node_types}
         self.out_arcs_type = {x : {} for x in node_types}
-        self.name = None
-        self.date = None
+        self.name = name
+        self.t = None
         self.pull_set_handler = {'default' : self.pull_distributed}
         self.push_set_handler = {'default' : lambda x : self.push_distributed(x, of_type = ['Node', 'River', 'Waste'])}
         self.pull_check_handler = {'default' : self.pull_check_basic}
@@ -54,7 +54,6 @@ class Node(WSIObj):
 
         #Update args
         super().__init__()
-        self.__dict__.update(kwargs)
 
         #Mass balance checking
         self.mass_balance_in = [self.total_in]
@@ -626,7 +625,6 @@ class Tank(WSIObj):
         
         
         WSIObj.__init__(self)
-        self.__dict__.update(kwargs)
         
         #TODO enable stores to be initialised not empty
         if 'initial_storage' in dir(self):
@@ -757,10 +755,17 @@ class Tank(WSIObj):
 
 class ResidenceTank(Tank):
     
-    def __init__(self,residence_time = 2, **kwargs):
+    def __init__(self,
+                        residence_time = 2,
+                        capacity = 0,
+                        area = 1,
+                        datum = 10,
+                        initial_storage = 0):
         self.residence_time = residence_time 
-        super().__init__(**kwargs)
-    
+        super().__init__(capacity = capacity,
+                                area = area,
+                                datum = datum,
+                                initial_storage = initial_storage)    
     def pull_outflow(self):
         outflow = self.storage['volume'] / self.residence_time
         outflow = self.v_change_vqip(self.storage, outflow)
@@ -804,11 +809,19 @@ class DecayTank(Tank, DecayObj):
     
 class QueueTank(Tank):
     #A storage that can allow delay before parts of it are accessible
-    def __init__(self, number_of_timesteps = 0,**kwargs):
+    def __init__(self, 
+                        number_of_timesteps = 0,
+                        capacity = 0,
+                        area = 1,
+                        datum = 10,
+                        initial_storage = 0):
+
         self.number_of_timesteps = number_of_timesteps
         
-        super().__init__(**kwargs)
-        
+        super().__init__(capacity = capacity,
+                                area = area,
+                                datum = datum,
+                                initial_storage = initial_storage)
         self.end_timestep = self._end_timestep
         #TODO enable stores to be initialised not empty
         self.active_storage = self.copy_vqip(self.storage)
@@ -899,14 +912,25 @@ class QueueTank(Tank):
         self.active_storage = self.empty_vqip()
 
 class DecayQueueTank(QueueTank):
-    def __init__(self,**kwargs):
+    def __init__(self,
+                        capacity = 0,
+                        area = 1,
+                        datum = 10,
+                        initial_storage = 0,
+                        decays = {},
+                        parent = None,
+                        number_of_timesteps = 1):
 
-        super().__init__(**kwargs)
+        super().__init__(capacity = capacity,
+                                area = area,
+                                datum = datum,
+                                initial_storage = initial_storage,
+                                number_of_timesteps = number_of_timesteps)
         self.internal_arc = DecayArcAlt(in_port = self, 
                                             out_port = self,
-                                            number_of_timesteps = self.number_of_timesteps,
-                                            parent = self.parent,
-                                            decays = self.decays)
+                                            number_of_timesteps = number_of_timesteps,
+                                            parent = parent,
+                                            decays = decays)
         self.end_timestep = self._end_timestep
 
     def _end_timestep(self):

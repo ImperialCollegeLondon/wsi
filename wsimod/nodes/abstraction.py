@@ -10,8 +10,8 @@ from wsimod.nodes.nodes import Node
 class Abstraction(Node):
     #A node that won't push up an abstraction when routing
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, name):
+        super().__init__(name)
         self.push_set_handler = {'default' : self.push_distributed_abstraction}
     
     def push_distributed_abstraction(self, vqip, of_type = None, tag = 'default'):

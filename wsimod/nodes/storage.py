@@ -10,24 +10,29 @@ from wsimod.nodes.nodes import Node, Tank, QueueTank, DecayTank, DecayQueueTank
 from wsimod.core import constants
 from math import exp
 class Storage(Node):
-    #Basically a wrapper for a tank
+    #Basically a node wrapper for a tank
 
-    def __init__(self, **kwargs):
-        #TODO call storage capacity...
-        self.initial_storage = 0
-        self.capacity = 0
-        self.area = 0
-        self.datum = 10
-        self.decays = None
-        self.travel_time = 0
-        super().__init__(**kwargs)
+    def __init__(self, 
+                        name,
+                        capacity = 0,
+                        area = 0,
+                        datum =0,
+                        decays = None,
+                        initial_storage = 0,
+                        ):
+        
+        self.initial_storage = initial_storage
+        self.capacity = capacity
+        self.area = area
+        self.datum = datum
+        self.decays = decays
+        super().__init__(name)
         
         #Create tank
         if 'initial_storage' not in dir(self):
             self.initial_storage = self.empty_vqip()
         
         if self.decays is None:
-            #TODO... renaming storage to capacity here is confusing
             self.tank = Tank(capacity = self.capacity,
                                 area = self.area,
                                 datum = self.datum,
@@ -75,11 +80,16 @@ class Storage(Node):
         self.tank.storage_['volume'] = self.initial_storage 
 
 class Groundwater(Storage):
-    def __init__(self, **kwargs):
-        self.residence_time = 200
-        self.infiltration_threshold = 1 # %/100 of capacity that node must be exceeding to generate infiltration
-        self.infiltration_pct = 0 # %/100 of storage above threshold that is SQRTed and infiltrated
-        
+    def __init__(self, 
+                        residence_time = 200,
+                        infiltration_threshold = 1,
+                        infiltration_pct = 0,
+                        data_input_dict = {},
+                        **kwargs):
+        self.residence_time = residence_time
+        self.infiltration_threshold = infiltration_threshold # %/100 of capacity that node must be exceeding to generate infiltration
+        self.infiltration_pct = infiltration_pct # %/100 of storage above threshold that is SQRTed and infiltrated
+        self.data_input_dict = data_input_dict
         super().__init__(**kwargs)
         
     def distribute(self):
@@ -102,9 +112,12 @@ class Groundwater(Storage):
     
 class QueueGroundwater(Storage):
     #TODO - no infiltration as yet
-    def __init__(self, **kwargs):
-        self.timearea = {0 : 1}
-
+    def __init__(self,
+                        timearea = {0 : 1},
+                        data_input_dict = {},
+                        **kwargs):
+        self.timearea = timearea
+        self.data_input_dict = data_input_dict
         super().__init__(**kwargs)
         self.__class__.__name__ = 'Groundwater'
         self.push_set_handler['default'] = self.push_set_timearea
@@ -204,22 +217,29 @@ class QueueGroundwater(Storage):
 
 class River(Storage):
     #TODO non-day timestep
-    def __init__(self, **kwargs):
-        self.depth = 1 # [m]
-        self.length = 200 # [m]
-        self.width = 10 # [m]
-        self.datum = 0 # [m]
-        self.velocity = 0.2 # [m/dt]
-        self.damp = 0.1 # [>=0] flow delay and attenuation
+    def __init__(self, 
+                        depth = 1,
+                        length = 200,
+                        width = 10,
+                        velocity = 0.2,
+                        damp = 0.1,
+                        **kwargs):
+        self.depth = depth # [m]
+        self.length = length # [m]
+        self.width = width # [m]
+        self.velocity = velocity # [m/dt]
+        self.damp = damp # [>=0] flow delay and attenuation
         
-        kwargs['area'] = kwargs['length'] * kwargs['width'] # [m2]
-        kwargs['storage'] = kwargs['depth'] * kwargs['area']
+        area = length * width # [m2]
+        capacity = depth * area
         
-        super().__init__(**kwargs)
+        super().__init__(capacity = capacity,
+                                area = area,
+                                **kwargs)
         
         
         
-        #TODO convert units
+        #TODO check units
         self.uptake_PNratio = 1/7.2 # [-] P:N during crop uptake
         self.bulk_density = 1300 # [kg/m3] soil density
         self.denpar_w = 0.0015#0.001, # [kg/m2/day] reference denitrification rate in water course
@@ -238,7 +258,7 @@ class River(Storage):
         self.qbank = 1e6 # [m3/day] bankfull flow = second largest outflow in the previous year
         self.qbankcorrpar = 0.001 # [-] correction coefficient for qbank flow
         self.sedexppar = 1 # [-]
-        self.EPC0 = 0.05 # [mg/l]
+        self.EPC0 = 0.05 * constants.MG_L_TO_KG_M3 # [mg/l]
         self.kd_s = 0 * constants.MG_L_TO_KG_M3 #6 * 1e-6, # [kg/m3]
         self.kadsdes_s = 2#0.9, # [-]
         self.Dsed = 0.2 # [m]
@@ -444,9 +464,12 @@ class Abstraction(Storage):
     They must have accumulated all upstream flows that are available for abstraction before being abstracted from
     Once abstracted from, they can then distribute
     """
-    def __init__(self, **kwargs):
+    #TODO use this or subclass abstraction?
+    def __init__(self, 
+                        mrf =0,
+                        **kwargs):
         super().__init__(**kwargs)
-        self.mrf = 0
+        self.mrf = mrf
         self.pull_set_handler['default'] = self.pull_set_abstraction
     
     def pull_set_abstraction(self, vqip):
@@ -465,12 +488,15 @@ class Reservoir(Storage):
             print('Spill at reservoir')
 
 class RiverReservoir(Reservoir):
-    def __init__(self, **kwargs):
-        self.environmental_flow = 0
-        self.total_environmental_satisfied = 0
-        
+    def __init__(self, environmental_flow = 0, **kwargs):
+
+        #Parameters
+        self.environmental_flow = environmental_flow
         super().__init__(**kwargs)
         
+        #State variables
+        self.total_environmental_satisfied = 0
+
         self.push_set_handler['default'] = self.push_set_river_reservoir
         self.push_check_handler['default'] = self.push_check_river_reservoir
         self.end_timestep = self.end_timestep_

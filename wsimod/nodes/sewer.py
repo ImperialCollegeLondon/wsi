@@ -10,16 +10,24 @@ from wsimod.nodes.nodes import Node, QueueTank
 from wsimod.core import constants
 
 class Sewer(Node):
-    def __init__(self, **kwargs):
+    def __init__(self, 
+                        name,
+                        capacity = 0,
+                        pipe_time = 0, #Sewer to sewer travel time
+                        pipe_timearea = {0 : 1},
+                        chamber_area = 1,
+                        chamber_floor = 10,
+                        data_input_dict = {}):
         #Default parameters
-        self.capacity = 0
-        self.pipe_time = 0 #Sewer to sewer travel time
-        self.pipe_timearea = {0 : 1}
-        self.chamber_area = 1
-        self.chamber_floor = 10
-        
+        self.capacity = capacity
+        self.pipe_time = pipe_time
+        self.pipe_timearea = pipe_timearea
+        self.chamber_area = chamber_area
+        self.chamber_floor = chamber_floor
+        self.data_input_dict = data_input_dict
+
         #Update args
-        super().__init__(**kwargs)
+        super().__init__(name)
         
         #Update handlers
         self.push_set_handler['Sewer'] = self.push_set_sewer
@@ -116,8 +124,21 @@ class Sewer(Node):
 
 class EnfieldFoulSewer(Sewer):
     #TODO: combine with sewer
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self, 
+                        name,
+                        capacity = 0,
+                        pipe_time = 0, #Sewer to sewer travel time
+                        pipe_timearea = {0 : 1},
+                        chamber_area = 1,
+                        chamber_floor = 10,
+                        data_input_dict = {}):
+        super().__init__(name,
+                                capacity = capacity,
+                                pipe_time = pipe_time,
+                                pipe_timearea = pipe_timearea,
+                                chamber_area = chamber_area,
+                                chamber_floor = chamber_floor,
+                                data_input_dict = data_input_dict)
         self.__class__.__name__ = 'Sewer'
         
     def make_discharge(self):
