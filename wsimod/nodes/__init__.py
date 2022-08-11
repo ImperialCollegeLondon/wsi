@@ -4,8 +4,6 @@ from wsimod.nodes.abstraction import *
 import wsimod.nodes.abstraction
 from wsimod.nodes.catchment import *
 import wsimod.nodes.catchment
-from wsimod.nodes.compartment import *
-import wsimod.nodes.compartment
 from wsimod.nodes.demand import *
 import wsimod.nodes.demand
 from wsimod.nodes.land import *

@@ -132,24 +132,18 @@ class Surface(DecayTank):
     def __init__(self,
                         area = 0,
                         depth = 1,
-                        decays = {},
-                        parent = None,
-                        data_input_dict = {}, **kwargs):
+                        data_input_dict = {}, 
+                        **kwargs):
         self.depth = depth
-        self.decays = decays
         self.data_input_dict = data_input_dict
         
         
         #TODO interception if I hate myself enough?
         capacity = area * depth
         #Parameters
-        #TODO maybe things should be passed upwards as kwargs for tidiness? since if they are not keyed then the error will throw upwards
-        #TODO (related) pretty sure I am passing data_input_dict way more than is needed
         super().__init__(capacity = capacity,
                                 area = area,
-                                decays = decays,
-                                parent = parent)
-        ##self.capacity = self.depth * self.area   
+                                **kwargs)
         
         self.inflows = [self.atmospheric_deposition,
                         self.precipitation_deposition]
@@ -207,14 +201,10 @@ class Surface(DecayTank):
     
 class ImperviousSurface(Surface):
     def __init__(self,
-                        area = 1,
                         pore_depth = 0,
-                        decays = {},
-                        parent = None,
                         et0_to_e = 0.1,
                         pollutant_load = {},
-                        data_input_dict = {}, **kwargs):        
-        self.data_input_dict = data_input_dict
+                        **kwargs):        
         #Default parameters 
         self.et0_to_e = et0_to_e #Total evaporation (ignoring transpiration)
         if len(pollutant_load) > 0:
@@ -223,11 +213,7 @@ class ImperviousSurface(Surface):
             self.pollutant_load = {x : 0.001 for x in constants.POLLUTANTS} #kg/m2/dt
         
         
-        super().__init__(depth = pore_depth,
-                                area = area,
-                                decays = decays,
-                                parent = parent,
-                                data_input_dict = data_input_dict)
+        super().__init__(depth = pore_depth,**kwargs)
         
         self.inflows.append(self.urban_deposition)
         self.inflows.append(self.precipitation_evaporation)
@@ -277,24 +263,20 @@ class ImperviousSurface(Surface):
     
 class PerviousSurface(Surface):
     def __init__(self,
-                        area = 1,
+                        depth = 0,
                         field_capacity = 0, #depth of water when water level is above this, recharge/percolation are generated
                         wilting_point = 0, #Depth of tank when added to field capacity, water below this level is available for plants+evaporation but not drainage
                         infiltration_capacity = 0, #depth of precipitation that can enter tank per timestep
                         percolation_coefficient = 0, #proportion of water above field capacity that can goes to percolation
                         et0_coefficient = 0.5, #proportion of et0 that goes to evapotranspiration
                         ihacres_p = 0.5,
-                        decays = {},
-                        parent = None,
-                        data_input_dict = {}, **kwargs):
+                        **kwargs):
         self.field_capacity = field_capacity
         self.wilting_point = wilting_point
         self.infiltration_capacity = infiltration_capacity
         self.percolation_coefficient = percolation_coefficient
         self.et0_coefficient = et0_coefficient
-        self.ihacres_p = ihacres_p
-        self.data_input_dict = data_input_dict
-        
+        self.ihacres_p = ihacres_p       
         
         #TODO what should these params be?
         self.soil_temp_w_prev = 0.3 #previous timestep weighting
@@ -304,11 +286,7 @@ class PerviousSurface(Surface):
         #IHACRES is a deficit not a tank, so doesn't really have a capacity in this way... and if it did.. it probably wouldn't be the sum of these
         depth = field_capacity + wilting_point # TODO Need better way to handle this
         
-        super().__init__(depth = depth,
-                                area = area,
-                                decays = decays,
-                                parent = parent,
-                                data_input_dict = data_input_dict)
+        super().__init__(depth=depth,**kwargs)
         
         #Initiliase flows
         self.infiltration_excess = self.empty_vqip()
@@ -427,22 +405,13 @@ class PerviousSurface(Surface):
 
 class GrowingSurface(PerviousSurface):
     def __init__(self,
-                        area = 1,
-                        field_capacity = 0, #depth of water when water level is above this, recharge/percolation are generated
-                        wilting_point = 0, #Depth of tank when added to field capacity, water below this level is available for plants+evaporation but not drainage
-                        infiltration_capacity = 0, #depth of precipitation that can enter tank per timestep
-                        percolation_coefficient = 0, #proportion of water above field capacity that can goes to percolation
-                        et0_coefficient = 0.5, #proportion of et0 that goes to evapotranspiration
-                        ihacres_p = 0.5,
-                        decays = {},
-                        parent = None,
-                        rooting_depth = 0,
+                       rooting_depth = 0,
                         ET_depletion_factor = 0,
                         crop_factor_stages = [0,0,0,0,0,0], #coefficient to do with ET, associated with stages
                         crop_factor_stage_dates = [0, 50, 200, 300, 301, 365], #dates when crops are planted/growing/harvested
                         sowing_day = 1,
                         harvest_day = 365,
-                        data_input_dict = {}, **kwargs
+                       **kwargs
                         ):
         #TODO Automatic check that nitrate, ammonia, solids, phosphorus, phosphate are in POLLUTANTS
         
@@ -450,7 +419,6 @@ class GrowingSurface(PerviousSurface):
         self.ET_depletion_factor = ET_depletion_factor #To do with water availability, p from FAOSTAT
         self.rooting_depth = rooting_depth #maximum depth that plants can absorb, Zr from FAOSTAT
         depth = rooting_depth
-        self.data_input_dict = data_input_dict
 
         #Crop parameters
         self.crop_cover_max = 0.9 # [-] 0~1
@@ -497,17 +465,7 @@ class GrowingSurface(PerviousSurface):
         #Other soil parameters
         self.bulk_density = 1300 # [kg/m3]
         
-        super().__init__(area = area,
-                                depth = depth,
-                                field_capacity = field_capacity,
-                                wilting_point = wilting_point,
-                                infiltration_capacity = infiltration_capacity,
-                                percolation_coefficient = percolation_coefficient,
-                                et0_coefficient = et0_coefficient,
-                                ihacres_p = ihacres_p,
-                                decays = decays,
-                                parent = parent,
-                                data_input_dict = data_input_dict)
+        super().__init__(depth = depth,**kwargs)
                                         
         #If decays are defined for any modelled pollutants then remove that behaviour
         for pollutant in ['nitrate','ammonia','org-phosphorus','phosphate']:
@@ -991,43 +949,10 @@ class GrowingSurface(PerviousSurface):
         
         
 class IrrigationSurface(GrowingSurface):
-    def __init__(self,
-                        area = 1,
-                        field_capacity = 0, #depth of water when water level is above this, recharge/percolation are generated
-                        wilting_point = 0, #Depth of tank when added to field capacity, water below this level is available for plants+evaporation but not drainage
-                        infiltration_capacity = 0, #depth of precipitation that can enter tank per timestep
-                        percolation_coefficient = 0, #proportion of water above field capacity that can goes to percolation
-                        et0_coefficient = 0.5, #proportion of et0 that goes to evapotranspiration
-                        ihacres_p = 0.5,
-                        decays = {},
-                        parent = None,
-                        rooting_depth = 0,
-                        ET_depletion_factor = 0,
-                        crop_factor_stages = [0,0,0,0,0,0], #coefficient to do with ET, associated with stages
-                        crop_factor_stage_dates = [0, 50, 200, 300, 301, 365], #dates when crops are planted/growing/harvested
-                        sowing_day = 1,
-                        harvest_day = 365,
-                        irrigation_coefficient = 0.1,
-                        data_input_dict = {}, **kwargs
-                        ):
+    def __init__(self,irrigation_coefficient = 0.1,**kwargs):
         self.irrigation_coefficient = irrigation_coefficient #proportion area irrigated * proportion of demand met
-        self.data_input_dict = data_input_dict
-        super().__init__(area = area,
-                                field_capacity = field_capacity,
-                                wilting_point = wilting_point,
-                                infiltration_capacity = infiltration_capacity,
-                                percolation_coefficient = percolation_coefficient,
-                                et0_coefficient = et0_coefficient,
-                                ihacres_p = ihacres_p,
-                                decays = decays,
-                                parent = parent,
-                                rooting_depth = rooting_depth,
-                                ET_depletion_factor = ET_depletion_factor,
-                                crop_factor_stages = crop_factor_stages,
-                                crop_factor_stage_dates = crop_factor_stage_dates,
-                                sowing_day = sowing_day,
-                                harvest_day = harvest_day,
-                                data_input_dict = data_input_dict)
+        
+        super().__init__(**kwargs)
         
         # self.inflows.append(self.irrigation)
                 
@@ -1061,41 +986,8 @@ class IrrigationSurface(GrowingSurface):
 
 class GardenSurface(GrowingSurface):
     #TODO - probably a simplier version of this is useful, building just on pervioussurface
-    def __init__(self,
-                        area = 1,
-                        field_capacity = 0, #depth of water when water level is above this, recharge/percolation are generated
-                        wilting_point = 0, #Depth of tank when added to field capacity, water below this level is available for plants+evaporation but not drainage
-                        infiltration_capacity = 0, #depth of precipitation that can enter tank per timestep
-                        percolation_coefficient = 0, #proportion of water above field capacity that can goes to percolation
-                        et0_coefficient = 0.5, #proportion of et0 that goes to evapotranspiration
-                        ihacres_p = 0.5,
-                        decays = {},
-                        parent = None,
-                        rooting_depth = 0,
-                        ET_depletion_factor = 0,
-                        crop_factor_stages = [0,0,0,0,0,0], #coefficient to do with ET, associated with stages
-                        crop_factor_stage_dates = [0, 50, 200, 300, 301, 365], #dates when crops are planted/growing/harvested
-                        sowing_day = 1,
-                        harvest_day = 365,
-                        data_input_dict = {}, **kwargs):
-        self.data_input_dict = data_input_dict
-        super().__init__(area = area,
-                                field_capacity = field_capacity,
-                                wilting_point = wilting_point,
-                                infiltration_capacity = infiltration_capacity,
-                                percolation_coefficient = percolation_coefficient,
-                                et0_coefficient = et0_coefficient,
-                                ihacres_p = ihacres_p,
-                                decays = decays,
-                                parent = parent,
-                                rooting_depth = rooting_depth,
-                                ET_depletion_factor = ET_depletion_factor,
-                                crop_factor_stages = crop_factor_stages,
-                                crop_factor_stage_dates = crop_factor_stage_dates,
-                                sowing_day = sowing_day,
-                                harvest_day = harvest_day,
-                                data_input_dict = data_input_dict)
-        
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         
     def calculate_irrigation_demand(self,ignore_vqip):
         irrigation_demand = max(self.evaporation['volume'] - self.precipitation['volume'], 0)
