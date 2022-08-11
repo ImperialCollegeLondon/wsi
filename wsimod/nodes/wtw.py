@@ -75,25 +75,17 @@ class WTW(Node):
         
 class WWTW(WTW):
     def __init__(self,
-                        name,
-                        treatment_throughput_capacity = 10,
-                        process_multiplier = {},
-                        liquor_multiplier = {},
-                        percent_solids = 0.0002,
                         stormwater_storage_capacity = 10,
                         stormwater_storage_area = 1,
-                        stormwater_storage_elevation = 10):
+                        stormwater_storage_elevation = 10,
+                        **kwargs):
         self.tank_parameters = {}
         self.stormwater_storage_capacity = stormwater_storage_capacity
         self.stormwater_storage_area = stormwater_storage_area
         self.stormwater_storage_elevation = stormwater_storage_elevation
 
         #Update args
-        super().__init__(name,
-                                treatment_throughput_capacity = treatment_throughput_capacity,
-                                process_multiplier = process_multiplier,
-                                liquor_multiplier = liquor_multiplier,
-                                percent_solids = percent_solids)
+        super().__init__(**kwargs)
         
         self.end_timestep = self.end_timestep_
         
@@ -201,16 +193,12 @@ class WWTW(WTW):
         
 class FWTW(WTW):
     def __init__(self,
-                        name,
-                        treatment_throughput_capacity = 10,
-                        process_multiplier = {},
-                        liquor_multiplier = {},
-                        percent_solids = 0.0002,
                         service_reservoir_storage_capacity = 10,
                         service_reservoir_storage_area = 1,
                         service_reservoir_storage_elevation = 10,
                         service_reservoir_initial_storage = 0,
-                        data_input_dict = {}):
+                        data_input_dict = {},
+                        **kwargs,):
         #Default parameters
         self.service_reservoir_storage_capacity = service_reservoir_storage_capacity
         self.service_reservoir_storage_area = service_reservoir_storage_area
@@ -219,11 +207,7 @@ class FWTW(WTW):
         self.data_input_dict = data_input_dict
         
         #Update args
-        super().__init__(name,
-                                treatment_throughput_capacity = treatment_throughput_capacity,
-                                process_multiplier = process_multiplier,
-                                liquor_multiplier = liquor_multiplier,
-                                percent_solids = percent_solids)
+        super().__init__(**kwargs)
         self.end_timestep = self.end_timestep_
                 
         #Update handlers

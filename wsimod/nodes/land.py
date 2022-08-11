@@ -137,7 +137,7 @@ class Surface(DecayTank):
         self.depth = depth
         self.data_input_dict = data_input_dict
         
-        
+        #TODO this is a decaytank but growing surfaces don't have decay parameters... is it a problem
         #TODO interception if I hate myself enough?
         capacity = area * depth
         #Parameters
