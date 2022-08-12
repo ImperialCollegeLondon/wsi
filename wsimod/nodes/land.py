@@ -32,8 +32,8 @@ class Land(Node):
         surfaces = []
         for surface in surfaces_:
             surface['parent'] = self
-            type_ = surface['type']
-            del surface['type']
+            type_ = surface['type_']
+            del surface['type_']
             surfaces.append(getattr(sys.modules[__name__], type_)(**surface))
             self.mass_balance_ds.append(surfaces[-1].ds)
             if isinstance(surfaces[-1], IrrigationSurface):
@@ -132,13 +132,14 @@ class Land(Node):
         
 class Surface(DecayTank):
     def __init__(self,
-                        area = 0,
+                        surface = '',
+                        area = 1,
                         depth = 1,
                         data_input_dict = {}, 
                         **kwargs):
         self.depth = depth
         self.data_input_dict = data_input_dict
-        
+        self.surface = surface
         #TODO this is a decaytank but growing surfaces don't have decay parameters... is it a problem
         #TODO interception if I hate myself enough?
         capacity = area * depth
