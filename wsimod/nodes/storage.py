@@ -125,7 +125,7 @@ class QueueGroundwater(Storage):
         self.pull_check_handler['default'] = self.pull_check_active
         if self.decays is None:
             #TODO... renaming storage to capacity here is confusing
-            self.tank = QueueTank(capacity = self.storage,
+            self.tank = QueueTank(capacity = self.capacity,
                                              area = self.area,
                                              datum = self.datum,
                                              initial_storage = self.initial_storage,
