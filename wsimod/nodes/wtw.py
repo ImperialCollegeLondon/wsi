@@ -37,7 +37,7 @@ class WTW(Node):
         
         #Update handlers        
         self.push_set_handler['default'] = self.push_set_deny
-        self.push_set_handler['default'] = self.push_check_deny
+        self.push_check_handler['default'] = self.push_check_deny
         
         #Initialise parameters
         self.current_input = self.empty_vqip()
