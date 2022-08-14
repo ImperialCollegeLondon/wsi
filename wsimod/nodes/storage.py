@@ -304,7 +304,7 @@ class River(Storage):
     
     def biochemical_processes(self):
         #TODO make more modular
-        
+        self.update_depth()
         #HYPE has a temperature equation that tends the tank storage to the mean... I'd sooner rely on decay or similar
         
         #Update lagged temperatures
@@ -355,7 +355,7 @@ class River(Storage):
         #TODO generalise
         temp_10_day = sum(self.lagged_temperatures[-10:]) / 10
         temp_20_day = sum(self.lagged_temperatures[-20:]) / 20
-        total_phos_365_day = sum(self.lagged_phosphorus) / self.max_lagged_phosphorus
+        total_phos_365_day = sum(self.lagged_total_phosphorus) / self.max_phosphorus_lag
         
         #Calculate coefficients
         tempfcn = (self.tank.storage['temperature']) / 20 * (temp_10_day - temp_20_day) / 5
@@ -430,6 +430,7 @@ class River(Storage):
         #TODO
         #source/sink for benthos sediment P
         #suspension/resuspension
+        return in_, out_
         
     def distribute(self):
         in_, out_ = self.biochemical_processes()
@@ -443,9 +444,9 @@ class River(Storage):
         else:
             riverrc = 1
         
-        outflow = self.pull_storage({'volume' : self.tank.storage['volume'] * riverrc})
+        outflow = self.tank.pull_storage({'volume' : self.tank.storage['volume'] * riverrc})
         reply = self.push_distributed(outflow, of_type = ['River','Node','Waste'])
-        if reply['volume'] > 0 :
+        if reply['volume'] > constants.FLOAT_ACCURACY:
             print('river cant push')
         
     def pull_check_fp(self, vqip = None):
