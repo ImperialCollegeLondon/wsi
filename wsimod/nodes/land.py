@@ -27,8 +27,10 @@ class Land(Node):
         self.irrigation_functions = [lambda : None]
         
         super().__init__(name)
-        self.push_check_handler[('Demand','Garden')] = self.push_check_deny
-        self.push_set_handler[('Demand','Garden')] = self.push_set_deny
+        
+        #This could be a deny but then you would have to know in advance whether a demand node has any gardening or not
+        self.push_check_handler[('Demand','Garden')] = lambda x : self.empty_vqip()
+        self.push_set_handler[('Demand','Garden')] = lambda x : self.empty_vqip()
         
         surfaces_ = surfaces.copy()
         surfaces = []
@@ -268,16 +270,16 @@ class ImperviousSurface(Surface):
     
 class PerviousSurface(Surface):
     def __init__(self,
-                        depth = 0,
-                        field_capacity = 0, #depth of water when water level is above this, recharge/percolation are generated
-                        wilting_point = 0, #Depth of tank when added to field capacity, water below this level is available for plants+evaporation but not drainage
+                        depth = 0.75,
+                        field_capacity = 0.3, #FAO (water above this generates flow)
+                        wilting_point = 0.12, #FAO (water above this is available for plants)
                         infiltration_capacity = 0, #depth of precipitation that can enter tank per timestep
                         percolation_coefficient = 0, #proportion of water above field capacity that can goes to percolation
                         et0_coefficient = 0.5, #proportion of et0 that goes to evapotranspiration
                         ihacres_p = 0.5,
                         **kwargs):
-        self.field_capacity = field_capacity
-        self.wilting_point = wilting_point
+        self.field_capacity = field_capacity * depth
+        self.wilting_point = wilting_point * depth
         self.infiltration_capacity = infiltration_capacity
         self.percolation_coefficient = percolation_coefficient
         self.et0_coefficient = et0_coefficient
@@ -289,8 +291,6 @@ class PerviousSurface(Surface):
         self.soil_temp_cons = 3 #deep soil temperature * weighting
         
         #IHACRES is a deficit not a tank, so doesn't really have a capacity in this way... and if it did.. it probably wouldn't be the sum of these
-        depth = field_capacity + wilting_point # TODO Need better way to handle this
-        
         super().__init__(depth=depth,**kwargs)
         
         #Initiliase flows
@@ -310,7 +310,10 @@ class PerviousSurface(Surface):
         #TODO decaytank uses air temperature not soil temperature... probably need to just give it the decay function
         
         self.outflows.append(self.route)
-        
+    
+    
+    #TODO - need to double check this conceptual representation - I think RZD might be different from CMD
+    
     def get_cmd(self):
         #Depth of moisture deficit
         return self.get_excess()['volume'] / self.area
@@ -505,7 +508,7 @@ class GrowingSurface(PerviousSurface):
         self.inflows.insert(0, self.calc_crop_cover)
         self.inflows.append(self.fertiliser)
         self.inflows.append(self.manure)
-        self.inflows.append(self.residue)
+        # self.inflows.append(self.residue)
         
         self.processes.append(self.calc_temperature_dependence_factor)
         self.processes.append(self.calc_soil_moisture_dependence_factor)

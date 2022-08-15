@@ -19,7 +19,7 @@ class UnlimitedDistribution(Distribution):
         super().__init__(**kwargs)
         #Update handlers        
         self.pull_set_handler['default'] = self.pull_set_unlimited
-        self.pull_check_handler['default'] = self.v_change_vqip(self.empty_vqip(), constants.UNBOUNDED_CAPACITY)
+        self.pull_check_handler['default'] = lambda x : self.v_change_vqip(self.empty_vqip(), constants.UNBOUNDED_CAPACITY)
         
         #States
         self.supplied = self.empty_vqip()
