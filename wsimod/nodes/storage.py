@@ -398,11 +398,11 @@ class River(Storage):
             self.tank.storage['phosphate'] += minprodP
             out_['org-phosphorus'] = minprodP
             self.tank.storage['org-phosphorus'] -= minprodP
-            
-            for pol in self.din_components:
-                gain = minprodN * self.tank.storage[pol] / din
-                in_[pol] += gain
-                self.tank.storage[pol] += gain
+            if din > 0:
+                for pol in self.din_components:
+                    gain = minprodN * self.tank.storage[pol] / din
+                    in_[pol] += gain
+                    self.tank.storage[pol] += gain
             
             out_['org-nitrogen'] = minprodN
             self.tank.storage['org-nitrogen'] -= minprodN
@@ -417,11 +417,11 @@ class River(Storage):
     
         macrouptN = self.muptNpar * tempfcn * self.area # [kg/day]
         macrophyte_uptake_N = min(0.5 * din, macrouptN)
-        
-        for pol in self.din_components:
-            loss = macrophyte_uptake_N * self.tank.storage[pol] / din
-            out_[pol] += loss
-            self.tank.storage[pol] -= loss
+        if din > 0:
+            for pol in self.din_components:
+                loss = macrophyte_uptake_N * self.tank.storage[pol] / din
+                out_[pol] += loss
+                self.tank.storage[pol] -= loss
        
         macrouptP = self.muptPpar * tempfcn * max(0, totalphosfcn) * self.area # [kg/day]
         macrophyte_uptake_P = min(0.5 * self.tank.storage['phosphate'], macrouptP) 

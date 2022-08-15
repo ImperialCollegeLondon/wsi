@@ -24,6 +24,8 @@ class UnlimitedDistribution(Distribution):
         #States
         self.supplied = self.empty_vqip()
         
+        self.mass_balance_in.append(lambda : self.supplied)
+        
     def pull_set_unlimited(self, vqip):
         vqip = self.v_change_vqip(self.empty_vqip(), vqip['volume'])
         self.supplied = self.sum_vqip(self.supplied, vqip)
