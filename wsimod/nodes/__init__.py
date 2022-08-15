@@ -16,3 +16,5 @@ from wsimod.nodes.waste import *
 import wsimod.nodes.waste
 from wsimod.nodes.wtw import *
 import wsimod.nodes.wtw
+from wsimod.nodes.distribution import *
+import wsimod.nodes.distribution

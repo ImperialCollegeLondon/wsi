@@ -27,6 +27,8 @@ class Land(Node):
         self.irrigation_functions = [lambda : None]
         
         super().__init__(name)
+        self.push_check_handler[('Demand','Garden')] = self.push_check_deny
+        self.push_set_handler[('Demand','Garden')] = self.push_set_deny
         
         surfaces_ = surfaces.copy()
         surfaces = []
