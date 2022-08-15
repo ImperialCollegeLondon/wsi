@@ -343,11 +343,12 @@ class River(Storage):
         #Update mass balance
         in_ = self.empty_vqip()
         out_ = self.empty_vqip()
-        for pol in self.din_components:
-            #denitrification
-            loss = (din - din_) / din * self.tank.storage[pol]
-            out_[pol] += loss
-            self.tank.storage[pol] -= loss
+        if din > 0:
+            for pol in self.din_components:
+                #denitrification
+                loss = (din - din_) / din * self.tank.storage[pol]
+                out_[pol] += loss
+                self.tank.storage[pol] -= loss
         
         din = self.get_din_pool()
         
