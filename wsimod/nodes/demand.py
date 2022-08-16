@@ -89,6 +89,7 @@ class Demand(Node):
     def end_timestep(self):
         self.total_demand = self.empty_vqip()
         self.total_backup = self.empty_vqip()
+        self.total_received = self.empty_vqip()
         
 class NonResidentialDemand(Demand): 
         

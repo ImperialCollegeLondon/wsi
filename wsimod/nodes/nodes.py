@@ -443,7 +443,7 @@ class Node(WSIObj):
                 iter_ += 1
             
             if iter_ == constants.MAXITER:
-                print('Maxiter reached')
+                print('Maxiter reached in {0} at {1}'.format(self.name, self.t))
         return pulled
     
     def push_distributed(self, vqip, of_type = None, tag = 'default'):
@@ -491,7 +491,7 @@ class Node(WSIObj):
                 iter_ += 1
                 
             if iter_ == constants.MAXITER:
-                print('Maxiter reached')
+                print('Maxiter reached in {0} at {1}'.format(self.name, self.t))
                 
         return not_pushed_
     

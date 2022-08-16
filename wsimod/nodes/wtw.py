@@ -67,7 +67,9 @@ class WTW(Node):
         
         #Blend with any existing discharge
         self.treated = self.sum_vqip(self.treated, discharge_holder)
-
+        
+        if self.treated['volume'] > self.current_input['volume']:
+            print('more treated than input')
     
     def end_timestep(self):
         self.current_input = self.empty_vqip()
@@ -145,7 +147,7 @@ class WWTW(WTW):
     
     def push_set_sewer(self, vqip):
         #Receive water from sewers
-        vqip_ = self.copy_vqip(vqip)
+        vqip = self.copy_vqip(vqip)
         #Check if can directly be treated
         sent_direct = self.get_excess_throughput()
         
@@ -189,6 +191,7 @@ class WWTW(WTW):
         self.previous_input = self.copy_vqip(self.current_input)
         self.current_input = self.empty_vqip()
         self.treated = self.empty_vqip()
+        self.solids = self.empty_vqip()
         self.stormwater_tank.end_timestep()
         
 class FWTW(WTW):

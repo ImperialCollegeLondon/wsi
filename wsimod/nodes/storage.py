@@ -48,8 +48,8 @@ class Storage(Node):
                                 )
         #Update handlers
         self.push_set_handler['default'] = self.push_set_storage
-        self.pull_set_handler['default'] = lambda vol : self.tank.pull_storage(vol)
         self.push_check_handler['default'] = self.tank.get_excess
+        self.pull_set_handler['default'] = lambda vol : self.tank.pull_storage(vol)
         self.pull_check_handler['default'] = self.tank.get_avail
         
         #Mass balance
@@ -218,9 +218,9 @@ class QueueGroundwater(Storage):
 class River(Storage):
     #TODO non-day timestep
     def __init__(self, 
-                        depth = 1,
+                        depth = 2,
                         length = 200,
-                        width = 10,
+                        width = 20,
                         velocity = 0.2,
                         damp = 0.1,
                         **kwargs):
@@ -288,6 +288,8 @@ class River(Storage):
         
         #Update handlers
         self.pull_check_handler[('RiparianBuffer', 'volume')] = self.pull_check_fp
+        self.push_set_handler['default'] = self.push_set_river
+        self.push_check_handler['default'] = lambda x : self.push_check_basic(x, of_type = ['Node', 'River', 'Waste'])
         
         #Update mass balance
         self.bio_in = self.empty_vqip()
@@ -295,6 +297,25 @@ class River(Storage):
         
         self.mass_balance_in.append(lambda : self.bio_in)
         self.mass_balance_out.append(lambda : self.bio_out)
+    
+    
+    #TODO something like this might be needed if you want sewers backing up from river height... would need to incorporate expected river outflow
+    # def get_dt_excess(self, vqip = None):
+    #     reply = self.empty_vqip()
+    #     reply['volume'] = self.tank.get_excess()['volume'] + self.tank.get_avail()['volume'] * self.get_riverrc()
+    #     if vqip is not None:
+    #         reply['volume'] = min(vqip['volume'], reply['volume'])
+    #     return reply
+    
+    # def push_set_river(self, vqip):
+    #     vqip_ = vqip.copy()
+    #     vqip_ = self.v_change_vqip(vqip_, min(vqip_['volume'], self.get_dt_excess()['volume']))
+    #     _ = self.tank.push_storage(vqip_, force=True)
+    #     return self.extract_vqip(vqip, vqip_)
+    
+    def push_set_river(self, vqip):
+        _ = self.tank.push_storage(vqip, force = True)
+        return self.empty_vqip()
         
     def update_depth(self):
         self.current_depth = self.tank.storage['volume'] / self.area
@@ -425,27 +446,30 @@ class River(Storage):
        
         macrouptP = self.muptPpar * tempfcn * max(0, totalphosfcn) * self.area # [kg/day]
         macrophyte_uptake_P = min(0.5 * self.tank.storage['phosphate'], macrouptP) 
-        out_['phosphate'] = macrophyte_uptake_P
+        out_['phosphate'] += macrophyte_uptake_P
         self.tank.storage['phosphate'] -= macrophyte_uptake_P
         
         #TODO
         #source/sink for benthos sediment P
         #suspension/resuspension
         return in_, out_
-        
-    def distribute(self):
-        in_, out_ = self.biochemical_processes()
-        self.bio_in = in_
-        self.bio_out = out_
-        
+    
+    def get_riverrc(self):
         total_time = self.length / (self.velocity) 
         kt = self.damp * total_time # [day]
         if kt != 0 :
             riverrc = 1 - kt + kt * exp(-1 / kt) # [-]
         else:
             riverrc = 1
+        return riverrc
+    
+    def distribute(self):
+        in_, out_ = self.biochemical_processes()
+        self.bio_in = in_
+        self.bio_out = out_
         
-        outflow = self.tank.pull_storage({'volume' : self.tank.storage['volume'] * riverrc})
+        
+        outflow = self.tank.pull_storage({'volume' : self.tank.storage['volume'] * self.get_riverrc()})
         reply = self.push_distributed(outflow, of_type = ['River','Node','Waste'])
         if reply['volume'] > constants.FLOAT_ACCURACY:
             print('river cant push')
