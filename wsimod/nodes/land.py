@@ -118,7 +118,7 @@ class Land(Node):
         #TODO could move to be a parameter..
         #TODO currently just push to the first impervious surface... not sure if people will be having multiple impervious surfaces
         for surface in self.surfaces:
-            if isinstance(surface.__class__, ImperviousSurface):
+            if isinstance(surface, ImperviousSurface):
                 vqip = self.surface.push_storage(vqip, force = True)
                 break
         return vqip
@@ -227,8 +227,11 @@ class ImperviousSurface(Surface):
         
         self.outflows.append(self.push_to_sewers)
     
+    
     def urban_deposition(self):
         pollution = self.copy_vqip(self.pollutant_load)
+        for pol in pollution.keys():
+            pollution[pol] *= self.area
         pollution['volume'] = 0
         _ = self.push_storage(pollution, force = True)
         

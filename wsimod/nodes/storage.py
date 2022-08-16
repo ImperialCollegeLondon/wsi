@@ -400,11 +400,11 @@ class River(Storage):
             self.tank.storage['phosphate'] -= minprodP
             in_['org-phosphorus'] = minprodP
             self.tank.storage['org-phosphorus'] += minprodP
-            
-            for pol in self.din_components:
-                loss = minprodN * self.tank.storage[pol] / din
-                out_[pol] += loss
-                self.tank.storage[pol] -= loss
+            if din > 0:
+                for pol in self.din_components:
+                    loss = minprodN * self.tank.storage[pol] / din
+                    out_[pol] += loss
+                    self.tank.storage[pol] -= loss
             
             in_['org-nitrogen'] = minprodN
             self.tank.storage['org-nitrogen'] += minprodN

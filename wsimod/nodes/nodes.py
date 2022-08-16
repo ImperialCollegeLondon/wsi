@@ -354,7 +354,8 @@ class Node(WSIObj):
         #Initialise connected dict
         connected = {'avail' : 0,
                      'priority' : 0,
-                     'allocation' : {}}
+                     'allocation' : {},
+                     'capacity' : {}}
         
         f, arcs = self.get_direction_arcs(direction, of_type)
         
@@ -367,6 +368,7 @@ class Node(WSIObj):
             preference = arc.preference
             connected['priority'] += avail * preference
             connected['allocation'][arc.name] = avail * preference
+            connected['capacity'][arc.name] = avail
                 
         return connected
     
@@ -466,7 +468,11 @@ class Node(WSIObj):
                                            of_type = of_type, 
                                            tag = tag)
             iter_ = 0
-            
+            if not_pushed > connected['avail']:
+                #If more water than can be pushed, ignore preference and allocate all available based on capacity
+                connected['priority'] = connected['avail']
+                connected['allocation'] = connected['capacity']
+                
             #Iterate over receiving nodes until sent
             while ((not_pushed > constants.FLOAT_ACCURACY) & 
                   (connected['avail'] > constants.FLOAT_ACCURACY) &
