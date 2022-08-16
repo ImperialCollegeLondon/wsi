@@ -20,8 +20,8 @@ UNBOUNDED_CAPACITY = 1e15
 MAX_INFLOW = 1e10
 DT_DAYS = 1
 POLLUTANTS = ['do','org-phosphorus','phosphate','ammonia','solids','bod','cod','ph','temperature','nitrate','nitrite','org-nitrogen'] 
-NON_ADDITIVE_POLLUTANTS = ['temperature', 'ph'] # e.g. pollutants whose concentration should not increase if volume is distilled out
-ADDITIVE_POLLUTANTS = ['do','org-phosphorus','phosphate','ammonia','solids','bod','cod','nitrate','nitrite','org-nitrogen'] 
+NON_ADDITIVE_POLLUTANTS = ['do', 'temperature', 'ph'] # e.g. pollutants whose concentration should not increase if volume is distilled out
+ADDITIVE_POLLUTANTS = ['org-phosphorus','phosphate','ammonia','solids','bod','cod','nitrate','nitrite','org-nitrogen'] 
 NUTRIENTS = ['N','P']
 PCT_GARDENS = 0.1 # Percentage of area that is people's gardens
 PI = 3.141592653589793
@@ -30,6 +30,7 @@ PER_DAY_TO_PER_HOUR = 1/24
 M3_S_TO_ML_H = M3_S_TO_ML_D * PER_DAY_TO_PER_HOUR
 MAXITER = 5# Max iterations in a while loop
 M3_S_TO_M3_DT = 86400
+M_S_TO_M_DT = 86400
 UG_L_TO_KG_M3 = 1e-6
 MG_L_TO_KG_M3 = 1e-3
 KG_M3_TO_MG_L = 1e3
@@ -39,6 +40,7 @@ KG_TO_MG = 1e-6
 DECAY_REFERENCE_TEMPERATURE = 20 # C
 PER_30MONTH_TO_PER_DAY = 1/30
 DAYS_IN_YEAR = 365
+
 
 M_TO_MM = 1e3
 MM_TO_M = 1e-3

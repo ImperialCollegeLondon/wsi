@@ -221,7 +221,7 @@ class River(Storage):
                         depth = 2,
                         length = 200,
                         width = 20,
-                        velocity = 0.2,
+                        velocity = 0.2 * constants.M_S_TO_M_DT,
                         damp = 0.1,
                         **kwargs):
         self.depth = depth # [m]
@@ -455,7 +455,7 @@ class River(Storage):
         return in_, out_
     
     def get_riverrc(self):
-        total_time = self.length / (self.velocity) 
+        total_time = self.length / self.velocity
         kt = self.damp * total_time # [day]
         if kt != 0 :
             riverrc = 1 - kt + kt * exp(-1 / kt) # [-]

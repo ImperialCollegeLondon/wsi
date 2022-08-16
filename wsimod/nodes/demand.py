@@ -64,8 +64,8 @@ class Demand(Node):
         #Send water where it needs to go
         for key, item in demand.items():
             #Ensure water has the concentration that was received
-            item = self.v_change_vqip(self.total_received, item['volume'])
-            demand[key] = item #put back in dict for mass balance checking
+            # item = self.v_change_vqip(self.total_received, item['volume'])
+            # demand[key] = item #put back in dict for mass balance checking
             
             #Distribute
             remaining = self.push_distributed(item,
@@ -149,5 +149,7 @@ class ResidentialDemand(Demand):
     def get_house_demand(self):
         consumption = self.population * self.per_capita
         foul = self.copy_vqip(self.pollutant_load)
+        for pol in constants.ADDITIVE_POLLUTANTS:
+            foul[pol] *= self.population
         foul['volume'] = consumption
         return foul
