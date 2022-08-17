@@ -90,6 +90,7 @@ class Land(Node):
         reply = self.push_distributed(percolation, of_type = ['Groundwater'])
         
         if reply['volume'] > 0:
+            print('Groundwater rejected push')
             #Update percolation 'tank'
             _ = self.percolation.push_storage(reply, force = True)
         
@@ -277,7 +278,7 @@ class PerviousSurface(Surface):
                         field_capacity = 0.3, #FAO (water above this generates flow)
                         wilting_point = 0.12, #FAO (water above this is available for plants)
                         infiltration_capacity = 0.5, #depth of precipitation that can enter tank per timestep
-                        percolation_coefficient = 0.25, #proportion of water above field capacity that can goes to percolation
+                        percolation_coefficient = 0.75, #proportion of water above field capacity that can goes to percolation
                         et0_coefficient = 0.5, #proportion of et0 that goes to evapotranspiration
                         ihacres_p = 0.5,
                         **kwargs):
