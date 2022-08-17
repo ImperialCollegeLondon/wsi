@@ -14,8 +14,8 @@ import sys
 class Land(Node):
     def __init__(self,
                         name,
-                        subsurface_residence_time = 2,
-                        percolation_residence_time = 10,
+                        subsurface_residence_time = 5,
+                        percolation_residence_time = 50,
                         surface_residence_time = 1,
                         surfaces = {},
                         data_input_dict = {}):
@@ -276,8 +276,8 @@ class PerviousSurface(Surface):
                         depth = 0.75,
                         field_capacity = 0.3, #FAO (water above this generates flow)
                         wilting_point = 0.12, #FAO (water above this is available for plants)
-                        infiltration_capacity = 0, #depth of precipitation that can enter tank per timestep
-                        percolation_coefficient = 0, #proportion of water above field capacity that can goes to percolation
+                        infiltration_capacity = 0.5, #depth of precipitation that can enter tank per timestep
+                        percolation_coefficient = 0.25, #proportion of water above field capacity that can goes to percolation
                         et0_coefficient = 0.5, #proportion of et0 that goes to evapotranspiration
                         ihacres_p = 0.5,
                         **kwargs):
@@ -300,7 +300,7 @@ class PerviousSurface(Surface):
         self.infiltration_excess = self.empty_vqip()
         self.subsurface_flow = self.empty_vqip()
         self.percolation = self.empty_vqip()
-        self.tank_recharge = self.empty_vqip()
+        self.tank_recharge = 0
         self.evaporation = self.empty_vqip()
         self.precipitation = self.empty_vqip()
         
@@ -501,7 +501,7 @@ class GrowingSurface(PerviousSurface):
         self.crop_factor = 0
         self.et0_coefficient = 1
         #Calculate parameters based on capacity/wp
-        self.total_available_water = (self.field_capacity - self.wilting_point) / self.area
+        self.total_available_water = (self.field_capacity - self.wilting_point) * self.depth
         if self.total_available_water < 0:
             print('warning: TAW < 0...')
         self.readily_available_water = self.total_available_water * self.ET_depletion_factor
