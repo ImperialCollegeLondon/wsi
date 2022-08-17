@@ -89,7 +89,7 @@ class Land(Node):
         #Distribute percolation
         reply = self.push_distributed(percolation, of_type = ['Groundwater'])
         
-        if reply['volume'] > 0:
+        if reply['volume'] > constants.FLOAT_ACCURACY:
             print('Groundwater rejected push')
             #Update percolation 'tank'
             _ = self.percolation.push_storage(reply, force = True)
