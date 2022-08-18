@@ -12,7 +12,8 @@ from wsimod.nodes.land import ImperviousSurface
 from wsimod.core import constants, WSIObj
 from wsimod.nodes import QueueTank, Tank
 from pandas import to_datetime
-
+import sys
+import os
 class Model(WSIObj):
     def __init__(self):
         super().__init__()
@@ -83,7 +84,12 @@ class Model(WSIObj):
         
         # if settings is None:
         #     settings = self.default_settings()
+        def blockPrint():
+            sys.stdout = open(os.devnull, 'w')
         
+        def enablePrint():
+            sys.stdout = sys.__stdout__
+        blockPrint() 
         if dates is None:
             dates = self.dates
         
@@ -208,5 +214,5 @@ class Model(WSIObj):
             
             for arc in self.arcs.values():
                 arc.end_timestep()
-                
+        enablePrint()
         return flows, tanks, node_mb, surfaces
