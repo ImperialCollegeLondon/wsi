@@ -464,9 +464,10 @@ class River(Storage):
         return riverrc
     
     def distribute(self):
-        in_, out_ = self.biochemical_processes()
-        self.bio_in = in_
-        self.bio_out = out_
+        if 'nitrate' in constants.POLLUTANTS:
+            in_, out_ = self.biochemical_processes()
+            self.bio_in = in_
+            self.bio_out = out_
         
         
         outflow = self.tank.pull_storage({'volume' : self.tank.storage['volume'] * self.get_riverrc()})

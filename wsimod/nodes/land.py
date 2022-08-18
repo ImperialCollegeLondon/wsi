@@ -342,9 +342,9 @@ class PerviousSurface(Surface):
         #Formulate in terms of (m) moisture deficit
         current_moisture_deficit_depth = self.get_cmd()
         
-        #IHACRES equations
-        evaporation = evaporation_depth * min(1, exp(2 * (1 - current_moisture_deficit_depth / self.wilting_point)))
-        outflow = infiltrated_precipitation  * (1 - min(1, (current_moisture_deficit_depth / self.field_capacity) ** self.ihacres_p))
+        #IHACRES equations (we do (depth - wilting_point or field capacity) to convert from a deficit to storage tank)
+        evaporation = evaporation_depth * min(1, exp(2 * (1 - current_moisture_deficit_depth / (self.depth - self.wilting_point))))
+        outflow = infiltrated_precipitation * (1 - min(1, (current_moisture_deficit_depth / (self.depth - self.field_capacity)) ** self.ihacres_p))
         
         #Can't evaporate more than available moisture
         evaporation = min(evaporation, precipitation_depth + self.get_smc())
@@ -510,19 +510,20 @@ class GrowingSurface(PerviousSurface):
         self.nutrient_pool = NutrientPool()
         
         self.inflows.insert(0, self.calc_crop_cover)
-        self.inflows.append(self.fertiliser)
-        self.inflows.append(self.manure)
-        # self.inflows.append(self.residue)
-        
-        self.processes.append(self.calc_temperature_dependence_factor)
-        self.processes.append(self.calc_soil_moisture_dependence_factor)
-        self.processes.append(self.soil_pool_transformation)
-        self.processes.append(self.calc_crop_uptake)
-        
-        #TODO possibly move these into nutrient pool
-        self.processes.append(self.erosion)
-        self.processes.append(self.denitrification)
-        self.processes.append(self.adsorption)
+        if 'nitrate' in constants.POLLUTANTS:
+            self.inflows.append(self.fertiliser)
+            self.inflows.append(self.manure)
+            # self.inflows.append(self.residue)
+            
+            self.processes.append(self.calc_temperature_dependence_factor)
+            self.processes.append(self.calc_soil_moisture_dependence_factor)
+            self.processes.append(self.soil_pool_transformation)
+            self.processes.append(self.calc_crop_uptake)
+            
+            # TODO possibly move these into nutrient pool
+            self.processes.append(self.erosion)
+            self.processes.append(self.denitrification)
+            self.processes.append(self.adsorption)
     
     def pull_storage(self, vqip):
         #Pull from Tank by volume (taking pollutants in proportion)
@@ -542,11 +543,12 @@ class GrowingSurface(PerviousSurface):
         
         #For now assume organic and inorganic N go to the same place to maintain mass balance
         #TODO Also ignores ammonia -> nitrate transformation within soil - it would be easy enough to use a generic decay for this
-        reply['nitrate'] = nutrients['inorganic']['N'] * self.storage['nitrate'] / (self.storage['nitrate'] + self.storage['ammonia'])
-        reply['ammonia'] = nutrients['inorganic']['N'] * self.storage['ammonia'] / (self.storage['nitrate'] + self.storage['ammonia'])
-        reply['phosphate'] = nutrients['inorganic']['P']
-        reply['org-phosphorus'] = nutrients['organic']['P']
-        reply['org-nitrogen'] = nutrients['organic']['N']
+        if 'nitrate' in constants.POLLUTANTS:
+            reply['nitrate'] = nutrients['inorganic']['N'] * self.storage['nitrate'] / (self.storage['nitrate'] + self.storage['ammonia'])
+            reply['ammonia'] = nutrients['inorganic']['N'] * self.storage['ammonia'] / (self.storage['nitrate'] + self.storage['ammonia'])
+            reply['phosphate'] = nutrients['inorganic']['P']
+            reply['org-phosphorus'] = nutrients['organic']['P']
+            reply['org-nitrogen'] = nutrients['organic']['N']
         
         #Extract from storage
         self.storage = self.extract_vqip(self.storage, reply)

@@ -197,7 +197,9 @@ class Model(WSIObj):
                                          'precipitation' : surface.precipitation['volume'],
                                          'tank_recharge' : surface.tank_recharge,
                                          'capacity' : surface.capacity,
-                                         'time' : date})
+                                         'time' : date,
+                                         'et0_coef' : surface.et0_coefficient,
+                                         'crop_factor' : surface.crop_factor})
                     
             for node in self.nodes.values():
                 node.end_timestep()
