@@ -286,6 +286,7 @@ class PerviousSurface(Surface):
         self.field_capacity = field_capacity * depth
         self.wilting_point = wilting_point * depth
         self.infiltration_capacity = infiltration_capacity
+        self.surface_coefficient = surface_coefficient
         self.percolation_coefficient = percolation_coefficient
         self.et0_coefficient = et0_coefficient
         self.ihacres_p = ihacres_p       
