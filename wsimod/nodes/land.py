@@ -279,6 +279,7 @@ class PerviousSurface(Surface):
                         wilting_point = 0.12, #FAO (water above this is available for plants)
                         infiltration_capacity = 0.5, #depth of precipitation that can enter tank per timestep
                         percolation_coefficient = 0.75, #proportion of water above field capacity that can goes to percolation
+                        surface_coefficient = 0.05,#proportion of water above field capacity that can goes to surface
                         et0_coefficient = 0.5, #proportion of et0 that goes to evapotranspiration
                         ihacres_p = 0.5,
                         **kwargs):
@@ -350,10 +351,12 @@ class PerviousSurface(Surface):
         evaporation = min(evaporation, precipitation_depth + self.get_smc())
         
         #Convert to volumes
-        percolation = outflow * self.percolation_coefficient * self.area
-        subsurface_flow = outflow * self.subsurface_coefficient * self.area
+        surface = outflow * self.surface_coefficient * self.area
+        percolation = outflow * (1-self.surface_coefficient) * self.percolation_coefficient * self.area
+        subsurface_flow = outflow * (1-self.surface_coefficient) * self.subsurface_coefficient * self.area
         tank_recharge = (infiltrated_precipitation - evaporation - outflow) * self.area
         infiltration_excess *= self.area
+        infiltration_excess += surface
         evaporation *= self.area
         precipitation = precipitation_depth * self.area
         

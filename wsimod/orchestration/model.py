@@ -91,7 +91,8 @@ class Model(WSIObj):
         tanks = []
         node_mb = []
         surfaces = []
-        for date in tqdm(dates):
+        # for date in tqdm(dates):
+        for date in dates:
             for node in self.nodelist:
                 node.t = date
                     
@@ -159,7 +160,8 @@ class Model(WSIObj):
         
             for v in constants.ADDITIVE_POLLUTANTS + ['volume']:
                 if (sys_in[v] - sys_ds[v] - sys_out[v]) > constants.FLOAT_ACCURACY:
-                    print("system mass balance error for " + v + " of " + str(sys_in[v] - sys_ds[v] - sys_out[v]))
+                    pass
+                    # print("system mass balance error for " + v + " of " + str(sys_in[v] - sys_ds[v] - sys_out[v]))
             
             #Store results
             for arc in self.arcs.values():
