@@ -69,12 +69,12 @@ class Model(WSIObj):
         for node in self.nodelist:
             _ = node.node_mass_balance()
     
-    # def default_settings(self):
-    #     return {'arcs' : {'flows' : True,
-    #                       'pollutants' : True},
-    #             'tanks' : {'storages' : True,
-    #                        'pollutants' : True},
-    #             'mass_balance' : False}
+    def default_settings(self):
+        return {'arcs' : {'flows' : True,
+                          'pollutants' : True},
+                'tanks' : {'storages' : True,
+                            'pollutants' : True},
+                'mass_balance' : False}
 
     
             
