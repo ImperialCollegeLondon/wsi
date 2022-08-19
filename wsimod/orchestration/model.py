@@ -80,10 +80,14 @@ class Model(WSIObj):
             
     def run(self, 
             dates = None,
-            settings = None):
+            settings = None,
+            record_arcs = None):
         
-        # if settings is None:
-        #     settings = self.default_settings()
+        if record_arcs is None:
+            record_arcs = self.arcs.keys()
+        
+        if settings is None:
+            settings = self.default_settings()
         def blockPrint():
             sys.stdout = open(os.devnull, 'w')
         
@@ -152,12 +156,12 @@ class Model(WSIObj):
                 in_, ds_, out_ = node.node_mass_balance()
 
                 
-                temp = {'name' : node.name,
-                        'time' : date}
-                for lab, dict_ in zip(['in','ds','out'], [in_, ds_, out_]):
-                    for key, value in dict_.items():
-                        temp[(lab, key)] = value
-                node_mb.append(temp)
+                # temp = {'name' : node.name,
+                #         'time' : date}
+                # for lab, dict_ in zip(['in','ds','out'], [in_, ds_, out_]):
+                #     for key, value in dict_.items():
+                #         temp[(lab, key)] = value
+                # node_mb.append(temp)
                 
                 for v in constants.ADDITIVE_POLLUTANTS + ['volume']:
                     sys_in[v] += in_[v]
@@ -170,7 +174,8 @@ class Model(WSIObj):
                     # print("system mass balance error for " + v + " of " + str(sys_in[v] - sys_ds[v] - sys_out[v]))
             
             #Store results
-            for arc in self.arcs.values():
+            for arc in record_arcs:
+                arc = self.arcs[arc]
                 flows.append({'arc' : arc.name,
                               'flow' : arc.vqip_out['volume'],
                               'time' : date})
@@ -182,32 +187,32 @@ class Model(WSIObj):
             #                   'storage' : node.tank.storage['volume'],
             #                   'time' : date})
 
-            for node in self.nodes.values():
-                for prop in dir(node):
-                    prop = node.__getattribute__(prop)
-                    if (prop.__class__ == Tank) | (prop.__class__ == QueueTank):
-                        tanks.append({'node' : node.name,
-                                      'time' : date,
-                                      'storage' : prop.storage['volume']})
-                        for pol in constants.POLLUTANTS:
-                            tanks[-1][pol] = prop.storage[pol]
+            # for node in self.nodes.values():
+            #     for prop in dir(node):
+            #         prop = node.__getattribute__(prop)
+            #         if (prop.__class__ == Tank) | (prop.__class__ == QueueTank):
+            #             tanks.append({'node' : node.name,
+            #                           'time' : date,
+            #                           'storage' : prop.storage['volume']})
+            #             for pol in constants.POLLUTANTS:
+            #                 tanks[-1][pol] = prop.storage[pol]
                             
-            for name, node in self.nodes_type['Land'].items():
-                for surface in node.surfaces:
-                    if not isinstance(surface,ImperviousSurface):
-                        surfaces.append({'node' : name,
-                                         'surface' : surface.surface,
-                                         'percolation' : surface.percolation['volume'],
-                                         'subsurface_r' : surface.subsurface_flow['volume'],
-                                         'surface_r' : surface.infiltration_excess['volume'],
-                                         'storage' : surface.storage['volume'],
-                                         'evaporation' : surface.evaporation['volume'],
-                                         'precipitation' : surface.precipitation['volume'],
-                                         'tank_recharge' : surface.tank_recharge,
-                                         'capacity' : surface.capacity,
-                                         'time' : date,
-                                         'et0_coef' : surface.et0_coefficient,
-                                         'crop_factor' : surface.crop_factor})
+            # for name, node in self.nodes_type['Land'].items():
+            #     for surface in node.surfaces:
+            #         if not isinstance(surface,ImperviousSurface):
+            #             surfaces.append({'node' : name,
+            #                              'surface' : surface.surface,
+            #                              'percolation' : surface.percolation['volume'],
+            #                              'subsurface_r' : surface.subsurface_flow['volume'],
+            #                              'surface_r' : surface.infiltration_excess['volume'],
+            #                              'storage' : surface.storage['volume'],
+            #                              'evaporation' : surface.evaporation['volume'],
+            #                              'precipitation' : surface.precipitation['volume'],
+            #                              'tank_recharge' : surface.tank_recharge,
+            #                              'capacity' : surface.capacity,
+            #                              'time' : date,
+            #                              'et0_coef' : surface.et0_coefficient,
+            #                              'crop_factor' : surface.crop_factor})
                     
             for node in self.nodes.values():
                 node.end_timestep()
