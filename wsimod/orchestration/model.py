@@ -6,7 +6,7 @@ Created on Mon Jul  4 16:01:48 2022
 """
 import wsimod
 from wsimod.arcs import arcs
-import dill as pickle
+# import dill as pickle
 from tqdm import tqdm
 from wsimod.nodes.land import ImperviousSurface
 from wsimod.core import constants, WSIObj
@@ -59,11 +59,11 @@ class Model(WSIObj):
             arc['out_port'] = self.nodes[arc['out_port']]
             self.arcs[name] = getattr(arcs,type_)(**dict(arc))
 
-    def save(self, fid):
-        #Note - dodgy if you are still editing the model! Only use for running the model
-        file = open(fid, 'wb')
-        pickle.dump(self, file)
-        return file.close()
+    # def save(self, fid):
+    #     #Note - dodgy if you are still editing the model! Only use for running the model
+    #     file = open(fid, 'wb')
+    #     pickle.dump(self, file)
+    #     return file.close()
     
     def debug_node_mb(self):
         for node in self.nodelist:
