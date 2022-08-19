@@ -171,7 +171,7 @@ class Surface(DecayTank):
         return self.parent.get_data_input(var)
     
     def get_data_input_surface(self, var):
-        return self.data_input_dict[(var, self.parent.t)]
+        return self.data_input_dict[(var, self.parent.monthyear)]
     
     def dry_deposition_to_tank(self, vqip):
         _ = self.push_storage(vqip, force = True)

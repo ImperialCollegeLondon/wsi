@@ -101,7 +101,7 @@ class Model(WSIObj):
         for date in dates:
             for node in self.nodelist:
                 node.t = date
-                    
+                node.monthyear = date.to_period('M')
             #Create demand (gets pushed to sewers)
             for node in self.nodes_type['Demand'].values():
                 node.create_demand()
