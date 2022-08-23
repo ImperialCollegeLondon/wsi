@@ -81,7 +81,8 @@ class Model(WSIObj):
     def run(self, 
             dates = None,
             settings = None,
-            record_arcs = None):
+            record_arcs = None,
+            verbose = True):
         
         if record_arcs is None:
             record_arcs = self.arcs.keys()
@@ -89,11 +90,13 @@ class Model(WSIObj):
         if settings is None:
             settings = self.default_settings()
         def blockPrint():
+            stdout = sys.stdout
             sys.stdout = open(os.devnull, 'w')
-        
-        def enablePrint():
-            sys.stdout = sys.__stdout__
-        blockPrint() 
+            return stdout
+        def enablePrint(stdout):
+            sys.stdout = stdout
+        if not verbose:
+            stdout = blockPrint() 
         if dates is None:
             dates = self.dates
         
@@ -101,8 +104,8 @@ class Model(WSIObj):
         tanks = []
         node_mb = []
         surfaces = []
-        # for date in tqdm(dates):
-        for date in dates:
+        for date in tqdm(dates, disable = (not verbose)):
+        # for date in dates:
             for node in self.nodelist:
                 node.t = date
                 node.monthyear = date.to_period('M')
@@ -201,23 +204,24 @@ class Model(WSIObj):
             #     for surface in node.surfaces:
             #         if not isinstance(surface,ImperviousSurface):
             #             surfaces.append({'node' : name,
-            #                              'surface' : surface.surface,
-            #                              'percolation' : surface.percolation['volume'],
-            #                              'subsurface_r' : surface.subsurface_flow['volume'],
-            #                              'surface_r' : surface.infiltration_excess['volume'],
-            #                              'storage' : surface.storage['volume'],
-            #                              'evaporation' : surface.evaporation['volume'],
-            #                              'precipitation' : surface.precipitation['volume'],
-            #                              'tank_recharge' : surface.tank_recharge,
-            #                              'capacity' : surface.capacity,
-            #                              'time' : date,
-            #                              'et0_coef' : surface.et0_coefficient,
-            #                              'crop_factor' : surface.crop_factor})
+            #                               'surface' : surface.surface,
+            #                               'percolation' : surface.percolation['volume'],
+            #                               'subsurface_r' : surface.subsurface_flow['volume'],
+            #                               'surface_r' : surface.infiltration_excess['volume'],
+            #                               'storage' : surface.storage['volume'],
+            #                               'evaporation' : surface.evaporation['volume'],
+            #                               'precipitation' : surface.precipitation['volume'],
+            #                               'tank_recharge' : surface.tank_recharge,
+            #                               'capacity' : surface.capacity,
+            #                               'time' : date,
+            #                               'et0_coef' : surface.et0_coefficient,
+            #                               'crop_factor' : surface.crop_factor})
                     
             for node in self.nodes.values():
                 node.end_timestep()
             
             for arc in self.arcs.values():
                 arc.end_timestep()
-        enablePrint()
+        if not verbose:
+            enablePrint(stdout)
         return flows, tanks, node_mb, surfaces

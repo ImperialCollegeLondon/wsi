@@ -375,7 +375,7 @@ class PerviousSurface(Surface):
             subsurface_flow = self.empty_vqip()
             percolation = self.empty_vqip()
             
-            if abs(evap + infiltrated_precipitation * self.area - evaporation) > constants.FLOAT_ACCURACY:
+            if abs(evap + infiltrated_precipitation * self.area - evaporation - infiltration_excess) > constants.FLOAT_ACCURACY:
                 print('inaccurate evaporation calculation')
         
         #Convert to VQIPs
