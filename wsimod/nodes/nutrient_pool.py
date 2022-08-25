@@ -37,12 +37,17 @@ class NutrientPool:
         self.fraction_residue_to_humus = {x : 1 - self.fraction_residue_to_fast[x] for x in constants.NUTRIENTS}
         self.fraction_dry_n_to_fast = 1 - self.fraction_dry_n_to_dissolved_inorganic
         
-        
         self.fast_pool = NutrientStore()
         self.humus_pool = NutrientStore()
         self.dissolved_inorganic_pool = NutrientStore()
         self.dissolved_organic_pool = NutrientStore()
         self.adsorbed_inorganic_pool = NutrientStore()
+        self.pools = [self.fast_pool,
+                      self.humus_pool,
+                      self.dissolved_inorganic_pool,
+                      self.dissolved_organic_pool,
+                      self.adsorbed_inorganic_pool]
+    
         
     def init_empty(self):
         self.empty_nutrient = {x : 0 for x in constants.NUTRIENTS}
@@ -53,30 +58,39 @@ class NutrientPool:
     
     def allocate_inorganic_irrigation(self, irrigation):
         self.dissolved_inorganic_pool.receive(irrigation)
+        return irrigation
         
     def allocate_organic_irrigation(self, irrigation):
         self.dissolved_organic_pool.receive(irrigation)
+        return irrigation
     
     def allocate_dry_deposition(self, deposition):
         self.fast_pool.storage['N'] += deposition['N'] * self.fraction_dry_n_to_fast
         self.dissolved_inorganic_pool.storage['N'] += deposition['N'] * self.fraction_dry_n_to_dissolved_inorganic
         self.adsorbed_inorganic_pool.storage['P'] += deposition['P']
+        return {'N' : deposition['N'] * self.fraction_dry_n_to_dissolved_inorganic, 'P' : 0}
         
     def allocate_wet_deposition(self, deposition):
         self.dissolved_inorganic_pool.receive(deposition)
+        return deposition
         
     def allocate_manure(self, manure):
         self.dissolved_inorganic_pool.receive(self.multiply_nutrients(manure,
                                                                       self.fraction_manure_to_dissolved_inorganic))
         self.fast_pool.receive(self.multiply_nutrients(manure,
                                                        self.fraction_manure_to_fast))
+        return self.multiply_nutrients(manure,self.fraction_manure_to_dissolved_inorganic)
+    
     def allocate_residue(self, residue):
         self.humus_pool.receive(self.multiply_nutrients(residue,
                                                    self.fraction_residue_to_humus))
         self.fast_pool.receive(self.multiply_nutrients(residue,
                                                        self.fraction_residue_to_fast))    
+        return self.empty_nutrient()
+    
     def allocate_fertiliser(self, fertiliser):
         self.dissolved_inorganic_pool.receive(fertiliser)
+        return fertiliser
     
     def extract_dissolved(self, proportion):
         reply_di = self.dissolved_inorganic_pool.extract({'N' : self.dissolved_inorganic_pool.storage['N'] * proportion,
@@ -104,16 +118,26 @@ class NutrientPool:
     def soil_pool_transformation(self):
         #For mass balance purposes, assume fast is inorganic and humus is organic
         
-        increase_in_inorganic = self.get_empty_nutrient()
+        increase_in_dissolved_inorganic = self.get_empty_nutrient()
+        increase_in_dissolved_organic = self.get_empty_nutrient()
+        
         amount = self.temp_soil_process(self.degrhpar, self.humus_pool, self.fast_pool)
-        increase_in_inorganic = self.sum_nutrients(increase_in_inorganic, amount)
+        # increase_in_inorganic = self.sum_nutrients(increase_in_inorganic, amount)
+        #This is solid inorganic to solid organic... no tracking
+        
         amount = self.temp_soil_process(self.dishpar, self.humus_pool, self.dissolved_organic_pool)
+        increase_in_dissolved_organic = self.sum_nutrients(increase_in_dissolved_organic, amount)
+        
         amount = self.temp_soil_process(self.minfpar, self.fast_pool, self.dissolved_inorganic_pool)
+        increase_in_dissolved_inorganic = self.sum_nutrients(increase_in_dissolved_inorganic, amount)
+        
         amount = self.temp_soil_process(self.disfpar, self.fast_pool, self.dissolved_organic_pool)
-        increase_in_inorganic = self.subtract_nutrients(increase_in_inorganic, amount)
+        increase_in_dissolved_organic = self.sum_nutrients(increase_in_dissolved_organic, amount)
+        
         amount = self.temp_soil_process(self.immobdpar, self.dissolved_organic_pool, self.fast_pool)
-        increase_in_inorganic = self.sum_nutrients(increase_in_inorganic, amount)
-        return increase_in_inorganic
+        increase_in_dissolved_organic = self.subtract_nutrients(increase_in_dissolved_organic, amount)
+        
+        return increase_in_dissolved_inorganic, increase_in_dissolved_organic
     def temp_soil_process(self, parameter, extract_pool, receive_pool):
         to_extract = self.get_empty_nutrient()
         for nutrient in constants.NUTRIENTS:
@@ -159,5 +183,5 @@ class NutrientStore(NutrientPool):
     def __init__(self):
         super().init_store()
 
-#TODO: Adsorption/desorption, denitification, erosion, suspension/runoff/etc.
+#TODO: Adsorption/desorption, denitification, erosion, suspension/runoff/etc. (think that's now done...)
  

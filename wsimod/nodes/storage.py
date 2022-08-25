@@ -19,6 +19,7 @@ class Storage(Node):
                         datum =0,
                         decays = None,
                         initial_storage = 0,
+                        **kwargs,
                         ):
         
         self.initial_storage = initial_storage
@@ -26,7 +27,7 @@ class Storage(Node):
         self.area = area
         self.datum = datum
         self.decays = decays
-        super().__init__(name)
+        super().__init__(name,**kwargs)
         
         #Create tank
         if 'initial_storage' not in dir(self):
@@ -243,7 +244,7 @@ class River(Storage):
         self.uptake_PNratio = 1/7.2 # [-] P:N during crop uptake
         self.bulk_density = 1300 # [kg/m3] soil density
         self.denpar_w = 0.0015#0.001, # [kg/m2/day] reference denitrification rate in water course
-        self.T_wdays = 20 # [days] weighting constant for river temperature calculation (similar to moving average period)
+        self.T_wdays = 5 # [days] weighting constant for river temperature calculation (similar to moving average period)
         self.halfsatINwater = 1.5 * constants.MG_L_TO_KG_M3 # [kg/m3] half saturation parameter for denitrification in river
         self.T_10_days = [] # [degree C] average water temperature of 10 days
         self.T_20_days = [] # [degree C] average water temperature of 20 days
@@ -326,7 +327,8 @@ class River(Storage):
     def biochemical_processes(self):
         #TODO make more modular
         self.update_depth()
-        #HYPE has a temperature equation that tends the tank storage to the mean... I'd sooner rely on decay or similar
+
+        self.tank.storage['temperature'] = (1 - 1 / self.T_wdays) * self.tank.storage['temperature'] + (1 / self.T_wdays) * self.get_data_input('temperature')
         
         #Update lagged temperatures
         if len(self.lagged_temperatures) > self.max_temp_lag:

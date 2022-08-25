@@ -17,7 +17,7 @@ class Node(WSIObj):
     
     ...
     """
-    def __init__(self,name):
+    def __init__(self,name, data_input_dict = None):
         """
         Constructs all the necessary attributes for the node object
 
@@ -51,7 +51,8 @@ class Node(WSIObj):
         self.push_set_handler = {'default' : lambda x : self.push_distributed(x, of_type = ['Node', 'River', 'Waste'])}
         self.pull_check_handler = {'default' : self.pull_check_basic}
         self.push_check_handler = {'default' : lambda x : self.push_check_basic(x, of_type = ['Node', 'River', 'Waste'])}
-
+        self.data_input_dict = data_input_dict
+        
         #Update args
         super().__init__()
 
@@ -404,6 +405,9 @@ class Node(WSIObj):
             else:
                 print('Some other error')
                 return handler[tag](ip)
+    
+    def get_data_input(self, var):
+        return self.data_input_dict[(var, self.t)]
     
     def pull_distributed(self, vqip, of_type = None, tag = 'default'):
         
