@@ -613,7 +613,7 @@ class GrowingSurface(PerviousSurface):
             self.crop_cover = self.quick_interp(doy, self.harvest_sow_calendar, self.crop_cover_stages)
             self.ground_cover = self.quick_interp(doy, self.harvest_sow_calendar, self.ground_cover_stages)
         
-        root_zone_depletion = self.get_cmd()
+        root_zone_depletion = max(self.field_capacity - self.get_smc(),0)
         if root_zone_depletion < self.readily_available_water :
             crop_water_stress_coefficient = 1
         else:
