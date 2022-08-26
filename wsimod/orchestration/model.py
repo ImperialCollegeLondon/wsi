@@ -83,7 +83,7 @@ class Model(WSIObj):
             settings = None,
             record_arcs = None,
             verbose = True,
-            record_all = False):
+            record_all = True):
         
         if record_arcs is None:
             record_arcs = self.arcs.keys()
