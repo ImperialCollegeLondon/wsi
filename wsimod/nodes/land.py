@@ -626,14 +626,15 @@ class GrowingSurface(PerviousSurface):
     
     
     def adjust_vqip_to_liquid(self, vqip, deposition, in_):
-        if deposition['N'] > 0:
-            vqip['nitrate'] *= (in_['N'] / deposition['N'])
-            vqip['ammonia'] *= (in_['N'] / deposition['N'])
-            vqip['org-nitrogen'] *= (in_['N'] / deposition['N'])
-        if deposition['P'] > 0:
-            vqip['phosphate'] *= (in_['P'] / deposition['P'])
-            vqip['org-phosphorus'] *= (in_['P'] / deposition['P'])
-        
+        if 'nitrate' in constants.POLLUTANTS:
+            if deposition['N'] > 0:
+                vqip['nitrate'] *= (in_['N'] / deposition['N'])
+                vqip['ammonia'] *= (in_['N'] / deposition['N'])
+                vqip['org-nitrogen'] *= (in_['N'] / deposition['N'])
+            if deposition['P'] > 0:
+                vqip['phosphate'] *= (in_['P'] / deposition['P'])
+                vqip['org-phosphorus'] *= (in_['P'] / deposition['P'])
+            
         return vqip
     
     def fertiliser(self):
