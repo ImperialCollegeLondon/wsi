@@ -941,7 +941,7 @@ class GrowingSurface(PerviousSurface):
         
         soil_moisture_content = self.get_smc() * constants.M_TO_MM # [mm] (not sure why HYPE has this in mm but whatever)
         conc_sol = self.nutrient_pool.adsorbed_inorganic_pool.storage['P'] * constants.KG_TO_MG / (self.bulk_density * self.rooting_depth * self.area)# [mg P/kg soil]
-        coeff = self.kfr * self.bulk_density * self.rooting_depth # [mm]
+        coeff = self.kfr * self.bulk_density * self.rooting_depth * constants.M_TO_MM # [mm]
         
         # calculate equilibrium concentration
         if conc_sol <= 0 :
