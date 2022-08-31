@@ -75,6 +75,33 @@ class Model(WSIObj):
                 'tanks' : {'storages' : True,
                             'pollutants' : True},
                 'mass_balance' : False}
+    
+    def change_runoff_coefficient(self, relative_change, nodes = None):
+        #Multiplies impervious area by relative change and adjusts grassland accordingly
+        if nodes == None:
+            nodes = self.nodes_type['Land'].values()
+        
+        for node in nodes:
+            surface_dict = {x.surface : x for x in node.surfaces}
+            if 'Impervious' in surface_dict.keys():
+                impervious_area = surface_dict['Impervious'].area
+                grass_area = surface_dict['Grass'].area
+                
+                new_impervious_area = impervious_area * relative_change
+                new_grass_area = grass_area + (impervious_area - new_impervious_area)
+                if new_grass_area < 0:
+                    print('not enough grass')
+                    break
+                surface_dict['Impervious'].area = new_impervious_area
+                surface_dict['Impervious'].capacity *= relative_change
+                
+                surface_dict['Grass'].area = new_grass_area
+                surface_dict['Grass'].capacity *= (new_grass_area / grass_area)
+                for pol in constants.ADDITIVE_POLLUTANTS + ['volume']:
+                    surface_dict['Grass'].storage[pol] *= (new_grass_area / grass_area)
+                for pool in surface_dict['Grass'].nutrient_pool.pools:
+                    for nutrient in pool.storage.keys():
+                        pool.storage[nutrient] *= (new_grass_area / grass_area)
 
     
             
