@@ -16,16 +16,21 @@ class Demand(Node):
                         population = 1,
                         pollutant_load = {},
                         per_capita = 0.12,
-                        gardening_efficiency = 0.6 * 0.7 #Watering efficiency by irrigated area
+                        gardening_efficiency = 0.6 * 0.7, #Watering efficiency by irrigated area
+                        data_input_dict = {}, #For temperature
+                        constant_temp = 30,
+                        constant_weighting = 0.2,
                         ):
         #Default parameters
         self.gardening_efficiency = gardening_efficiency
         self.population = population
         self.per_capita = per_capita
         self.pollutant_load = pollutant_load
-        #Update args
-        super().__init__(name)
+        self.constant_weighting = constant_weighting
+        self.constant_temp = constant_temp
         
+        #Update args
+        super().__init__(name, data_input_dict = data_input_dict)
         #Update handlers
         self.push_set_handler['default'] = self.push_set_deny
         self.push_check_handler['default'] = self.push_check_deny
@@ -152,4 +157,5 @@ class ResidentialDemand(Demand):
         for pol in constants.ADDITIVE_POLLUTANTS:
             foul[pol] *= self.population
         foul['volume'] = consumption
+        foul['temperature'] = self.get_data_input('temperature') * (1 - self.constant_weighting) + self.constant_temp * self.constant_weighting
         return foul

@@ -102,7 +102,7 @@ class Groundwater(Storage):
     
     def infiltrate(self):
         avail = self.tank.get_avail()['volume']
-        avail = max(avail - self.tank.capacity * self.tank.infiltration_threshold, 0)
+        avail = max(avail - self.tank.capacity * self.infiltration_threshold, 0)
         avail = (avail * self.infiltration_pct) ** 0.5
         
         to_send = self.tank.pull_storage({'volume' : avail})

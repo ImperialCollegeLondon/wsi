@@ -13,15 +13,15 @@ class WTW(Node):
     def __init__(self,
                         name,
                         treatment_throughput_capacity = 10,
-                        process_multiplier = {},
+                        process_parameters = {},
                         liquor_multiplier = {},
                         percent_solids = 0.0002):
         #Default parameters
         self.treatment_throughput_capacity = treatment_throughput_capacity
-        if len(process_multiplier) > 0:
-            self.process_multiplier = process_multiplier
+        if len(process_parameters) > 0:
+            self.process_parameters = process_parameters
         else:
-            self.process_multiplier = {x : 0.2 for x in constants.ADDITIVE_POLLUTANTS}
+            self.process_parameters = {x : {'constant' : 0.2, 'exponent' : 1.001} for x in constants.ADDITIVE_POLLUTANTS}
         if len(liquor_multiplier) > 0:
             self.liquor_multiplier = liquor_multiplier
         else:
@@ -33,7 +33,7 @@ class WTW(Node):
         #Update args
         super().__init__(name)
         
-        self.process_multiplier['volume'] = 1 - self.percent_solids - self.liquor_multiplier['volume']
+        self.process_parameters['volume'] = {'constant' : 1 - self.percent_solids - self.liquor_multiplier['volume']}
         
         #Update handlers        
         self.push_set_handler['default'] = self.push_set_deny
@@ -56,10 +56,21 @@ class WTW(Node):
         
         #Calculate effluent, liquor and solids
         discharge_holder = self.empty_vqip()
+        
+        for key in constants.NON_ADDITIVE_POLLUTANTS:
+            discharge_holder[key] = influent[key]
+            self.liquor[key] = (self.liquor[key] * self.liquor['volume'] + influent[key] * influent['volume'] * self.liquor_multiplier['volume']) / (self.liquor['volume'] + influent['volume'] * self.liquor_multiplier['volume'])
+        
+        
         for key in constants.ADDITIVE_POLLUTANTS + ['volume']:
-            discharge_holder[key] = influent[key] * self.process_multiplier[key]
+            if key != 'volume':
+                temp_factor = self.process_parameters[key]['exponent'] ** (constants.DECAY_REFERENCE_TEMPERATURE - influent['temperature'])
+            else:
+                temp_factor = 1
+            discharge_holder[key] = influent[key] * self.process_parameters[key]['constant'] * temp_factor
             self.liquor[key] = influent[key] * self.liquor_multiplier[key]
-            
+        
+        
         self.solids['volume'] = influent['volume'] * self.percent_solids
         
         for key in constants.ADDITIVE_POLLUTANTS:

@@ -144,7 +144,11 @@ class Model(WSIObj):
             #Create runoff (impervious gets pushed to sewers, pervious to groundwater)
             for node in self.nodes_type['Land'].values():
                 node.run()
-                
+            
+            #Infiltrate GW
+            for node in self.nodes_type['Groundwater'].values():
+                node.infiltrate()
+            
             #Discharge sewers (pushed to other sewers or WWTW)
             for node in self.nodes_type['Sewer'].values():
                 node.make_discharge()
