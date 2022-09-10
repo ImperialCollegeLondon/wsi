@@ -493,7 +493,7 @@ class Abstraction(Storage):
     They must have accumulated all upstream flows that are available for abstraction before being abstracted from
     Once abstracted from, they can then distribute
     """
-    #TODO use this or subclass abstraction?
+    #TODO use this or subclass abstraction? / Is this even necessary with river object??
     def __init__(self, 
                         mrf =0,
                         **kwargs):
