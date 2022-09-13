@@ -13,7 +13,11 @@ from wsimod.nodes import nodes
 
 class Arc(WSIObj):
     def __init__(self,**kwargs):
+        """Arc objects are the way for information to be passed between nodes in WSIMOD.
+        """
+
         #Default essential parameters
+        #TODO put these as explicit arguments!
         self.name = None
         self.in_port = None
         self.out_port = None
@@ -53,27 +57,17 @@ class Arc(WSIObj):
         self.mass_balance_ds = [lambda : self.empty_vqip()]
 
     def arc_mass_balance(self):
-        '''
-        Checks mass balance for inflows/outflows/storage change in an arc
+        """Checks mass balance for inflows/outflows/storage change in an arc
 
-        Returns
-        -------
-        Note: pollutants in return vqips are take absolute values, 
-              not concentrations
-        
-        in_ (vqip) Total vqip of vqip_in and other inputs
-        out_ (vqip): Total vqip of vqip_out and other outputs
-        ds_ (vqip): Total vqip of change in arc
-        
-        Example
-        -------
-        arc_in, arc_out, arc_ds = my_arc.arc_mass_balance()
-        
-        Raises
-        ------
-        Message if mass balance does not close to constants.FLOAT_ACCURACY
-        '''
-        
+        Returns:
+            in_ (dict) Total vqip of vqip_in and other inputs in mass_balance_in
+            ds_ (dict): Total vqip of change in arc in mass_balance_ds
+            out_ (dict): Total vqip of vqip_out and other outputs in mass_balance_out
+
+        Examples:
+            arc_in, arc_out, arc_ds = my_arc.arc_mass_balance()        
+        """
+
         in_, ds_, out_ = self.mass_balance()
         return in_, ds_, out_
     
