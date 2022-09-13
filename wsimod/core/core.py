@@ -371,6 +371,9 @@ class WSIObj:
             in_ (dict): A VQIP of the total from mass_balance_in functions
             ds_ (dict): A VQIP of the total from mass_balance_ds functions
             out_ (dict): A VQIP of the total from mass_balance_out functions
+        
+        Raises:
+            Message if mass balance does not close to constants.FLOAT_ACCURACY
         """
 
         #Iterate over mass_balance_in functions, summing values in in_
@@ -437,6 +440,9 @@ class DecayObj(WSIObj):
             (high temperature sensitivity).
         
             >>> decays = {'phosphate' : {'constant' : 0.001, 'exponent' : 1.005}}
+        
+        Raises:
+            Message if no access to temperature data
         """
 
         #Store decays
@@ -449,7 +455,7 @@ class DecayObj(WSIObj):
         elif 'in_port' in dir(self):
             self.data_input_object = self.in_port
         else:
-            print('warning: decay arc cannot access temperature data')
+            print('warning: decay object cannot access temperature data')
             
         self.total_decayed = self.empty_vqip()
         
