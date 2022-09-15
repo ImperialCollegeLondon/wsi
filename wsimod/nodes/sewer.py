@@ -18,12 +18,43 @@ class Sewer(Node):
                         chamber_area = 1,
                         chamber_floor = 10,
                         data_input_dict = {}):
-        #Default parameters
+        """Sewer node that has a QueueTank and storage capacity. Think carefully 
+        about parameterising this tank, because of course the amount of water that 
+        can flow through a sewer in a timestep is different in reality than in a 
+        steady state (e.g., a sewer that can handle a peak of 6m3/s in practice could 
+        not handle 6 * 86400 m3 of water in a day because that water does not flow 
+        uniformly over the day). 
+        
+        Sewer discharging downstream must be triggered by the make_discharge function.
+
+        Args:
+            name (str): node name
+            capacity (float, optional): Sewer tank capacity. Defaults to 0.
+            pipe_time (float, optional): Number of timesteps to spend in the queue of 
+                the sewer tank. Defaults to 0.
+            pipe_timearea (dict, optional): Time area diagram that enables flows to 
+                take a range of different durations to 'traverse' the tank. The keys 
+                of the dict are the number of timesteps while the values are the 
+                proportion of flow. E.g., {0 : 0.7, 1 : 0.3} means 70% of flow takes 
+                0 timesteps and 30% takes 1 timesteps. 
+            chamber_area (float, optional): Sewer tank area. Defaults to 1.
+            chamber_floor (float, optional): Sewer tank datum. Defaults to 10.
+            data_input_dict (dict, optional): Dictionary of data inputs relevant for 
+                the node (though I don't think it is used). Defaults to {}.
+        
+        NOTE that currently the queuetank either applies the pipe_timearea 
+        (push_set_land) OR the pipe_time (push_set_sewer). Though this behaviour 
+        could be changed by setting the number_of_timesteps property to pipe_time of 
+        the sewer_tank and removing the pipe_time setting in push_set_sewer.
+
+        """
+        #Set parameters
         self.capacity = capacity
         self.pipe_time = pipe_time
         self.pipe_timearea = pipe_timearea
         self.chamber_area = chamber_area
         self.chamber_floor = chamber_floor
+        #TODO I don't think this is used..
         self.data_input_dict = data_input_dict
 
         #Update args
@@ -41,6 +72,7 @@ class Sewer(Node):
         self.push_check_handler['Land'] = self.push_check_sewer
         
         #Create sewer tank
+        #TODO this might work better as a ResidenceTank (maybe also decay?)
         self.sewer_tank = QueueTank(capacity = self.capacity,
                                     number_of_timesteps = 0,
                                     datum = self.chamber_floor,
@@ -50,21 +82,52 @@ class Sewer(Node):
         self.mass_balance_ds.append(lambda : self.sewer_tank.ds())
     
     def push_check_sewer(self, vqip = None):
+        """Generic push check, simply looks at excess
+
+        Args:
+            vqip (dict, optional): A VQIP that can be used to limit the volume in 
+                the return value (only volume key is used). Defaults to None.
+
+        Returns:
+            excess (dict): Sewer tank excess
+        """
+        #Get excess
         excess = self.sewer_tank.get_excess()
         if vqip is None:
             return excess
-        
+        #Limit respone to vqip volume
         excess = self.v_change_vqip(excess, 
                                        min(excess['volume'], vqip['volume']))
         return excess
         
     def push_set_sewer(self, vqip):
+        """Generic push request setting that implements basic queue travel time (it 
+        does NOT implement timearea travel time). Updates the sewer tank storage. 
+        Assumes that the inflow arc has accurately calculated capacity with 
+        push_check_sewer, thus the water is forced.
+
+        Args:
+            vqip (dict): A VQIP amount of water to push
+
+        Returns:
+            (dict): A VQIP amount of water that was not received
+        """
         #Sewer to sewer push, update queued tank
         return self.sewer_tank.push_storage(vqip, 
                                             time = self.pipe_time,
                                             force = True) # TODO Should this be forced?
     
     def push_set_land(self, vqip):
+        """Push request that applies pipe_timearea (see __init__ for description). As 
+        with push_set_sewer, push is also forced. Used to receive flow from land or 
+        demand that is assumed to occur widely across some kind of sewer catchment.
+        
+        Args:
+            vqip (dict): A VQIP amount to be pushed
+
+        Returns:
+            (dict): A VQIP amount that was not received
+        """
         #Land/demand to sewer push, update queued tank
         
         reply = self.empty_vqip()
@@ -81,6 +144,8 @@ class Sewer(Node):
         return reply
     
     def make_discharge(self):
+        """Function to trigger downstream sewer flow. Updates sewer tank travel time, pushes to WWTW, then sewer, then CSO. May flood land if, after these attempts, the sewer tank storage is above capacity
+        """
         backflow = self.sewer_tank.internal_arc.update_queue(direction = 'push')
         #TODO... do I need to do anything with this backflow... does it ever happen?
         
@@ -117,9 +182,13 @@ class Sewer(Node):
                 print('ponded water cant reenter')
                 
     def end_timestep(self):
+        """Overwrite end_timestep behaviour to update tank variables
+        """
         self.sewer_tank.end_timestep()
     
     def reinit(self):
+        """Call Tank reinit
+        """
         self.sewer_tank.reinit()
 
 class EnfieldFoulSewer(Sewer):
@@ -132,6 +201,10 @@ class EnfieldFoulSewer(Sewer):
                         chamber_area = 1,
                         chamber_floor = 10,
                         data_input_dict = {}):
+        """Alternate legacy sewer class... I dont think this is needed any more
+        """
+        #TODO above
+
         super().__init__(name,
                                 capacity = capacity,
                                 pipe_time = pipe_time,
