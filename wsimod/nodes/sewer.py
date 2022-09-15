@@ -24,8 +24,6 @@ class Sewer(Node):
         steady state (e.g., a sewer that can handle a peak of 6m3/s in practice could 
         not handle 6 * 86400 m3 of water in a day because that water does not flow 
         uniformly over the day). 
-        
-        Sewer discharging downstream must be triggered by the make_discharge function.
 
         Args:
             name (str): node name
@@ -46,6 +44,9 @@ class Sewer(Node):
         (push_set_land) OR the pipe_time (push_set_sewer). Though this behaviour 
         could be changed by setting the number_of_timesteps property to pipe_time of 
         the sewer_tank and removing the pipe_time setting in push_set_sewer.
+
+        Functions intended to call in orchestration:
+            make_discharge
 
         """
         #Set parameters

@@ -13,6 +13,9 @@ class Waste(Node):
 
         Args:
             name (str): Node name
+        
+        Functions intended to call in orchestration:
+            None
         """
         #Update args
         super().__init__(name)

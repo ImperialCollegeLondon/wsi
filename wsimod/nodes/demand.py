@@ -42,6 +42,9 @@ class Demand(Node):
                 generated water. Defaults to 30
             constant_weighting (float, optional): Proportion of temperature that is 
                 made up from by cconstant_temp. Defaults to 0.2.
+        
+        Functions intended to call in orchestration:
+            create_demand
         """
         #TODO should temperature be defined in pollutant dict?
         #TODO a lot of this should probably be moved to ResidentialDemand

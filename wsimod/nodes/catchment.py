@@ -24,6 +24,9 @@ class Catchment(Node):
                 the node. Keys are tuples where first value is the name of the 
                 variable to read from the dict and the second value is the time. 
                 Defaults to {}.
+        
+        Functions intended to call in orchestration:
+            route
         """
         
         #Update args
