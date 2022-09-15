@@ -10,8 +10,6 @@ from wsimod.nodes.nodes import Node, Tank, QueueTank, DecayTank, DecayQueueTank
 from wsimod.core import constants
 from math import exp
 class Storage(Node):
-    #Basically a node wrapper for a tank
-
     def __init__(self, 
                         name,
                         capacity = 0,
@@ -21,7 +19,20 @@ class Storage(Node):
                         initial_storage = 0,
                         **kwargs,
                         ):
-        
+        """A Node wrapper for a Tank or DecayTank
+
+        Args:
+            name (str): node name
+            capacity (float, optional): Tank capacity (see nodes.py/Tank). Defaults to 0.
+            area (float, optional): Tank area (see nodes.py/Tank). Defaults to 0.
+            datum (float, optional): Tank datum (see nodes.py/Tank). Defaults to 0.
+            decays (dict, optional): Tank decays if needed, (see nodes.py/DecayTank). Defaults to None.
+            initial_storage (float or dict, optional): Initial storage (see nodes.py/Tank). Defaults to 0.
+
+        Functions intended to call in orchestration:
+            distribute (optional, depends on subclass)
+        """
+        #Set parameters
         self.initial_storage = initial_storage
         self.capacity = capacity
         self.area = area
@@ -57,6 +68,14 @@ class Storage(Node):
         self.mass_balance_ds.append(lambda : self.tank.ds())
     
     def push_set_storage(self, vqip):
+        """A node wrapper for the tank push_storage
+
+        Args:
+            vqip (dict): A VQIP amount to push to the tank
+
+        Returns:
+            reply (dict): A VQIP amount that was not successfully pushed
+        """
 
         #Update tank
         reply = self.tank.push_storage(vqip)
@@ -64,6 +83,9 @@ class Storage(Node):
         return reply
     
     def distribute(self):
+        """Optional function that discharges all tank storage with push_distributed
+        """
+
         #Distribute any active storage
         storage = self.tank.pull_storage(self.tank.get_avail())
         retained = self.push_distributed(storage)
@@ -72,9 +94,13 @@ class Storage(Node):
             
     
     def end_timestep(self):
+        """Update tank states
+        """
         self.tank.end_timestep()
     
     def reinit(self):
+        """Call tank reinit
+        """
         # TODO Automate this better
         self.tank.reinit()
         self.tank.storage['volume'] = self.initial_storage
@@ -87,13 +113,33 @@ class Groundwater(Storage):
                         infiltration_pct = 0,
                         data_input_dict = {},
                         **kwargs):
+        #TODO why isn't this a subcalss of ResidenceTank?
+        """A storage with a residence time for groundwater. Can also infiltrate to sewers.
+
+        Args:
+            residence_time (float, optional): Residence time (see nodes.py/
+                ResidenceTank). Defaults to 200.
+            infiltration_threshold (float, optional): Proportion of storage capacity 
+                that must be exceeded to generate infiltration. Defaults to 1.
+            infiltration_pct (float, optional): Proportion of storage above the 
+                threshold that is square rooted and infiltrated. Defaults to 0.
+            data_input_dict (dict, optional): Dictionary of data inputs relevant for 
+                the node (though I don't think it is used). Defaults to {}.
+        
+        Functions intended to call in orchestration:
+            infiltrate (before sewers are discharged)
+            distribute
+        """
         self.residence_time = residence_time
-        self.infiltration_threshold = infiltration_threshold # %/100 of capacity that node must be exceeding to generate infiltration
-        self.infiltration_pct = infiltration_pct # %/100 of storage above threshold that is SQRTed and infiltrated
+        self.infiltration_threshold = infiltration_threshold
+        self.infiltration_pct = infiltration_pct
+        #TODO not used data_input
         self.data_input_dict = data_input_dict
         super().__init__(**kwargs)
         
     def distribute(self):
+        """Calculate outflow with residence time and send to Nodes or Rivers
+        """
         avail = self.tank.get_avail()['volume'] / self.residence_time
         to_send = self.tank.pull_storage({'volume' : avail})
         retained = self.push_distributed(to_send, of_type = ['Node', 'River'])
@@ -101,13 +147,18 @@ class Groundwater(Storage):
             print('Storage unable to push')
     
     def infiltrate(self):
+        """Calculate amount of water available for infiltration and send to sewers
+        """
+        #Calculate infiltration
         avail = self.tank.get_avail()['volume']
         avail = max(avail - self.tank.capacity * self.infiltration_threshold, 0)
         avail = (avail * self.infiltration_pct) ** 0.5
         
+        #Push to sewers
         to_send = self.tank.pull_storage({'volume' : avail})
         retained = self.push_distributed(to_send, of_type = 'Sewer')
 
+        #Any not sent is left in tank
         if retained['volume'] > constants.FLOAT_ACCURACY:
             _ = self.tank.push_storage(retained, force = True)
     
@@ -117,13 +168,35 @@ class QueueGroundwater(Storage):
                         timearea = {0 : 1},
                         data_input_dict = {},
                         **kwargs):
+        """Alternate formulation of Groundwater that uses a timearea property to 
+        enable more nonlinear time behaviour of baseflow routing. Uses the QueueTank 
+        or DecayQueueTank (see nodes.py/Tank subclassses)
+
+        NOTE: abstraction behaviour from this kind of node need careful checking
+
+        Args:
+            timearea (dict, optional): Time area diagram that enables flows to 
+                take a range of different durations to 'traverse' the tank. The keys 
+                of the dict are the number of timesteps while the values are the 
+                proportion of flow. E.g., {0 : 0.7, 1 : 0.3} means 70% of flow takes 
+                0 timesteps and 30% takes 1 timesteps. Defaults to {0 : 1}.
+            data_input_dict (dict, optional): Dictionary of data inputs relevant for 
+                the node (though I don't think it is used). Defaults to {}.
+        
+        Functions intended to call in orchestration:
+            distribute
+        """
         self.timearea = timearea
+        #TODO not used
         self.data_input_dict = data_input_dict
         super().__init__(**kwargs)
+        #Label as Groundwater class so that other nodes treat it the same
         self.__class__.__name__ = 'Groundwater'
+        #Update handlers
         self.push_set_handler['default'] = self.push_set_timearea
         self.pull_set_handler['default'] = self.pull_set_active
         self.pull_check_handler['default'] = self.pull_check_active
+        #Enable decay
         if self.decays is None:
             #TODO... renaming storage to capacity here is confusing
             self.tank = QueueTank(capacity = self.capacity,
@@ -139,9 +212,22 @@ class QueueGroundwater(Storage):
                                              parent = self,
                                              initial_storage = self.initial_storage,
                                              )
+
     def push_set_timearea(self, vqip):
+        """Push setting that enables timearea behaviour, (see __init__ for 
+        description). Assumes that the inflow arc has accurately calculated capacity 
+        with the tank get_excess function, thus the water is forced. Used to receive 
+        flow that is assumed to occur widely across some kind of catchment.
+
+        Args:
+            vqip (dict): A VQIP that has been pushed
+
+        Returns:
+            reply (dict): A VQIP amount that was not successfuly receivesd
+        """
         reply = self.empty_vqip()
         #Iterate over timearea diagram
+        #TODO timearea diagram behaviour be generalised across nodes
         for time, normalised in self.timearea.items():
             vqip_ = self.v_change_vqip(vqip, 
                                        vqip['volume'] * normalised)
@@ -152,6 +238,8 @@ class QueueGroundwater(Storage):
         return reply
         
     def distribute(self):
+        """Update internal arc, push active_storage onwards, update tank
+        """
         _ = self.tank.internal_arc.update_queue(direction = 'push')
         
         remaining = self.push_distributed(self.tank.active_storage)
@@ -168,6 +256,15 @@ class QueueGroundwater(Storage):
             print('Miscalculated tank storage in discharge')
     
     def pull_check_active(self,vqip = None):
+        """A pull check that returns the active storage
+
+        Args:
+            vqip (dict, optional): A VQIP that can be used to limit the volume in 
+                the return value (only volume key is used). Defaults to None.
+
+        Returns:
+            (dict): A VQIP amount that is available to pull
+        """
         if vqip is None:
             return self.tank.storage
         else:
@@ -175,23 +272,38 @@ class QueueGroundwater(Storage):
             return self.v_change_vqip(self.tank.storage, reply)
         
     def pull_set_active(self, vqip):
+        #TODO - this is quite weird behaviour, and inconsistent with pull_check_active
+        """Pull proportionately from both the active storage and the queue. Adjudging 
+        groundwater abstractions to not be particularly sensitive to the within 
+        catchment travel time.
+
+        Args:
+            vqip (dict): A VQIP amount to be pulled (only volume key is used)
+
+        Returns:
+            pulled (dict): A VQIP amount that was successfully pulled
+        """
         
+        #Calculate actual pull
         total_storage = self.tank.storage['volume']
         total_pull = min(self.tank.storage['volume'], vqip['volume'])
         
         if total_pull < constants.FLOAT_ACCURACY:
             return self.empty_vqip()
         else:
+            #Track total pull in pulled
             pulled = self.empty_vqip()
-            #Proportionally take from queue & active storage
+            #Iterate over queue
             if isinstance(self.tank.internal_arc.queue, dict):
                 for t, v in self.tank.internal_arc.queue.items():
-                    
+                    #Pull proportionately
                     t_pulled = self.v_change_vqip(self.tank.internal_arc.queue[t], 
                                                   v['volume'] * total_pull / total_storage)
-                    
+                    #Reduce queue VQIPs
                     self.tank.internal_arc.queue[t] = self.extract_vqip(self.tank.internal_arc.queue[t], t_pulled)
+                    #Track pull
                     pulled = self.sum_vqip(pulled, t_pulled)
+                #Pull also from active storage
                 a_pulled = self.v_change_vqip(self.tank.active_storage,
                                               self.tank.active_storage['volume'] * total_pull / total_storage)
                 self.tank.active_storage = self.extract_vqip(self.tank.active_storage, a_pulled)
@@ -225,6 +337,21 @@ class River(Storage):
                         velocity = 0.2 * constants.M_S_TO_M_DT,
                         damp = 0.1,
                         **kwargs):
+        """Node that contains extensive in-river biochemical processes
+
+        Args:
+            depth (float, optional): River tank depth. Defaults to 2.
+            length (float, optional): River tank length. Defaults to 200.
+            width (float, optional): River tank width. Defaults to 20.
+            velocity (float, optional): River velocity (if someone wants to calculate 
+                this on the fly that would also work). Defaults to 0.2*constants.M_S_TO_M_DT.
+            damp (float, optional): Flow delay and attentuation parameter. Defaults 
+                to 0.1.
+        
+        Functions intended to call in orchestration:
+            distribute
+        """
+        #Set parameters
         self.depth = depth # [m]
         self.length = length # [m]
         self.width = width # [m]
@@ -241,6 +368,8 @@ class River(Storage):
         
         
         #TODO check units
+        #TODO Will a user want to change any of these?
+        #Wide variety of river parameters (from HYPE)
         self.uptake_PNratio = 1/7.2 # [-] P:N during crop uptake
         self.bulk_density = 1300 # [kg/m3] soil density
         self.denpar_w = 0.0015#0.001, # [kg/m2/day] reference denitrification rate in water course
@@ -270,7 +399,8 @@ class River(Storage):
         self.max_phosphorus_lag = 365
         self.lagged_total_phosphorus = []
         
-        self.din_components = ['ammonia','nitrate'] # TODO need a cleaner way to do this depending on whether e.g., nitrite is included
+        self.din_components = ['ammonia','nitrate'] 
+        # TODO need a cleaner way to do this depending on whether e.g., nitrite is included
         
         # Initialise paramters
         self.current_depth = 0 # [m]
@@ -288,9 +418,11 @@ class River(Storage):
         self.end_timestep = self.end_timestep_
         
         #Update handlers
-        self.pull_check_handler[('RiparianBuffer', 'volume')] = self.pull_check_fp
         self.push_set_handler['default'] = self.push_set_river
         self.push_check_handler['default'] = lambda x : self.push_check_basic(x, of_type = ['Node', 'River', 'Waste'])
+
+        #TODO - RiparianBuffer
+        self.pull_check_handler[('RiparianBuffer', 'volume')] = self.pull_check_fp
         
         #Update mass balance
         self.bio_in = self.empty_vqip()
@@ -315,16 +447,37 @@ class River(Storage):
     #     return self.extract_vqip(vqip, vqip_)
     
     def push_set_river(self, vqip):
+        """Push to river tank, currently forced.
+
+        Args:
+            vqip (dict): A VQIP amount to push
+
+        Returns:
+            (dict): A VQIP amount that was not successfully received
+        """
         _ = self.tank.push_storage(vqip, force = True)
         return self.empty_vqip()
         
     def update_depth(self):
+        """Recalculate depth
+        """
         self.current_depth = self.tank.storage['volume'] / self.area
     
     def get_din_pool(self):
+        """Get total dissolved inorganic nitrogen from tank storage
+
+        Returns:
+            (float): total din
+        """
         return sum([self.tank.storage[x] for x in self.din_components]) #TODO + self.tank.storage['nitrite'] but nitrite might not be modelled... need some ways to address this
     
     def biochemical_processes(self):
+        """Runs all biochemical processes and updates pollutant amounts
+
+        Returns:
+            in_ (dict): A VQIP amount that represents total gain in pollutant amounts
+            out_ (dict): A VQIP amount that represents total loss in pollutant amounts
+        """
         #TODO make more modular
         self.update_depth()
 
@@ -457,7 +610,15 @@ class River(Storage):
         return in_, out_
     
     def get_riverrc(self):
+        """Get river runoff coefficient (i.e., how much water leaves the tank in this 
+        timestep)
+
+        Returns:
+            riverrc (float): runoff coeffficient
+        """
+        #Calculate travel time
         total_time = self.length / self.velocity
+        #Apply damp
         kt = self.damp * total_time # [day]
         if kt != 0 :
             riverrc = 1 - kt + kt * exp(-1 / kt) # [-]
@@ -466,33 +627,40 @@ class River(Storage):
         return riverrc
     
     def distribute(self):
+        """Run biochemical processes, track mass balance, and distribute water
+        """
         if 'nitrate' in constants.POLLUTANTS:
+            #TODO clumsy
+            #Run biochemical processes
             in_, out_ = self.biochemical_processes()
+            #Mass balance
             self.bio_in = in_
             self.bio_out = out_
         
-        
+        #Get outflow
         outflow = self.tank.pull_storage({'volume' : self.tank.storage['volume'] * self.get_riverrc()})
+        #Distribute outflow
         reply = self.push_distributed(outflow, of_type = ['River','Node','Waste'])
         if reply['volume'] > constants.FLOAT_ACCURACY:
             print('river cant push')
         
     def pull_check_fp(self, vqip = None):
+        #TODO Pull checking for riparian buffer, needs updating
         # update river depth
         self.update_depth()
         return self.current_depth, self.area, self.width, self.river_tank.storage
     
     def end_timestep_(self):
+        """Update state variables
+        """
         self.tank.end_timestep()
         self.bio_in = self.empty_vqip()
         self.bio_out = self.empty_vqip()
     
 class Abstraction(Storage):
+    """Probably redundant node - River class should be used
     """
-    With a river - abstractions must be placed at abstraction points
-    They must have accumulated all upstream flows that are available for abstraction before being abstracted from
-    Once abstracted from, they can then distribute
-    """
+    
     #TODO use this or subclass abstraction? / Is this even necessary with river object??
     def __init__(self, 
                         mrf =0,
@@ -508,9 +676,16 @@ class Abstraction(Storage):
 
 class Reservoir(Storage):
     def __init__(self, **kwargs):
+        """Storage node that makes abstractions by calling pull_distributed
+
+        Functions intended to call in orchestration:
+            make_abstractions (before any river routing)
+        """
         super().__init__(**kwargs)
     
     def make_abstractions(self):
+        """Pulls water and updates tanks
+        """
         reply = self.pull_distributed(self.tank.get_excess())
         spill = self.tank.push_storage(reply)
         if spill['volume'] > constants.FLOAT_ACCURACY:
@@ -518,6 +693,18 @@ class Reservoir(Storage):
 
 class RiverReservoir(Reservoir):
     def __init__(self, environmental_flow = 0, **kwargs):
+        """A reservoir with a natural river inflow, includes an environmental 
+        downstream flow to satisfy
+
+        Args:
+            environmental_flow (float, optional): Downstream environmental flow. 
+                Defaults to 0.
+        
+        Functions intended to call in orchestration:
+                make_abstractions (if any)
+                satisfy_environmental (before river routing.. possibly before 
+                    downstream river abstractions depending on licence)
+        """
 
         #Parameters
         self.environmental_flow = environmental_flow
@@ -533,38 +720,67 @@ class RiverReservoir(Reservoir):
         self.__class__.__name__ = 'Reservoir'
         
     def push_set_river_reservoir(self, vqip):
+        """Receive water
+
+        Args:
+            vqip (dict): A VQIP amount to be received
+
+        Returns:
+            reply (dict): A VQIP amount that was not successfully received
+        """
         #Apply normal reservoir storage
         spill = self.push_set_storage(vqip)
         
         #Send spill downstream
-        reply = self.push_distributed(spill) #of_type = Node?
+        reply = self.push_distributed(spill, of_type = ['Node','River'])
         
+        #Use spill to satisfy downstream flow
         self.total_environmental_satisfied += (spill['volume'] - reply['volume'])
         
         return reply
     
     def push_check_river_reservoir(self, vqip = None):
+        """A push check to receive water, assumes spill may occur and checks 
+        downstream capacity
+
+        Args:
+            vqip (dict, optional): A VQIP that can be used to limit the volume in 
+                the return value (only volume key is used). Defaults to None.
+
+        Returns:
+            excess (dict): A VQIP amount of water that cannot be received
+        """
+        #Check downstream capacity (i.e., that would be spilled)
         downstream_availability = self.get_connected(direction = 'push')['avail']
+        #Check excess capacity in the reservoir
         excess = self.tank.get_excess()
-        
+        #Combine excess and downstream in response
         new_v = excess['volume'] + downstream_availability
         if vqip is not None:
             new_v = min(vqip['volume'], new_v)
-            
+        #Update to vqip
         excess = self.v_change_vqip(excess, new_v)
         
         return excess
         
     
     def satisfy_environmental(self):
+        """Satisfy environmental flow downstream
+        """
+        #Calculate how much environmental flow is yet to satisfy 
+        # #(some may have been already if pull-and-take abstractions have taken place)
         to_satisfy = max(self.environmental_flow - self.total_environmental_satisfied, 0)
+        #Pull from tank
         environmental = self.tank.pull_storage({'volume' : to_satisfy})
+        #Send downstream
         reply = self.push_distributed(environmental)
         if reply['volume'] > 0:
             print('warning: environmental not able to push')
-            
+        #Update satisfaction
         self.total_environmental_satisfied += environmental['volume']
         
     def end_timestep_(self):
+        """Udpate state varibles
+        """
         self.tank.end_timestep()
         self.total_environmental_satisfied = 0
