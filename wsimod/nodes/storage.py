@@ -113,7 +113,7 @@ class Groundwater(Storage):
                         infiltration_pct = 0,
                         data_input_dict = {},
                         **kwargs):
-        #TODO why isn't this a subcalss of ResidenceTank?
+        #TODO why isn't this using a ResidenceTank?
         """A storage with a residence time for groundwater. Can also infiltrate to sewers.
 
         Args:
@@ -215,9 +215,8 @@ class QueueGroundwater(Storage):
 
     def push_set_timearea(self, vqip):
         """Push setting that enables timearea behaviour, (see __init__ for 
-        description). Assumes that the inflow arc has accurately calculated capacity 
-        with the tank get_excess function, thus the water is forced. Used to receive 
-        flow that is assumed to occur widely across some kind of catchment.
+        description).Used to receive flow that is assumed to occur widely 
+        across some kind of catchment.
 
         Args:
             vqip (dict): A VQIP that has been pushed
@@ -232,8 +231,7 @@ class QueueGroundwater(Storage):
             vqip_ = self.v_change_vqip(vqip, 
                                        vqip['volume'] * normalised)
             reply_ = self.tank.push_storage(vqip_,
-                                            time = time,
-                                            force = True) # TODO Should this be forced?
+                                            time = time)
             reply = self.sum_vqip(reply, reply_)
         return reply
         
@@ -254,6 +252,9 @@ class QueueGroundwater(Storage):
         reply = self.tank.pull_storage(sent)
         if (reply['volume'] - sent['volume']) > constants.FLOAT_ACCURACY:
             print('Miscalculated tank storage in discharge')
+    
+    def infiltrate(self):
+        pass
     
     def pull_check_active(self,vqip = None):
         """A pull check that returns the active storage
@@ -336,6 +337,7 @@ class River(Storage):
                         width = 20,
                         velocity = 0.2 * constants.M_S_TO_M_DT,
                         damp = 0.1,
+                        mrf = 0,
                         **kwargs):
         """Node that contains extensive in-river biochemical processes
 
@@ -347,6 +349,8 @@ class River(Storage):
                 this on the fly that would also work). Defaults to 0.2*constants.M_S_TO_M_DT.
             damp (float, optional): Flow delay and attentuation parameter. Defaults 
                 to 0.1.
+            mrf (float, optional): Minimum required flow in river (volume per timestep), 
+                can limit pulls made to the river. Defaults to 0.
         
         Functions intended to call in orchestration:
             distribute
@@ -357,7 +361,7 @@ class River(Storage):
         self.width = width # [m]
         self.velocity = velocity # [m/dt]
         self.damp = damp # [>=0] flow delay and attenuation
-        
+        self.mrf = mrf
         area = length * width # [m2]
         capacity = depth * area
         
@@ -421,6 +425,9 @@ class River(Storage):
         self.push_set_handler['default'] = self.push_set_river
         self.push_check_handler['default'] = lambda x : self.push_check_basic(x, of_type = ['Node', 'River', 'Waste'])
 
+        self.pull_check_handler['default'] = self.pull_check_river
+        self.pull_set_handler['default'] = self.pull_set_river
+
         #TODO - RiparianBuffer
         self.pull_check_handler[('RiparianBuffer', 'volume')] = self.pull_check_fp
         
@@ -445,7 +452,60 @@ class River(Storage):
     #     vqip_ = self.v_change_vqip(vqip_, min(vqip_['volume'], self.get_dt_excess()['volume']))
     #     _ = self.tank.push_storage(vqip_, force=True)
     #     return self.extract_vqip(vqip, vqip_)
-    
+
+    def pull_check_river(self, vqip = None):
+        """Check amount of water that can be pulled from river tank and upstream
+
+        Args:
+            vqip (dict, optional): Maximum water required (only 'volume' is used) 
+
+        Returns:
+            avail (dict): A VQIP amount that can be pulled
+        """
+        
+        #Get storage
+        avail = self.tank.get_avail()
+        
+        #Check incoming
+        upstream = self.get_connected(direction = 'pull', of_type =['River','Node'])
+        avail['volume'] += upstream['avail']
+        
+        #convert mrf from volume/timestep to discrete value
+        mrf = self.mrf / self.get_riverrc()
+
+        #Apply mrf
+        avail_vol = max(avail['volume'] - mrf, 0)
+        if vqip is None:
+            avail = self.v_change_vqip(avail, avail_vol)
+        else:
+            avail = self.v_change_vqip(avail, min(avail_vol,vqip['volume']))
+        
+        return avail
+
+    def pull_set_river(self, vqip):
+        """Pull from river tank and upstream, acknowledging MRF with pull_check
+
+        Args:
+            vqip (dict): A VQIP amount to pull (only volume key used)
+
+        Returns:
+            (dict): A VQIP amount that was pulled
+        """
+        #Calculate available pull
+        avail = self.pull_check_river(vqip)
+        
+        #Take first from tank
+        pulled = self.tank.pull_storage(avail)
+        
+        #Take remaining from upstream
+        to_pull = {'volume' : avail['volume'] - pulled['volume']}
+        pulled_ = self.pull_distributed(to_pull, of_type = ['River', 'Node'])
+        
+        reply = self.sum_vqip(pulled, pulled_)
+        
+        return reply
+        
+
     def push_set_river(self, vqip):
         """Push to river tank, currently forced.
 
@@ -656,23 +716,6 @@ class River(Storage):
         self.tank.end_timestep()
         self.bio_in = self.empty_vqip()
         self.bio_out = self.empty_vqip()
-    
-class Abstraction(Storage):
-    """Probably redundant node - River class should be used
-    """
-    
-    #TODO use this or subclass abstraction? / Is this even necessary with river object??
-    def __init__(self, 
-                        mrf =0,
-                        **kwargs):
-        super().__init__(**kwargs)
-        self.mrf = mrf
-        self.pull_set_handler['default'] = self.pull_set_abstraction
-    
-    def pull_set_abstraction(self, vqip):
-        #Calculate MRF before reply TODO
-        reply = self.tank.pull_storage(vqip['volume'])
-        return reply
 
 class Reservoir(Storage):
     def __init__(self, **kwargs):
