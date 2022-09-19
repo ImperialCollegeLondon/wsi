@@ -51,6 +51,7 @@ class Model(WSIObj):
             self.nodelist = [x for x in self.nodes.values()]
         
     def add_arcs(self, arclist):
+        river_arcs = {}
         for arc in arclist:
             name = arc['name']
             type_ = arc['type_']
@@ -58,6 +59,34 @@ class Model(WSIObj):
             arc['in_port'] = self.nodes[arc['in_port']]
             arc['out_port'] = self.nodes[arc['out_port']]
             self.arcs[name] = getattr(arcs,type_)(**dict(arc))
+            
+            if arc['in_port'].__class__.__name__ in ['River', 'Node', 'Waste']:
+                if arc['out_port'].__class__.__name__ in ['River', 'Node', 'Waste']:
+                    river_arcs[name] = self.arcs[name]
+                
+        upstreamness = {x : 0 for x in self.nodes_type['Waste'].keys()}
+        
+        upstreamness = self.assign_upstream(river_arcs, upstreamness)
+        
+        self.river_discharge_order = []
+        for node in sorted(upstreamness.items(), key=lambda item: item[1],reverse=True):
+            if node[0] in self.nodes_type['River'].keys():
+                self.river_discharge_order.append(node[0])
+        
+        
+    def assign_upstream(self, arcs, upstreamness):
+        upstreamness_ = upstreamness.copy()
+        in_nodes = [x.in_port.name for x in arcs.values() if x.out_port.name in upstreamness.keys()]
+        ind = max(list(upstreamness_.values())) + 1
+        in_nodes = list(set(in_nodes).difference(upstreamness.keys()))
+        for node in in_nodes:
+            upstreamness[node] = ind
+        if upstreamness == upstreamness_:
+            return upstreamness
+        else:
+            upstreamness = self.assign_upstream(arcs,upstreamness)
+            return upstreamness
+    
 
     def save(self, fid):
         #Note - dodgy if you are still editing the model! Only use for running the model
@@ -168,9 +197,13 @@ class Model(WSIObj):
             for node in self.nodes_type['Groundwater'].values():
                 node.distribute()
             
+            #Abstract
+            for node in self.nodes_type['Reservoir'].values():
+                node.make_abstractions()
+            
             #river
-            for node in self.nodes_type['River'].values():
-                node.distribute()
+            for node_name in self.river_discharge_order:
+                self.nodes[node_name].distribute()
             
             
             #mass balance checking
