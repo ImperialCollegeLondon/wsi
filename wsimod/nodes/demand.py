@@ -20,6 +20,7 @@ class Demand(Node):
                         data_input_dict = {}, #For temperature
                         constant_temp = 30,
                         constant_weighting = 0.2,
+                        constant_demand = 0,
                         ):
         """Node that generates and moves water associated with population. 
 
@@ -36,18 +37,21 @@ class Demand(Node):
                 that is irrigated and the efficacy of people in meeting their garden 
                 water demand. Defaults to 0.6*0.7.
             data_input_dict (dict, optional):  Dictionary of data inputs relevant for 
-                the node (temperature). Keys are tuples where first value is the name of the variable to read from the dict and the second value is the 
+                the node (temperature). Keys are tuples where first value is the name of 
+                the variable to read from the dict and the second value is the 
                 time. Defaults to {}
             constant_temp (float, optional): A constant temperature associated with 
                 generated water. Defaults to 30
             constant_weighting (float, optional): Proportion of temperature that is 
                 made up from by cconstant_temp. Defaults to 0.2.
+            constant_demand (float, optional): A constant portion of demand if no subclass
+                is used. Defaults to 0.
         
         Functions intended to call in orchestration:
             create_demand
         """
         #TODO should temperature be defined in pollutant dict?
-        #TODO a lot of this should probably be moved to ResidentialDemand
+        #TODO a lot of this should be moved to ResidentialDemand
         #Assign parameters
         self.gardening_efficiency = gardening_efficiency
         self.population = population
@@ -55,6 +59,7 @@ class Demand(Node):
         self.pollutant_load = pollutant_load
         self.constant_weighting = constant_weighting
         self.constant_temp = constant_temp
+        self.constant_demand = constant_demand
         
         #Update args
         super().__init__(name, data_input_dict = data_input_dict)
@@ -96,7 +101,9 @@ class Demand(Node):
                                            'Garden'),
                                   'of_type' : 'Land'},
                       'house' : {'tag' : 'Demand',
-                                 'of_type' : 'Sewer'}}
+                                 'of_type' : 'Sewer'},
+                                 'default' : {'tag' : 'default',
+                                                    'of_type' : None}}
         
         
         #Send water where it needs to go
@@ -117,14 +124,14 @@ class Demand(Node):
             self.total_demand = self.sum_vqip(self.total_demand, 
                                               dem)
                 
-    def get_constant_demand(self):
+    def get_demand(self):
         """Holder function to enable constant demand generation
 
         Returns:
             (dict): A VQIP that will contain constant demand
         """
         #TODO read/gen demand
-        return self.empty_vqip()
+        return {'default' : self.v_change_vqip(self.empty_vqip(), self.constant_demand)}
     
     def end_timestep(self):
         """Reset state variable trackers
@@ -138,13 +145,13 @@ class NonResidentialDemand(Demand):
     """
         
     def get_demand(self):
-        """Holder function to call get_constant_demand
+        """Holder function
 
         Returns:
             (dict): A dict of VQIPs, where the keys match with directions 
                 in Demand/create_demand
         """
-        return {'house' : self.get_constant_demand()}
+        return {'house' : self.get_demand()}
 
 class ResidentialDemand(Demand):
     """Subclass of demand with functions to handle internal and external water use
