@@ -17,32 +17,77 @@ class Land(Node):
                         subsurface_residence_time = 5,
                         percolation_residence_time = 50,
                         surface_residence_time = 1,
-                        surfaces = {},
+                        surfaces = [],
                         data_input_dict = {}):
+        """An extensive node class that represents land processes (agriculture, soil, 
+        subsurface flow, rural runoff, urban drainage, pollution deposition). The 
+        expected use is that each distinctive type of land cover (different crop 
+        types, gardens, forests, impervious urban drainage, etc.) each have a Surface 
+        object, which is a subclass of Tank. The land node will iterate over its 
+        surfaces each timestep, which will generally (except in the case of an 
+        impervious surface) send water to three common Tanks: surface flow, 
+        subsurface flow and percolation. These tanks will then send flows to rivers 
+        or groundwater.
+        
+        (See wsimod/nodes/land.py/Surface and subclasses for currently available 
+        surfaces)
+        
+        Args:
+            name (str): node name.
+            subsurface_residence_time (float, optional): Residence time for     
+                subsurface flow (see nodes.py/ResidenceTank). Defaults to 5.
+            percolation_residence_time (int, optional): Residence time for 
+                percolation flow (see nodes.py/ResidenceTank). Defaults to 50.
+            surface_residence_time (int, optional): Residence time for surface flow
+                (see nodes.py/ResidenceTank). Defaults to 1.
+            surfaces (list, optional): list of dicts where each dict describes the 
+                parameters of each surface in the Land node. Each dict also contains 
+                an entry under 'type_' which describes which subclass of surface to 
+                use. Defaults to [].
+            data_input_dict (dict, optional): Dictionary of data inputs relevant for 
+                the node (generally, et0, precipitation and temperature). Keys are 
+                tuples where first value is the name of the variable to read from the 
+                dict and the second value is the time. Defaults to {}.
+
+        Functions intended to call in orchestration:
+            run
+        """
+        #Assign parameters
         self.subsurface_residence_time = subsurface_residence_time
         self.percolation_residence_time = percolation_residence_time
         self.surface_residence_time = surface_residence_time
         self.data_input_dict = data_input_dict
 
-        self.irrigation_functions = [lambda : None]
-        
         super().__init__(name, data_input_dict = data_input_dict)
         
         #This could be a deny but then you would have to know in advance whether a demand node has any gardening or not
         self.push_check_handler[('Demand','Garden')] = lambda x : self.empty_vqip()
         self.push_set_handler[('Demand','Garden')] = lambda x : self.empty_vqip()
         
+        #Create surfaces
+        self.irrigation_functions = [lambda : None]
+        
         surfaces_ = surfaces.copy()
         surfaces = []
         for surface in surfaces_:
+            #Assign parent (for data reading and to determine where to send flows to)
             surface['parent'] = self
+
+            #Get surface type
             type_ = surface['type_']
             del surface['type_']
+
+            #Instantiate surface and store in list of surfaces
             surfaces.append(getattr(sys.modules[__name__], type_)(**surface))
+
+            #Assign ds (mass balance checking)
             self.mass_balance_ds.append(surfaces[-1].ds)
+
+            #Assign any irrigation functions 
             if isinstance(surfaces[-1], IrrigationSurface):
                 self.irrigation_functions.append(surfaces[-1].irrigate)
             
+            #Assign garden surface functions
             if isinstance(surfaces[-1], GardenSurface):
                 self.push_check_handler[('Demand','Garden')] = surfaces[-1].calculate_irrigation_demand
                 self.push_set_handler[('Demand','Garden')] = surfaces[-1].receive_irrigation_demand
@@ -52,10 +97,9 @@ class Land(Node):
         self.push_check_handler['default'] = self.push_check_deny
         self.push_set_handler['Sewer'] = self.push_set_sewer
         
-        
+        #Create subsurface runoff, surface runoff and percolation tanks
         #Can also do as timearea if this seems dodge (that is how it is done in IHACRES)
         #TODO should these be decayresidencetanks?
-                
         self.subsurface_runoff = ResidenceTank(residence_time = self.subsurface_residence_time, 
                                                capacity = constants.UNBOUNDED_CAPACITY)
         self.percolation = ResidenceTank(residence_time = self.percolation_residence_time,
@@ -63,9 +107,10 @@ class Land(Node):
         self.surface_runoff = ResidenceTank(residence_time = self.surface_residence_time,
                                             capacity = constants.UNBOUNDED_CAPACITY)
         
-        
+        #Store surfaces
         self.surfaces = surfaces
         
+        #Mass balance checkign vqips and functions
         self.running_inflow_mb = self.empty_vqip()
         self.running_outflow_mb = self.empty_vqip()
         
@@ -76,10 +121,17 @@ class Land(Node):
         self.mass_balance_ds.append(self.percolation.ds)
     
     def apply_irrigation(self):
+        """Iterate over any irrigation functions (needs further testing.. maybe)
+        """
         for f in self.irrigation_functions:
             f()
             
-    def run(self):  
+    def run(self):
+        """Call the run function in all surfaces, update surface/subsurface/
+        percolation tanks, discharge to rivers/groundwater
+        """
+
+        #Run all surfaces
         for surface in self.surfaces:
             surface.run()
             
@@ -101,6 +153,7 @@ class Land(Node):
         #Total runoff
         total_runoff = self.sum_vqip(surface_runoff, subsurface_runoff)
         if total_runoff['volume'] > 0:
+            #Send to rivers (or nodes, which are assumed to be junctions)
             reply = self.push_distributed(total_runoff, of_type = ['River','Node'])
             
             #Redistribute total_runoff not sent
@@ -115,9 +168,16 @@ class Land(Node):
                     self.subsurface_runoff.push_storage(reply_subsurface, force = True)
     
     def push_set_sewer(self, vqip):
-        impervious_surfaces = []
-        #TODO could move to be a parameter..
-        #TODO currently just push to the first impervious surface... not sure if people will be having multiple impervious surfaces
+        """Receive water from a sewer and send it to the first ImperviousSurface in 
+        surfaces. 
+
+        Args:
+            vqip (dict): A VQIP amount to be sent to the impervious surface
+
+        Returns:
+            vqip (dict): A VQIP amount of water that was not received
+        """
+        #TODO currently just push to the first impervious surface... not sure if people will be having multiple impervious surfaces. If people would be only having one then it would make sense to store as a parameter... this is probably fine for now
         for surface in self.surfaces:
             if isinstance(surface, ImperviousSurface):
                 vqip = self.surface.push_storage(vqip, force = True)
@@ -125,6 +185,8 @@ class Land(Node):
         return vqip
     
     def end_timestep(self):
+        """Update mass balance and end timestep of all tanks (and surfaces)
+        """
         self.running_inflow_mb = self.empty_vqip()
         self.running_outflow_mb = self.empty_vqip()
         for tanks in self.surfaces + [self.surface_runoff, self.subsurface_runoff, self.percolation]:
@@ -139,17 +201,49 @@ class Surface(DecayTank):
                         depth = 1,
                         data_input_dict = {}, 
                         **kwargs):
+        """A subclass of DecayTank. Each Surface is anticipated to represent a 
+        different land cover type of a Land node. Besides functioning as a Tank, 
+        Surfaces have three lists of functions (inflows, processes and outflows) 
+        where behaviour can be added by appending new functions. We anticipate that 
+        customised surfaces should be a subclass of Surface or its subclasses and add 
+        functions to these lists. These lists are executed (inflows first, then 
+        processes, then outflows) in the run function, which is called by the run 
+        function in Land. The lists must return any model inflows or outflows as a 
+        VQIP for mass balance checking.
+        
+        If a user wishes the DecayTank portion to be active, then can provide 
+        'decays', which are passed upwards (see wsimod/core/core.py/DecayObj for 
+        documentation)
+
+        Args:
+            surface (str, optional): String description of the surface type. Doesn't 
+                serve a modelling purpose, just used for user reference. Defaults to ''.
+            area (float, optional): Area of surface. Defaults to 1.
+            depth (float, optional): Depth of tank (this has different physical 
+                implications for different subclasses). Defaults to 1.
+            data_input_dict (dict, optional):  Dictionary of data inputs relevant for 
+                the surface (generally, deposition). Keys are tuples where first 
+                value is the name of the variable to read from the dict and the 
+                second value is the time. Note that this input should be specific to 
+                the surface, and is not intended to be the same data input as for the 
+                land node. Also note that with each surface having its own timeseries 
+                of data inputs, this can take up a lot of memory, thus the default 
+                behavior is to have this as monthly data where the time variable is a 
+                monthyear. Defaults to {}.
+        """
+        #Assign parameters
         self.depth = depth
         self.data_input_dict = data_input_dict
         self.surface = surface
-        #TODO this is a decaytank but growing surfaces don't have decay parameters... is it a problem
-        #TODO interception if I hate myself enough?
+        #TODO this is a decaytank but growing surfaces don't have decay parameters... is it a problem.. we don't even take decays as an explicit argument and insert them in kwargs..
         capacity = area * depth
         #Parameters
         super().__init__(capacity = capacity,
                                 area = area,
                                 **kwargs)
         
+        #Populate function lists
+        #TODO.. not sure why I have deposition but no precipitation here
         self.inflows = [self.atmospheric_deposition,
                         self.precipitation_deposition]
         self.processes = [lambda : (self.empty_vqip(), self.empty_vqip())]
@@ -157,8 +251,14 @@ class Surface(DecayTank):
         
         
     def run(self):
+        """Call run function (called from Land node)
+        """
         if 'nitrate' in constants.POLLUTANTS:
-            #Decayed nitrite becomes nitrate n.b. decay in a decaytank happens at start of timestep
+            #Assume that if nitrate is modelled then ammonia is also modelled
+            #You will need ammonia->nitrite->nitrate decay to accurate simulate ammonia
+            #Thus, these decays are simulated here
+
+            #NOTE decay in a decaytank happens at start of timestep (confusingly) in the end_timestep function
             self.storage['nitrate'] += self.total_decayed['nitrite']
             self.parent.running_inflow_mb['nitrate'] += self.total_decayed['nitrite']
             
@@ -167,50 +267,117 @@ class Surface(DecayTank):
             self.parent.running_inflow_mb['nitrite'] += self.total_decayed['ammonia']
         
         for f in self.inflows + self.processes + self.outflows:
+            #Iterate over function lists, updating mass balance
             in_, out_ = f()
             self.parent.running_inflow_mb = self.sum_vqip(self.parent.running_inflow_mb, in_)
             self.parent.running_outflow_mb = self.sum_vqip(self.parent.running_outflow_mb, out_)
         
     def get_data_input(self, var):
+        """Read data input from parent Land node (i.e., for precipitation/et0/temp)
+
+        Args:
+            var (str): Name of variable
+
+        Returns:
+            Data read
+        """
         return self.parent.get_data_input(var)
     
     def get_data_input_surface(self, var):
+        """Read data input from this surface's data_input_dict
+
+        Args:
+            var (str): Name of variable
+
+        Returns:
+            Data read
+        """
         return self.data_input_dict[(var, self.parent.monthyear)]
     
     def dry_deposition_to_tank(self, vqip):
+        """Generic function for allocating dry pollution deposition to the surface.
+        Simply sends the pollution into the tank (some subclasses overwrite this 
+        behaviour)
+
+        Args:
+            vqip (dict): A VQIP amount of dry deposition to send to tank
+
+        Returns:
+            vqip (dict): A VQIP amount of dry deposition that entered the tank (used 
+                for mass balance checking)
+        """
+        #Default behaviour is to just enter the tank
         _ = self.push_storage(vqip, force = True)
         return vqip
         
     def wet_deposition_to_tank(self, vqip):
+        """Generic function for allocating wet pollution deposition to the surface.
+        Simply sends the pollution into the tank (some subclasses overwrite this 
+        behaviour)
+
+        Args:
+            vqip (dict): A VQIP amount of wet deposition to send to tank
+
+        Returns:
+            vqip (dict): A VQIP amount of wet deposition that entered the tank (used 
+                for mass balance checking)
+        """
+        #Default behaviour is to just enter the tank
         _ = self.push_storage(vqip, force = True)
         return vqip
 
     def atmospheric_deposition(self):
-        #TODO double check units - is weight of N or weight of NHX/noy?
+        """Inflow function to cause dry atmospheric deposition to occur, updating the 
+        surface tank
+
+        Returns:
+            (tuple): A tuple containing a VQIP amount for model inputs and outputs 
+                for mass balance checking. 
+        """
+        #TODO double check units in preprocessing - is weight of N or weight of NHX/noy?
+
+        #Read data and scale
         nhx = self.get_data_input_surface('nhx-dry') * self.area
         noy = self.get_data_input_surface('noy-dry') * self.area
         srp = self.get_data_input_surface('srp-dry') * self.area
         
+        #Assign pollutants
         vqip = self.empty_vqip()
         vqip['ammonia'] = nhx
         vqip['nitrate'] = noy
         vqip['phosphate'] = srp
         
+        #Update tank
         in_ = self.dry_deposition_to_tank(vqip)
+        
+        #Return mass balance
         return (in_, self.empty_vqip())
         
     def precipitation_deposition(self):
+        """Inflow function to cause wet precipitation deposition to occur, updating 
+        the surface tank
+
+        Returns:
+            (tuple): A tuple containing a VQIP amount for model inputs and outputs 
+                for mass balance checking. 
+        """
         #TODO double check units - is weight of N or weight of NHX/noy?
+
+        #Read data and scale
         nhx = self.get_data_input_surface('nhx-wet') * self.area
         noy = self.get_data_input_surface('noy-wet') * self.area
         srp = self.get_data_input_surface('srp-wet') * self.area
         
+        #Assign pollutants
         vqip = self.empty_vqip()
         vqip['ammonia'] = nhx
         vqip['nitrate'] = noy
         vqip['phosphate'] = srp
         
+        #Update tank
         in_ = self.wet_deposition_to_tank(vqip)
+
+        #Return mass balance
         return (in_, self.empty_vqip())
     
 class ImperviousSurface(Surface):
@@ -307,6 +474,8 @@ class PerviousSurface(Surface):
         #IHACRES is a deficit not a tank, so doesn't really have a capacity in this way... and if it did.. it probably wouldn't be the sum of these
         super().__init__(depth=depth,**kwargs)
         
+        #TODO interception if I hate myself enough?
+
         #Initiliase flows
         self.infiltration_excess = self.empty_vqip()
         self.subsurface_flow = self.empty_vqip()
