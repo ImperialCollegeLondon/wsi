@@ -138,12 +138,16 @@ class Model(WSIObj):
             dates = None,
             settings = None,
             record_arcs = None,
+            record_tanks = None,
             verbose = True,
             record_all = True):
         
         if record_arcs is None:
             record_arcs = self.arcs.keys()
-
+            
+        if record_tanks is None:
+            record_tanks = []
+        
         if settings is None:
             settings = self.default_settings()
         def blockPrint():
@@ -249,6 +253,12 @@ class Model(WSIObj):
                               'time' : date})
                 for pol in constants.POLLUTANTS:
                     flows[-1][pol] = arc.vqip_out[pol]
+            
+            for node in record_tanks:
+                node = self.nodes[node]
+                tanks.append({'node' : node.name,
+                              'storage' : node.tank.storage['volume'],
+                              'time' : date})
             if record_all:
                 for node in self.nodes_type['Groundwater'].values():
                     tanks.append({'node' : node.name,
