@@ -1,5 +1,5 @@
 # WSIMOD component catalogue
-
+This catalogue contains documentation for the 
 ## Contents
 1. [Node base object](#node-base-object)
 2. [Tank](#tank)
@@ -13,6 +13,9 @@
 10. [Land](#land)
 
 ## Node base object
+All components in WSIMOD are intended to be a subclass of Node, the Node base class also functions as a generic junction.
+
+
 
 ## Tank
 

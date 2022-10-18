@@ -7,7 +7,6 @@ Created on Wed Apr  7 08:43:32 2021
 Converted to totals on Thur Apr 21 2022
 
 """
-from wsimod.nodes import nodes
 from wsimod.core import constants
 from wsimod.core.core import WSIObj, DecayObj
 from wsimod.arcs.arcs import AltQueueArc, DecayArcAlt
@@ -28,12 +27,11 @@ class Node(WSIObj):
         Examples:    
             >>> my_node = nodes.Node(name = 'london_river_junction')
         """
-        
         #Get node types
         def all_subclasses(cls):
             return set(cls.__subclasses__()).union(
                 [s for c in cls.__subclasses__() for s in all_subclasses(c)])
-        node_types = [x.__name__ for x in all_subclasses(nodes.Node)] + ['Node']
+        node_types = [x.__name__ for x in all_subclasses(self.__class__)] + ['Node']
         
         #Default essential parameters
         #Dictionary of arcs

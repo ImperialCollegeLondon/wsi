@@ -1,0 +1,19 @@
+site_name: WSIMOD docs
+
+theme:
+  name: "material"
+
+extra_css:
+  - stylesheets/extra.css
+
+
+plugins:
+  - mkdocstrings
+
+nav:
+  - Home: index.md
+  - Tutorials: tutorials.md
+  - How to guide: how-to.md
+  - Preprocessing (England): preprocessing_england.md
+  - API reference - nodes: reference-nodes.md
+  - API reference - land: reference-land.md
