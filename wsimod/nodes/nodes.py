@@ -8,8 +8,9 @@ Converted to totals on Thur Apr 21 2022
 
 """
 from wsimod.nodes import nodes
-from wsimod.core import constants, WSIObj, DecayObj
-from wsimod.arcs import AltQueueArc, DecayArcAlt
+from wsimod.core import constants
+from wsimod.core.core import WSIObj, DecayObj
+from wsimod.arcs.arcs import AltQueueArc, DecayArcAlt
 
 class Node(WSIObj):
     
@@ -293,7 +294,7 @@ class Node(WSIObj):
     def query_handler(self, handler, ip, tag):
         """Sends all push/pull requests/checks using the handler (i.e., ensures the 
         correct function is used that lines up with 'tag')
-
+    
         Args:
             handler (dict): contains all push/pull requests for various tags
             ip (vqip): the vqip request

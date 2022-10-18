@@ -9,10 +9,11 @@ from wsimod.arcs import arcs
 import dill as pickle
 from tqdm import tqdm
 from wsimod.nodes.land import ImperviousSurface
-from wsimod.core import constants, WSIObj
-from wsimod.nodes import QueueTank, Tank
+from wsimod.core import constants
+from wsimod.core.core import WSIObj
+from wsimod.nodes.nodes import QueueTank, Tank, Node
 from pandas import to_datetime
-import sys
+import sys, inspect
 import os
 class Model(WSIObj):
     def __init__(self):
@@ -22,11 +23,12 @@ class Model(WSIObj):
         self.nodes = {}
         self.nodes_type = {}
 
+        
         def all_subclasses(cls):
             return set(cls.__subclasses__()).union(
                 [s for c in cls.__subclasses__() for s in all_subclasses(c)])
-
-        self.nodes_type = [x.__name__ for x in all_subclasses(wsimod.Node)] + ['Node']
+        
+        self.nodes_type = [x.__name__ for x in all_subclasses(Node)] + ['Node']
         self.nodes_type = set(getattr(wsimod,x)(name='').__class__.__name__ for x in self.nodes_type).union(['Foul'])
         self.nodes_type = {x : {} for x in self.nodes_type}
         
