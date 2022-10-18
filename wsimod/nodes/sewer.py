@@ -150,19 +150,21 @@ class Sewer(Node):
         backflow = self.sewer_tank.internal_arc.update_queue(direction = 'push')
         #TODO... do I need to do anything with this backflow... does it ever happen?
         #Discharge to Sewer if possible
-        remaining = self.push_distributed(self.sewer_tank.active_storage,
-                                        of_type = 'Sewer',
-                                        tag = 'Sewer')
+        # remaining = self.push_distributed(self.sewer_tank.active_storage,
+        #                                 of_type = 'Sewer',
+        #                                 tag = 'Sewer')
         
-        #Discharge to WWTW if possible
-        remaining = self.push_distributed(remaining,
-                                        of_type = 'WWTW',
-                                        tag = 'Sewer')
+        # #Discharge to WWTW if possible
+        # remaining = self.push_distributed(remaining,
+        #                                 of_type = 'WWTW',
+        #                                 tag = 'Sewer')
         
         
-        #CSO discharge
-        remaining = self.push_distributed(remaining,
-                                          of_type = ['Node', 'River'])
+        # #CSO discharge
+        # remaining = self.push_distributed(remaining,
+        #                                   of_type = ['Node', 'River'])
+        
+        remaining = self.push_distributed(self.sewer_tank.active_storage)
         
         #TODO backflow can cause mass balance errors here 
         

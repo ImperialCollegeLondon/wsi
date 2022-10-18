@@ -161,6 +161,8 @@ class WWTW(WTW):
         self.pull_check_handler['default'] = self.pull_check_reuse
         self.push_set_handler['Sewer'] = self.push_set_sewer
         self.push_check_handler['Sewer'] = self.push_check_sewer
+        self.push_check_handler['default'] = self.push_check_sewer
+        self.push_set_handler['default'] = self.push_set_sewer
         
         #Create tank
         self.stormwater_tank = Tank(capacity = self.stormwater_storage_capacity,
