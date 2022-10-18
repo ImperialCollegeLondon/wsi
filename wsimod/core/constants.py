@@ -7,6 +7,7 @@ Created on Fri Dec  6 15:17:07 2019
 
 """Constants
 """
+from wsimod.core import constants
 M3_S_TO_ML_D = 86.4 
 MM_KM2_TO_ML = 1e-3 * 1e6 * 1e3 * 1e-6 # mm->m, km2->m2, m3->l, l->Ml
 MM_M2_TO_ML = 1e-3 * 1e3 * 1e-6 # mm->m, m3->l, l->Ml
@@ -62,3 +63,9 @@ KG_M2_TO_KG_KM2 = 1e6
 KG_M3_TO_KG_KM3 = 1e9
 
 D_TO_S = 3600 * 24
+
+def set_simple_pollutants():
+    constants.POLLUTANTS = ['phosphate','temperature']
+    constants.ADDITIVE_POLLUTANTS = ['phosphate']
+    constants.NON_ADDITIVE_POLLUTANTS = ['temperature']
+
