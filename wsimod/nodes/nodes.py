@@ -840,7 +840,8 @@ class Tank(WSIObj):
 
         Args:
             vqip (dict): VQIP amount to be pushed
-            force (bool, optional): _description_. Defaults to False.
+            force (bool, optional): Argument used to cause function to ignore tank 
+                capacity, possibly resulting in pooling. Defaults to False.
 
         Returns:
             reply (dict): A VQIP of water not successfully pushed to the tank

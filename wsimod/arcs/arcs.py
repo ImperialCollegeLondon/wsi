@@ -8,12 +8,14 @@ Converted to totals on Thur Apr 21 2022
 
 """
 
-from wsimod.core import constants, WSIObj, DecayObj
-from wsimod.nodes import nodes
+from wsimod.core import constants
+from wsimod.core.core import WSIObj, DecayObj
+from wsimod import nodes
 
 class Arc(WSIObj):
     def __init__(self,**kwargs):
-        """Arc objects are the way for information to be passed between nodes in WSIMOD.
+        """Arc objects are the way for information to be passed between nodes in WSIMOD. They 
+        have an in_port (where a message comes from) and an out_port (where a message goes to). 
         """
 
         #Default essential parameters
@@ -72,6 +74,20 @@ class Arc(WSIObj):
         return in_, ds_, out_
     
     def send_push_request(self, vqip, tag = 'default', force = False):
+        """Function used to transmit a push request from one node (in_port) to 
+        another node (out_port).
+
+        Args:
+            vqip (dict): A dict VQIP of water to push
+            tag (str, optional):  optional message to direct the out_port's query_handler which 
+                function to call. Defaults to 'default'.
+            force (bool, optional): Argument used to cause function to ignore tank 
+                capacity of out_port, possibly resulting in pooling. Should not be used unless 
+                out_port is a tank object. Defaults to False.
+
+        Returns:
+            (dict): A VQIP amount of water that was not successfully pushed
+        """
         #TODO force doesn't appear to do anything here
         vqip = self.copy_vqip(vqip)
         
