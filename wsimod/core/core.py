@@ -34,6 +34,11 @@ class WSIObj:
 
         Returns:
             empty_vqip_predefined (dict): Copy of empty_vqip_predefined
+        
+        Examples:
+            >>> obj = WSIObj()
+            >>> obj.empty_vqip()
+            
         """
         return self.empty_vqip_predefined.copy()
     
