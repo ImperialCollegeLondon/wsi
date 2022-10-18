@@ -10,7 +10,7 @@ Converted to totals on Thur Apr 21 2022
 from wsimod.core import constants
 from wsimod.core.core import WSIObj, DecayObj
 from wsimod.arcs.arcs import AltQueueArc, DecayArcAlt
-
+from wsimod.nodes import nodes
 class Node(WSIObj):
     
     def __init__(self,name, data_input_dict = None):
@@ -31,7 +31,7 @@ class Node(WSIObj):
         def all_subclasses(cls):
             return set(cls.__subclasses__()).union(
                 [s for c in cls.__subclasses__() for s in all_subclasses(c)])
-        node_types = [x.__name__ for x in all_subclasses(self.__class__)] + ['Node']
+        node_types = [x.__name__ for x in all_subclasses(nodes.Node)] + ['Node']
         
         #Default essential parameters
         #Dictionary of arcs

@@ -4,8 +4,8 @@ Created on Mon Jul  4 16:01:48 2022
 
 @author: bdobson
 """
-import wsimod
-from wsimod.arcs import arcs
+from wsimod import nodes
+from wsimod.arcs import arcs as arcs_mod
 import dill as pickle
 from tqdm import tqdm
 from wsimod.nodes.land import ImperviousSurface
@@ -27,12 +27,16 @@ class Model(WSIObj):
         def all_subclasses(cls):
             return set(cls.__subclasses__()).union(
                 [s for c in cls.__subclasses__() for s in all_subclasses(c)])
-        
         self.nodes_type = [x.__name__ for x in all_subclasses(Node)] + ['Node']
-        self.nodes_type = set(getattr(wsimod,x)(name='').__class__.__name__ for x in self.nodes_type).union(['Foul'])
+        self.nodes_type = set(getattr(nodes,x)(name='').__class__.__name__ for x in self.nodes_type).union(['Foul'])
         self.nodes_type = {x : {} for x in self.nodes_type}
         
     def add_nodes(self, nodelist):
+        def all_subclasses(cls):
+            return set(cls.__subclasses__()).union(
+                [s for c in cls.__subclasses__() for s in all_subclasses(c)])
+        
+ 
         for data in nodelist:
             name = data['name']
             type_ = data['type_']
@@ -47,8 +51,7 @@ class Model(WSIObj):
             if 'geometry' in data.keys():
                 del data['geometry']
             del data['type_']
-
-            self.nodes_type[type_][name] = getattr(wsimod,node_type)(**dict(data))
+            self.nodes_type[type_][name] = getattr(nodes,node_type)(**dict(data))
             self.nodes[name] = self.nodes_type[type_][name]
             self.nodelist = [x for x in self.nodes.values()]
         
@@ -60,7 +63,7 @@ class Model(WSIObj):
             del arc['type_']
             arc['in_port'] = self.nodes[arc['in_port']]
             arc['out_port'] = self.nodes[arc['out_port']]
-            self.arcs[name] = getattr(arcs,type_)(**dict(arc))
+            self.arcs[name] = getattr(arcs_mod,type_)(**dict(arc))
             
             if arc['in_port'].__class__.__name__ in ['River', 'Node', 'Waste']:
                 if arc['out_port'].__class__.__name__ in ['River', 'Node', 'Waste']:

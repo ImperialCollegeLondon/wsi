@@ -10,7 +10,7 @@ Converted to totals on Thur Apr 21 2022
 
 from wsimod.core import constants
 from wsimod.core.core import WSIObj, DecayObj
-from wsimod import nodes
+# from wsimod.nodes import nodes #Complains about circular imports.. I don't think it should do..
 
 class Arc(WSIObj):
     def __init__(self,**kwargs):
@@ -30,14 +30,14 @@ class Arc(WSIObj):
         WSIObj.__init__(self)
         self.__dict__.update(kwargs)
         
-        def all_subclasses(cls):
-            return set(cls.__subclasses__()).union(
-                [s for c in cls.__subclasses__() for s in all_subclasses(c)])
-        node_types = [x.__name__ for x in all_subclasses(nodes.nodes.Node)] + ['Node']
+        # def all_subclasses(cls):
+        #     return set(cls.__subclasses__()).union(
+        #         [s for c in cls.__subclasses__() for s in all_subclasses(c)])
+        # node_types = [x.__name__ for x in all_subclasses(nodes.Node)] + ['Node']
         
-        if self.name in node_types:
-            print('Warning: arc name should not take a node class name')
-            #TODO... not sure why
+        # if self.name in node_types:
+        #     print('Warning: arc name should not take a node class name')
+        #     #TODO... not sure why... also currently commented for import issues..
         
         #Initialise states
         self.flow_in = 0
