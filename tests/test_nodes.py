@@ -328,6 +328,29 @@ class MyTestClass(TestCase):
         #Distributing is iterative so these won't be perfect
         self.assertDictAlmostEqual(d3, arc4.vqip_in, 14)
         self.assertDictAlmostEqual(d4, arc3.vqip_in, 14)
+    
+    def test_pull_check_basic(self):
+        d1 = {'volume' : 30,
+            'phosphate' : 0.7,
+            'temperature' : (15 * 10 + 12 * 20) / 30}
         
+        
+        d2 = {'volume' : 10}
+        
+        d3 = {'volume' : 10,
+            'phosphate' : 0.7 / 3,
+            'temperature' : (15 * 10 + 12 * 20) / 30}
+               
+        node1, node2, node3, node4, arc1, arc2, arc3, arc4 = self.get_simple_model2()
+        
+        reply = node3.pull_check_basic()
+        self.assertDictAlmostEqual(d1, reply)
+        
+        reply = node3.pull_check_basic(d2)
+        self.assertDictAlmostEqual(d3, reply)
+    
+    def test_push_check_basic(self):
+        pass
 if __name__ == "__main__":
     unittest.main()
+    
