@@ -191,7 +191,7 @@ class WSIObj:
                 c2 proportionately extracted from it
         """
         
-        c = self.empty_vqip()
+        c = self.copy_vqip(c1)
         
         c1 = self.concentration_to_total(c1)
         c2 = self.concentration_to_total(c2)
