@@ -193,18 +193,18 @@ class Land(Node):
         for tanks in self.surfaces + [self.surface_runoff, self.subsurface_runoff, self.percolation]:
             tanks.end_timestep()
     
-    def get_surface(self, surface):
+    def get_surface(self, surface_):
         """Return a surface from the list of surfaces by the 'surface' entry
         in the surface. I.e., the name of the surface
 
         Args:
-            surface (str): Name of the surface
+            surface_ (str): Name of the surface
 
         Returns:
             surface (Surface): The first surface that matches the name
         """
         for surface in self.surfaces:
-            if surface.surface == surface:
+            if surface.surface == surface_:
                 return surface
         return None
         
