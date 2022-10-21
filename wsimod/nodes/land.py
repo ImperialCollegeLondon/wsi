@@ -254,8 +254,8 @@ class Surface(DecayTank):
     def run(self):
         """Call run function (called from Land node)
         """
-        if 'nitrate' in constants.POLLUTANTS:
-            #Assume that if nitrate is modelled then ammonia is also modelled
+        if 'nitrite' in constants.POLLUTANTS:
+            #Assume that if nitrite is modelled then nitrification is also modelled
             #You will need ammonia->nitrite->nitrate decay to accurate simulate ammonia
             #Thus, these decays are simulated here
 
