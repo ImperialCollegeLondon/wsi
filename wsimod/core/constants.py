@@ -69,3 +69,7 @@ def set_simple_pollutants():
     constants.ADDITIVE_POLLUTANTS = ['phosphate']
     constants.NON_ADDITIVE_POLLUTANTS = ['temperature']
 
+def set_default_pollutants():
+    constants.POLLUTANTS = ['do','org-phosphorus','phosphate','ammonia','solids','bod','cod','ph','temperature','nitrate','nitrite','org-nitrogen'] 
+    constants.NON_ADDITIVE_POLLUTANTS = ['do', 'temperature', 'ph'] # e.g. pollutants whose concentration should not increase if volume is distilled out
+    constants.ADDITIVE_POLLUTANTS = ['org-phosphorus','phosphate','ammonia','solids','bod','cod','nitrate','nitrite','org-nitrogen'] 
