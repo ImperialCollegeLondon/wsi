@@ -94,7 +94,6 @@ class Arc(WSIObj):
         Returns:
             (dict): A VQIP amount of water that was not successfully pushed
         """
-        #TODO force doesn't appear to do anything here
         vqip = self.copy_vqip(vqip)
         
         
@@ -173,6 +172,8 @@ class Arc(WSIObj):
             node_excess = self.in_port.pull_check(vqip, tag)
         excess = min(pipe_excess, node_excess['volume'])
 
+        #TODO - sensible to min(vqip, excess) here? (though it should be applied by node)
+
         #TODO : returning this as a vqip seems dodgy.. at least for pushes
         return self.v_change_vqip(node_excess, excess)
     
@@ -187,6 +188,7 @@ class Arc(WSIObj):
 
 class QueueArc(Arc):
     def __init__(self, **kwargs):
+        #TODO - number_of_timesteps should be a named arg
         self.number_of_timesteps = 0
         self.queue = []
         super().__init__(**kwargs)
@@ -349,6 +351,8 @@ class QueueArc(Arc):
         
         for request in self.queue:
             request['time'] = max(request['time'] - 1, 0)
+        
+        #TODO - update_queue here?
 
     def reinit(self):
         self.end_timestep()
