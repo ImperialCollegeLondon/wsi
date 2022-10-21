@@ -466,10 +466,7 @@ class Node(WSIObj):
             avail = self.sum_vqip(avail, getattr(arc, f)(tag = tag))
             
         if vqip is not None:
-            avail['volume'] = min(avail['volume'], vqip['volume'])
-            #TODO: should be:
-            #avail = self.v_change_vqip(avail, min(avail['volume'], vqip['volume']))
-            #In case checks are using pollutant information
+            avail = self.v_change_vqip(avail, min(avail['volume'], vqip['volume']))
 
         return avail
     
@@ -830,6 +827,7 @@ class Tank(WSIObj):
             vol = min(vqip['volume'], vol)
         
         #Adjust storage pollutants to match volume in vqip
+        #TODO the v_change_vqip in the reply here is a weird default (if a VQIP is not provided)
         return self.v_change_vqip(self.storage, vol)
     
     def push_storage(self, vqip, force = False):
@@ -1264,6 +1262,7 @@ class QueueTank(Tank):
         """Wrapper for end_timestep that also ends the timestep in the internal_arc
         """
         self.internal_arc.end_timestep()
+        self.internal_arc.update_queue()
         self.storage_ = self.copy_vqip(self.storage)
     
     def reinit(self):
