@@ -429,10 +429,9 @@ class ImperviousSurface(Surface):
         #Assign parameters 
         self.et0_to_e = et0_to_e #Total evaporation
 
-        if len(pollutant_load) > 0:
-            self.pollutant_load = pollutant_load
-        else:
-            self.pollutant_load = {x : 0.001 for x in constants.POLLUTANTS} #kg/m2/dt
+
+        self.pollutant_load = pollutant_load
+
         
         
         super().__init__(depth = pore_depth,**kwargs)
@@ -457,11 +456,11 @@ class ImperviousSurface(Surface):
                 for mass balance checking. 
         """
         #Copy pollutant_load
-        pollution = self.copy_vqip(self.pollutant_load)
+        pollution = self.empty_vqip()
 
         #Scale by area
-        for pol in pollution.keys():
-            pollution[pol] *= self.area
+        for pol, item in pollution.items():
+            pollution[pol] = item * self.area
         pollution['volume'] = 0
         
         #Update tank
