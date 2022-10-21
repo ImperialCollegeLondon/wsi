@@ -259,9 +259,11 @@ class Surface(DecayTank):
         
         #Populate function lists
         #TODO.. not sure why I have deposition but no precipitation here
-        #TODO - weird to have these deposition function if the relevant pollutants aren't modelled
-        self.inflows = [self.atmospheric_deposition,
-                        self.precipitation_deposition]
+        if 'nhx-dry' in set(x[0] for x in data_input_dict.keys()):
+            self.inflows = [self.atmospheric_deposition,
+                            self.precipitation_deposition]
+        else:
+            self.inflows = [lambda : (self.empty_vqip(), self.empty_vqip())]
         self.processes = [lambda : (self.empty_vqip(), self.empty_vqip())]
         self.outflows = [lambda : (self.empty_vqip(), self.empty_vqip())]
         
