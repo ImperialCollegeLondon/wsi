@@ -192,7 +192,21 @@ class Land(Node):
         self.running_outflow_mb = self.empty_vqip()
         for tanks in self.surfaces + [self.surface_runoff, self.subsurface_runoff, self.percolation]:
             tanks.end_timestep()
-            
+    
+    def get_surface(self, surface):
+        """Return a surface from the list of surfaces by the 'surface' entry
+        in the surface. I.e., the name of the surface
+
+        Args:
+            surface (str): Name of the surface
+
+        Returns:
+            surface (Surface): The first surface that matches the name
+        """
+        for surface in self.surfaces:
+            if surface.surface == surface:
+                return surface
+        return None
         
         
 class Surface(DecayTank):
