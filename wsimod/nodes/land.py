@@ -810,8 +810,8 @@ class GrowingSurface(PerviousSurface):
             sowing_day (int, optional): day of year that crops are sown. Defaults to 1.
             harvest_day (int, optional): day of year that crops are harvest. Defaults 
                 to 365.
-            initial_soil_storage (dict or float, optional): See wsimod/nodes/nodes.py/
-                Tank for documentation. Defaults to None.
+            initial_soil_storage (dict or float, optional): Initial mass of solid pollutants
+                in the soil nutrient pools (fast and adsorbed inorganic pools)
         """
         
         #Crop factors (set when creating object)
@@ -946,8 +946,9 @@ class GrowingSurface(PerviousSurface):
             #Update nutrient pool and get concentration for nutrients
             prop = reply['volume'] / self.storage['volume']
             nutrients = self.nutrient_pool.extract_dissolved(prop)
-            reply['nitrate'] = nutrients['inorganic']['N'] * self.storage['nitrate'] / (self.storage['nitrate'] + self.storage['ammonia'])
-            reply['ammonia'] = nutrients['inorganic']['N'] * self.storage['ammonia'] / (self.storage['nitrate'] + self.storage['ammonia'])
+            reply['nitrate'] = nutrients['inorganic']['N'] * self.storage['nitrate'] / (self.storage['nitrate'] + self.storage['ammonia'] + self.storage['nitrite'])
+            reply['ammonia'] = nutrients['inorganic']['N'] * self.storage['ammonia'] / (self.storage['nitrate'] + self.storage['ammonia'] + self.storage['nitrite'])
+            reply['nitrite'] = nutrients['inorganic']['N'] * self.storage['nitrite'] / (self.storage['nitrate'] + self.storage['ammonia'] + self.storage['nitrite'])
             reply['phosphate'] = nutrients['inorganic']['P']
             reply['org-phosphorus'] = nutrients['organic']['P']
             reply['org-nitrogen'] = nutrients['organic']['N']

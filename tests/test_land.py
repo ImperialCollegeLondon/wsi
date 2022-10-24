@@ -470,7 +470,67 @@ class MyTestClass(TestCase):
         self.assertDictAlmostEqual(d1, r1)
         self.assertDictAlmostEqual(d1, r2)
         self.assertDictAlmostEqual(d2, surface.storage, 14)
+    
+    def create_growing_surface(self):
+        constants.set_default_pollutants()
+        node = Node(name = '')
+        initial_vol = node.empty_vqip()
+        initial_vol['phosphate']= 11
+        initial_vol['nitrate']= 2.5
+        initial_vol['nitrite']= 1.5
+        initial_vol['ammonia']= 0.1
+        initial_vol['org-nitrogen']= 0.2
+        initial_vol['org-phosphorus']= 3
+        initial_vol['volume']= 0.32
         
+        initial_soil = {'phosphate' : 1.2,
+                        'ammonia' : 0.2,
+                        'nitrate' : 0.3,
+                        'nitrite' : 0.4,
+                        'org-nitrogen' : 2,
+                        'org-phosphorus' : 4}
+        
+        surface = GrowingSurface(rooting_depth = 0.5,
+                                 area = 1.5,
+                                 initial_storage = initial_vol,
+                                 initial_soil_storage = initial_soil)
+        return surface, initial_vol, initial_soil
+    
+    def test_grow_init(self):
+        constants.set_default_pollutants()
+        surface, ivol, isoil = self.create_growing_surface()
+        
+        d1 = {'N' : ivol['nitrate'] + ivol['nitrite'] + ivol['ammonia'],
+              'P' : ivol['phosphate']}
+        self.assertDictAlmostEqual(surface.nutrient_pool.dissolved_inorganic_pool.storage, 
+                                   d1)
+        
+        d2 = {'N' : ivol['org-nitrogen'],
+              'P' : ivol['org-phosphorus']}
+        self.assertDictAlmostEqual(surface.nutrient_pool.dissolved_organic_pool.storage, 
+                                   d2)
+        
+        d3 = {'N' : isoil['nitrate'] + isoil['nitrite'] + isoil['ammonia'],
+              'P' : isoil['phosphate']}
+        self.assertDictAlmostEqual(surface.nutrient_pool.adsorbed_inorganic_pool.storage, 
+                                   d3,
+                                   15)
+        
+        d4 = {'N' : isoil['org-nitrogen'],
+              'P' : isoil['org-phosphorus']}
+        self.assertDictAlmostEqual(surface.nutrient_pool.fast_pool.storage, 
+                                   d4)
+    
+    def test_grow_pull(self):
+        constants.set_default_pollutants()
+        surface, ivol, isoil = self.create_growing_surface()
+        
+        d1 = surface.empty_vqip()
+        for key, amount in ivol.items():
+            d1[key] = amount * 0.25 / 0.32
+            
+        reply = surface.pull_storage({'volume' : 0.25})
+        self.assertDictAlmostEqual(d1, reply, 15)
 if __name__ == "__main__":
     unittest.main()
     
