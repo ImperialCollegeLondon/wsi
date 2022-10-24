@@ -17,7 +17,7 @@ from wsimod.nodes.land import Surface, PerviousSurface, ImperviousSurface, Growi
 from wsimod.nodes.sewer import Sewer
 from wsimod.arcs.arcs import Arc
 from math import exp
-
+from pandas import to_datetime
     
 
 class MyTestClass(TestCase):
@@ -402,7 +402,71 @@ class MyTestClass(TestCase):
         self.assertDictAlmostEqual(d3, surface.subsurface_flow)
         self.assertDictAlmostEqual(d4, surface.storage,15)
         self.assertDictAlmostEqual(d5, surface.infiltration_excess)
-    
+        
+    def test_ihacres3(self):
+        #Infiltration excess
+        constants.set_simple_pollutants()
+        inputs = {('precipitation', 1) : 0.1,
+                  ('et0',1) : 0.01,
+                  ('temperature',1) : 10,
+                 }
+        
+        node = Node(name = '',
+                    data_input_dict = inputs)
+        
+        surface = PerviousSurface(parent = node,
+                                    depth = 0.5,
+                                    area = 1.5,
+                                    field_capacity = 0.35,
+                                    wilting_point = 0.12,
+                                    infiltration_capacity = 0.05,
+                                    surface_coefficient = 0.04,
+                                    percolation_coefficient = 0.6,
+                                    et0_coefficient = 0.4,
+                                    ihacres_p = 12,
+                                    initial_storage = 0.4 * 0.5 * 1.5
+                                    )
+        
+        node.t = 1
+        
+        (r1, r2) = surface.ihacres()
+        
+        d1 = {'volume' : 0.1 * 1.5,
+              'phosphate' : 0,
+              'temperature' : 0}
+        
+        d2 = {'volume' : 0.01 * 1.5 * 0.4,
+              'phosphate' : 0,
+              'temperature' : 0}
+        
+        outflow_ = 0.05 * (1 - ((0.5 - 0.4*0.5) / (0.5 - 0.35*0.5))**12)
+        
+        total_water_passing_through_soil = (0.05 - 0.01*0.4 - outflow_ * 0.04)*1.5
+        
+        temperature = (0 * 0.4 * 0.5 * 1.5) + (total_water_passing_through_soil * 10) / (total_water_passing_through_soil + 0.4 * 0.5 * 1.5)
+        
+        d3 = {'volume' : outflow_ * (1 - 0.04) * 0.6 * 1.5,
+              'phosphate' : 0,
+              'temperature' : temperature}
+        
+        d4 = {'volume' : outflow_ * (1 - 0.04) * (1 - 0.6) * 1.5,
+              'phosphate' : 0,
+              'temperature' : temperature}
+        
+        d5 = {'volume' : (0.05 - outflow_ - 0.01*0.4 + 0.4*0.5) * 1.5,
+              'phosphate' : 0,
+              'temperature' : temperature}
+        
+        d6 = {'volume' : outflow_ * 0.04 * 1.5 + 0.05 * 1.5,
+              'phosphate' : 0,
+              'temperature' : 10}
+        
+        self.assertDictAlmostEqual(d1, r1)
+        self.assertDictAlmostEqual(d2, r2)
+        self.assertDictAlmostEqual(d3, surface.percolation, 15)
+        self.assertDictAlmostEqual(d4, surface.subsurface_flow)
+        self.assertDictAlmostEqual(d5, surface.storage,15)
+        self.assertDictAlmostEqual(d6, surface.infiltration_excess)
     def test_perv_route(self):
         constants.set_simple_pollutants()
         land = Land(name = '',
@@ -482,6 +546,7 @@ class MyTestClass(TestCase):
         initial_vol['org-nitrogen']= 0.2
         initial_vol['org-phosphorus']= 3
         initial_vol['volume']= 0.32
+        initial_vol['temperature']= 11
         
         initial_soil = {'phosphate' : 1.2,
                         'ammonia' : 0.2,
@@ -490,10 +555,23 @@ class MyTestClass(TestCase):
                         'org-nitrogen' : 2,
                         'org-phosphorus' : 4}
         
+        crop_factor_stages = [0.   , 0.   , 0.3  , 0.3  , 1.2  , 1.2  , 0.325, 0.   , 0.   ]
+        crop_factor_stage_dates =[  0,  90,  91, 121, 161, 213, 244, 245, 366]
+        sowing_day = 91
+        harvest_day = 244
+        ET_depletion_factor = 0.55
+        
         surface = GrowingSurface(rooting_depth = 0.5,
                                  area = 1.5,
                                  initial_storage = initial_vol,
-                                 initial_soil_storage = initial_soil)
+                                 initial_soil_storage = initial_soil,
+                                 crop_factor_stages = crop_factor_stages,
+                                    crop_factor_stage_dates = crop_factor_stage_dates,
+                                    sowing_day = sowing_day,
+                                    harvest_day = harvest_day,
+                                    ET_depletion_factor = ET_depletion_factor,
+                                    wilting_point = 0.1,
+                                    field_capacity = 0.2)
         return surface, initial_vol, initial_soil
     
     def test_grow_init(self):
@@ -528,9 +606,386 @@ class MyTestClass(TestCase):
         d1 = surface.empty_vqip()
         for key, amount in ivol.items():
             d1[key] = amount * 0.25 / 0.32
-            
+        d1['temperature'] = ivol['temperature']
+        n1 = {'N' : (ivol['nitrate'] + ivol['nitrite'] + ivol['ammonia']) * (1 - 0.25 / 0.32),
+              'P' : ivol['phosphate']* (1 - 0.25 / 0.32)}
+        n2 = {'N' : ivol['org-nitrogen']* (1 - 0.25 / 0.32),
+              'P' : ivol['org-phosphorus']* (1 - 0.25 / 0.32)}
+        n3 = {'N' : (isoil['nitrate'] + isoil['nitrite'] + isoil['ammonia']) ,
+              'P' : isoil['phosphate']}
+        n4 = {'N' : isoil['org-nitrogen'],
+              'P' : isoil['org-phosphorus']}
         reply = surface.pull_storage({'volume' : 0.25})
         self.assertDictAlmostEqual(d1, reply, 15)
+        self.assertDictAlmostEqual(surface.nutrient_pool.dissolved_inorganic_pool.storage, n1, 15)
+        self.assertDictAlmostEqual(surface.nutrient_pool.dissolved_organic_pool.storage, n2, 15)
+        self.assertDictAlmostEqual(surface.nutrient_pool.adsorbed_inorganic_pool.storage, n3, 15)
+        self.assertDictAlmostEqual(surface.nutrient_pool.fast_pool.storage, n4, 15)
+        
+    def test_crop_cover(self):
+        constants.set_default_pollutants()
+        surface, ivol, isoil = self.create_growing_surface()
+        date = to_datetime('2000-05-01')
+        node = Node(name = '')  
+        node.t = date
+        surface.parent = node
+        surface.days_after_sow = date.dayofyear - surface.sowing_day
+        _ = surface.calc_crop_cover()
+        self.assertEqual(0.3, surface.crop_factor)
+        self.assertEqual(0.3, surface.et0_coefficient)
+        
+        #These two numbers from the interpolation between doy-harvest_sow_calendar and crop/ground_cover_stages
+        self.assertEqual(0.17647058823529413, surface.crop_cover)
+        self.assertEqual(0.058823529411764705, surface.ground_cover)
+        
+    def test_adjust_vqip(self):
+        constants.set_default_pollutants()
+        surface = GrowingSurface()
+        vqip = surface.empty_vqip()
+        vqip['nitrate'] = 0.5
+        vqip['ammonia'] = 0.75
+        vqip['org-nitrogen'] = 1.25
+        vqip['phosphate'] = 1.2
+        vqip['org-phosphorus'] = 0.3
+        dep_ = {'N' : 5, 'P' : 3}
+        in_ = {'N' : 3, 'P' : 2}
+        
+        d1 = surface.empty_vqip()
+        d1['nitrate'] = 0.5 * 3/5
+        d1['ammonia'] = 0.75 * 3/5
+        d1['org-nitrogen'] = 1.25 * 3/5
+        d1['phosphate'] = 1.2 * 2/3
+        d1['org-phosphorus'] = 0.3 * 2/3
+        
+        r1 = surface.adjust_vqip_to_liquid(vqip, dep_, in_)
+        self.assertDictAlmostEqual(d1, r1,15)
+        
+    def test_dry_grow_dep(self):
+        constants.set_default_pollutants()
+        surface = GrowingSurface()
+        vqip = surface.empty_vqip()
+        vqip['nitrate'] = 0.5
+        vqip['ammonia'] = 0.75
+        vqip['phosphate'] = 1.2
+        vqip_ = surface.dry_deposition_to_tank(vqip)
+        
+        d1 = surface.empty_vqip()
+        d1['nitrate'] = 0.45
+        d1['ammonia'] = 0.675
+        d1['phosphate'] = 0
+        self.assertDictAlmostEqual(d1, vqip_)
+        n1 = {'N' : 0,
+              'P' : 1.2}
+        self.assertDictAlmostEqual(n1, surface.nutrient_pool.adsorbed_inorganic_pool.storage)
+        
+        n2 = {'N' : (0.5 + 0.75) * surface.nutrient_pool.fraction_dry_n_to_fast,
+              'P' : 0}
+        self.assertDictAlmostEqual(n2, surface.nutrient_pool.fast_pool.storage)
+        
+        n3 = {'N' : (0.5 + 0.75) * surface.nutrient_pool.fraction_dry_n_to_dissolved_inorganic,
+              'P' : 0}
+        self.assertDictAlmostEqual(n3, surface.nutrient_pool.dissolved_inorganic_pool.storage)
+    
+    def test_wet_grow_dep(self):
+        constants.set_default_pollutants()
+        surface = GrowingSurface()
+        vqip = surface.empty_vqip()
+        vqip['nitrate'] = 0.5
+        vqip['ammonia'] = 0.75
+        vqip['phosphate'] = 1.2
+        vqip_ = surface.wet_deposition_to_tank(vqip)
+        
+        d1 = surface.empty_vqip()
+        d1['nitrate'] = 0.5
+        d1['ammonia'] = 0.75
+        d1['phosphate'] = 1.2
+        self.assertDictAlmostEqual(d1, vqip_)
+        
+        n1 = {'N' : (0.5 + 0.75),
+              'P' : 1.2}
+        self.assertDictAlmostEqual(n1, surface.nutrient_pool.dissolved_inorganic_pool.storage)
+        
+    def test_fertiliser(self):
+        constants.set_default_pollutants()
+        surface, ivol, isoil = self.create_growing_surface()
+        input_data = {('nhx-fertiliser' , 1) : 5,
+                      ('noy-fertiliser' , 1) : 2,
+                      ('srp-fertiliser' , 1) : 3}
+        surface.data_input_dict = input_data
+        node = Node(name = '')
+        node.monthyear = 1
+        surface.parent = node
+        
+        (r1, r2) = surface.fertiliser()
+        
+        d1 = surface.empty_vqip()
+        
+        self.assertDictAlmostEqual(d1, r2)
+        
+        d1['phosphate'] = 3 * 1.5
+        d1['nitrate'] = 2 * 1.5
+        d1['ammonia'] = 5 * 1.5
+        self.assertDictAlmostEqual(d1, r1)
+        
+        n1 = {'N' : 4.1 + (2 + 5) * 1.5,
+              'P' : 11 + 3 * 1.5}
+        self.assertDictAlmostEqual(n1, surface.nutrient_pool.dissolved_inorganic_pool.storage)
+        
+    def test_manure(self):
+        constants.set_default_pollutants()
+        surface, ivol, isoil = self.create_growing_surface()
+        input_data = {('nhx-manure' , 1) : 5,
+                      ('noy-manure' , 1) : 2,
+                      ('srp-manure' , 1) : 3}
+        surface.data_input_dict = input_data
+        node = Node(name = '')
+        node.monthyear = 1
+        surface.parent = node
+        
+        (r1, r2) = surface.manure()
+        
+        d1 = surface.empty_vqip()
+        
+        self.assertDictAlmostEqual(d1, r2)
+        
+        d1['phosphate'] = 3 * 1.5 * surface.nutrient_pool.fraction_manure_to_dissolved_inorganic['P']
+        d1['nitrate'] = 2 * 1.5 * surface.nutrient_pool.fraction_manure_to_dissolved_inorganic['N']
+        d1['ammonia'] = 5 * 1.5 * surface.nutrient_pool.fraction_manure_to_dissolved_inorganic['N']
+        self.assertDictAlmostEqual(d1, r1)
+        
+        n1 = {'N' : 4.1 + (2 + 5) * 1.5 * surface.nutrient_pool.fraction_manure_to_dissolved_inorganic['N'],
+              'P' : 11 + 3 * 1.5 * surface.nutrient_pool.fraction_manure_to_dissolved_inorganic['P']}
+        self.assertDictAlmostEqual(n1, surface.nutrient_pool.dissolved_inorganic_pool.storage)
+        
+        n2 = {'N' : 2 + (2 + 5) * 1.5 * surface.nutrient_pool.fraction_manure_to_fast['N'],
+              'P' : 4 + 3 * 1.5 * surface.nutrient_pool.fraction_manure_to_fast['P']}
+        self.assertDictAlmostEqual(n2, surface.nutrient_pool.fast_pool.storage)
+    
+    def calc_temp_dep(self):
+        constants.set_simple_pollutants()
+        surface = GrowingSurface(initial_storage = {'volume' : 0,
+                                                    'phosphate' : 0,
+                                                    'temperature' : -1})
+        surface.calc_temperature_dependence_factor()
+        self.assertEqual(0, surface.nutrient_pool.temperature_dependence_factor)
+        
+        surface.storage['temperature'] = 2.5
+        surface.calc_temperature_dependence_factor()
+        self.assertEqual(2.5/5, surface.nutrient_pool.temperature_dependence_factor)
+        
+        surface.storage['temperature'] = 7.5
+        surface.calc_temperature_dependence_factor()
+        self.assertEqual(2 ** ((7.5 - 20)/10), surface.nutrient_pool.temperature_dependence_factor)
+    
+    def calc_mois_dep(self):
+        constants.set_simple_pollutants()
+        surface = GrowingSurface(initial_storage = {'volume' : 0.05,
+                                                    'phosphate' : 0,
+                                                    'temperature' : 0},
+                                 rooting_depth = 1,
+                                 area = 1,
+                                 wilting_point = 0.1,
+                                 field_capacity = 0.2)
+        surface.calc_soil_moisture_dependence_factor()
+        self.assertEqual(0, surface.nutrient_pool.soil_moisture_dependence_factor)
+        
+        surface.storage['volume'] = 0.15
+        surface.calc_soil_moisture_dependence_factor()
+        v1 = ((0.2 - 0.15) / (surface.thetaupp * 1)) ** surface.thetapow
+        v1 = (1 - surface.satact) * v1 + surface.satact
+        v2 = ((0.15 - 0.1) / (surface.thetalow * 1)) ** surface.thetapow
+        
+        v = min(1, v1, v2)
+        self.assertEqual(v, surface.nutrient_pool.soil_moisture_dependence_factor)
+        
+        surface.storage['volume'] = 0.25
+        surface.calc_soil_moisture_dependence_factor()
+        self.assertEqual(surface.satact, surface.nutrient_pool.soil_moisture_dependence_factor)
+        
+    def test_soil_pool(self):
+        constants.set_default_pollutants()
+        surface, ivol, isoil = self.create_growing_surface()
+        surface.calc_temperature_dependence_factor()
+        surface.calc_soil_moisture_dependence_factor()
+        
+        nut_p = surface.nutrient_pool
+        cf = nut_p.temperature_dependence_factor *\
+                nut_p.soil_moisture_dependence_factor
+        (r1, r2) = surface.soil_pool_transformation()
+        d1 = surface.empty_vqip()
+        d1['phosphate'] = nut_p.minfpar['P'] *\
+                            isoil['org-phosphorus'] * cf
+        d1['nitrate'] = nut_p.minfpar['N'] *\
+                            isoil['org-nitrogen'] * cf *\
+                                        ivol['nitrate'] / (ivol['nitrate'] + ivol['ammonia'])
+        d1['ammonia'] = nut_p.minfpar['N'] *\
+                            isoil['org-nitrogen'] * cf *\
+                                        ivol['ammonia'] / (ivol['nitrate'] + ivol['ammonia'])
+        self.assertDictAlmostEqual(d1, r1)
+        
+        d2 = surface.empty_vqip()       
+        fast_ = (1 - nut_p.minfpar['P'] *cf) * isoil['org-phosphorus']
+        inc_dissol = fast_ * cf * nut_p.disfpar['P']
+        dec_immob = (ivol['org-phosphorus'] + inc_dissol) * cf * nut_p.immobdpar['P']
+        
+        d2['org-phosphorus'] = dec_immob - inc_dissol
+        
+        fast_ = (1 - nut_p.minfpar['N'] *cf) * isoil['org-nitrogen']
+        inc_dissol = fast_ * cf * nut_p.disfpar['N']
+        dec_immob = (ivol['org-nitrogen'] + inc_dissol) * cf * nut_p.immobdpar['N']
+        
+        d2['org-nitrogen'] = dec_immob - inc_dissol
+        self.assertDictAlmostEqual(d2, r2)
+    
+    def test_crop_uptake(self):
+        constants.set_default_pollutants()
+        surface, ivol, isoil = self.create_growing_surface()
+        date = to_datetime('2000-05-01')
+        node = Node(name = '')  
+        node.t = date
+        surface.parent = node
+        surface.days_after_sow = date.dayofyear - surface.sowing_day
+        _ = surface.calc_crop_cover()
+        
+        (r1, r2) = surface.calc_crop_uptake()
+        
+        d1 = surface.empty_vqip()
+        self.assertDictAlmostEqual(r1, d1)
+        d1['nitrate'] = 3.152069428336998e-05
+        d1['phosphate'] = 4.377874206023608e-06
+        self.assertDictAlmostEqual(d1, r2)
+        
+        d2 = surface.copy_vqip(ivol)
+        d2['nitrate'] -= d1['nitrate']
+        d2['phosphate'] -= d1['phosphate']
+        self.assertDictAlmostEqual(d2, surface.storage)
+        
+        n1 = {'N' : ivol['nitrate'] + ivol['ammonia'] + ivol['nitrite'] - d1['nitrate'],
+              'P' : ivol['phosphate'] - d1['phosphate']}
+        self.assertDictAlmostEqual(n1, surface.nutrient_pool.dissolved_inorganic_pool.storage)
+    
+    def test_erosion1(self):
+        #High rain
+        constants.set_default_pollutants()
+        surface, ivol, isoil = self.create_growing_surface()
+        
+        date = to_datetime('2000-05-01')
+        inputs = {('precipitation', date) : 1.5,
+                  ('et0', date) : 0.01,
+                  ('temperature', date) : 10,
+                 }
+        
+        node = Node(name = '',
+                    data_input_dict = inputs)
+        node.t = date
+        surface.parent = node
+        _ = surface.ihacres()
+        (r1, r2) = surface.erosion()
+        d1 = surface.empty_vqip()
+        self.assertDictAlmostEqual(d1, r2)
+        d1['phosphate'] = 0.002780491450131737
+        d1['solids'] = 1.5060995354880244
+        self.assertDictAlmostEqual(d1, r1)
+    
+    def test_erosion2(self):
+        #Med rain
+        constants.set_default_pollutants()
+        surface, ivol, isoil = self.create_growing_surface()
+        
+        date = to_datetime('2000-05-01')
+        inputs = {('precipitation', date) : 0.1,
+                  ('et0', date) : 0.01,
+                  ('temperature', date) : 10,
+                 }
+        
+        node = Node(name = '',
+                    data_input_dict = inputs)
+        node.t = date
+        surface.parent = node
+        _ = surface.ihacres()
+        (r1, r2) = surface.erosion()
+        d1 = surface.empty_vqip()
+        self.assertDictAlmostEqual(d1, r2)
+        d1['phosphate'] = 3.24263332112971e-06
+        d1['solids'] = 0.001756426382278593
+        self.assertDictAlmostEqual(d1, r1)
+    
+    def test_erosion3(self):
+        #low rain
+        constants.set_default_pollutants()
+        surface, ivol, isoil = self.create_growing_surface()
+        
+        date = to_datetime('2000-05-01')
+        inputs = {('precipitation', date) : 0.005,
+                  ('et0', date) : 0.01,
+                  ('temperature', date) : 10,
+                 }
+        
+        node = Node(name = '',
+                    data_input_dict = inputs)
+        node.t = date
+        surface.parent = node
+        _ = surface.ihacres()
+        (r1, r2) = surface.erosion()
+        d1 = surface.empty_vqip()
+        self.assertDictAlmostEqual(d1, r2)
+        d1['phosphate'] = 1.0335001632285022e-08
+        d1['solids'] = 2.1814650319210036e-06
+        self.assertDictAlmostEqual(d1, r1)
+    
+    def test_denitrification(self):
+        #low rain
+        constants.set_default_pollutants()
+        surface, ivol, isoil = self.create_growing_surface()
+        surface.calc_temperature_dependence_factor()
+        (r1, r2) = surface.denitrification()
+        d1 = surface.empty_vqip()
+        self.assertDictAlmostEqual(d1, r1)
+        d1['nitrate'] = 0.03295446191742672
+        self.assertDictAlmostEqual(d1, r2)
+        
+    def test_desorption(self):
+        constants.set_default_pollutants()
+        surface, ivol, isoil = self.create_growing_surface()
+        (r1, r2) = surface.adsorption()
+        d1 = surface.empty_vqip()
+        self.assertDictAlmostEqual(d1, r2)
+        d1['phosphate'] = 0.03510479526499916
+        self.assertDictAlmostEqual(d1, r1)
+        n1 = {'N' : 0.9,
+              'P' : 1.1648952047350007}
+        self.assertDictAlmostEqual(n1, surface.nutrient_pool.adsorbed_inorganic_pool.storage)
+        n2 = {'N' : 4.1,
+              'P' : 11.035104795265}
+        self.assertDictAlmostEqual(n2, surface.nutrient_pool.dissolved_inorganic_pool.storage)
+    
+    def test_adsorption(self):
+        constants.set_default_pollutants()
+        surface, ivol, isoil = self.create_growing_surface()
+        
+        input_data = {('nhx-fertiliser' , 1) : 0,
+                      ('noy-fertiliser' , 1) : 0,
+                      ('srp-fertiliser' , 1) : 1000}
+        surface.data_input_dict = input_data
+        node = Node(name = '')
+        node.monthyear = 1
+        surface.parent = node
+        
+        surface.fertiliser()
+        
+        (r1, r2) = surface.adsorption()
+        d1 = surface.empty_vqip()
+        self.assertDictAlmostEqual(d1, r1)
+        d1['phosphate'] = 0.009223050568400447
+        self.assertDictAlmostEqual(d1, r2)
+        n1 = {'N' : 0.9,
+              'P' : 1.2092230505684003}
+        self.assertDictAlmostEqual(n1, surface.nutrient_pool.adsorbed_inorganic_pool.storage)
+        n2 = {'N' : 4.1,
+              'P' : 1510.9907769494316}
+        self.assertDictAlmostEqual(n2, surface.nutrient_pool.dissolved_inorganic_pool.storage)
+    
+    
 if __name__ == "__main__":
     unittest.main()
     

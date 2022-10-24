@@ -766,7 +766,7 @@ class GrowingSurface(PerviousSurface):
                        **kwargs
                         ):
         """Extensive surface subclass that implements the CatchWat equations (Liu, 
-        Dobson & Mijic (2022) Science of the total environment), which in term are 
+        Dobson & Mijic (2022) Science of the total environment), which in turn are 
         primarily based on FAO document: 
         https://www.fao.org/3/x0490e/x0490e0ehtm#soil%20water%20availability. 
         This surface is a pervious surface that also has things that grow on it. This 
@@ -891,17 +891,6 @@ class GrowingSurface(PerviousSurface):
         
         #Initiliase nutrient pools
         self.nutrient_pool = NutrientPool()
-        #Reflect initial water concentration in dissolved nutrient pools
-        self.nutrient_pool.dissolved_inorganic_pool.storage['P'] = self.initial_storage['phosphate']
-        self.nutrient_pool.dissolved_inorganic_pool.storage['N'] = self.initial_storage['nitrate'] + self.initial_storage['ammonia'] + self.initial_storage['nitrite']
-        self.nutrient_pool.dissolved_organic_pool.storage['P'] = self.initial_storage['org-phosphorus']
-        self.nutrient_pool.dissolved_organic_pool.storage['N'] = self.initial_storage['org-nitrogen']
-        if initial_soil_storage:
-            #Reflect initial nutrient stores in solid nutrient pools
-            self.nutrient_pool.adsorbed_inorganic_pool.storage['P'] = initial_soil_storage['phosphate']
-            self.nutrient_pool.adsorbed_inorganic_pool.storage['N'] = initial_soil_storage['ammonia'] + initial_soil_storage['nitrate'] + initial_soil_storage['nitrite']
-            self.nutrient_pool.fast_pool.storage['N'] = initial_soil_storage['org-nitrogen']
-            self.nutrient_pool.fast_pool.storage['P'] = initial_soil_storage['org-phosphorus']
         
         self.inflows.insert(0, self.calc_crop_cover)
         if 'nitrate' in constants.POLLUTANTS:
@@ -919,6 +908,19 @@ class GrowingSurface(PerviousSurface):
             self.processes.append(self.erosion)
             self.processes.append(self.denitrification)
             self.processes.append(self.adsorption)
+            
+            #Reflect initial water concentration in dissolved nutrient pools
+            self.nutrient_pool.dissolved_inorganic_pool.storage['P'] = self.storage['phosphate']
+            self.nutrient_pool.dissolved_inorganic_pool.storage['N'] = self.storage['nitrate'] + self.storage['ammonia'] + self.storage['nitrite']
+            self.nutrient_pool.dissolved_organic_pool.storage['P'] = self.storage['org-phosphorus']
+            self.nutrient_pool.dissolved_organic_pool.storage['N'] = self.storage['org-nitrogen']
+            if initial_soil_storage:
+                #Reflect initial nutrient stores in solid nutrient pools
+                self.nutrient_pool.adsorbed_inorganic_pool.storage['P'] = initial_soil_storage['phosphate']
+                self.nutrient_pool.adsorbed_inorganic_pool.storage['N'] = initial_soil_storage['ammonia'] + initial_soil_storage['nitrate'] + initial_soil_storage['nitrite']
+                self.nutrient_pool.fast_pool.storage['N'] = initial_soil_storage['org-nitrogen']
+                self.nutrient_pool.fast_pool.storage['P'] = initial_soil_storage['org-phosphorus']
+            
     
     def pull_storage(self, vqip):
         """Pull water from the surface, updating the surface storage VQIP. Nutrient 
