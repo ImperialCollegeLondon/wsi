@@ -666,7 +666,7 @@ class PerviousSurface(Surface):
         evaporation = evaporation_depth * min(1, exp(2 * (1 - current_moisture_deficit_depth / (self.depth - self.wilting_point))))
         outflow = infiltrated_precipitation * (1 - min(1, (current_moisture_deficit_depth / (self.depth - self.field_capacity)) ** self.ihacres_p))
         
-        #Can't evaporate more than available moisture
+        #Can't evaporate more than available moisture (presumably the IHACRES equation prevents this ever being needed)
         evaporation = min(evaporation, precipitation_depth + self.get_smc())
         
         #Scale to volumes and apply proportions to work out percolation/surface runoff/subsurface runoff

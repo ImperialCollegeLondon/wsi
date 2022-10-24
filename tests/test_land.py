@@ -14,8 +14,9 @@ from wsimod.core import constants
 from wsimod.nodes.nodes import Node, Tank, ResidenceTank, DecayTank, QueueTank, DecayQueueTank
 from wsimod.nodes.waste import Waste
 from wsimod.nodes.land import Surface, PerviousSurface, ImperviousSurface, GrowingSurface, GardenSurface, Land
+from wsimod.nodes.sewer import Sewer
 from wsimod.arcs.arcs import Arc
-
+from math import exp
 
     
 
@@ -165,6 +166,311 @@ class MyTestClass(TestCase):
         
         
         self.assertDictAlmostEqual(d1, surface.storage,16)
+    
+    def test_urban_dep(self):
+        constants.set_simple_pollutants()
+        d1 = {'phosphate' : 2,
+                'volume' : 0,
+                'temperature' : 0}
+
+        surface = ImperviousSurface(pollutant_load = d1,
+                                    area = 1)
+       
+        (in_, out_) = surface.urban_deposition()
+        
+        
+        d2 = {'volume' : 0,
+              'temperature' : 0,
+              'phosphate' : 0}
+        self.assertDictAlmostEqual(d1, in_)
+        self.assertDictAlmostEqual(surface.storage, in_)
+        self.assertDictAlmostEqual(d2, out_)
+        
+    def test_urban_precip(self):
+        constants.set_simple_pollutants()
+        inputs = {('precipitation', 1) : 0.1,
+                  ('et0',1) : 0.01,
+                  ('temperature',1) : 10,
+                  ('precipitation' , 2) : 0,
+                  ('et0',2) : 0.02,
+                  ('temperature',2) : 15}
+        
+        node = Node(name = '',
+                    data_input_dict = inputs)
+          
+        surface = ImperviousSurface(parent = node,
+                                    area = 1.5,
+                                    et0_to_e = 0.9,
+                                    pore_depth = 0.015)
+        
+        
+        node.t = 1
+
+        d1 = {'volume' : 0.1*1.5,
+              'temperature' : 0,
+              'phosphate' : 0}
+        d2 = {'phosphate' : 0,
+             'volume' : 0.01*1.5*0.9,
+             'temperature' : 0}
+        d3 = {'phosphate' : 0,
+              'temperature' : 10,
+              'volume' : (0.1 - 0.01*0.9) * 1.5}
+        (r1, r2) = surface.precipitation_evaporation()
+        self.assertDictAlmostEqual(d1, r1,17)
+        self.assertDictAlmostEqual(d2, r2,17)
+        self.assertDictAlmostEqual(d3, surface.storage,17)
+        
+        node.t = 2
+        d3 = {'volume' : 0,
+              'temperature' : 0,
+              'phosphate' : 0}
+        d4 = {'phosphate' : 0,
+             'volume' : 0.02*1.5*0.9,
+             'temperature' : 0}
+        d5 = {'phosphate' : 0,
+              'temperature' : 10,
+              'volume' : (0.1 - (0.01 + 0.02)*0.9) * 1.5}
+        (r1, r2) = surface.precipitation_evaporation()
+        self.assertDictAlmostEqual(d3, r1,17)
+        self.assertDictAlmostEqual(d4, r2,17)
+        self.assertDictAlmostEqual(d5, surface.storage,17)
+    
+    def test_urban_push(self):
+        constants.set_simple_pollutants()
+        inputs = {('precipitation', 1) : 0.1,
+                  ('et0',1) : 0.01,
+                  ('temperature',1) : 10,
+                  }
+        
+        node = Node(name = '',
+                    data_input_dict = inputs)
+        node.t = 1
+        sewer = Sewer(name = '',
+                      capacity = 2)
+        _ = Arc(in_port = node, out_port = sewer, name = '')
+        surface = ImperviousSurface(parent = node,
+                                    area = 1.5,
+                                    et0_to_e = 0.9,
+                                    pore_depth = 0.015)
+        _ = surface.precipitation_evaporation()
+        _ = surface.push_to_sewers()
+        
+        d1 = {'volume' : 0.015 * 1.5,
+              'phosphate' : 0,
+              'temperature' : 10}
+        d2 = {'volume' : (0.1 - 0.01*0.9 - 0.015) * 1.5,
+              'phosphate' : 0,
+              'temperature' : 10}
+        
+        self.assertDictAlmostEqual(d1, surface.storage,16)
+        self.assertDictAlmostEqual(d2, sewer.sewer_tank.storage,16)
+    
+    def test_perv_cmd(self):
+        surface = PerviousSurface(parent = '',
+                                  depth = 0.5,
+                                  area = 1.5,
+                                  initial_storage = 0.5*1.5*0.25
+                                  )
+        self.assertAlmostEqual((1 - 0.25)*0.5, surface.get_cmd())
+    
+    def test_perv_cmd(self):
+        surface = PerviousSurface(parent = '',
+                                  depth = 0.5,
+                                  area = 1.5,
+                                  initial_storage = 0.5*1.5*0.25
+                                  )
+        self.assertAlmostEqual(0.25*0.5, surface.get_smc())
+        
+    def test_ihacres1(self):
+        #Above field capacity
+        constants.set_simple_pollutants()
+        inputs = {('precipitation', 1) : 0.1,
+                  ('et0',1) : 0.01,
+                  ('temperature',1) : 10,
+                 }
+        
+        node = Node(name = '',
+                    data_input_dict = inputs)
+        
+        surface = PerviousSurface(parent = node,
+                                    depth = 0.5,
+                                    area = 1.5,
+                                    field_capacity = 0.35,
+                                    wilting_point = 0.12,
+                                    infiltration_capacity = 0.4,
+                                    surface_coefficient = 0.04,
+                                    percolation_coefficient = 0.6,
+                                    et0_coefficient = 0.4,
+                                    ihacres_p = 12,
+                                    initial_storage = 0.4 * 0.5 * 1.5
+                                    )
+        
+        node.t = 1
+        
+        (r1, r2) = surface.ihacres()
+        
+        d1 = {'volume' : 0.1 * 1.5,
+              'phosphate' : 0,
+              'temperature' : 0}
+        
+        d2 = {'volume' : 0.01 * 1.5 * 0.4,
+              'phosphate' : 0,
+              'temperature' : 0}
+        
+        outflow_ = 0.1 * (1 - ((0.5 - 0.4*0.5) / (0.5 - 0.35*0.5))**12)
+        
+        total_water_passing_through_soil = (0.1 - 0.01*0.4 - outflow_ * 0.04)*1.5
+        
+        temperature = (0 * 0.4 * 0.5 * 1.5) + (total_water_passing_through_soil * 10) / (total_water_passing_through_soil + 0.4 * 0.5 * 1.5)
+        
+        d3 = {'volume' : outflow_ * (1 - 0.04) * 0.6 * 1.5,
+              'phosphate' : 0,
+              'temperature' : temperature}
+        
+        d4 = {'volume' : outflow_ * (1 - 0.04) * (1 - 0.6) * 1.5,
+              'phosphate' : 0,
+              'temperature' : temperature}
+        
+        d5 = {'volume' : (0.1 - outflow_ - 0.01*0.4 + 0.4*0.5) * 1.5,
+              'phosphate' : 0,
+              'temperature' : temperature}
+        
+        d6 = {'volume' : outflow_ * 0.04 * 1.5,
+              'phosphate' : 0,
+              'temperature' : 10}
+        
+        self.assertDictAlmostEqual(d1, r1)
+        self.assertDictAlmostEqual(d2, r2)
+        self.assertDictAlmostEqual(d3, surface.percolation, 15)
+        self.assertDictAlmostEqual(d4, surface.subsurface_flow)
+        self.assertDictAlmostEqual(d5, surface.storage,15)
+        self.assertDictAlmostEqual(d6, surface.infiltration_excess)
+    
+    def test_ihacres2(self):
+        #Below wilting point
+        constants.set_simple_pollutants()
+        inputs = {('precipitation', 1) : 0,
+                  ('et0',1) : 0.01,
+                  ('temperature',1) : 10,
+                 }
+        
+        node = Node(name = '',
+                    data_input_dict = inputs)
+        
+        surface = PerviousSurface(parent = node,
+                                    depth = 0.5,
+                                    area = 1.5,
+                                    field_capacity = 0.35,
+                                    wilting_point = 0.12,
+                                    infiltration_capacity = 0.4,
+                                    surface_coefficient = 0.04,
+                                    percolation_coefficient = 0.6,
+                                    et0_coefficient = 0.4,
+                                    ihacres_p = 12,
+                                    initial_storage = 0.11 * 0.5 * 1.5
+                                    )
+        
+        node.t = 1
+        
+        (r1, r2) = surface.ihacres()
+        
+        evaporation_ = 0.01 * 0.4 * exp(2 * (1 - (0.5-0.11*0.5) / (0.5 - 0.12*0.5))) * 1.5
+        d1 = {'volume' : 0,
+              'phosphate' : 0,
+              'temperature' : 0}
+        
+        d2 = {'volume' : evaporation_,
+              'phosphate' : 0,
+              'temperature' : 0}
+        
+        d3 = {'volume' : 0,
+              'phosphate' : 0,
+              'temperature' : 0}
+        
+        d4 = {'volume' : 0.11*0.5*1.5 - evaporation_,
+              'phosphate' : 0,
+              'temperature' : 0}
+        
+        d5 = {'volume' : 0,
+              'phosphate' : 0,
+              'temperature' : 10}
+     
+        
+        self.assertDictAlmostEqual(d1, r1)
+        self.assertDictAlmostEqual(d2, r2)
+        self.assertDictAlmostEqual(d3, surface.percolation, 15)
+        self.assertDictAlmostEqual(d3, surface.subsurface_flow)
+        self.assertDictAlmostEqual(d4, surface.storage,15)
+        self.assertDictAlmostEqual(d5, surface.infiltration_excess)
+    
+    def test_perv_route(self):
+        constants.set_simple_pollutants()
+        land = Land(name = '',
+                    )
+        
+        d1 = {'volume' : 2.5,
+              'temperature' : 10,
+              'phosphate' : 0.3}
+        
+        d2 = {'volume' : 2,
+              'temperature' : 12,
+              'phosphate' : 0.1}
+        
+        d3 = {'volume' : 5,
+              'temperature' : 11,
+              'phosphate' : 0.2}
+        
+        d4 = {'volume' : 0,
+              'temperature' : 0,
+              'phosphate' : 0}
+        surface = PerviousSurface(parent = land,
+                                    depth = 0.5,
+                                    area = 1.5)
+        surface.infiltration_excess = d1
+        surface.subsurface_flow = d2
+        surface.percolation = d3
+        
+        (r1, r2) = surface.route()
+        self.assertDictAlmostEqual(d4, r1)
+        self.assertDictAlmostEqual(d4, r2)
+        self.assertDictAlmostEqual(d1, land.surface_runoff.storage)
+        self.assertDictAlmostEqual(d2, land.subsurface_runoff.storage)
+        self.assertDictAlmostEqual(d3, land.percolation.storage)
+    
+    def test_soil_temp(self):
+        #Above field capacity
+        constants.set_simple_pollutants()
+        inputs = {('temperature',1) : 10,
+                 }
+        
+        node = Node(name = '',
+                    data_input_dict = inputs)    
+        node.t = 1
+        surface = PerviousSurface(parent = node,
+                                    depth = 0.5,
+                                    area = 1.5,
+                                    initial_storage = {'volume' : 7,
+                                                       'temperature' : 3,
+                                                       'phosphate' : 0.2})
+        
+        surface.soil_temp_w_prev = 0.2
+        surface.soil_temp_w_air = 0.3
+        surface.soil_temp_w_deep = 0.4
+        surface.soil_temp_deep = 5
+        
+        d1 = {'volume' : 0,
+              'temperature' : 0,
+              'phosphate' : 0}
+        
+        d2 = {'volume' : 7,
+              'temperature' : (5 * 0.4 + 0.2 * 3 + 0.3 * 10) / (0.2 + 0.3 + 0.4),
+              'phosphate' : 0.2}
+        
+        (r1, r2) = surface.calculate_soil_temperature()
+        self.assertDictAlmostEqual(d1, r1)
+        self.assertDictAlmostEqual(d1, r2)
+        self.assertDictAlmostEqual(d2, surface.storage, 14)
+        
 if __name__ == "__main__":
     unittest.main()
     
