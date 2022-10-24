@@ -458,7 +458,7 @@ class ImperviousSurface(Surface):
                 for mass balance checking. 
         """
         #Copy pollutant_load
-        pollution = self.empty_vqip()
+        pollution = self.copy_vqip(self.pollutant_load)
 
         #Scale by area
         for pol, item in pollution.items():
