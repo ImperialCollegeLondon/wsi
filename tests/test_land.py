@@ -13,8 +13,9 @@ from unittest import TestCase
 from wsimod.core import constants
 from wsimod.nodes.nodes import Node, Tank, ResidenceTank, DecayTank, QueueTank, DecayQueueTank
 from wsimod.nodes.waste import Waste
-from wsimod.nodes.land import Surface, PerviousSurface, ImperviousSurface, GrowingSurface, GardenSurface, Land
+from wsimod.nodes.land import Surface, PerviousSurface, ImperviousSurface, GrowingSurface, IrrigationSurface, GardenSurface, Land
 from wsimod.nodes.sewer import Sewer
+from wsimod.nodes.storage import Reservoir
 from wsimod.arcs.arcs import Arc
 from math import exp
 from pandas import to_datetime
@@ -985,7 +986,109 @@ class MyTestClass(TestCase):
               'P' : 1510.9907769494316}
         self.assertDictAlmostEqual(n2, surface.nutrient_pool.dissolved_inorganic_pool.storage)
     
-    
+    def test_irrigate(self):
+        constants.set_default_pollutants()
+
+        
+        date = to_datetime('2000-05-01')
+        inputs = {('precipitation', date) : 0.005,
+                  ('et0', date) : 0.01,
+                  ('temperature', date) : 10,
+                 }
+        
+        node = Node(name = '',
+                    data_input_dict = inputs)
+        node.t = date
+        
+        initial_vol = node.empty_vqip()
+        initial_vol['phosphate']= 11
+        initial_vol['nitrate']= 2.5
+        initial_vol['nitrite']= 1.5
+        initial_vol['ammonia']= 0.1
+        initial_vol['org-nitrogen']= 0.2
+        initial_vol['org-phosphorus']= 3
+        initial_vol['volume']= 0.32
+        initial_vol['temperature']= 11
+        
+        initial_soil = {'phosphate' : 1.2,
+                        'ammonia' : 0.2,
+                        'nitrate' : 0.3,
+                        'nitrite' : 0.4,
+                        'org-nitrogen' : 2,
+                        'org-phosphorus' : 4}
+        
+        crop_factor_stages = [0.   , 0.   , 0.3  , 0.3  , 1.2  , 1.2  , 0.325, 0.   , 0.   ]
+        crop_factor_stage_dates =[  0,  90,  91, 121, 161, 213, 244, 245, 366]
+        sowing_day = 91
+        harvest_day = 244
+        ET_depletion_factor = 0.55
+        
+        surface = IrrigationSurface(rooting_depth = 0.5,
+                                     area = 1.5,
+                                     initial_storage = initial_vol,
+                                     initial_soil_storage = initial_soil,
+                                     crop_factor_stages = crop_factor_stages,
+                                        crop_factor_stage_dates = crop_factor_stage_dates,
+                                        sowing_day = sowing_day,
+                                        harvest_day = harvest_day,
+                                        ET_depletion_factor = ET_depletion_factor,
+                                        wilting_point = 0.1,
+                                        field_capacity = 0.2,
+                                        irrigation_coefficient = 0.8,
+                                        parent = node)
+        surface.days_after_sow = date.dayofyear - surface.sowing_day
+        _ = surface.ihacres()
+        
+        reservoir = Reservoir(name = '',
+                              capacity = 50,
+                              initial_storage = 40)
+        arc = Arc(in_port = reservoir, out_port = node, name ='')
+        surface.irrigate()
+        self.assertEqual(0.006, arc.flow_in)
+
+    def test_garden(self):
+        constants.set_simple_pollutants()
+
+        
+        date = to_datetime('2000-05-01')
+        inputs = {('precipitation', date) : 0.0025,
+                  ('et0', date) : 0.01,
+                  ('temperature', date) : 10,
+                 }
+        
+        node = Node(name = '',
+                    data_input_dict = inputs)
+        node.t = date
+        
+        surface = GardenSurface(rooting_depth = 0.5,
+                                area = 1.5,
+                                wilting_point = 0.1,
+                                field_capacity = 0.2,
+                                initial_storage = 0.2 * 0.5 * 1.5,
+                                parent = node)
+        
+        _ = surface.ihacres()
+        
+        reply = surface.calculate_irrigation_demand()
+        d1 = {'phosphate' : 0,
+              'temperature' : 0,
+              'volume' : 0.0075*1.5}
+        self.assertDictAlmostEqual(d1, reply)
+        
+        
+        d2 = {'phosphate' : 0,
+              'temperature' : 0,
+              'volume' : 0.2 * 0.5 * 1.5 - 0.0075*1.5}
+        self.assertDictAlmostEqual(d2, surface.storage, 16)
+        
+        reply = surface.receive_irrigation_demand(d1)
+        self.assertDictAlmostEqual(surface.empty_vqip(), reply)
+        
+        d3 = {'phosphate' : 0,
+              'temperature' : 0,
+              'volume' : 0.2 * 0.5 * 1.5}
+        self.assertDictAlmostEqual(d3, surface.storage, 16)
+        
 if __name__ == "__main__":
     unittest.main()
     
