@@ -55,20 +55,24 @@ class Catchment(Node):
         vqip['volume'] *= constants.M3_S_TO_M3_DT #preprocess to SI
         for pollutant in constants.POLLUTANTS:
             vqip[pollutant] = self.data_input_dict[(pollutant,
-                                                   self.t)] * vqip['volume']
+                                                   self.t)]
+        
         return vqip
     
     def route(self):
         """Send any water that has not already been abstracted downstream
         """
         #Get amount of water
-        avail = self.pull_avail()
+        avail = self.get_avail()
         #Route excess flow onwards
-        reply = self.push_distributed(avail)
+        reply = self.push_distributed(avail, of_type = ['Node', 
+                                                        'River', 
+                                                        'Catchment',
+                                                        'Waste'])
         if reply['volume'] > constants.FLOAT_ACCURACY:
             print('Catchment unable to route')
     
-    def pull_avail(self):
+    def get_avail(self):
         """Water available for abstraction (Read data and subtract pre-existing 
         abstractions)
 
@@ -86,17 +90,17 @@ class Catchment(Node):
         return avail
     
     def pull_check_abstraction(self, vqip = None):
-        """Check wrapper for pull_avail that updates response if VQIP is given
+        """Check wrapper for get_avail that updates response if VQIP is given
 
         Args:
-            vqip (dict, optional): A VQIP that is compared with pull_avail and the 
+            vqip (dict, optional): A VQIP that is compared with get_avail and the 
                 minimum is returned. Only the 'volume' key is used. Defaults to None.
 
         Returns:
             avail (dict): A VQIP of water available for abstraction
         """
         #Respond to abstraction check request
-        avail = self.pull_avail()
+        avail = self.get_avail()
         
         if vqip:
             avail = self.v_change_vqip(avail, 
@@ -105,7 +109,7 @@ class Catchment(Node):
         return avail
     
     def pull_set_abstraction(self, vqip):
-        """Request set wrapper for pull_avail where VQIP is specified
+        """Request set wrapper for get_avail where VQIP is specified
 
         Args:
             vqip (dict): A VQIP of water to pull. Only the 'volume' key is used.
@@ -114,7 +118,7 @@ class Catchment(Node):
             avail (dict): A VQIP of water abstracted
         """
         #Respond to abstraction set request
-        avail = self.pull_avail()
+        avail = self.get_avail()
         avail = self.v_change_vqip(avail, 
                                        min(avail['volume'], vqip['volume']))
         
