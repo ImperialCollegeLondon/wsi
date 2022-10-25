@@ -115,8 +115,8 @@ class Sewer(Node):
         """
         #Sewer to sewer push, update queued tank
         return self.sewer_tank.push_storage(vqip, 
-                                            time = self.pipe_time,
-                                            force = True) # TODO Should this be forced?
+                                            time = self.pipe_time
+                                            )
     
     def push_set_land(self, vqip):
         """Push request that applies pipe_timearea (see __init__ for description). As 
@@ -138,8 +138,7 @@ class Sewer(Node):
             vqip_ = self.v_change_vqip(vqip, 
                                        vqip['volume'] * normalised)
             reply_ = self.sewer_tank.push_storage(vqip_,
-                                                  time = time,
-                                                  force = True) # TODO Should this be forced?
+                                                  time = time)
             reply = self.sum_vqip(reply, reply_)
         
         return reply
