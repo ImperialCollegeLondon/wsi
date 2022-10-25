@@ -214,7 +214,12 @@ class QueueArc(Arc):
         excess_in = self.get_excess(direction = 'pull', vqip = vqip)['volume']
         not_pulled = max(volume - excess_in, 0)
         volume -= not_pulled
-        vqip = self.v_change_vqip(vqip,volume)
+        
+        for pol in constants.ADDITIVE_POLLUTANTS:
+            if pol in vqip.keys():
+                vqip[pol] *= volume / vqip['volume']
+            
+        vqip['volume'] = volume
         
         #Make pull
         vqip = self.in_port.pull_set(vqip)
@@ -390,7 +395,7 @@ class AltQueueArc(QueueArc):
 
         
     def update_queue(self, direction = None, backflow_enabled = True):
-        #NOTE - has no direction
+        #NOTE - has no direction or tags
    
         
         total_removed = self.copy_vqip(self.queue[0])
@@ -441,9 +446,14 @@ class DecayArc(QueueArc, DecayObj):
         
         self.mass_balance_out.append(lambda : self.total_decayed)
         
+        
+        
+        
     def enter_queue(self, request, direction = None, tag = 'default'):
         #Update inflows and format
         request = self.enter_arc(request, direction, tag)
+        
+        #TODO - currently decay depends on temp at the in_port data object.. surely on vqip would be more sensible?
         
         #Decay on entry
         request['vqip'] = self.make_decay(request['vqip'])
