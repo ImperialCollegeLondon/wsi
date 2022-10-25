@@ -142,7 +142,7 @@ class Groundwater(Storage):
         """
         avail = self.tank.get_avail()['volume'] / self.residence_time
         to_send = self.tank.pull_storage({'volume' : avail})
-        retained = self.push_distributed(to_send, of_type = ['Node', 'River'])
+        retained = self.push_distributed(to_send, of_type = ['Node', 'River', 'Waste'])
         if retained['volume'] > constants.FLOAT_ACCURACY:
             print('Storage unable to push')
     
@@ -198,7 +198,6 @@ class QueueGroundwater(Storage):
         self.pull_check_handler['default'] = self.pull_check_active
         #Enable decay
         if self.decays is None:
-            #TODO... renaming storage to capacity here is confusing
             self.tank = QueueTank(capacity = self.capacity,
                                              area = self.area,
                                              datum = self.datum,
@@ -267,10 +266,10 @@ class QueueGroundwater(Storage):
             (dict): A VQIP amount that is available to pull
         """
         if vqip is None:
-            return self.tank.storage
+            return self.tank.active_storage
         else:
-            reply = min(vqip['volume'], self.tank.storage['volume'])
-            return self.v_change_vqip(self.tank.storage, reply)
+            reply = min(vqip['volume'], self.tank.active_storage['volume'])
+            return self.v_change_vqip(self.tank.active_storage, reply)
         
     def pull_set_active(self, vqip):
         #TODO - this is quite weird behaviour, and inconsistent with pull_check_active
@@ -772,10 +771,17 @@ class RiverReservoir(Reservoir):
             reply (dict): A VQIP amount that was not successfully received
         """
         #Apply normal reservoir storage
-        spill = self.push_set_storage(vqip)
+        #We do this under the assumption that spill is mixed in with the reservoir
+        #If the reservoir can't spill everything you'll get some weird numbers in
+        #reply, but if your reservoir can't spill as much as you like then you 
+        #should probably be pushing the right amount through push_check_river_reservoir
+        #Some cunning could probably avoid this by checking vqip, but this is a 
+        #serious edge case
+        _ = self.tank.push_storage(vqip, force = True)
+        spill = self.tank.pull_ponded()
         
         #Send spill downstream
-        reply = self.push_distributed(spill, of_type = ['Node','River'])
+        reply = self.push_distributed(spill, of_type = ['Node','River','Waste'])
         
         #Use spill to satisfy downstream flow
         self.total_environmental_satisfied += (spill['volume'] - reply['volume'])
@@ -794,7 +800,9 @@ class RiverReservoir(Reservoir):
             excess (dict): A VQIP amount of water that cannot be received
         """
         #Check downstream capacity (i.e., that would be spilled)
-        downstream_availability = self.get_connected(direction = 'push')['avail']
+        downstream_availability = self.get_connected(direction = 'push',
+                                                     of_type = ['Node','River','Waste']
+                                                     )['avail']
         #Check excess capacity in the reservoir
         excess = self.tank.get_excess()
         #Combine excess and downstream in response
