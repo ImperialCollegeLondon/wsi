@@ -102,8 +102,9 @@ class Demand(Node):
                                   'of_type' : 'Land'},
                       'house' : {'tag' : 'Demand',
                                  'of_type' : 'Sewer'},
-                                 'default' : {'tag' : 'default',
-                                                    'of_type' : None}}
+                        'default' : {'tag' : 'default',
+                                     'of_type' : None}}
+                      
         
         
         #Send water where it needs to go
@@ -131,7 +132,10 @@ class Demand(Node):
             (dict): A VQIP that will contain constant demand
         """
         #TODO read/gen demand
-        return {'default' : self.v_change_vqip(self.empty_vqip(), self.constant_demand)}
+        pol = self.v_change_vqip(self.empty_vqip(), self.constant_demand)
+        for key, item in self.pollutant_load.items():
+            pol[key] = item
+        return {'default' : pol}
     
     def end_timestep(self):
         """Reset state variable trackers

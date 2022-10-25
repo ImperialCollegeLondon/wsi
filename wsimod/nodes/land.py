@@ -756,10 +756,10 @@ class PerviousSurface(Surface):
 
 class GrowingSurface(PerviousSurface):
     def __init__(self,
-                       rooting_depth = 0,
-                        ET_depletion_factor = 0,
-                        crop_factor_stages = [0,0,0,0,0,0], 
-                        crop_factor_stage_dates = [0, 50, 200, 300, 301, 365], 
+                       rooting_depth = 1,
+                        ET_depletion_factor = 1,
+                        crop_factor_stages = [1,1], 
+                        crop_factor_stage_dates = [0, 365], 
                         sowing_day = 1,
                         harvest_day = 365,
                         initial_soil_storage = None,
@@ -793,10 +793,10 @@ class GrowingSurface(PerviousSurface):
 
         Args:
             rooting_depth (float, optional): Depth of the soil tank (i.e., how deep do 
-                crop roots go). Defaults to 0.
+                crop roots go). Defaults to 1.
             ET_depletion_factor (float, optional): Average fraction of soil that can be 
                 depleted from the root zone before moisture stress (reduction in ET) 
-                occurs. Defaults to 0.
+                occurs. Defaults to 1.
             crop_factor_stages (list, optional): Crop factor is a multiplier on et0, 
                 more grown plants have higher transpiration and higher crop factors.   
                 This list shows changing crop factor at different times of year in 
@@ -804,9 +804,9 @@ class GrowingSurface(PerviousSurface):
                 england_data_formatting.py/format_surfaces for further details on 
                 formulating these - since the interpolation used to find crop_factors 
                 in between the given values in the list is a bit involved. Defaults to 
-                [0,0,0,0,0,0].
+                [1,1].
             crop_factor_stage_dates (list, optional): Dates associated with 
-                crop_factor_stages. Defaults to [0, 50, 200, 300, 301, 365].
+                crop_factor_stages. Defaults to [0, 365].
             sowing_day (int, optional): day of year that crops are sown. Defaults to 1.
             harvest_day (int, optional): day of year that crops are harvest. Defaults 
                 to 365.
