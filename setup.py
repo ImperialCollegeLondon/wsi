@@ -25,5 +25,7 @@ setuptools.setup(
       'tqdm',
       'requests',
       'pytest',
+      'pyarrow',
+      'fastparquet'
       ],
       )
