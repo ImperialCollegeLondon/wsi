@@ -1,5 +1,5 @@
 # wsimod
-Installation
+## Installation
 
 Create and activate new conda environment
 ```
@@ -17,7 +17,7 @@ Download or clone this folder, navigate to it, and run:
 python setup.py develop
 ```
 
-Structure of this repository
+## Structure of this repository
 
 ```
 |---- projects
