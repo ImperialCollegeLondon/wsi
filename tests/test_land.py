@@ -168,16 +168,16 @@ class MyTestClass(TestCase):
         
         self.assertDictAlmostEqual(d1, surface.storage,16)
     
-    def test_urban_dep(self):
+    def test_simple_dep(self):
         constants.set_simple_pollutants()
         d1 = {'phosphate' : 2,
                 'volume' : 0,
                 'temperature' : 0}
 
-        surface = ImperviousSurface(pollutant_load = d1,
+        surface = Surface(pollutant_load = d1,
                                     area = 1)
        
-        (in_, out_) = surface.urban_deposition()
+        (in_, out_) = surface.simple_deposition()
         
         
         d2 = {'volume' : 0,
