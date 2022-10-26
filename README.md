@@ -1,9 +1,23 @@
 # wsimod
 Installation
-Download, navigate to this folder and run:
+
+Create and activate new conda environment
+```
+conda create --name wsimod python=3.10
+conda activate wsimod
+```
+
+Install geopandas separately (because it is naughty)
+```
+conda install geopandas -c conda-forge --verbose
+```
+
+Download or clone this folder, navigate to it, and run:
 ```
 python setup.py develop
 ```
+
+Structure of this repository
 
 ```
 |---- projects
@@ -21,8 +35,4 @@ python setup.py develop
 |    |---- nodes
 |    |---- arcs
 |    |---- preprocessing
-|    |    |---- population
-|    |    |---- climate
-|    |    |---- landuse
-|    |    |---- ...
 ```
