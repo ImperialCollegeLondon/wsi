@@ -359,11 +359,10 @@ class Surface(DecayTank):
             (tuple): A tuple containing a VQIP amount for model inputs and outputs 
                 for mass balance checking. 
         """
-        #Copy pollutant_load
-        pollution = self.copy_vqip(self.pollutant_load)
+        pollution = self.empty_vqip()
 
         #Scale by area
-        for pol, item in pollution.items():
+        for pol, item in self.pollutant_load.items():
             pollution[pol] = item * self.area
         pollution['volume'] = 0
         

@@ -9,7 +9,7 @@ from wsimod.nodes.nodes import Node
 
 class Abstraction(Node):
     #A node that won't push up an abstraction when routing
-
+    #TODO DOCUMENT
     def __init__(self, name):
         super().__init__(name)
         self.push_set_handler = {'default' : self.push_distributed_abstraction}
