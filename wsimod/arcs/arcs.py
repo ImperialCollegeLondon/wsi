@@ -134,9 +134,10 @@ class Arc(WSIObj):
         not_pulled = max(volume - excess_in, 0)
         volume -= not_pulled
         
-        for pol in constants.ADDITIVE_POLLUTANTS:
-            if pol in vqip.keys():
-                vqip[pol] *= volume / vqip['volume']
+        if volume > 0:
+            for pol in constants.ADDITIVE_POLLUTANTS:
+                if pol in vqip.keys():
+                    vqip[pol] *= volume / vqip['volume']
             
         vqip['volume'] = volume
         

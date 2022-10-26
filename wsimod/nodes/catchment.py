@@ -43,7 +43,8 @@ class Catchment(Node):
         self.mass_balance_in.append(lambda : self.get_flow())
         
     def get_flow(self):
-        """Read volume data (assumed in m3/s), convert to m3/dt, read pollutant data
+        """Read volume data, read pollutant data, convert additibve pollutants
+        from kg/m3 to kg
 
         Returns:
             vqip (dict): Return read data as a VQIP
@@ -52,10 +53,11 @@ class Catchment(Node):
         #get pushed, and the pollutants will 'disappear', causing a mass balance error
         vqip = {'volume' : self.data_input_dict[('flow',
                                                self.t)]}
-        vqip['volume'] *= constants.M3_S_TO_M3_DT #preprocess to SI
         for pollutant in constants.POLLUTANTS:
             vqip[pollutant] = self.data_input_dict[(pollutant,
                                                    self.t)]
+        for pollutant in constants.ADDITIVE_POLLUTANTS:
+            vqip[pollutant] *= vqip['volume']
         
         return vqip
     
@@ -67,7 +69,6 @@ class Catchment(Node):
         #Route excess flow onwards
         reply = self.push_distributed(avail, of_type = ['Node', 
                                                         'River', 
-                                                        'Catchment',
                                                         'Waste'])
         if reply['volume'] > constants.FLOAT_ACCURACY:
             print('Catchment unable to route')

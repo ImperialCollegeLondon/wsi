@@ -57,7 +57,13 @@ class Model(WSIObj):
             self.nodes_type[type_][name] = getattr(nodes,node_type)(**dict(data))
             self.nodes[name] = self.nodes_type[type_][name]
             self.nodelist = [x for x in self.nodes.values()]
-        
+    
+    def add_instantiated_nodes(self, nodelist):
+        self.nodelist = nodelist
+        self.nodes = {x.name : x for x in nodelist}
+        for x in nodelist:
+            self.nodes_type[x.__class__.__name__][x.name] = x
+    
     def add_arcs(self, arclist):
         river_arcs = {}
         for arc in arclist:
@@ -80,7 +86,23 @@ class Model(WSIObj):
         for node in sorted(upstreamness.items(), key=lambda item: item[1],reverse=True):
             if node[0] in self.nodes_type['River'].keys():
                 self.river_discharge_order.append(node[0])
+    
+    def add_instantiated_arcs(self, arclist):
+        self.arclist = arclist
+        self.arcs = {x.name : x for x in arclist}
+        river_arcs = {}
+        for arc in arclist:
+            if arc.in_port.__class__.__name__ in ['River', 'Node', 'Waste']:
+                if arc.out_port.__class__.__name__ in ['River', 'Node', 'Waste']:
+                    river_arcs[arc.name] = arc
+        upstreamness = {x : 0 for x in self.nodes_type['Waste'].keys()}
         
+        upstreamness = self.assign_upstream(river_arcs, upstreamness)
+        
+        self.river_discharge_order = []
+        for node in sorted(upstreamness.items(), key=lambda item: item[1],reverse=True):
+            if node[0] in self.nodes_type['River'].keys():
+                self.river_discharge_order.append(node[0])
         
     def assign_upstream(self, arcs, upstreamness):
         upstreamness_ = upstreamness.copy()
@@ -295,7 +317,13 @@ class Model(WSIObj):
             
             #Abstract
             for node in self.nodes_type['Reservoir'].values():
+                if node.t == self.dates[60]:
+                    flag = 1
                 node.make_abstractions()
+            
+            #Catchment routing
+            for node in self.nodes_type['Catchment'].values():
+                node.route()
             
             #river
             for node_name in self.river_discharge_order:
@@ -334,8 +362,8 @@ class Model(WSIObj):
         
             for v in constants.ADDITIVE_POLLUTANTS + ['volume']:
                 if (sys_in[v] - sys_ds[v] - sys_out[v]) > constants.FLOAT_ACCURACY:
-                    pass
-                    # print("system mass balance error for " + v + " of " + str(sys_in[v] - sys_ds[v] - sys_out[v]))
+                    # pass
+                    print("system mass balance error for " + v + " of " + str(sys_in[v] - sys_ds[v] - sys_out[v]))
             
             #Store results
             for arc in record_arcs:
@@ -382,7 +410,8 @@ class Model(WSIObj):
                                               'capacity' : surface.capacity,
                                               'time' : date,
                                               'et0_coef' : surface.et0_coefficient,
-                                              'crop_factor' : surface.crop_factor})
+                                              # 'crop_factor' : surface.crop_factor
+                                              })
                             for pol in constants.POLLUTANTS:
                                 surfaces[-1][pol] = surface.storage[pol]
                         else:
@@ -404,3 +433,10 @@ class Model(WSIObj):
         if not verbose:
             enablePrint(stdout)
         return flows, tanks, node_mb, surfaces
+    
+    def reinit(self):
+        for node in self.nodes.values():
+            node.end_timestep()
+        
+        for arc in self.arcs.values():
+            arc.end_timestep()
