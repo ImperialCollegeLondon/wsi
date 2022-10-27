@@ -284,6 +284,11 @@ class Model(WSIObj):
             for node in self.nodelist:
                 node.t = date
                 node.monthyear = date.to_period('M')
+            
+            #Run FWTW
+            for node in self.nodes_type['FWTW'].values():
+                node.treat_water()
+            
             #Create demand (gets pushed to sewers)
             for node in self.nodes_type['Demand'].values():
                 node.create_demand()
@@ -317,8 +322,6 @@ class Model(WSIObj):
             
             #Abstract
             for node in self.nodes_type['Reservoir'].values():
-                if node.t == self.dates[60]:
-                    flag = 1
                 node.make_abstractions()
             
             #Catchment routing
