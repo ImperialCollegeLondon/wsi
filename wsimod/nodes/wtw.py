@@ -46,7 +46,7 @@ class WTW(Node):
         if len(process_parameters) > 0:
             self.process_parameters = process_parameters
         else:
-            self.process_parameters = {x : {'constant' : 0.2, 'exponent' : 1.001} for x in constants.ADDITIVE_POLLUTANTS}
+            self.process_parameters = {x : {'constant' : 0.01, 'exponent' : 1.001} for x in constants.ADDITIVE_POLLUTANTS}
         if len(liquor_multiplier) > 0:
             self.liquor_multiplier = liquor_multiplier
         else:

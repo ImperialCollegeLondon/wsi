@@ -160,7 +160,11 @@ class NonResidentialDemand(Demand):
 class ResidentialDemand(Demand):
     """Subclass of demand with functions to handle internal and external water use
     """
-    
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        #Label as Demand class so that other nodes treat it the same
+        self.__class__.__name__ = 'Demand'
+        
     def get_demand(self):
         """Overwrite get_demand and replace with custom functions
 
