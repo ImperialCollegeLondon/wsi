@@ -143,7 +143,6 @@ class Land(Node):
         reply = self.push_distributed(percolation, of_type = ['Groundwater'])
         
         if reply['volume'] > constants.FLOAT_ACCURACY:
-            print('Groundwater rejected push')
             #Update percolation 'tank'
             _ = self.percolation.push_storage(reply, force = True)
         
@@ -268,11 +267,11 @@ class Surface(DecayTank):
             self.inflows = [self.atmospheric_deposition,
                             self.precipitation_deposition]
         else:
-            self.inflows = [lambda : (self.empty_vqip(), self.empty_vqip())]
+            self.inflows = []
         if len(self.pollutant_load) > 0:
             self.inflows.append(self.simple_deposition)
-        self.processes = [lambda : (self.empty_vqip(), self.empty_vqip())]
-        self.outflows = [lambda : (self.empty_vqip(), self.empty_vqip())]
+        self.processes = []
+        self.outflows = []
         
         
     def run(self):
