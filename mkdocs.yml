@@ -15,5 +15,11 @@ nav:
   - Tutorials: tutorials.md
   - How to guide: how-to.md
   - Preprocessing (England): preprocessing_england.md
-  - API reference - nodes: reference-nodes.md
+  - API reference - arc: reference-arc.md
+  - API reference - core: reference-core.md
   - API reference - land: reference-land.md
+  - API reference - nodes: reference-nodes.md
+  - API reference - sewer: reference-sewer.md
+  - API reference - storage: reference-storage.md
+  - API reference - wtw: reference-wtw.md
+  - API reference - other components: reference-other.md
