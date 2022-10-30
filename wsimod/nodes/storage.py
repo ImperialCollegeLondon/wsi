@@ -128,6 +128,7 @@ class Groundwater(Storage):
         
         Functions intended to call in orchestration:
             infiltrate (before sewers are discharged)
+
             distribute
         """
         self.residence_time = residence_time
@@ -744,6 +745,7 @@ class RiverReservoir(Reservoir):
         
         Functions intended to call in orchestration:
                 make_abstractions (if any)
+                
                 satisfy_environmental (before river routing.. possibly before 
                     downstream river abstractions depending on licence)
         """

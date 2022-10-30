@@ -143,6 +143,7 @@ class WWTW(WTW):
         
         Functions intended to call in orchestration:
             calculate_discharge
+            
             make_discharge
         """
         #Set parameters
