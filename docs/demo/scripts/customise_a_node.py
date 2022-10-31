@@ -26,7 +26,7 @@
 # off it by implementing a minimum required flow at the abstraction location. 
 # 
 # We copy all of the model creation code from the oxford demo into a single 
-# function below, you will want to ignore this and skip to [create baselin](#Create-baseline)
+# function below, you will want to ignore this and skip to [create baseline](#Create-baseline)
 # %%
 def create_oxford_model(data_folder):
     from wsimod.nodes.wtw import WWTW, FWTW
@@ -322,7 +322,7 @@ f.tight_layout()
 # To protect the river from abstractions during low flows, we can customise the
 # abstraction node to implement a MRF.
 #
-# Our new node will want to behave exactly the same as the old node, but with
+# Our new node will want to behave similar to the old node, but with
 # different behaviour when another node is pulling water from it. Thus we will 
 # define new functions to accommodate this.
 #
@@ -354,10 +354,10 @@ def pull_check_mrf(node,vqip = None):
 # We must also define what will happen during a 'pull set' - that is, how should
 # the node respond when another node requests water to pull from it.
 #
-# The default function for a node to do this is 'pull_distributed', which pulls
+# The default function for a node to do this is ```pull_distributed```, which pulls
 # water from upstream nodes. We still call pull_distributed, however we 
 # increase the amount we request via it by the amount of MRF yet to satisfy. 
-# Any water which satsifies the MRF goes towards mrf_satisfied_this_timestep, 
+# Any water which satsifies the MRF goes towards ```mrf_satisfied_this_timestep```, 
 # then the rest is available in the 'reply', for use in the pull request.
 # Finally, we route the water that was used to satisfy the mrf downstream so 
 # that it cannot be used again this timestep.
@@ -396,9 +396,9 @@ def pull_set_mrf(node, vqip):
 # because we want water that this node sends downstream on interactions that
 # are not to do with pulls to still update the minimum required flow. 
 # 
-# The default behaviour for a node to do a push set is 'push_distributed', which
+# The default behaviour for a node to do a push set is ```push_distributed```, which
 # pushes water to downstream nodes. We do this as normal, but then update the 
-# mrf_satisfied_this_timestep 
+# ```mrf_satisfied_this_timestep```
 # %%
 def push_set_mrf(node, vqip):
     #Respond to a push request to the node
@@ -416,7 +416,7 @@ def push_set_mrf(node, vqip):
 
 
 # %% [markdown]
-# We also create a function to reset the mrf_satisfied_this_timestep at the end
+# We also create a function to reset the ```mrf_satisfied_this_timestep``` at the end
 # of each timestep
 # %%
 def end_timestep(node):
@@ -481,7 +481,7 @@ plot_mrf = pd.DataFrame(index = [customised_model.dates[0],
                         columns = ['MRF'],
                         data = [new_mrf, new_mrf])
 plot_mrf.plot(ax=axs[0],
-              color = 'r',
+              color = 'k',
               ls = '--')
 axs[0].set_yscale('symlog')
 axs[0].set_ylim([10e3,10e7])
