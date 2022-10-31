@@ -432,8 +432,8 @@ class DecayObj(WSIObj):
         """A WSIObj that has decay functions built in. 
 
         Args:
-            decays (dict): A dict of dicts containing a key for each pollutant and, 
-                within that, a key for each parameter (a constant and exponent)
+            decays (dict): A dict of dicts containing a key for each pollutant that decays
+                and, within that, a key for each parameter (a constant and exponent)
         
         Examples:
             The 'constant' parameter represents what proportion of an amount will 

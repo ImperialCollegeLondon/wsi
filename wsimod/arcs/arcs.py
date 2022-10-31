@@ -128,6 +128,17 @@ class Arc(WSIObj):
         return reply
     
     def send_pull_request(self, vqip, tag = 'default'):
+        """Function used to transmit a pull request from one node (in_port) to 
+        another node (out_port).
+
+        Args:
+            vqip (dict): A dict VQIP of water to pull (by default, only 'volume' key is used)
+            tag (str, optional): optional message to direct the out_port's query_handler which 
+                function to call. Defaults to 'default'.
+
+        Returns:
+            (dict): A VQIP amount of water that was successfully pulled
+        """
         volume = vqip['volume']
         #Apply pipe capacity
         excess_in = self.get_excess(direction = 'pull', vqip = vqip)['volume']
@@ -154,14 +165,52 @@ class Arc(WSIObj):
         return vqip
     
     def send_push_check(self, vqip = None, tag = 'default'):
+        """Function used to transmit a push check from one node (in_port) to 
+        another node (out_port).
+
+        Args:
+            vqip (dict): A dict VQIP of water to push that can be specified. Defaults to None, 
+                which returns maximum capacity to push.
+            tag (str, optional):  optional message to direct the out_port's query_handler which 
+                function to call. Defaults to 'default'.
+
+        Returns:
+            (dict): A VQIP amount of water that could be pushed
+        """
         return self.get_excess(direction = 'push', vqip = vqip, tag = tag)
 
     
     def send_pull_check(self, vqip = None, tag = 'default'):
+        """Function used to transmit a pull check from one node (in_port) to 
+        another node (out_port).
+
+        Args:
+            vqip (dict): A dict VQIP of water to pull that can be specified (by default,
+                only the 'volume' key is used). Defaults to None, which returns all available
+                water to pull.
+            tag (str, optional):  optional message to direct the out_port's query_handler which 
+                function to call. Defaults to 'default'.
+
+        Returns:
+            (dict): A VQIP amount of water that could be pulled
+        """
         return self.get_excess(direction = 'pull', vqip = vqip, tag = tag)
     
     def get_excess(self, direction, vqip = None, tag = 'default'):
-        #Get excess in direction (push/pull)
+        """Calculate how much could be pull/pulled along the arc by
+        combining both arc capacity and out_port check information.
+
+        Args:
+            direction (str): should be 'pull' or 'push'
+            vqip (dict, optional): A VQIP amount to push/pull that can be 
+                specified. Defaults to None, which returns all available water to
+                pull or maximum capacity to push (depending on 'direction').
+            tag (str, optional): optional message to direct the out_port's query_handler which 
+                function to call. Defaults to 'default'.
+
+        Returns:
+            (dict): A VQIP amount of water that could be pulled/pushed
+        """
         
         #Pipe capacity
         pipe_excess = self.capacity - self.flow_in
@@ -175,22 +224,39 @@ class Arc(WSIObj):
 
         #TODO - sensible to min(vqip, excess) here? (though it should be applied by node)
 
-        #TODO : returning this as a vqip seems dodgy.. at least for pushes
         return self.v_change_vqip(node_excess, excess)
     
     def end_timestep(self):
+        """End timestep in an arc, resetting flow/vqip in/out (which determine)
+        the capacity for that timestep.
+        """
         self.vqip_in = self.empty_vqip()
         self.vqip_out = self.empty_vqip()
         self.flow_in = 0
         self.flow_out = 0
 
     def reinit(self):
+        """Reinitiatilise 
+        """
         self.end_timestep()
 
 class QueueArc(Arc):
-    def __init__(self, **kwargs):
-        #TODO - number_of_timesteps should be a named arg
-        self.number_of_timesteps = 0
+    def __init__(self,number_of_timesteps = 0,**kwargs):
+        """A queue arc that stores each push or pull individually in the queue.
+        Enables implementation of travel time. A fixed number of timesteps
+        can be specified as a parameter, and additional number of timesteps
+        can be specified when the requests are made.
+
+        The queue is a list of requests, where their travel time is decremented
+        by 1 each timestep. Any requests with a travel time of 0 will be sent 
+        onwards if the 'update_queue' function is called.
+
+        Args:
+            number_of_timesteps (int, optional): Fixed number of timesteps that
+                it takes to traverse the arc. Defaults to 0.
+        """
+
+        self.number_of_timesteps = number_of_timesteps
         self.queue = []
         super().__init__(**kwargs)
         
@@ -200,16 +266,41 @@ class QueueArc(Arc):
         self.mass_balance_ds.append(lambda : self.queue_arc_ds())
         
     def queue_arc_ds(self):
+        """Calculate change in amount of water and other pollutants in the arc
+
+        Returns:
+            (dict): A VQIP amount of change
+        """
         self.queue_storage = self.queue_arc_sum()
         return self.extract_vqip(self.queue_storage, self.queue_storage_)
         
     def queue_arc_sum(self):
+        """Sum the total water in the requests in the queue of the arc
+
+        Returns:
+            (dict): A VQIP amount of water/pollutants in the arc
+        """
         queue_storage = self.empty_vqip()
         for request in self.queue:
             queue_storage = self.sum_vqip(queue_storage, request['vqip'])
         return queue_storage
     
     def send_pull_request(self, vqip, tag = 'default', time = 0):
+        """"Function used to transmit a pull request from one node (in_port) to 
+        another node (out_port). Any pulled water is immediately
+        removed from the out_port and then takes the travel time to be 
+        received. This function has not been extensively tested.
+
+        Args:
+            vqip (_type_): A dict VQIP of water to pull (by default, only 'volume' key is used)
+            tag (str, optional): optional message to direct the out_port's query_handler which 
+                function to call. Defaults to 'default'.
+            time (int, optional): Travel time for request to spend in the arc (in addition to the
+                arc's 'number_of_timesteps' parameter). Defaults to 0.
+
+        Returns:
+            (dict): A VQIP amount of water that was successfully pulled.
+        """
         volume = vqip['volume']
         #Apply pipe capacity
         excess_in = self.get_excess(direction = 'pull', vqip = vqip)['volume']
@@ -237,7 +328,21 @@ class QueueArc(Arc):
         return reply
         
     def send_push_request(self, vqip_, tag = 'default', force = False, time = 0):
-        #TODO force doesn't appear to do anything here
+        """Function used to transmit a push request from one node (in_port) to 
+        another node (out_port). 
+
+        Args:
+            vqip_ (dict): A dict VQIP of water to push.
+            tag (str, optional): optional message to direct the out_port's query_handler which 
+                function to call. Defaults to 'default'.
+            force (bool, optional): Ignore the capacity of the arc (note does not currently,
+                pass the force argument to the out_port). Defaults to False.
+            time (int, optional): Travel time for request to spend in the arc (in addition to the
+                arc's 'number_of_timesteps' parameter). Defaults to 0.
+
+        Returns:
+            (dict): A VQIP amount of water that was not successfully pushed
+        """
         vqip = self.copy_vqip(vqip_)
         
         if vqip['volume'] < constants.FLOAT_ACCURACY:
@@ -273,6 +378,19 @@ class QueueArc(Arc):
         return not_pushed
     
     def enter_arc(self, request, direction, tag):
+        """Function used to cause format a request into the 
+        format expected by the enter_queue function. 
+
+        Args:
+            request (dict): A dict with a VQIP under the 'vqip' key and the travel
+                time under the 'time' key.
+            direction (str): Direction of flow, can be 'push' or 'pull
+            tag (str, optional):  optional message to direct the out_port's query_handler which 
+                function to call. Defaults to 'default'.
+
+        Returns:
+            (dict): The request dict with additional information entered for the queue.
+        """
         request['average_flow'] =  request['vqip']['volume'] / (request['time'] + 1)
         request['direction'] = direction
         request['tag'] = tag
@@ -283,6 +401,15 @@ class QueueArc(Arc):
         return request
         
     def enter_queue(self, request, direction = None, tag = 'default'):
+        """Add a request into the arc's queue list.
+
+        Args:
+            request (dict): A dict with a VQIP under the 'vqip' key and the travel
+                time under the 'time' key.
+            direction (str): Direction of flow, can be 'push' or 'pull
+            tag (str, optional):  optional message to direct the out_port's query_handler which 
+                function to call. Defaults to 'default'.
+        """
         #Update inflows and format request
         request = self.enter_arc(request, direction, tag)
 
@@ -290,6 +417,31 @@ class QueueArc(Arc):
         self.queue.append(request)
         
     def update_queue(self, direction = None, backflow_enabled = True):
+        """Iterate over all requests in the queue, removing them if they have
+        no volume. 
+        
+        If a request is a push and has 0 travel time remaining then
+        the push will be triggered at the out_port, if the out_port responds that 
+        it cannot receive the push, then this water will be returned as backflow
+        (if enabled). 
+
+        If a request is a pull and has 0 travel time remaining then it is simply summed
+        with other 0 travel time pull_requests and returned (since the pull is made at
+        the out_port when the send_pull_request is made).
+
+
+        Args:
+            direction (str, optional): Direction of flow, can be 'push' or 'pull. Defaults to None.
+            backflow_enabled (bool, optional): Enable backflow, described above, if not enabled
+                then the request will remain in the queue until all water has been received. 
+                Defaults to True.
+
+        Returns:
+            total_backflow (dict): In the case of a push direction, any backflow will be returned
+                as a VQIP amount
+            total_removed (dict): In the case of a pull direction, any pulled water will be returned
+                as a VQIP amount
+        """
         done_requests = []
         
         total_removed = self.empty_vqip()
@@ -347,6 +499,9 @@ class QueueArc(Arc):
             print('No direction')
         
     def end_timestep(self):
+        """End timestep in an arc, resetting flow/vqip in/out (which determine)
+        the capacity for that timestep. Update times of requests in the queue.
+        """
         self.vqip_in = self.empty_vqip()
         self.vqip_out = self.empty_vqip()
         self.flow_in = 0
@@ -366,6 +521,10 @@ class QueueArc(Arc):
         
 class AltQueueArc(QueueArc):
     def __init__(self, **kwargs):
+        """A simpler queue arc that has a queue that is a dict where each
+        key is the travel time. Cannot be used if arc capacity is dynamic.
+        Cannot be used for pulls.
+        """
         self.queue_arc_sum = self.alt_queue_arc_sum
                 
         super().__init__(**kwargs)
@@ -375,14 +534,26 @@ class AltQueueArc(QueueArc):
         
         
     def alt_queue_arc_sum(self):
+        """Sum the total water in the queue of the arc
+
+        Returns:
+            (dict): A VQIP amount of water/pollutants in the arc
+        """
         queue_storage = self.empty_vqip()
         for request in self.queue.values():
             queue_storage = self.sum_vqip(queue_storage, request)
         return queue_storage
     
-    def enter_queue(self, request, direction = None, tag = 'default'):
-        #NOTE- has no tags
-        
+    def enter_queue(self, request, direction = 'push', tag = 'default'):
+        """Add a request into the arc's queue.
+
+        Args:
+            request (dict): A dict with a VQIP under the 'vqip' key and the travel
+                time under the 'time' key.
+            direction (str): Direction of flow, can be 'push' only. Defaults to 'push'
+            tag (str, optional): Optional message for out_port's query handler, can be
+                'default' only. Defaults to 'default'.
+        """        
         #Update inflows and format request
         request = self.enter_arc(request, direction, tag)
         
@@ -396,7 +567,21 @@ class AltQueueArc(QueueArc):
 
         
     def update_queue(self, direction = None, backflow_enabled = True):
-        #NOTE - has no direction or tags
+        """Trigger the push of water in the 0th key for the queue, if the 
+        out_port responds that it cannot receive the push, then this water 
+        will be returned as backflow (if enabled). 
+
+        Args:
+            direction (str): Direction of flow, can be 'push' only. Defaults to 'push'
+            backflow_enabled (bool, optional): Enable backflow, described above, if not enabled
+                then the request will remain in the queue until all water has been received. 
+                Defaults to True.
+
+        Returns:
+            backflow (dict): In the case of a push direction, any backflow will be returned
+                as a VQIP amount
+        """
+        #TODO - can this work for pulls??
    
         
         total_removed = self.copy_vqip(self.queue[0])
@@ -418,6 +603,9 @@ class AltQueueArc(QueueArc):
         return backflow
         
     def end_timestep(self):
+        """End timestep in an arc, resetting flow/vqip in/out (which determine)
+        the capacity for that timestep. Update timings in the queue.
+        """
         self.vqip_in = self.empty_vqip()
         self.vqip_out = self.empty_vqip()
         self.flow_in = 0
@@ -440,6 +628,13 @@ class AltQueueArc(QueueArc):
 
 class DecayArc(QueueArc, DecayObj):
     def __init__(self,decays = {}, **kwargs):
+        """A QueueArc that applies decays from a DecayObj
+
+        Args:
+            decays (dict, optional): A dict of dicts containing a key for each pollutant that decays
+                and within that, a key for each parameter (a constant and exponent). 
+                Defaults to {}.
+        """
         self.decays = decays
         
         QueueArc.__init__(self, **kwargs)
@@ -447,14 +642,23 @@ class DecayArc(QueueArc, DecayObj):
         
         self.mass_balance_out.append(lambda : self.total_decayed)
         
-        
-        
-        
     def enter_queue(self, request, direction = None, tag = 'default'):
+        """Add a request into the arc's queue list. Apply the make_decay
+        function (i.e., the decay that occur's this timestep)
+
+        Args:
+            request (dict): A dict with a VQIP under the 'vqip' key and the travel
+                time under the 'time' key.
+            direction (str): Direction of flow, can be 'push' or 'pull
+            tag (str, optional):  optional message to direct the out_port's query_handler which 
+                function to call. Defaults to 'default'.
+        """
         #Update inflows and format
         request = self.enter_arc(request, direction, tag)
         
-        #TODO - currently decay depends on temp at the in_port data object.. surely on vqip would be more sensible?
+        #TODO - currently decay depends on temp at the in_port data object.. 
+        # surely on vqip would be more sensible? (though this is true in many
+        # places including WTW)
         
         #Decay on entry
         request['vqip'] = self.make_decay(request['vqip'])
@@ -465,6 +669,11 @@ class DecayArc(QueueArc, DecayObj):
         
 
     def end_timestep(self):
+        """End timestep in an arc, resetting flow/vqip in/out (which determine)
+        the capacity for that timestep. Update times of requests in the queue.
+        Apply the make_decay function (i.e., the decay that occurs in the following
+        timestep)
+        """
         self.vqip_in = self.empty_vqip()
         self.vqip_out = self.empty_vqip()
         self.total_decayed = self.empty_vqip()
@@ -482,6 +691,13 @@ class DecayArc(QueueArc, DecayObj):
 
 class DecayArcAlt(AltQueueArc, DecayObj):
     def __init__(self, decays={}, **kwargs):
+        """An AltQueueArc that applies decays from a DecayObj
+
+        Args:
+            decays (dict, optional): A dict of dicts containing a key for each pollutant that decays
+                and within that, a key for each parameter (a constant and exponent). 
+                Defaults to {}.
+        """
         self.decays = {}
         
         # super().__init__(**kwargs)
@@ -494,6 +710,16 @@ class DecayArcAlt(AltQueueArc, DecayObj):
         self.mass_balance_out.append(lambda : self.total_decayed)
         
     def enter_queue(self, request, direction = None, tag = 'default'):
+        """Add a request into the arc's queue. Apply the make_decay
+        function (i.e., the decay that occur's this timestep)
+
+        Args:
+            request (dict): A dict with a VQIP under the 'vqip' key and the travel
+                time under the 'time' key.
+            direction (str): Direction of flow, can be 'push' only. Defaults to 'push'
+            tag (str, optional): Optional message for out_port's query handler, can be
+                'default' only. Defaults to 'default'.
+        """
         #TODO- has no tags
         
         #Update inflows and format
@@ -513,6 +739,11 @@ class DecayArcAlt(AltQueueArc, DecayObj):
         
 
     def _end_timestep(self):
+        """End timestep in an arc, resetting flow/vqip in/out (which determine)
+        the capacity for that timestep. Update timings in the queue. 
+        Apply the make_decay function (i.e., the decay that occurs in the following
+        timestep)
+        """
         self.vqip_in = self.empty_vqip()
         self.vqip_out = self.empty_vqip()
         self.total_decayed = self.empty_vqip()

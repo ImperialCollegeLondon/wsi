@@ -1061,8 +1061,8 @@ class DecayTank(Tank, DecayObj):
         beginning of the timestep.
 
         Args:
-            decays (dict): A dict of dicts containing a key for each pollutant and, 
-                within that, a key for each parameter (a constant and exponent)
+            decays (dict): A dict of dicts containing a key for each pollutant that decays
+                and, within that, a key for each parameter (a constant and exponent)
             parent (object): An object that can be used to read temperature data from
         """
         #Store parameters
