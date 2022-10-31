@@ -30,20 +30,20 @@ class MyTestClass(TestCase):
     
     def test_get_flow(self):
         catchment = Catchment(name = '',
-                              data_input_dict = {('flow', 1) : 0.001,
+                              data_input_dict = {('flow', 1) : 10,
                                                   ('phosphate', 1) : 0.4,
                                                   ('temperature', 1): 10}
                               )
         catchment.t = 1
         vq = catchment.get_flow()
-        d1 = {'volume' : 0.001 * 86400,
-              'phosphate' : 0.4,
+        d1 = {'volume' : 10,
+              'phosphate' : 0.4 * 10,
               'temperature' : 10} 
         self.assertDictAlmostEqual(d1, vq)
     
     def test_get_avail(self):
         catchment = Catchment(name = '',
-                              data_input_dict = {('flow', 1) : 0.001,
+                              data_input_dict = {('flow', 1) : 10,
                                                   ('phosphate', 1) : 0.4,
                                                   ('temperature', 1): 10}
                               )
@@ -54,14 +54,14 @@ class MyTestClass(TestCase):
         arc1.vqip_in = {'volume' : 2}
         catchment.t = 1
         vq = catchment.get_avail()
-        d1 = {'volume' : 86.4 - 2,
-              'phosphate' : 0.4 * 84.4/86.4,
+        d1 = {'volume' : 10 - 2,
+              'phosphate' : 0.4 * 8,
               'temperature' : 10} 
         self.assertDictAlmostEqual(d1, vq)
     
     def test_route(self):
         catchment = Catchment(name = '',
-                              data_input_dict = {('flow', 1) : 0.001,
+                              data_input_dict = {('flow', 1) : 10,
                                                   ('phosphate', 1) : 0.4,
                                                   ('temperature', 1): 10}
                               )
@@ -74,8 +74,8 @@ class MyTestClass(TestCase):
         
         
         vq = catchment.get_flow()
-        d1 = {'volume' : 0.001 * 86400,
-              'phosphate' : 0.4,
+        d1 = {'volume' : 10,
+              'phosphate' : 0.4 * 10,
               'temperature' : 10}
         
         catchment.route()
@@ -83,7 +83,7 @@ class MyTestClass(TestCase):
         self.assertDictAlmostEqual(d1, arc1.vqip_out)
     def test_pull(self):
         catchment = Catchment(name = '',
-                              data_input_dict = {('flow', 1) : 0.001,
+                              data_input_dict = {('flow', 1) : 10,
                                                   ('phosphate', 1) : 0.4,
                                                   ('temperature', 1): 10}
                               )
@@ -94,14 +94,14 @@ class MyTestClass(TestCase):
         arc1.vqip_in['volume'] = 2
         catchment.t = 1
         vq1 = catchment.pull_check_abstraction()
-        d1 = {'volume' : 86.4 - 2,
-              'phosphate' : 0.4 * 84.4/86.4,
+        d1 = {'volume' : 10 - 2,
+              'phosphate' : 0.4 * 8,
               'temperature' : 10} 
         self.assertDictAlmostEqual(d1, vq1)
         
         vq2 = catchment.pull_check_abstraction({'volume' : 3})
         d2 = {'volume' : 3,
-              'phosphate' : 0.4 * 3/86.4,
+              'phosphate' : 0.4 * 3,
               'temperature' : 10} 
         self.assertDictAlmostEqual(d2, vq2)
         
