@@ -440,6 +440,12 @@ class Model(WSIObj):
     def reinit(self):
         for node in self.nodes.values():
             node.end_timestep()
-        
+            for prop in dir(node):
+                prop = node.__getattribute__(prop)
+                for prop_ in dir(prop):
+                    if prop_ == 'reinit':
+                        prop_ = node.__getattribute__(prop_)
+                        prop_()
+
         for arc in self.arcs.values():
             arc.end_timestep()

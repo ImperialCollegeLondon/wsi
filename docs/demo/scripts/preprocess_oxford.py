@@ -7,7 +7,7 @@ Created on Tue Nov 16 14:15:13 2021
 import pandas as pd
 import os
 import re
-
+from wsimod.preprocessing.geoprocessing_tools import create_timeseries
 data_dir = os.path.join(
                os.path.dirname(
                   os.path.dirname(
@@ -92,12 +92,6 @@ flows = flows.unstack().rename('value').reset_index()
 flows['variable'] = 'flow'
 
 rain = rain.loc[rain.date.isin(wq.date)]
-def create_timeseries(amount, dates, variable):
-    df = pd.DataFrame(columns = ['date','variable', 'value'])
-    df['date'] = dates
-    df['variable'] = variable
-    df['value'] = amount
-    return df
 evaporation = create_timeseries(2 / 1000, rain.date, 'et0')
 evaporation['site'] = 'oxford_land'
 

@@ -79,8 +79,6 @@ import pandas as pd
 import geopandas as gpd
 from shapely.geometry import LineString
 from matplotlib import pyplot as plt
-import warnings
-warnings.filterwarnings("ignore")
 
 # %% [markdown]
 # Load input data
@@ -88,7 +86,7 @@ warnings.filterwarnings("ignore")
 data_folder= os.path.join(os.path.abspath(''),
                                "docs","demo","data")
 
-data_folder = os.path.join(os.path.split(os.path.abspath(''))[0],"data")
+# data_folder = os.path.join(os.path.split(os.path.abspath(''))[0],"data") #Use this path if opening in jupyter
 
 input_fid = os.path.join(data_folder, "processed", "timeseries_data.csv")
 input_data = pd.read_csv(input_fid)
@@ -170,7 +168,8 @@ print(dir(evenlode))
 
 # %% [markdown]
 # ### Freshwater treatment works
-# Each type of node uses different parameters (see API reference). Below we create a freshwater treatment works (FWTW)
+# Each type of node uses different parameters (see [API reference](./../../../../reference)). 
+# Below we create a freshwater treatment works (FWTW)
 
 # %%
 
@@ -718,7 +717,7 @@ print(demand_to_sewer.flow_in)
 # %% [markdown]
 # Many nodes have functions intended to be called during orchestration.
 # These functions are described in the documentation.
-# For example, we see in the  [Land node](./../../../reference-land/#wsimod.nodes.land.Land) API reference that the 'run' function is intended to be called from orchestration.
+# For example, we see in the [Land node](./../../../reference-land/#wsimod.nodes.land.Land) API reference that the 'run' function is intended to be called from orchestration.
 # %%
 oxford_land.run()
 
@@ -788,7 +787,6 @@ my_model.dates = dates
 # The model object lets us reinitialise the nodes/arcs, and run all of the orchestration with a 'run' function.
 #
 # We see some mass balance errors, but because they are small and do not get larger, it is not something overly worrying (although if anyone wants to hunt down what is causing them I would be very grateful).
-
 # %%
 
 my_model.reinit()

@@ -207,7 +207,11 @@ class Land(Node):
             if surface.surface == surface_:
                 return surface
         return None
-        
+    
+    def reinit(self):
+        self.end_timestep()
+        for surface in self.surfaces + [self.surface_runoff, self.subsurface_runoff, self.percolation]:
+            surface.reinit()
         
 class Surface(DecayTank):
     def __init__(self,
