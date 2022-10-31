@@ -15,12 +15,13 @@ from wsimod.nodes.nodes import Node, Tank, ResidenceTank, DecayTank, QueueTank, 
 from wsimod.nodes.waste import Waste
 from wsimod.nodes.storage import Storage
 from wsimod.arcs.arcs import Arc
-constants.set_simple_pollutants()
+
 
     
 
 class MyTestClass(TestCase):
-    
+    def setUp(self):
+        constants.set_simple_pollutants()
     def assertDictAlmostEqual(self, d1, d2, accuracy = 19):
         for d in [d1, d2]:
             for key, item in d.items():

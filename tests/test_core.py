@@ -12,9 +12,10 @@ from unittest import TestCase
 from wsimod.core import constants
 from wsimod.core.core import WSIObj, DecayObj
 
-constants.set_simple_pollutants()
 
 class MyTestClass(TestCase):
+    def setUp(self):
+        constants.set_simple_pollutants()
     def test_empty(self):
         
         obj = WSIObj()
