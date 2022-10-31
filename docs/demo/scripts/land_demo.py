@@ -94,7 +94,8 @@ print(constants.POLLUTANTS)
 # ## Basic surface
 
 # %% [markdown]
-# Create a simple Land node with one basic surface.
+# Create a simple [Land node](./../../../reference-land/#wsimod.nodes.land.Land)
+# with one [basic surface](./../../../reference-land/#wsimod.nodes.land.Surface).
 # We can pass surfaces as a dictionary when creating a Land node.
 # %%
 surface = {'type_' : 'Surface',
@@ -465,5 +466,4 @@ flows.groupby('arc').get_group('outflow').set_index('time').phosphate.plot(ax=ax
 # the crops change the evapotranspiration coefficient
 #
 # Meanwhile, phosphate levels look much more interesting with the 
-# GrowingSurface, and are not solely dependent on the hydrology
-# %%
+# GrowingSurface, and are not solely dependent on the hydrology.

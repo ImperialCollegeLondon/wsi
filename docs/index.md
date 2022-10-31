@@ -39,6 +39,8 @@ and consists of four separate parts:
     
     3.8. [API reference - other components](reference-other.md)
 
+    3.9. [API reference - model](reference-model.md)
+
 ## Acknowledgements
 
 TODO: Acknowledge the people who have contributed to this project.
