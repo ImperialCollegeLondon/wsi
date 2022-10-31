@@ -20,6 +20,12 @@ import sys, inspect
 import os
 class Model(WSIObj):
     def __init__(self):
+        """Object to contain nodes and arcs that provides a default
+        orchestration
+
+        Returns:
+            Model: An empty model object
+        """
         super().__init__()
         self.arcs = {}
         # self.arcs_type = {} #not sure that this would be necessary
@@ -35,6 +41,13 @@ class Model(WSIObj):
         self.nodes_type = {x : {} for x in self.nodes_type}
         
     def add_nodes(self, nodelist):
+        """Add nodes to the model object from a list of dicts, where
+        each dict contains all of the parameters for a node. Intended
+        to be called before add_arcs.
+
+        Args:
+            nodelist (list): List of dicts, where a dict is a node
+        """
         def all_subclasses(cls):
             return set(cls.__subclasses__()).union(
                 [s for c in cls.__subclasses__() for s in all_subclasses(c)])
@@ -59,12 +72,25 @@ class Model(WSIObj):
             self.nodelist = [x for x in self.nodes.values()]
     
     def add_instantiated_nodes(self, nodelist):
+        """Add nodes to the model object from a list of objects, where
+        each object is an already instantiated node object. Intended
+        to be called before add_arcs.
+
+        Args:
+            nodelist (list): list of objects that are nodes
+        """
         self.nodelist = nodelist
         self.nodes = {x.name : x for x in nodelist}
         for x in nodelist:
             self.nodes_type[x.__class__.__name__][x.name] = x
     
     def add_arcs(self, arclist):
+        """Add nodes to the model object from a list of dicts, where
+        each dict contains all of the parameters for an arc. 
+
+        Args:
+            arclist (list): list of dicts, where a dict is an arc
+        """
         river_arcs = {}
         for arc in arclist:
             name = arc['name']
@@ -88,6 +114,12 @@ class Model(WSIObj):
                 self.river_discharge_order.append(node[0])
     
     def add_instantiated_arcs(self, arclist):
+        """Add arcs to the model object from a list of objects, where
+        each object is an already instantiated arc object.
+
+        Args:
+            arclist (list): list of objects that are arcs.
+        """
         self.arclist = arclist
         self.arcs = {x.name : x for x in arclist}
         river_arcs = {}
@@ -105,6 +137,18 @@ class Model(WSIObj):
                 self.river_discharge_order.append(node[0])
         
     def assign_upstream(self, arcs, upstreamness):
+        """Recursive function to trace upstream up 
+        arcs to determine which are the most upstream
+
+        Args:
+            arcs (list): list of dicts where dicts are arcs
+            upstreamness (dict): dictionary contain nodes in 
+                arcs as keys and a number representing upstreamness
+                (higher numbers = more upstream)
+
+        Returns:
+            upstreamness (dict): final version of upstreamness
+        """
         upstreamness_ = upstreamness.copy()
         in_nodes = [x.in_port.name for x in arcs.values() if x.out_port.name in upstreamness.keys()]
         ind = max(list(upstreamness_.values())) + 1
@@ -119,16 +163,33 @@ class Model(WSIObj):
     
 
     def save(self, fid):
+        """Save model as a pickled dill object
+
+        Args:
+            fid (str): file address to save model
+
+        Returns:
+            file close exit message
+        """
         #Note - dodgy if you are still editing the model! Only use for running the model
         file = open(fid, 'wb')
         pickle.dump(self, file)
         return file.close()
     
     def debug_node_mb(self):
+        """Simple function that iterates over nodes
+        calling their mass balance function
+        """
         for node in self.nodelist:
             _ = node.node_mass_balance()
     
     def default_settings(self):
+        """Incomplete function that enables easy specification
+        of results storage
+
+        Returns:
+            (dict): default settings
+        """
         return {'arcs' : {'flows' : True,
                           'pollutants' : True},
                 'tanks' : {'storages' : True,
@@ -136,6 +197,14 @@ class Model(WSIObj):
                 'mass_balance' : False}
     
     def change_runoff_coefficient(self, relative_change, nodes = None):
+        """Clunky way to change the runoff coefficient of a land node
+
+        Args:
+            relative_change (float): amount that the impervious area in the land
+                node is multiplied by (grass area is changed in compensation)
+            nodes (list, optional): list of land nodes to change the parameters of.
+                Defaults to None, which applies the change to all land nodes.
+        """
         #Multiplies impervious area by relative change and adjusts grassland accordingly
         if nodes == None:
             nodes = self.nodes_type['Land'].values()
@@ -172,6 +241,25 @@ class Model(WSIObj):
                      wwtw_id = 'uwwName',
                      catchment_id = 'wfdid',
                      ):
+        """Create a model following the default specification described
+        in england_water_body/scripts.
+
+        Args:
+            model_dir (str): path to extracted model
+            parameter_dir (str): path to directory with parameters
+            dates (list, optional): list of datetimes to include. Defaults to [].
+            x (list, optional): list of parameter values that align with calibrate-able
+                variables in england_water_body/data/raw/default_model_params.csv. 
+                Defaults to None, which just sets parameters as their defaults.
+            verbose (bool, optional): Prints updates on model creation if true. 
+                Defaults to True.
+            node_name (str, optional): String containing the node node column. 
+                Defaults to 'node_name'.
+            wwtw_id (str, optional): String referencing the name of wastewater plant
+                information column in related datasets. Defaults to 'uwwName'.
+            catchment_id (str, optional): String referencing the name of subcatchment
+                information column in related datasets. Defaults to 'wfdid'.
+        """
         def load(fid):
             file = open(fid,'rb')
             object_file = pickle.load(file)
@@ -255,6 +343,28 @@ class Model(WSIObj):
             record_tanks = None,
             verbose = True,
             record_all = True):
+        """Run the model object with the default orchestration
+
+        Args:
+            dates (list, optional): Dates to simulate. Defaults to None, which
+                simulates all dates that the model has data for.
+            settings (dict, optional): Dict to specify what results are stored,
+                not currently used. Defaults to None.
+            record_arcs (list, optional): List of arcs to store result for. 
+                Defaults to None.
+            record_tanks (list, optional): List of nodes with water stores to 
+                store results for. Defaults to None.
+            verbose (bool, optional): Prints updates on simulation if true. 
+                Defaults to True.
+            record_all (bool, optional): Specifies to store all results.
+                Defaults to True.
+
+        Returns:
+            flows: simulated flows in a list of dicts
+            tanks: simulated tanks storages in a list of dicts
+            node_mb: mass balance differences in a list of dicts (not currently used)
+            surfaces: simulated surface storages of land nodes in a list of dicts
+        """
         
         if record_arcs is None:
             record_arcs = self.arcs.keys()
@@ -438,6 +548,9 @@ class Model(WSIObj):
         return flows, tanks, node_mb, surfaces
     
     def reinit(self):
+        """Reinitialise by ending all node/arc timesteps and calling reinit
+        function in all nodes (generally zero-ing their storage values).
+        """
         for node in self.nodes.values():
             node.end_timestep()
             for prop in dir(node):

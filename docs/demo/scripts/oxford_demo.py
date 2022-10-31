@@ -1,6 +1,9 @@
 # %% [markdown]
 # # WSIMOD model demonstration - Oxford (.py)
 #
+# Note - this script can also be opened in interactive Python if you wanted to
+# play around. On the GitHub it is in docs/demo/scripts/quickstart_demo.py
+#
 # 1. [Introduction](#We-will-cover-a-demo-WSIMOD-case-study)
 #
 # 2. [Data](#Imports-and-forcing-data)
