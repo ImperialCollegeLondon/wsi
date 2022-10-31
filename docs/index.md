@@ -33,7 +33,7 @@ and consists of four separate parts:
     
     3.5. [API reference - sewer](reference-sewer.md)
     
-    3.6. [API reference - storage](reference-storage.md)
+    3.6. [API reference - storage (reservoir, river, groundwater)](reference-storage.md)
     
     3.7. [API reference - wtw](reference-wtw.md)
     

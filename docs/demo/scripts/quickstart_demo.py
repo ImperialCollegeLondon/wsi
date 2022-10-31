@@ -115,7 +115,8 @@ waste = {'type_' : 'Waste',
 # %% [markdown]
 # ## Create arcs
 # %% [markdown]
-# Arcs can also be created as dictionaries, they don't typically need any 
+# [Arcs](./../../../reference-arc/#wsimod.arcs.arcs.Arc) can also be 
+# created as dictionaries, they don't typically need any 
 # numerical parameters (although there are some exceptions in the 
 # [case study demo](./../oxford_demo/#Arc-parameters)). Though they do need
 # to specify the in_port (where the arc starts), and out_port (where it 
@@ -154,7 +155,7 @@ catchment_outflow = {'type_' : 'Arc',
 # %% [markdown]
 # ## Create model
 # %% [markdown]
-# We can create a model object and add dates
+# We can create a [model object](./../../../reference-model/#wsimod.orchestration.model.Model) and add dates
 # %%
 my_model = Model()
 my_model.dates = dates

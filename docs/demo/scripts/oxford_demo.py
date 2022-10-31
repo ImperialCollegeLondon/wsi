@@ -138,12 +138,14 @@ print(constants.POLLUTANTS)
 # ## Create nodes
 
 # %% [markdown]
-# For waste nodes, no parameters are needed, they are just the model outlet
+# For [waste nodes](./../../../reference-other/#wsimod.nodes.waste.Waste),
+# no parameters are needed, they are just the model outlet
 # %%
 thames_above_abingdon = Waste(name = 'thames_above_abingdon')
 
 # %% [markdown]
-# For junctions and abstraction locations, we can simply use the default nodes
+# For junctions and abstraction locations, we can simply use the default 
+# [nodes](./../../../reference-nodes/#wsimod.nodes.nodes.Node)
 # %%
 farmoor_abstraction = Node(name = 'farmoor_abstraction')
 evenlode_thames = Node(name = 'evenlode_thames')
@@ -152,7 +154,8 @@ cherwell_thames = Node(name = 'cherwell_thames')
 thames_mixer = Node(name = 'thames_mixer')
 
 # %% [markdown]
-# For catchment nodes, we only need to specify the input data (as a dictionary format).
+# For [catchment nodes](./../../../reference-other/#wsimod.nodes.catchment.Catchment), 
+# we only need to specify the input data (as a dictionary format).
 # %%
 evenlode = Catchment(name = 'evenlode',
                      data_input_dict = data_input_dict['evenlode'])
@@ -172,7 +175,7 @@ print(dir(evenlode))
 # %% [markdown]
 # ### Freshwater treatment works
 # Each type of node uses different parameters (see [API reference](./../../../../reference)). 
-# Below we create a freshwater treatment works (FWTW)
+# Below we create a [freshwater treatment works (FWTW)](./../../../reference-wtw/#wsimod.nodes.wtw.FWTW)
 
 # %%
 
@@ -221,10 +224,9 @@ print(oxford_fwtw.service_reservoir_tank.storage)
 
 # %% [markdown]
 # ### Land
-# We will now create a land node, it is a bit involved so you might want to skip ahead to [demand](#Residential-demand), and check out the [land node tutorial](./../land_demo)
-
-
-
+# We will now create a [land node](./../../../reference-land/#wsimod.nodes.land.Land), 
+# it is a bit involved so you might want to skip ahead to [demand](#Residential-demand), 
+# or check out the [land node tutorial](./../land_demo)
 # %% [markdown]
 # Data inputs are a single dictionary
 
@@ -312,7 +314,9 @@ print('{0}-{1}'.format('urban',urban_surface.storage))
 
 # %% [markdown]
 # ### Residential demand
-# The residential demand node requires population, per capita demand and a pollutant_load dictionary that defines how much (weight in kg) pollution is generated per person per day.
+# The [residential demand](./../../../reference-other/#wsimod.nodes.demand.ResidentialDemand)
+# node requires population, per capita demand and a pollutant_load dictionary that defines 
+# how much (weight in kg) pollution is generated per person per day.
 
 # %%
 oxford = ResidentialDemand(name = 'oxford',
@@ -338,7 +342,8 @@ oxford = ResidentialDemand(name = 'oxford',
 
 # %% [markdown]
 # ### Reservoir
-# A reservoir node is used to make abstractions from rivers and supply FWTWs
+# A [reservoir node](./../../../reference-storage/#wsimod.nodes.storage.Reservoir) 
+# is used to make abstractions from rivers and supply FWTWs
 
 # %%
 farmoor = Reservoir(name = 'farmoor',
@@ -349,7 +354,7 @@ farmoor = Reservoir(name = 'farmoor',
 
 # %% [markdown]
 # ### Distribution
-# We use a generic Node as a junction to represent the distribution network between the FWTW and households
+# We use a generic [Node](./../../../reference-nodes/#wsimod.nodes.nodes.Node) as a junction to represent the distribution network between the FWTW and households
 
 # %%
 
@@ -357,7 +362,9 @@ distribution = Node(name = 'oxford_distribution')
 
 # %% [markdown]
 # ### Wastewater treatment works
-# Wastewater treatment works (WWTW) are nodes that can store sewage water temporarily in storm tanks, and reduce the pollution amounts in water before releasing them onwards to rivers.
+# [Wastewater treatment works (WWTW)](./../../../reference-wtw/#wsimod.nodes.wtw.WWTW) 
+# are nodes that can store sewage water temporarily in storm tanks, and reduce the pollution 
+# amounts in water before releasing them onwards to rivers.
 
 # %%
 
@@ -368,8 +375,10 @@ oxford_wwtw = WWTW(stormwater_storage_capacity = 2e4,
 
 # %% [markdown]
 # ### Sewers
-# Sewer nodes enable water to transition between households and WWTWs, and between impervious surfaces and rivers or WWTWs.
-# They use a timearea diagram to represent travel time, which assigns a specified percentage of water to take a specified duration to pass through the sewer node.
+# [Sewer nodes](./../../../reference-sewer/#wsimod.nodes.sewer.Sewer) enable water to transition
+# between households and WWTWs, and between impervious surfaces and rivers or WWTWs.
+# They use a timearea diagram to represent travel time, which assigns a specified percentage
+# of water to take a specified duration to pass through the sewer node.
 # %%
 combined_sewer = Sewer(capacity = 4e6,
                        pipe_timearea = {0 : 0.8,
@@ -381,7 +390,8 @@ combined_sewer = Sewer(capacity = 4e6,
 
 # %% [markdown]
 # ### Groundwater
-# Groundwater nodes implement a simple residence time to determine baseflow
+# [Groundwater nodes](./../../../reference-storage/#wsimod.nodes.storage.Groundwater) 
+# implement a simple residence time to determine baseflow
 
 # %%
 
@@ -419,7 +429,7 @@ print(nodelist)
 
 # %% [markdown]
 # ## Arcs
-# Arcs link nodes.
+# [Arcs](./../../../reference-arc/#wsimod.arcs.arcs.Arc) link nodes.
 # An example arc is the link between a FWTW and the distribution node
 # %%
 
@@ -775,7 +785,8 @@ for arc in arclist:
 # %% [markdown]
 # ## Model object
 # Of course it would be a massive pain to manually orchestrate every timestep.
-# So instead we store node and arc information in a model object that will do the orchestration for us.
+# So instead we store node and arc information in a [model object](./../../../reference-model/#wsimod.orchestration.model.Model)
+# that will do the orchestration for us.
 #
 # Because we have already created the nodes/arcs above, we simply need to add the instantiated lists above.
 

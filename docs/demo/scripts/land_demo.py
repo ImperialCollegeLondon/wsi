@@ -15,6 +15,7 @@
 # 5. [Connecting land nodes in a model](#Connecting-land-nodes-in-a-model)
 #
 #     5.1 [Model object](#Model-object)
+#
 # 6. [Growing surface](#Growing-surface)
 # 
 # %% [markdown]
@@ -282,7 +283,7 @@ print(land.surface_runoff.storage)
 
 # %% [markdown]
 # ## Connecting land nodes in a model
-# As mentioned, the land node expects to be able to discharge to groundwater,
+# As mentioned, the land node expects to be able to discharge to [groundwater](./../../../reference-storage/#wsimod.nodes.storage.Groundwater),
 # and rivers (where a river could be the 
 # [River node](./../../../reference-storage/#wsimod.nodes.storage.River) 
 # or just a generic [Node](./../../../reference-nodes/#wsimod.nodes.nodes.Node)).
@@ -296,7 +297,7 @@ gw = Groundwater(name = 'my_groundwater',
 outlet = Waste(name = 'my_outlet')
 
 # %% [markdown]
-# We use arcs to join up all of the different nodes according to a standard
+# We use [arcs](./../../../reference-arc/#wsimod.arcs.arcs.Arc) to join up all of the different nodes according to a standard
 # hydrological representation.
 # %%
 arc1 = Arc(in_port = land, out_port = node, name = 'quickflow')
@@ -318,8 +319,8 @@ print(land.surface_runoff.storage)
 
 # %% [markdown]
 # ### Model object
-# We can put these nodes and arcs into the Model object to have a functioning
-# hydrological model.
+# We can put these nodes and arcs into the [Model object](./../../../reference-model/#wsimod.orchestration.model.Model) 
+# to have a functioning hydrological model.
 #
 # We start by creating a model object.
 # %%
