@@ -326,7 +326,7 @@ f.tight_layout()
 # different behaviour when another node is pulling water from it. Thus we will 
 # define new functions to accommodate this.
 #
-# The first function we will define is a 'pull_check' - that is, how should the 
+# The first function we will define is a 'pull check' - that is, how should the 
 # node respond when another node queries how much water could be pulled from it.
 # 
 # The only new line in comparison to that defined in the 
