@@ -85,6 +85,7 @@ wq['silicon'] *= 2.14
 
 wq = wq.melt(id_vars = ['site', 'date'])
 
+# wq.date = pd.to_datetime(wq.date.dt.date)
 
 flows = flows.loc[flows.index.isin(wq.date)]
 flows = flows.unstack().rename('value').reset_index()
@@ -92,7 +93,7 @@ flows['variable'] = 'flow'
 
 rain = rain.loc[rain.date.isin(wq.date)]
 def create_timeseries(amount, dates, variable):
-    df = pd.DataFrame(index = dates, columns = ['date','variable', 'value'])
+    df = pd.DataFrame(columns = ['date','variable', 'value'])
     df['date'] = dates
     df['variable'] = variable
     df['value'] = amount
@@ -100,10 +101,9 @@ def create_timeseries(amount, dates, variable):
 evaporation = create_timeseries(2 / 1000, rain.date, 'et0')
 evaporation['site'] = 'oxford_land'
 
-temperature = wq.loc[wq.variable == 'temperature'].groupby(['site','date']).mean()
-temperature = temperature.reset_index()
-temperature['variable'] = 'temperature'
-temperature['site'] = 'oxford_land'
+temperature_ = wq.loc[wq.variable == 'temperature'].groupby('date').mean().reset_index()
+temperature_['site'] = 'oxford_land'
+temperature_['variable'] = 'temperature'
 
-input_data = pd.concat([wq, flows, rain, evaporation, temperature], axis = 0)
+input_data = pd.concat([wq, flows, rain, evaporation, temperature_], axis = 0)
 input_data.to_csv(os.path.join(data_dir, "processed", "timeseries_data.csv"), index = False)
