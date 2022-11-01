@@ -91,8 +91,13 @@ class Storage(Node):
         retained = self.push_distributed(storage)
         if retained['volume'] > constants.FLOAT_ACCURACY:
             print('Storage unable to push')
-            
-    
+
+    def get_percent(self):
+        """Function that returns the volume in the storage tank
+        expressed as a percent of capacity
+        """        
+        return self.tank.storage['volume'] / self.tank.capacity
+        
     def end_timestep(self):
         """Update tank states
         """
