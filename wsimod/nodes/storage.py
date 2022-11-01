@@ -89,6 +89,7 @@ class Storage(Node):
         #Distribute any active storage
         storage = self.tank.pull_storage(self.tank.get_avail())
         retained = self.push_distributed(storage)
+        _ = self.tank.push_storage(retained, force = True)
         if retained['volume'] > constants.FLOAT_ACCURACY:
             print('Storage unable to push')
 
@@ -97,7 +98,7 @@ class Storage(Node):
         expressed as a percent of capacity
         """        
         return self.tank.storage['volume'] / self.tank.capacity
-        
+
     def end_timestep(self):
         """Update tank states
         """
@@ -149,8 +150,10 @@ class Groundwater(Storage):
         avail = self.tank.get_avail()['volume'] / self.residence_time
         to_send = self.tank.pull_storage({'volume' : avail})
         retained = self.push_distributed(to_send, of_type = ['Node', 'River', 'Waste'])
+        _ = self.tank.push_storage(retained, force = True)
         if retained['volume'] > constants.FLOAT_ACCURACY:
             print('Storage unable to push')
+            
     
     def infiltrate(self):
         """Calculate amount of water available for infiltration and send to sewers
@@ -163,10 +166,11 @@ class Groundwater(Storage):
         #Push to sewers
         to_send = self.tank.pull_storage({'volume' : avail})
         retained = self.push_distributed(to_send, of_type = 'Sewer')
-
+        _ = self.tank.push_storage(retained, force = True)
         #Any not sent is left in tank
         if retained['volume'] > constants.FLOAT_ACCURACY:
-            _ = self.tank.push_storage(retained, force = True)
+            print('unable to infiltrate')
+            
     
 class QueueGroundwater(Storage):
     #TODO - no infiltration as yet
@@ -706,9 +710,10 @@ class River(Storage):
         outflow = self.tank.pull_storage({'volume' : self.tank.storage['volume'] * self.get_riverrc()})
         #Distribute outflow
         reply = self.push_distributed(outflow, of_type = ['River','Node','Waste'])
+        _ = self.tank.push_storage(reply, force = True)
         if reply['volume'] > constants.FLOAT_ACCURACY:
             print('river cant push')
-        
+            
     def pull_check_fp(self, vqip = None):
         #TODO Pull checking for riparian buffer, needs updating
         # update river depth
@@ -736,8 +741,10 @@ class Reservoir(Storage):
         """
         reply = self.pull_distributed(self.tank.get_excess())
         spill = self.tank.push_storage(reply)
+        _ = self.tank.push_storage(spill, force = True)
         if spill['volume'] > constants.FLOAT_ACCURACY:
             print('Spill at reservoir')
+            
 
 class RiverReservoir(Reservoir):
     def __init__(self, environmental_flow = 0, **kwargs):
@@ -832,8 +839,10 @@ class RiverReservoir(Reservoir):
         environmental = self.tank.pull_storage({'volume' : to_satisfy})
         #Send downstream
         reply = self.push_distributed(environmental)
+        _ = self.tank.push_storage(reply, force = True)
         if reply['volume'] > 0:
             print('warning: environmental not able to push')
+            
         #Update satisfaction
         self.total_environmental_satisfied += environmental['volume']
         

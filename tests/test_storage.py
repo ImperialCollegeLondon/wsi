@@ -109,7 +109,7 @@ class MyTestClass(TestCase):
         d2 = {'volume' : 4*2/3,
                 'phosphate' : 0.2*2/3,
                 'temperature' : 12}
-        self.assertDictAlmostEqual(d2, groundwater.tank.storage,15)
+        self.assertDictAlmostEqual(d2, groundwater.tank.storage,14)
     
     def test_groundwater_infiltrate(self):
         constants.set_simple_pollutants()

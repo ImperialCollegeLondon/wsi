@@ -21,6 +21,10 @@ and consists of four separate parts:
 
 2. [How-To Guides](how-to.md)
 
+    2.1. [Customise a node](./demo/scripts/customise_a_node.py)
+
+    2.2. [Customise an arc](./demo/scripts/customise_an_arc.py)
+
 3. [API reference](reference.md)
     
     3.1. [API reference - arc](reference-arc.md)

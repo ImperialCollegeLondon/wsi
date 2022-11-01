@@ -25,9 +25,7 @@
 # We will use the [Oxford demo](./../oxford_demo) as our base model, and build 
 # off it by assigning a varying capacity to the river abstraction depending on
 # reservoir storage
-# %%
-
-# %% [markdown]
+#
 # ## Create baseline
 # We will first create and simulate the Oxford model to formulate baseline 
 # results. We use a version of the model with the minimum required flow from
@@ -35,7 +33,6 @@
 #
 # Start by importing packages.
 # %%
-from wsimod.core import constants
 import os
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -48,7 +45,7 @@ data_folder= os.path.join(os.path.abspath(''),
                                "docs","demo","data")
 
 #Use this path if opening in jupyter
-data_folder = os.path.join(os.path.split(os.path.abspath(''))[0],"data") 
+# data_folder = os.path.join(os.path.split(os.path.abspath(''))[0],"data") 
 
 baseline_model = create_oxford_model_mrf(data_folder)
 
@@ -60,7 +57,7 @@ baseline_flows = pd.DataFrame(baseline_flows)
 baseline_tanks = pd.DataFrame(baseline_tanks)
 
 # %% [markdown]
-# We see some alarmingly low reservoir levels - I am sure that Thames Water
+# When we plot the results, we see some alarmingly low reservoir levels - I am sure that Thames Water
 # would not be happy about this
 # %%
 f, axs = plt.subplots(3,1,figsize=(6,6))
@@ -114,11 +111,14 @@ capacity_multiplier = 1.25
 #     excess = min(pipe_excess, node_excess['volume'])
 #     return self.v_change_vqip(node_excess, excess)
 # ```
-# This shows only the bits of the function that are relevant for pulls. We need
-# to: 
-#   identify the month
-#   identify the reservoir volume expressed as a percent
-#   adjust the capacity to reflect possibility of increased abstractions
+# This shows only the bits of the function that are relevant for pulls. 
+# In order to implement the new variable capacity, we will need to: 
+#
+#   -identify the month
+#
+#   -identify the reservoir volume expressed as a percent
+#
+#   -adjust the capacity to reflect possibility of increased abstractions
 # %%
 def get_excess_new(arc, direction, vqip = None, tag = 'default'):
     #All nodes have access to the 't' parameter, which is a datetime object 
@@ -179,8 +179,8 @@ tanks_var_cap = pd.DataFrame(tanks_var_cap)
 # negligible change in river flow because the increased abstractions are mainly 
 # occurring when the flow is quite high. This is still unlikely to be a 
 # preferred option in practice because the lowest reservoir storage is
-# unchanged. The increased capacity available is not helpful when the flows are
-# so low that the minimum required flow is active!
+# unchanged. This happens because the increased capacity available is not helpful when the flows are
+# so low that the minimum required flow is active. Better luck next time Thames Water!
 # %%
 
 f, axs = plt.subplots(3,1,figsize=(6,6))

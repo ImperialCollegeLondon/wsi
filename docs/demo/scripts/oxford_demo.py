@@ -89,7 +89,8 @@ from matplotlib import pyplot as plt
 data_folder= os.path.join(os.path.abspath(''),
                                "docs","demo","data")
 
-# data_folder = os.path.join(os.path.split(os.path.abspath(''))[0],"data") #Use this path if opening in jupyter
+#Use this path if opening in jupyter
+# data_folder = os.path.join(os.path.split(os.path.abspath(''))[0],"data") 
 
 input_fid = os.path.join(data_folder, "processed", "timeseries_data.csv")
 input_data = pd.read_csv(input_fid)
@@ -129,7 +130,7 @@ constants.POLLUTANTS.remove('precipitation')
 constants.POLLUTANTS.remove('et0')
 constants.NON_ADDITIVE_POLLUTANTS = ['temperature']
 constants.ADDITIVE_POLLUTANTS = list(set(constants.POLLUTANTS).difference(constants.NON_ADDITIVE_POLLUTANTS))
-constants.FLOAT_ACCURACY = 1E-8
+constants.FLOAT_ACCURACY = 1E-11
 print(constants.POLLUTANTS)
 
 
@@ -799,8 +800,6 @@ my_model.dates = dates
 
 # %% [markdown]
 # The model object lets us reinitialise the nodes/arcs, and run all of the orchestration with a 'run' function.
-#
-# We see some mass balance errors, but because they are small and do not get larger, it is not something overly worrying (although if anyone wants to hunt down what is causing them I would be very grateful).
 # %%
 
 my_model.reinit()

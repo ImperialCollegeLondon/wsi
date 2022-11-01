@@ -18,6 +18,7 @@ import geopandas as gpd
 import pandas as pd
 import sys, inspect
 import os
+from math import log10
 class Model(WSIObj):
     def __init__(self):
         """Object to contain nodes and arcs that provides a default
@@ -459,7 +460,6 @@ class Model(WSIObj):
             for node in self.nodelist:
                 # print(node.name)
                 in_, ds_, out_ = node.node_mass_balance()
-
                 
                 # temp = {'name' : node.name,
                 #         'time' : date}
@@ -474,8 +474,22 @@ class Model(WSIObj):
                     sys_ds[v] += ds_[v]
         
             for v in constants.ADDITIVE_POLLUTANTS + ['volume']:
-                if (sys_in[v] - sys_ds[v] - sys_out[v]) > constants.FLOAT_ACCURACY:
-                    # pass
+                
+                #Find the largest value of in_, out_, ds_
+                largest = max(sys_in[v], sys_in[v], sys_in[v])
+
+                if largest > constants.FLOAT_ACCURACY:
+                    #Convert perform comparison in a magnitude to match the largest value
+                    magnitude = 10**int(log10(largest))
+                    in_10 = sys_in[v] / magnitude
+                    out_10 = sys_in[v] / magnitude
+                    ds_10 = sys_in[v] / magnitude
+                else:
+                    in_10 = sys_in[v]
+                    ds_10 = sys_in[v]
+                    out_10 = sys_in[v]
+                
+                if (in_10 - ds_10 - out_10) > constants.FLOAT_ACCURACY:
                     print("system mass balance error for " + v + " of " + str(sys_in[v] - sys_ds[v] - sys_out[v]))
             
             #Store results

@@ -205,6 +205,7 @@ class WWTW(WTW):
         """Discharge treated effluent
         """
         reply = self.push_distributed(self.treated)
+        _ = self.stormwater_tank.push_storage(reply, force = True)
         if reply['volume'] > constants.FLOAT_ACCURACY:
             print('WWTW couldnt push')
     
@@ -367,6 +368,7 @@ class FWTW(WTW):
         self.total_deficit = self.empty_vqip()
         self.total_pulled = self.empty_vqip()
         self.previous_pulled = self.empty_vqip()
+        self.unpushed_sludge = self.empty_vqip()
         
         #Create tanks
         self.service_reservoir_tank = Tank(capacity = self.service_reservoir_storage_capacity,
@@ -379,6 +381,7 @@ class FWTW(WTW):
         #Mass balance
         self.mass_balance_in.append(lambda : self.total_deficit)
         self.mass_balance_ds.append(lambda : self.service_reservoir_tank.ds())
+        self.mass_balance_out.append(lambda : self.unpushed_sludge)
     
     def treat_water(self):
         """Pulls water, aiming to fill service reservoirs, calls WTW treat_current_input, avoids deficit, sends liquor and solids to sewers
@@ -412,15 +415,16 @@ class FWTW(WTW):
         #Discharge liquor and solids to sewers
         push_back = self.sum_vqip(self.liquor, self.solids)
         rejected = self.push_distributed(push_back, of_type = 'Sewer')
-        
+        self.unpushed_sludge = self.sum_vqip(self.unpushed_sludge, rejected)
         if rejected['volume'] > constants.FLOAT_ACCURACY:
-            print('nowhere for sludge to go - mass balance error incoming')
+            print('nowhere for sludge to go')
         
         #Send water to service reservoirs
         excess = self.service_reservoir_tank.push_storage(self.treated)
-        
+        _ = self.service_reservoir_tank.push_storage(excess, force = True)
         if excess['volume'] > 0:
             print("excess treated water")
+            
     
     def pull_check_fwtw(self, vqip = None):
         """Pull checks query service reservoirs
@@ -457,6 +461,7 @@ class FWTW(WTW):
         self.previous_pulled = self.copy_vqip(self.total_pulled)
         self.total_pulled = self.empty_vqip()
         self.treated = self.empty_vqip()
+        self.unpushed_sludge = self.empty_vqip()
         
     def reinit(self):
         """Call tank reinit

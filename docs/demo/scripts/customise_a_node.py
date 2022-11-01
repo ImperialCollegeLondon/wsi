@@ -26,9 +26,7 @@
 #
 # We will use the [Oxford demo](./../oxford_demo) as our base model, and build 
 # off it by implementing a minimum required flow at the abstraction location. 
-# %%
-
-# %% [markdown]
+#
 # ## Create baseline
 # We will first create and simulate the Oxford model to formulate baseline 
 # results.

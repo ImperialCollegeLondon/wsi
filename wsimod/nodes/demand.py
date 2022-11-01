@@ -115,10 +115,10 @@ class Demand(Node):
                                               of_type = directions[key]['of_type'],
                                               tag = directions[key]['tag']
                                               )
-            
+            self.total_backup = self.sum_vqip(self.total_backup, remaining)
             if remaining['volume'] > constants.FLOAT_ACCURACY:
                 print('Demand not able to push')
-                self.total_backup = self.sum_vqip(self.total_backup, remaining)
+                
                 
         #Update for mass balance
         for dem in demand.values():

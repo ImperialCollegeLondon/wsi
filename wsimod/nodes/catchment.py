@@ -38,9 +38,11 @@ class Catchment(Node):
         self.pull_check_handler['default'] = self.pull_check_abstraction
         self.push_set_handler['default'] = self.push_set_deny
         self.push_check_handler['default'] = self.push_set_deny
-        
+        self.unrouted_water = self.empty_vqip()
         #Mass balance
         self.mass_balance_in.append(lambda : self.get_flow())
+        self.mass_balance_out.append(lambda : self.unrouted_water)
+        self.end_timestep = self.end_timestep_
         
     def get_flow(self):
         """Read volume data, read pollutant data, convert additibve pollutants
@@ -70,8 +72,10 @@ class Catchment(Node):
         reply = self.push_distributed(avail, of_type = ['Node', 
                                                         'River', 
                                                         'Waste'])
+        self.unrouted_water = self.sum_vqip(self.unrouted_water, reply)
         if reply['volume'] > constants.FLOAT_ACCURACY:
-            print('Catchment unable to route')
+            pass
+            # print('Catchment unable to route')
     
     def get_avail(self):
         """Water available for abstraction (Read data and subtract pre-existing 
@@ -124,3 +128,8 @@ class Catchment(Node):
                                        min(avail['volume'], vqip['volume']))
         
         return avail
+    
+    def end_timestep_(self):
+        """Reset unrouted water
+        """
+        self.unrouted_water = self.empty_vqip()
