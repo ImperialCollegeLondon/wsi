@@ -9,41 +9,43 @@ project documentation as described by Daniele Procida
 in the [Diátaxis documentation framework](https://diataxis.fr/)
 and consists of four separate parts:
 
-1. [Installation](installation.md)
+1. [About](./paper/paper.md)
 
-1. [Tutorials](tutorials.md)
-    
-    1.1. [Quickstart](./demo/scripts/quickstart_demo.py)
-    
-    1.2. [WSIMOD model demonstration - Oxford](./demo/scripts/oxford_demo.py)
-    
-    1.3. [Land nodes - hydrology and agriculture](./demo/scripts/land_demo.py)
+2. [Installation](installation.md)
 
-2. [How-To Guides](how-to.md)
+3. [Tutorials](tutorials.md)
+    
+    3.1. [Quickstart](./demo/scripts/quickstart_demo.py)
+    
+    3.2. [WSIMOD model demonstration - Oxford](./demo/scripts/oxford_demo.py)
+    
+    3.3. [Land nodes - hydrology and agriculture](./demo/scripts/land_demo.py)
 
-    2.1. [Customise a node](./demo/scripts/customise_a_node.py)
+4. [How-To Guides](how-to.md)
 
-    2.2. [Customise an arc](./demo/scripts/customise_an_arc.py)
+    4.1. [Customise a node](./demo/scripts/customise_a_node.py)
 
-3. [API reference](reference.md)
-    
-    3.1. [API reference - arc](reference-arc.md)
-    
-    3.2. [API reference - core](reference-core.md)
-    
-    3.3. [API reference - land](reference-land.md)
-    
-    3.4. [API reference - nodes](reference-nodes.md)
-    
-    3.5. [API reference - sewer](reference-sewer.md)
-    
-    3.6. [API reference - storage (reservoir, river, groundwater)](reference-storage.md)
-    
-    3.7. [API reference - wtw](reference-wtw.md)
-    
-    3.8. [API reference - other components](reference-other.md)
+    4.2. [Customise an arc](./demo/scripts/customise_an_arc.py)
 
-    3.9. [API reference - model](reference-model.md)
+5. [API reference](reference.md)
+    
+    5.1. [API reference - arc](reference-arc.md)
+    
+    5.2. [API reference - core](reference-core.md)
+    
+    5.3. [API reference - land](reference-land.md)
+    
+    5.4. [API reference - nodes](reference-nodes.md)
+    
+    5.5. [API reference - sewer](reference-sewer.md)
+    
+    5.6. [API reference - storage (reservoir, river, groundwater)](reference-storage.md)
+    
+    5.7. [API reference - wtw](reference-wtw.md)
+    
+    5.8. [API reference - other components](reference-other.md)
+
+    5.9. [API reference - model](reference-model.md)
 
 ## Acknowledgements
 
