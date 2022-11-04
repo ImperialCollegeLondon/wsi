@@ -290,3 +290,21 @@ def create_oxford_model_mrf(data_folder):
   my_model = create_oxford_model(data_folder)
   convert_to_mrf(my_model.nodes['farmoor_abstraction'], mrf = 3 * 86400)
   return my_model
+
+def create_timeseries(amount, dates, variable):
+    """Create a timeseries with a constant value, formatted 
+    as a dataframe.
+
+    Args:
+        amount (float): Constant value to be applied over the timeseries
+        dates (list): list or iterable of dates to be generated
+        variable (str): String to store in the 'variable' column of the dataframe
+
+    Returns:
+        (DataFrame): the formatted dataframe
+    """
+    df = pd.DataFrame(columns = ['date','variable', 'value'])
+    df['date'] = dates
+    df['variable'] = variable
+    df['value'] = amount
+    return df

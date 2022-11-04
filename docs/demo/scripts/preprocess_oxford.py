@@ -7,7 +7,7 @@ Created on Tue Nov 16 14:15:13 2021
 import pandas as pd
 import os
 import re
-from wsimod.preprocessing.geoprocessing_tools import create_timeseries
+from wsimod.demo.create_oxford import create_timeseries
 data_dir = os.path.join(
                os.path.dirname(
                   os.path.dirname(

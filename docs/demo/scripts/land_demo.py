@@ -44,7 +44,7 @@ from wsimod.nodes.storage import Groundwater
 from wsimod.orchestration.model import Model
 from wsimod.arcs.arcs import Arc
 from wsimod.core import constants
-from wsimod.preprocessing.geoprocessing_tools import create_timeseries
+from wsimod.demo.create_oxford import create_timeseries
 import os
 import pandas as pd
 from matplotlib import pyplot as plt

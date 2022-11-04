@@ -13,7 +13,6 @@ from wsimod.core import constants
 from wsimod.core.core import WSIObj
 from wsimod.nodes.nodes import QueueTank, Tank, Node
 from pandas import to_datetime
-from wsimod.preprocessing import england_data_formatting as ef
 import geopandas as gpd
 import pandas as pd
 import sys, inspect
@@ -231,111 +230,6 @@ class Model(WSIObj):
                 for pool in surface_dict['Grass'].nutrient_pool.pools:
                     for nutrient in pool.storage.keys():
                         pool.storage[nutrient] *= (new_grass_area / grass_area)
-
-    def make_default(self,
-                     model_dir,
-                     parameter_dir,
-                     dates = [],
-                     x = None,
-                     verbose = True,
-                     node_name = 'node_name',
-                     wwtw_id = 'uwwName',
-                     catchment_id = 'wfdid',
-                     ):
-        """Create a model following the default specification described
-        in england_water_body/scripts.
-
-        Args:
-            model_dir (str): path to extracted model
-            parameter_dir (str): path to directory with parameters
-            dates (list, optional): list of datetimes to include. Defaults to [].
-            x (list, optional): list of parameter values that align with calibrate-able
-                variables in england_water_body/data/raw/default_model_params.csv. 
-                Defaults to None, which just sets parameters as their defaults.
-            verbose (bool, optional): Prints updates on model creation if true. 
-                Defaults to True.
-            node_name (str, optional): String containing the node node column. 
-                Defaults to 'node_name'.
-            wwtw_id (str, optional): String referencing the name of wastewater plant
-                information column in related datasets. Defaults to 'uwwName'.
-            catchment_id (str, optional): String referencing the name of subcatchment
-                information column in related datasets. Defaults to 'wfdid'.
-        """
-        def load(fid):
-            file = open(fid,'rb')
-            object_file = pickle.load(file)
-            file.close()
-            return object_file
-        
-        #TODO parameters should maybe be copied to the model folder (though now it's being used by water resources...)
-        
-        
-        if verbose:
-            print('loading geospatial data')
-        subs = gpd.read_file(os.path.join(model_dir, "subcatchments.geojson"))
-        population_nodes = gpd.read_file(os.path.join(model_dir, "foul_population_nodes.geojson"))
-        river_nodes = gpd.read_file(os.path.join(model_dir, "river_nodes.geojson"))
-        wwtw = gpd.read_file(os.path.join(model_dir, "wwtw.geojson")).set_index(wwtw_id).geometry
-        ww_discharge = gpd.read_file(os.path.join(model_dir, "ww_discharge.geojson"))
-        catchment_outlets = gpd.read_file(os.path.join(model_dir, "catchment_outlets.geojson")).set_index('start_wfdid')
-        
-        if verbose:
-            print('loading surfaces')
-        impervious_surfaces = pd.read_parquet(os.path.join(model_dir, "surfaces", "impervious_surfaces.gzip"))
-        growing_surfaces = pd.read_parquet(os.path.join(model_dir, "surfaces", "growing_surfaces.gzip"))
-        
-        if verbose:
-            print('loading inputs')
-        input_data = load(os.path.join(model_dir, "input_data.pkl"))
-        surface_input_data = load(os.path.join(model_dir, "surface_input_data.pkl"))
-
-        if verbose:
-            print('loading parameters')
-        pollutant_params = pd.read_csv(os.path.join(parameter_dir, "default_pollutant_params.csv"))
-        model_parameters_ = pd.read_csv(os.path.join(parameter_dir, "default_model_parameters.csv"))
-        # model_ub = model_parameters_.set_index('parameter').ub.to_dict()
-        # model_lb = model_parameters_.set_index('parameter').lb.to_dict()
-        model_parameters = model_parameters_.set_index('parameter').value.to_dict()
-        
-        #Assign x
-        if x is not None:
-            for par, (idx, row) in zip(x, model_parameters_.set_index('parameter').dropna(subset=['calibrate']).iterrows()):
-                model_parameters[idx] = par * (row.ub - row.lb) + row.lb        
-        
-        model_parameters['wilting_point'] = min(model_parameters['wilting_point'], model_parameters['field_capacity'])
-        constants.FLOAT_ACCURACY = 1e-8
-        constants.POLLUTANTS = ['temperature']
-        constants.ADDITIVE_POLLUTANTS = []
-        constants.NON_ADDITIVE_POLLUTANTS = ['temperature']
-        #TODO these need to be reloaded if simulated with true and then false?    
-        if verbose:
-            print('Create model')
-        nodelist, arclist = ef.format_node_arc(subs,
-                                                population_nodes,
-                                                river_nodes,
-                                                wwtw,
-                                                ww_discharge,
-                                                catchment_outlets,
-                                                
-                                                impervious_surfaces,
-                                                growing_surfaces,
-                                                
-                                                input_data,
-                                                surface_input_data,
-                                                
-                                                pollutant_params,
-                                                model_parameters,
-                                                
-                                                node_name,
-                                                wwtw_id,
-                                                catchment_id,
-                                                )
-        
-        model = Model()
-        model.add_nodes(nodelist)
-        model.add_arcs(arclist)
-        model.dates = dates
-        return model
     
     def run(self, 
             dates = None,
