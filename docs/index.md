@@ -1,6 +1,7 @@
 # Welcome to WSIMOD
 
 This is the documentation for the [WSIMOD project](https://github.com/barneydobson/wsimod).
+WSIMOD stands for the Water Systems Integrated Modelling framework.
 
 ## Table Of Contents
 
@@ -51,4 +52,17 @@ and consists of:
 
 ## Acknowledgements
 
-TODO: Acknowledge the people who have contributed to this project.
+WSIMOD was developed by Barnaby Dobson and Liu Leyang. 
+Theoretical support was provided by Ana Mijic.
+Testing the WSIMOD over a variety of applications has been performed by 
+Fangjun Peng, Vladimir Krivstov and Samer Muhandes.
+
+The design of WSIMOD was significantly influenced by 
+[CityDrain3](https://github.com/gregorburger/CityDrain3), 
+[OpenMI](https://www.ogc.org/standards/openmi), 
+[Belete, Voinov and Laniak, (2017)](https://doi.org/10.1016/j.envsoft.2016.10.013), 
+and [smif](https://github.com/tomalrussell/smif).
+
+We acknowledge funding from the CAMELLIA project (Community Water Management 
+for a Liveable London), funded by the Natural Environment Research Council 
+(NERC) under grant NE/S003495/1.

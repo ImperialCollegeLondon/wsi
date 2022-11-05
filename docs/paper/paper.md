@@ -1,5 +1,5 @@
 ---
-title: 'WSIMOD: A Python package for integrated modelling of water quality and quantity across the water cycle'
+title: 'Water Systems Integrated Modelling framework, WSIMOD: A Python package for integrated modelling of water quality and quantity across the water cycle'
 tags:
   - Python
   - water quality
@@ -38,13 +38,13 @@ that is accessible and easy to setup.
 
 # Statement of need
 
-`WSIMOD` is a Python package for integrated modelling of the water cycle. It 
+WSIMOD is a Python package for integrated modelling of the water cycle. It 
 brings together a range of software developed over the course of three years 
 on the [CAMELLIA project](https://www.camelliawater.org/). Urban water 
 processes are based on those presented and validated in the CityWat model 
 [@Dobson:2020;@Dobson:2021;@Dobson:2022;@Muhandes:2022], while hydrological 
 and agricultural processes are from the CatchWat model [@Liu:2022;@Liu:2022b]. 
-`WSIMOD` also provides an interface for message passing between different 
+WSIMOD also provides an interface for message passing between different 
 model components, enabling all parts of the water cycle to interact with all 
 other parts. The result is a simulation model that is easy to set up, highly 
 flexible and ideal for representing water quality and quantity in 'non-
@@ -56,6 +56,17 @@ connect them together with arcs (i.e., representing the fluxes between
 subsystems), and orchestrate them into a model that creates simulations. 
 
 # Acknowledgements
+
+WSIMOD was developed by Barnaby Dobson and Liu Leyang. 
+Theoretical support was provided by Ana Mijic.
+Testing the WSIMOD over a variety of applications has been performed by 
+Fangjun Peng, Vladimir Krivstov and Samer Muhandes.
+
+The design of WSIMOD was significantly influenced by 
+[CityDrain3](https://github.com/gregorburger/CityDrain3), 
+[OpenMI](https://www.ogc.org/standards/openmi), 
+[Belete, Voinov and Laniak, (2017)](https://doi.org/10.1016/j.envsoft.2016.10.013), 
+and [smif](https://github.com/tomalrussell/smif).
 
 We acknowledge funding from the CAMELLIA project (Community Water Management 
 for a Liveable London), funded by the Natural Environment Research Council 
