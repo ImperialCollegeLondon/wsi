@@ -24,7 +24,7 @@ markdown_extensions:
   - footnotes
 
 nav:
-  - Home: README.md
+  - Home: index.md
   - About: ./paper/paper.md
   - Installation: installation.md
   - Tutorials: tutorials.md
