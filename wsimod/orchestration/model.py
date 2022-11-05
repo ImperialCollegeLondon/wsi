@@ -13,10 +13,12 @@ from wsimod.core import constants
 from wsimod.core.core import WSIObj
 from wsimod.nodes.nodes import QueueTank, Tank, Node
 from pandas import to_datetime
+import os
+os.environ['USE_PYGEOS'] = '0'
 import geopandas as gpd
 import pandas as pd
 import sys, inspect
-import os
+
 from math import log10
 class Model(WSIObj):
     def __init__(self):
