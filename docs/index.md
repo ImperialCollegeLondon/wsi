@@ -7,7 +7,7 @@ This is the documentation for the [WSIMOD project](https://github.com/barneydobs
 The documentation follows the best practice for
 project documentation as described by Daniele Procida
 in the [Diátaxis documentation framework](https://diataxis.fr/)
-and consists of four separate parts:
+and consists of:
 
 1. [About](./paper/paper.md)
 
@@ -46,6 +46,8 @@ and consists of four separate parts:
     5.8. [API reference - other components](reference-other.md)
 
     5.9. [API reference - model](reference-model.md)
+
+6. [Coverage](coverage.md)
 
 ## Acknowledgements
 
