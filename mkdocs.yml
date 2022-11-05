@@ -32,3 +32,4 @@ nav:
   - API reference: reference.md
   - Quickstart: ./demo/scripts/quickstart_demo.py
   - Coverage report: coverage.md
+  - WSIMOD repository: https://github.com/barneydobson/wsi

@@ -57,10 +57,11 @@ subsystems), and orchestrate them into a model that creates simulations.
 
 # Acknowledgements
 
-WSIMOD was developed by Barnaby Dobson and Liu Leyang. 
+WSIMOD was developed by Barnaby Dobson and Leyang Liu. 
 Theoretical support was provided by Ana Mijic.
 Testing the WSIMOD over a variety of applications has been performed by 
 Fangjun Peng, Vladimir Krivstov and Samer Muhandes.
+Software development support was provided by Imperial College's Research Software Engineering service, in particular from Diego Alonso and Dan Davies.
 
 The design of WSIMOD was significantly influenced by 
 [CityDrain3](https://github.com/gregorburger/CityDrain3), 
