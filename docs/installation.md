@@ -6,12 +6,7 @@ conda activate wsimod
 
 Install a GUI if you like
 ```
-conda install spyder -c conda-forge --verbose
-```
-
-Install geopandas separately (because it is naughty)
-```
-conda install geopandas -c conda-forge --verbose
+conda install spyder -c conda-forge
 ```
 
 Download or clone this folder, navigate to it, and run:
