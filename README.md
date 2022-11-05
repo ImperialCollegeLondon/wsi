@@ -1,7 +1,8 @@
 # Welcome to WSIMOD
 
-This is the documentation for the [WSIMOD project](https://github.com/barneydobson/wsi).
 WSIMOD stands for the Water Systems Integrated Modelling framework.
+
+You can access our documentation below or at [https://barneydobson.github.io/wsi](https://barneydobson.github.io/wsi).
 
 ## Table Of Contents
 
