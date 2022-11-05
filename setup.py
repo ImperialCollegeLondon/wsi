@@ -8,7 +8,7 @@ setuptools.setup(
    packages=setuptools.find_packages(),
    license='LICENSE.txt',
    description='An awesome package that does something',
-   long_description=open('README.md').read(),
+   long_description=open('docs\README.md').read(),
    install_requires=['pandas',
       'geopandas',
       'dill',
