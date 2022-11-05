@@ -77,8 +77,9 @@ from wsimod.nodes.nodes import Node
 from wsimod.orchestration.model import Model
 from wsimod.arcs.arcs import Arc
 from wsimod.core import constants
-import os
 import pandas as pd
+import os
+os.environ['USE_PYGEOS'] = '0'
 import geopandas as gpd
 from shapely.geometry import LineString
 from matplotlib import pyplot as plt
