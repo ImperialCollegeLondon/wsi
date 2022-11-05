@@ -1,7 +1,7 @@
 # %% [markdown]
 # # Quickstart (.py)
 # Note - this script can also be opened in interactive Python if you wanted to
-# play around. On the GitHub it is in docs/demo/scripts/quickstart_demo.py
+# play around. On the GitHub it is in [docs/demo/scripts](https://github.com/barneydobson/wsi/blob/main/docs/demo/scripts/quickstart_demo.py)
 #
 # 1. [Introduction](#Introduction)
 #
