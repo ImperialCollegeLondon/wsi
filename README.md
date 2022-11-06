@@ -49,7 +49,7 @@ and consists of:
 
     5.9. [API reference - model](https://barneydobson.github.io/wsi/reference-model/)
 
-6. [Coverage](coverage.md)
+6. [Coverage](https://barneydobson.github.io/wsi/coverage/)
 
 ## Acknowledgements
 
