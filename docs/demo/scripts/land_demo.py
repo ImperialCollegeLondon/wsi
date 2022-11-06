@@ -261,7 +261,7 @@ print(land.get_surface('my_surface').get_smc() / land.get_surface('my_surface').
 # %% [markdown]
 # Once soil moisture content is greater than the field capacity, 
 # flows will be generated and the land tanks will fill up.
-# %% [markdown]
+# %%
 print(land.percolation.storage)
 print(land.subsurface_runoff.storage)
 print(land.surface_runoff.storage)
