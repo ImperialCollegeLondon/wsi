@@ -169,7 +169,8 @@ class Groundwater(Storage):
         _ = self.tank.push_storage(retained, force = True)
         #Any not sent is left in tank
         if retained['volume'] > constants.FLOAT_ACCURACY:
-            print('unable to infiltrate')
+            #print('unable to infiltrate')
+            pass
             
     
 class QueueGroundwater(Storage):
