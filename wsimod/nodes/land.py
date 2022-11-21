@@ -367,7 +367,10 @@ class Surface(DecayTank):
 
         #Scale by area
         for pol, item in self.pollutant_load.items():
-            pollution[pol] = item * self.area
+            if pol in constants.ADDITIVE_POLLUTANTS:
+                pollution[pol] = item * self.area
+            else:
+                pollution[pol] = item
         pollution['volume'] = 0
         
         #Update tank
