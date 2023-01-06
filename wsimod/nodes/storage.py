@@ -9,6 +9,7 @@ Converted to totals on 2022-05-03
 from wsimod.nodes.nodes import Node, Tank, QueueTank, DecayTank, DecayQueueTank
 from wsimod.core import constants
 from math import exp
+import pandas as pd
 class Storage(Node):
     def __init__(self, 
                         name,
@@ -696,9 +697,7 @@ class River(Storage):
             riverrc = 1
         return riverrc
     
-    def distribute(self):
-        """Run biochemical processes, track mass balance, and distribute water
-        """
+    def calculate_discharge(self):
         if 'nitrate' in constants.POLLUTANTS:
             #TODO clumsy
             #Run biochemical processes
@@ -706,7 +705,11 @@ class River(Storage):
             #Mass balance
             self.bio_in = in_
             self.bio_out = out_
-        
+            
+    def distribute(self):
+        """Run biochemical processes, track mass balance, and distribute water
+        """
+        # self.calculate_discharge()
         #Get outflow
         outflow = self.tank.pull_storage({'volume' : self.tank.storage['volume'] * self.get_riverrc()})
         #Distribute outflow
