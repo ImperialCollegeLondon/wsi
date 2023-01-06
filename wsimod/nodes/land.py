@@ -890,7 +890,7 @@ class GrowingSurface(PerviousSurface):
         self.et0_coefficient = 1
 
         #Calculate parameters based on capacity/wp
-        self.total_available_water = (self.field_capacity - self.wilting_point) * self.depth
+        self.total_available_water = (self.field_capacity - self.wilting_point)
         if self.total_available_water < 0:
             print('warning: TAW < 0...')
         self.readily_available_water = self.total_available_water * self.ET_depletion_factor
