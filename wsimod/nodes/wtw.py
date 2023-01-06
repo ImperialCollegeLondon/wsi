@@ -205,8 +205,9 @@ class WWTW(WTW):
         """Discharge treated effluent
         """
         reply = self.push_distributed(self.treated)
-        _ = self.stormwater_tank.push_storage(reply, force = True)
+        self.treated = self.empty_vqip()
         if reply['volume'] > constants.FLOAT_ACCURACY:
+            _ = self.stormwater_tank.push_storage(reply, force = True)
             print('WWTW couldnt push')
     
     def push_check_sewer(self, vqip = None):
@@ -304,7 +305,7 @@ class WWTW(WTW):
                 timestep's treated throughput
         """
         #Respond to request of water for reuse/MRF
-        return self.copy_vqip(self.previous_input)
+        return self.copy_vqip(self.treated)
     
     def end_timestep_(self):
         """End timestep function to update state variables
@@ -312,7 +313,6 @@ class WWTW(WTW):
         self.liquor_ = self.copy_vqip(self.liquor)
         self.previous_input = self.copy_vqip(self.current_input)
         self.current_input = self.empty_vqip()
-        self.treated = self.empty_vqip()
         self.solids = self.empty_vqip()
         self.stormwater_tank.end_timestep()
         
