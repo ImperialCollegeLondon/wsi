@@ -23,7 +23,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from datetime import datetime
 
-data_folder= os.path.join(os.path.abspath(os.path.join(os.path.dirname("__file__"),os.path.pardir)), "data", "processed", "cherwell_demo")
+data_folder= os.path.join(os.path.abspath(os.path.join(os.path.dirname("__file__"),os.path.pardir)), "data", "processed", "cherwell")
 
 precipitation = pd.read_csv(os.path.join(data_folder, "Cherwell, Thame and Wye_rainfall_1975_2018_day_25_km.csv"))
 precipitation.columns = ['date', 'value']
