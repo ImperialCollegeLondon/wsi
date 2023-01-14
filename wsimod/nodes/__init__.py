@@ -7,3 +7,4 @@ from wsimod.nodes.nodes import Node
 from wsimod.nodes.sewer import Sewer, EnfieldFoulSewer
 from wsimod.nodes.waste import Waste
 from wsimod.nodes.wtw import WTW, WWTW, FWTW
+from wsimod.nodes.discharge_point import Discharge_point

@@ -9,7 +9,6 @@ Converted to totals on 2022-05-03
 from wsimod.nodes.nodes import Node, Tank, QueueTank, DecayTank, DecayQueueTank
 from wsimod.core import constants
 from math import exp
-import pandas as pd
 class Storage(Node):
     def __init__(self, 
                         name,
@@ -374,7 +373,7 @@ class River(Storage):
         self.damp = damp # [>=0] flow delay and attenuation
         self.mrf = mrf
         area = length * width # [m2]
-        capacity = depth * area
+        capacity = constants.UNBOUNDED_CAPACITY #TODO might be depth * area if flood indunation is going to be simulated
         
         super().__init__(capacity = capacity,
                                 area = area,
@@ -581,7 +580,7 @@ class River(Storage):
         
         din = self.get_din_pool()
         din_concentration = din / self.tank.storage['volume']
-        confcn = din_concentration / (din_concentration + self.halfsatINwater) # [kg/m3]
+        confcn = din_concentration / (din_concentration + self.halfsatINwater) # [-]
         denitri_water = self.denpar_w * self.area * tempfcn * confcn # [kg/day] #TODO convert to per DT
         
         river_denitrification = min(denitri_water, 0.5 * din) # [kg/day] max 50% kan be denitrified
@@ -697,7 +696,9 @@ class River(Storage):
             riverrc = 1
         return riverrc
     
-    def calculate_discharge(self):
+    def distribute(self):
+        """Run biochemical processes, track mass balance, and distribute water
+        """
         if 'nitrate' in constants.POLLUTANTS:
             #TODO clumsy
             #Run biochemical processes
@@ -705,11 +706,7 @@ class River(Storage):
             #Mass balance
             self.bio_in = in_
             self.bio_out = out_
-            
-    def distribute(self):
-        """Run biochemical processes, track mass balance, and distribute water
-        """
-        # self.calculate_discharge()
+        
         #Get outflow
         outflow = self.tank.pull_storage({'volume' : self.tank.storage['volume'] * self.get_riverrc()})
         #Distribute outflow

@@ -296,6 +296,7 @@ class MyTestClass(TestCase):
         surface = PerviousSurface(parent = node,
                                     depth = 0.5,
                                     area = 1.5,
+                                    total_porosity = 0.45,
                                     field_capacity = 0.35,
                                     wilting_point = 0.12,
                                     infiltration_capacity = 0.4,
@@ -318,7 +319,7 @@ class MyTestClass(TestCase):
               'phosphate' : 0,
               'temperature' : 0}
         
-        outflow_ = 0.1 * (1 - ((0.5 - 0.4*0.5) / (0.5 - 0.35*0.5))**12)
+        outflow_ = 0.1 * (1 - ((0.45*0.5 - 0.4*0.5) / (0.45*0.5 - 0.35*0.5))**12)
         
         total_water_passing_through_soil = (0.1 - 0.01*0.4 - outflow_ * 0.04)*1.5
         
@@ -343,7 +344,7 @@ class MyTestClass(TestCase):
         self.assertDictAlmostEqual(d1, r1)
         self.assertDictAlmostEqual(d2, r2)
         self.assertDictAlmostEqual(d3, surface.percolation, 15)
-        self.assertDictAlmostEqual(d4, surface.subsurface_flow)
+        self.assertDictAlmostEqual(d4, surface.subsurface_flow, 15)
         self.assertDictAlmostEqual(d5, surface.storage,15)
         self.assertDictAlmostEqual(d6, surface.infiltration_excess)
     
@@ -361,6 +362,7 @@ class MyTestClass(TestCase):
         surface = PerviousSurface(parent = node,
                                     depth = 0.5,
                                     area = 1.5,
+                                    total_porosity = 0.45,
                                     field_capacity = 0.35,
                                     wilting_point = 0.12,
                                     infiltration_capacity = 0.4,
@@ -375,7 +377,7 @@ class MyTestClass(TestCase):
         
         (r1, r2) = surface.ihacres()
         
-        evaporation_ = 0.01 * 0.4 * exp(2 * (1 - (0.5-0.11*0.5) / (0.5 - 0.12*0.5))) * 1.5
+        evaporation_ = 0.01 * 0.4 * exp(2 * (1 - (0.45*0.5-0.11*0.5) / (0.45*0.5 - 0.12*0.5))) * 1.5
         d1 = {'volume' : 0,
               'phosphate' : 0,
               'temperature' : 0}
@@ -418,6 +420,7 @@ class MyTestClass(TestCase):
         surface = PerviousSurface(parent = node,
                                     depth = 0.5,
                                     area = 1.5,
+                                    total_porosity = 0.45,
                                     field_capacity = 0.35,
                                     wilting_point = 0.12,
                                     infiltration_capacity = 0.05,
@@ -440,7 +443,7 @@ class MyTestClass(TestCase):
               'phosphate' : 0,
               'temperature' : 0}
         
-        outflow_ = 0.05 * (1 - ((0.5 - 0.4*0.5) / (0.5 - 0.35*0.5))**12)
+        outflow_ = 0.05 * (1 - ((0.45*0.5 - 0.4*0.5) / (0.45*0.5 - 0.35*0.5))**12)
         
         total_water_passing_through_soil = (0.05 - 0.01*0.4 - outflow_ * 0.04)*1.5
         
@@ -465,7 +468,7 @@ class MyTestClass(TestCase):
         self.assertDictAlmostEqual(d1, r1)
         self.assertDictAlmostEqual(d2, r2)
         self.assertDictAlmostEqual(d3, surface.percolation, 15)
-        self.assertDictAlmostEqual(d4, surface.subsurface_flow)
+        self.assertDictAlmostEqual(d4, surface.subsurface_flow, 15)
         self.assertDictAlmostEqual(d5, surface.storage,15)
         self.assertDictAlmostEqual(d6, surface.infiltration_excess)
     def test_perv_route(self):
@@ -813,30 +816,44 @@ class MyTestClass(TestCase):
         cf = nut_p.temperature_dependence_factor *\
                 nut_p.soil_moisture_dependence_factor
         (r1, r2) = surface.soil_pool_transformation()
+        
+        fast_ = {'N': isoil['org-nitrogen'], 'P': isoil['org-phosphorus']} # original
+        dissolved_inorganic_ = {'N': ivol['nitrate'] + ivol['nitrite'] + ivol['ammonia'], 'P': ivol['phosphate']}
+        
+        miner = {'N': nut_p.minfpar['N'] * fast_['N'] * cf,
+                'P': nut_p.minfpar['P'] * fast_['P'] * cf}
+        
+        fast_ = {'N': fast_['N'] - miner['N'],
+                'P': fast_['P'] - miner['P']}
+        dissolved_inorganic_ = {'N': dissolved_inorganic_['N'] + miner['N'],
+                                'P': dissolved_inorganic_['P'] + miner['P']}
+        
+        disso = {'N': nut_p.disfpar['N'] * fast_['N'] * cf,
+                'P': nut_p.disfpar['P'] * fast_['P'] * cf}
+        
+        fast_ = {'N': fast_['N'] - disso['N'],
+                'P': fast_['P'] - disso['P']}
+        
+        immob = {'N': nut_p.immobdpar['N'] * dissolved_inorganic_['N'] * cf,
+                'P': nut_p.immobdpar['P'] * dissolved_inorganic_['P'] * cf}
+        
         d1 = surface.empty_vqip()
-        d1['phosphate'] = nut_p.minfpar['P'] *\
-                            isoil['org-phosphorus'] * cf
-        d1['nitrate'] = nut_p.minfpar['N'] *\
-                            isoil['org-nitrogen'] * cf *\
-                                        ivol['nitrate'] / (ivol['nitrate'] + ivol['ammonia'])
-        d1['ammonia'] = nut_p.minfpar['N'] *\
-                            isoil['org-nitrogen'] * cf *\
-                                        ivol['ammonia'] / (ivol['nitrate'] + ivol['ammonia'])
-        self.assertDictAlmostEqual(d1, r1)
+        d2 = surface.empty_vqip()
+        if miner['P'] - immob['P'] > 0:
+            d1['phosphate'] = miner['P'] - immob['P']
+        else:
+            d2['phosphate'] = immob['P'] - miner['P']
+        if miner['N'] - immob['N'] > 0:
+            d1['nitrate'] = (miner['N'] - immob['N']) * ivol['nitrate'] / (ivol['nitrate'] + ivol['ammonia'])
+            d1['ammonia'] = (miner['N'] - immob['N']) * ivol['ammonia'] / (ivol['nitrate'] + ivol['ammonia'])
+        else:
+            d2['nitrate'] = (immob['N'] - miner['N']) * ivol['nitrate'] / (ivol['nitrate'] + ivol['ammonia'])
+            d2['ammonia'] = (immob['N'] - miner['N']) * ivol['ammonia'] / (ivol['nitrate'] + ivol['ammonia'])
+        d1['org-phosphorus'] = disso['P']
+        d1['org-nitrogen'] = disso['N']
         
-        d2 = surface.empty_vqip()       
-        fast_ = (1 - nut_p.minfpar['P'] *cf) * isoil['org-phosphorus']
-        inc_dissol = fast_ * cf * nut_p.disfpar['P']
-        dec_immob = (ivol['org-phosphorus'] + inc_dissol) * cf * nut_p.immobdpar['P']
-        
-        d2['org-phosphorus'] = dec_immob - inc_dissol
-        
-        fast_ = (1 - nut_p.minfpar['N'] *cf) * isoil['org-nitrogen']
-        inc_dissol = fast_ * cf * nut_p.disfpar['N']
-        dec_immob = (ivol['org-nitrogen'] + inc_dissol) * cf * nut_p.immobdpar['N']
-        
-        d2['org-nitrogen'] = dec_immob - inc_dissol
-        self.assertDictAlmostEqual(d2, r2)
+        self.assertDictAlmostEqual(d1, r1, 15)
+        self.assertDictAlmostEqual(d2, r2, 15)
     
     def test_crop_uptake(self):
         constants.set_default_pollutants()
@@ -852,8 +869,8 @@ class MyTestClass(TestCase):
         
         d1 = surface.empty_vqip()
         self.assertDictAlmostEqual(r1, d1)
-        d1['nitrate'] = 3.152069428336998e-05
-        d1['phosphate'] = 4.377874206023608e-06
+        d1['nitrate'] = 4.7281041425055e-05
+        d1['phosphate'] = 6.5668113090354e-06
         self.assertDictAlmostEqual(d1, r2)
         
         d2 = surface.copy_vqip(ivol)
@@ -884,8 +901,8 @@ class MyTestClass(TestCase):
         (r1, r2) = surface.erosion()
         d1 = surface.empty_vqip()
         self.assertDictAlmostEqual(d1, r2)
-        d1['phosphate'] = 0.002780491450131737
-        d1['solids'] = 1.5060995354880244
+        d1['phosphate'] = 0.0019497135091285024
+        d1['solids'] = 1.0560948174446056
         self.assertDictAlmostEqual(d1, r1)
     
     def test_erosion2(self):
@@ -907,8 +924,8 @@ class MyTestClass(TestCase):
         (r1, r2) = surface.erosion()
         d1 = surface.empty_vqip()
         self.assertDictAlmostEqual(d1, r2)
-        d1['phosphate'] = 3.24263332112971e-06
-        d1['solids'] = 0.001756426382278593
+        d1['phosphate'] = 1.0244298083948e-06
+        d1['solids'] = 0.0005548994795471758
         self.assertDictAlmostEqual(d1, r1)
     
     def test_erosion3(self):
@@ -930,8 +947,8 @@ class MyTestClass(TestCase):
         (r1, r2) = surface.erosion()
         d1 = surface.empty_vqip()
         self.assertDictAlmostEqual(d1, r2)
-        d1['phosphate'] = 1.0335001632285022e-08
-        d1['solids'] = 2.1814650319210036e-06
+        d1['phosphate'] = 8.3285749289e-09
+        d1['solids'] = 1.7605117735786e-06
         self.assertDictAlmostEqual(d1, r1)
     
     def test_denitrification(self):
@@ -948,16 +965,17 @@ class MyTestClass(TestCase):
     def test_desorption(self):
         constants.set_default_pollutants()
         surface, ivol, isoil = self.create_growing_surface()
+        surface.nutrient_pool.adsorbed_inorganic_pool.storage['P'] = 1e6
         (r1, r2) = surface.adsorption()
         d1 = surface.empty_vqip()
         self.assertDictAlmostEqual(d1, r2)
-        d1['phosphate'] = 0.03510479526499916
+        d1['phosphate'] = 29534.602916697728
         self.assertDictAlmostEqual(d1, r1)
         n1 = {'N' : 0.9,
-              'P' : 1.1648952047350007}
+              'P' : 970465.3970833023}
         self.assertDictAlmostEqual(n1, surface.nutrient_pool.adsorbed_inorganic_pool.storage)
         n2 = {'N' : 4.1,
-              'P' : 11.035104795265}
+              'P' : 29545.602916697728}
         self.assertDictAlmostEqual(n2, surface.nutrient_pool.dissolved_inorganic_pool.storage)
     
     def test_adsorption(self):
@@ -977,13 +995,13 @@ class MyTestClass(TestCase):
         (r1, r2) = surface.adsorption()
         d1 = surface.empty_vqip()
         self.assertDictAlmostEqual(d1, r1)
-        d1['phosphate'] = 0.009223050568400447
+        d1['phosphate'] = 1.5761692429741743
         self.assertDictAlmostEqual(d1, r2)
         n1 = {'N' : 0.9,
-              'P' : 1.2092230505684003}
+              'P' : 2.7761692429741744}
         self.assertDictAlmostEqual(n1, surface.nutrient_pool.adsorbed_inorganic_pool.storage)
         n2 = {'N' : 4.1,
-              'P' : 1510.9907769494316}
+              'P' : 1509.4238307570258}
         self.assertDictAlmostEqual(n2, surface.nutrient_pool.dissolved_inorganic_pool.storage)
     
     def test_irrigate(self):
@@ -1007,7 +1025,7 @@ class MyTestClass(TestCase):
         initial_vol['ammonia']= 0.1
         initial_vol['org-nitrogen']= 0.2
         initial_vol['org-phosphorus']= 3
-        initial_vol['volume']= 0.32
+        initial_vol['volume']= 0.3
         initial_vol['temperature']= 11
         
         initial_soil = {'phosphate' : 1.2,
@@ -1034,6 +1052,7 @@ class MyTestClass(TestCase):
                                         ET_depletion_factor = ET_depletion_factor,
                                         wilting_point = 0.1,
                                         field_capacity = 0.2,
+                                        total_porosity = 0.4,
                                         irrigation_coefficient = 0.8,
                                         parent = node)
         surface.days_after_sow = date.dayofyear - surface.sowing_day

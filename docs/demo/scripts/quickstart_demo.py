@@ -46,8 +46,7 @@ from matplotlib import pyplot as plt
 # evapotranspiration (et0).
 # %%
 
-data_folder= os.path.join(os.path.abspath(''),
-                               "docs","demo","data")
+data_folder= os.path.join(os.path.abspath(os.path.join(os.path.dirname("__file__"),os.path.pardir)), "data")
 # data_folder = os.path.join(os.path.split(os.path.abspath(''))[0],"data") #Use this path if opening in jupyter
 
 

@@ -1049,7 +1049,100 @@ class ResidenceTank(Tank):
         #Remove from tank
         outflow = self.pull_storage(outflow)
         return outflow
+
+class ResidenceTank_catchwat(Tank):
     
+    def __init__(self,
+                        residence_time = 2,
+                        **kwargs):
+        """A tank that has a residence time property that limits storage 
+        pulled from the 'pull_outflow' function
+
+        Args:
+            residence_time (float, optional): Residence time, in theory given 
+                in timesteps, in practice it just means that storage / 
+                residence time can be pulled each time pull_outflow is called. 
+                Defaults to 2.
+        """
+        self.residence_time = residence_time
+        super().__init__(**kwargs)
+        
+        self.inflow = self.empty_vqip()
+        self.outflow = self.empty_vqip()
+    
+    def push_storage(self, vqip, force = False):
+        """Push water into tank, updating the storage VQIP. Force argument can 
+        be used to ignore tank capacity.
+
+        Args:
+            vqip (dict): VQIP amount to be pushed
+            force (bool, optional): Argument used to cause function to ignore tank 
+                capacity, possibly resulting in pooling. Defaults to False.
+
+        Returns:
+            reply (dict): A VQIP of water not successfully pushed to the tank
+        
+        Examples:
+            >>> constants.ADDITIVE_POLLUTANTS = ['phosphate']
+            >>> constants.POLLUTANTS = ['phosphate']
+            >>> constants.NON_ADDITIVE_POLLUTANTS = []
+            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 5, 'phosphate' : 0.2})
+            >>> my_push = {'volume' : 10, 'phosphate' : 0.5}
+            >>> reply = my_tank.push_storage(my_push)
+            >>> print(reply)
+            {'volume' : 6, 'phosphate' : 0.3}
+            >>> print(my_tank.storage)
+            {'volume': 9.0, 'phosphate': 0.4}
+            >>> print(my_tank.push_storage(reply, force = True))
+            {'phosphate': 0, 'volume': 0}
+            >>> print(my_tank.storage)
+            {'volume': 15.0, 'phosphate': 0.7}
+
+        """
+        
+        if force:
+            #Directly add request to storage
+            self.storage = self.sum_vqip(self.storage, vqip)
+            self.inflow = self.sum_vqip(self.inflow, vqip)
+            return self.empty_vqip()
+        
+        #Check whether request can be met
+        excess = self.get_excess()['volume']
+        
+        #Adjust accordingly
+        reply = max(vqip['volume'] - excess, 0)
+        reply = self.v_change_vqip(vqip, reply)
+        entered = self.v_change_vqip(vqip, vqip['volume'] - reply['volume'])
+        #
+        self.inflow = self.sum_vqip(self.inflow, entered)
+        
+        #Update storage
+        self.storage = self.sum_vqip(self.storage, entered)
+            
+        return reply
+    
+    def pull_outflow(self):
+        """Pull storage by residence time from the tank, updating tank storage
+
+        Returns:
+            outflow (dict): A VQIP with volume of pulled volume and pollutants 
+                proportionate to the tank's pollutants
+        """
+        #Calculate outflow
+        self.outflow['volume'] += (self.inflow['volume'] - self.outflow['volume']) / self.residence_time
+        #Update pollutant amounts
+        self.outflow = self.v_change_vqip(self.storage, self.outflow['volume'])
+        #Remove from tank
+        self.outflow = self.pull_storage(self.outflow)
+        return self.outflow
+    
+    def end_timestep(self):
+        """Function to be called by parent object, tracks previously 
+        timestep's storage
+        """
+        self.storage_ = self.copy_vqip(self.storage)
+        #
+        self.inflow = self.empty_vqip()
     
 class DecayTank(Tank, DecayObj):
     def __init__(self,

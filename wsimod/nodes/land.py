@@ -553,6 +553,7 @@ class ImperviousSurface(Surface):
 class PerviousSurface(Surface):
     def __init__(self,
                         depth = 0.75,
+                        total_porosity = 0.4,
                         field_capacity = 0.3,
                         wilting_point = 0.12,
                         infiltration_capacity = 0.5,
@@ -604,11 +605,10 @@ class PerviousSurface(Surface):
         self.soil_temp_deep = 10 #deep soil temperature
         
         #IHACRES is a deficit not a tank, so doesn't really have a capacity in this way... and if it did.. I don't know if it would be the root depth
-        super().__init__(depth=depth,**kwargs)
+        super().__init__(depth=depth * total_porosity,**kwargs)
         
         #Calculate subsurface coefficient
-        self.subsurface_coefficient = 1 - self.percolation_coefficient 
-
+        self.subsurface_coefficient = 1 - self.percolation_coefficient        
 
         #Initiliase state variables
         self.infiltration_excess = self.empty_vqip()
@@ -619,7 +619,8 @@ class PerviousSurface(Surface):
         self.precipitation = self.empty_vqip()
         
         #Populate function lists
-        self.inflows.append(self.ihacres) #work out runoff
+        #self.inflows.append(self.ihacres) #work out runoff
+        self.inflows.append(self.catchwat)
                 
         #TODO interception if I hate myself enough?
         self.processes.append(self.calculate_soil_temperature) # Calculate soil temp + dependence factor
@@ -676,7 +677,7 @@ class PerviousSurface(Surface):
         evaporation = min(evaporation, precipitation_depth + self.get_smc())
         
         #Scale to volumes and apply proportions to work out percolation/surface runoff/subsurface runoff
-        surface = outflow * self.surface_coefficient * self.area
+        surface = outflow * self.surface_coefficient * self.area # LEON: this part of surface runoff comes from soil after soil water is saturated - should have the same concentration with subsurface/percolation but currently are empty_vqip
         percolation = outflow * (1-self.surface_coefficient) * self.percolation_coefficient * self.area
         subsurface_flow = outflow * (1-self.surface_coefficient) * self.subsurface_coefficient * self.area
         tank_recharge = (infiltrated_precipitation - evaporation - outflow) * self.area
@@ -704,7 +705,7 @@ class PerviousSurface(Surface):
             subsurface_flow = self.empty_vqip()
             percolation = self.empty_vqip()
             
-            if abs(evap + infiltrated_precipitation * self.area - evaporation - infiltration_excess) > constants.FLOAT_ACCURACY:
+            if abs(evap + infiltrated_precipitation * self.area - evaporation - infiltration_excess) > 1e-9:#constants.FLOAT_ACCURACY:
                 print('inaccurate evaporation calculation')
         
         #TODO saturation excess (think it should just be 'pull_ponded'  presumably in net effective precipitation? )
@@ -722,6 +723,115 @@ class PerviousSurface(Surface):
         self.tank_recharge = tank_recharge
         self.evaporation = evaporation
         self.precipitation = precipitation
+        
+        #Mass balance
+        in_ = precipitation
+        out_ = evaporation
+        
+        return (in_, out_)
+    
+    def catchwat(self):
+        """Inflow function that runs the CatchWat soil model equations, updates tanks, and 
+        store flows in state variables (which are later sent to the parent land node in 
+        the route function)
+
+        Returns:
+            (tuple): A tuple containing a VQIP amount for model inputs and outputs 
+                for mass balance checking. 
+        """
+        
+        #Read data (leave in depth units since that is what IHACRES equations are in)
+        precipitation_depth = self.get_data_input('precipitation')
+        evaporation_depth = self.get_data_input('et0') * self.et0_coefficient
+        temperature = self.get_data_input('temperature')
+        
+        storage_t_1 = self.storage['volume'] + 1 - 1
+        
+        #Apply infiltration
+        infiltrated_precipitation = min(precipitation_depth, self.infiltration_capacity)
+        infiltration_excess = max(precipitation_depth - infiltrated_precipitation, 0) 
+        infiltrated_precipitation_vqip = self.v_change_vqip(self.empty_vqip(), infiltrated_precipitation * self.area) #TODO assume 0 pollutant concetration from rainfall 
+        infiltrated_precipitation_vqip['temperature'] = temperature
+        infiltration_excess_vqip = self.v_change_vqip(self.empty_vqip(), infiltration_excess * self.area) #TODO assume 0 pollutant concetration from rainfall 
+        infiltration_excess_vqip['temperature'] = temperature
+        
+        # total available water
+        self.total_available_water = self.field_capacity - self.wilting_point
+        # get current moisture and potential deficit after ET
+        current_soil_moisture_content = self.get_smc()
+        current_moisture_deficit_depth = self.field_capacity - current_soil_moisture_content
+        if current_moisture_deficit_depth < 0:
+            print('Error: cmd = ', current_moisture_deficit_depth, ' < 0 before soil water balance at this timestep') #TODO not consider irrigation
+        potential_moisture_deficit = current_moisture_deficit_depth + evaporation_depth - infiltrated_precipitation
+        
+        #Get current moisture deficit after infiltration
+        #current_moisture_deficit_depth = max(0, self.field_capacity - current_soil_moisture_content) #self.get_cmd()
+        
+        if current_moisture_deficit_depth >= self.total_available_water:
+            evaporation = 0
+            next_moisture_deficit_depth = current_moisture_deficit_depth - infiltrated_precipitation
+            effective_precipitation = 0
+        else:
+            if potential_moisture_deficit >= self.total_available_water:
+                evaporation = self.total_available_water - current_moisture_deficit_depth + infiltrated_precipitation
+                next_moisture_deficit_depth = self.total_available_water
+                effective_precipitation = 0
+            else:
+                evaporation = evaporation_depth
+                if potential_moisture_deficit > 0:
+                    next_moisture_deficit_depth = potential_moisture_deficit
+                    effective_precipitation = 0
+                else:
+                    next_moisture_deficit_depth = 0
+                    effective_precipitation = - potential_moisture_deficit
+        
+        self.storage['volume'] = (self.field_capacity - next_moisture_deficit_depth) * self.area
+        
+        effective_precipitation_conc = self.empty_vqip()
+        if effective_precipitation > 0:
+            for pol in constants.ADDITIVE_POLLUTANTS:
+                effective_precipitation_conc[pol] = self.storage[pol] / ((self.field_capacity + effective_precipitation) * self.area)
+            for pol in constants.NON_ADDITIVE_POLLUTANTS:
+                effective_precipitation_conc[pol] = self.storage[pol]
+        
+        surface = self.surface_coefficient * effective_precipitation * self.area
+        subsurface = (1 - self.surface_coefficient) * self.subsurface_coefficient * effective_precipitation * self.area
+        percolation = (1 - self.surface_coefficient) * self.percolation_coefficient * effective_precipitation * self.area
+        
+        surface_vqip = self.v_change_vqip_c(effective_precipitation_conc, surface)
+        subsurface_vqip = self.v_change_vqip_c(effective_precipitation_conc, subsurface)
+        percolation_vqip = self.v_change_vqip_c(effective_precipitation_conc, percolation)
+        
+        surface_vqip = self.concentration_to_total(surface_vqip)
+        subsurface_vqip = self.concentration_to_total(subsurface_vqip)
+        percolation_vqip = self.concentration_to_total(percolation_vqip)
+        
+        effective_precipitation_vqip = self.sum_vqip(surface_vqip, subsurface_vqip)
+        effective_precipitation_vqip = self.sum_vqip(effective_precipitation_vqip, percolation_vqip)
+        effective_precipitation_vqip['volume'] = 0
+        
+        self.storage = self.extract_vqip(self.storage, effective_precipitation_vqip)
+        
+        evaporation *= self.area
+        
+        #Convert to VQIPs
+        infiltration_excess = self.sum_vqip(infiltration_excess_vqip, surface_vqip)
+        precipitation = self.v_change_vqip(self.empty_vqip(), precipitation_depth * self.area)
+        evaporation = self.v_change_vqip(self.empty_vqip(), evaporation)
+        
+        #Track flows (these are sent onwards in the route function)
+        self.infiltration_excess = infiltration_excess
+        self.subsurface_flow = subsurface_vqip
+        self.percolation = percolation_vqip
+        self.evaporation = evaporation
+        self.precipitation = precipitation
+        
+        # check internal mass balance
+        _in = self.precipitation['volume']
+        _out = self.evaporation['volume'] + self.infiltration_excess['volume'] + self.subsurface_flow['volume'] + self.percolation['volume']
+        _ds = self.storage['volume'] - storage_t_1
+        if abs(_in - _out - _ds) >= 1e-6 :
+            print('_in - _out - _ds =', _in - _out - _ds)
         
         #Mass balance
         in_ = precipitation
@@ -851,8 +961,8 @@ class GrowingSurface(PerviousSurface):
         self.sreroexp = 1.2 # [-] surface runoff erosion exponent
         self.cohesion = 1 # [kPa]
         self.slope = 5 # [-] every 100
-        self.srfilt = 0.95 # [-] ratio of eroded sediment left in surface runoff after filtration
-        self.macrofilt = 0.1 # [-] ratio of eroded sediment left in subsurface flow after filtration
+        self.srfilt = 0.7 # [-] ratio of eroded sediment left in surface runoff after filtration
+        self.macrofilt = 0.01 # [-] ratio of eroded sediment left in subsurface flow after filtration
         
         #Denitrification parameters
         self.limpar = 0.7 # [-] above which denitrification begins
@@ -863,7 +973,7 @@ class GrowingSurface(PerviousSurface):
         #Adsorption parameters
         self.adosorption_nr_limit = 0.00001
         self.adsorption_nr_maxiter = 20
-        self.kfr = 153.7 # [1/kg] freundlich adsorption isoterm
+        self.kfr = 153.7 # [l/kg] freundlich adsorption isoterm
         self.nfr = 1/2.6 # [-] freundlich exponential coefficient
         self.kadsdes = 0.03 # [1/day] adsorption/desorption coefficient
         
@@ -876,8 +986,8 @@ class GrowingSurface(PerviousSurface):
         self.ground_cover_stages = [0,0,self.ground_cover_max,0,0]
         self.crop_cover_stages = [0,0,self.crop_cover_max,0,0]
         
-        #This is just based on googling when is autumn...
-        if self.sowing_day > 265:
+        #Judge autumn-sown crops
+        if self.sowing_day > 181:
             self.autumn_sow = True
         else:
             self.autumn_sow = False
@@ -901,6 +1011,7 @@ class GrowingSurface(PerviousSurface):
         self.inflows.insert(0, self.calc_crop_cover)
         if 'nitrate' in constants.POLLUTANTS:
             #Populate function lists 
+            self.inflows.append(self.effective_precipitation_flushing)
             self.inflows.append(self.fertiliser)
             self.inflows.append(self.manure)
             # self.inflows.append(self.residue)
@@ -923,9 +1034,11 @@ class GrowingSurface(PerviousSurface):
             if initial_soil_storage:
                 #Reflect initial nutrient stores in solid nutrient pools
                 self.nutrient_pool.adsorbed_inorganic_pool.storage['P'] = initial_soil_storage['phosphate']
+                # LEON: don't think there should be any adsorbed N
                 self.nutrient_pool.adsorbed_inorganic_pool.storage['N'] = initial_soil_storage['ammonia'] + initial_soil_storage['nitrate'] + initial_soil_storage['nitrite']
                 self.nutrient_pool.fast_pool.storage['N'] = initial_soil_storage['org-nitrogen']
                 self.nutrient_pool.fast_pool.storage['P'] = initial_soil_storage['org-phosphorus']
+                # LEON: should also have humus pools
             
     
     def pull_storage(self, vqip):
@@ -1069,6 +1182,41 @@ class GrowingSurface(PerviousSurface):
             
         return vqip
     
+    def effective_precipitation_flushing(self):
+        """ Remove the nutrients brought out by effective precipitation,
+        which is surface runoff, subsurface runoff, and percolation, from the nutrients pool.
+
+        Returns
+        -------
+        None.
+
+        """
+        # inorganic
+        out = self.nutrient_pool.get_empty_nutrient()
+        out['N'] = self.subsurface_flow['ammonia'] + self.subsurface_flow['nitrite'] + self.subsurface_flow['nitrate'] + \
+                   self.percolation['ammonia'] + self.percolation['nitrite'] + self.percolation['nitrate'] + \
+                   self.infiltration_excess['ammonia'] + self.infiltration_excess['nitrite'] + self.infiltration_excess['nitrate'] #TODO what happens if infiltration excess (the real part) has pollutants?
+        out['P'] = self.subsurface_flow['phosphate'] + \
+                   self.percolation['phosphate'] + \
+                   self.infiltration_excess['phosphate']
+        out_ = self.nutrient_pool.dissolved_inorganic_pool.extract(out)
+        if not self.compare_vqip(out, out_):
+            print('nutrient pool not tracking soil tank')
+        
+        #organic
+        out = self.nutrient_pool.get_empty_nutrient()
+        out['N'] = self.subsurface_flow['org-nitrogen'] + \
+                   self.percolation['org-nitrogen'] + \
+                   self.infiltration_excess['org-nitrogen']
+        out['P'] = self.subsurface_flow['org-phosphorus'] + \
+                   self.percolation['org-phosphorus'] + \
+                   self.infiltration_excess['org-phosphorus']
+        out_ = self.nutrient_pool.dissolved_organic_pool.extract(out)
+        if not self.compare_vqip(out, out_):
+            print('nutrient pool not tracking soil tank')
+        
+        return (self.empty_vqip(), self.empty_vqip())
+        
     def fertiliser(self):
         """Read, scale and allocate fertiliser, updating the tank
 
@@ -1291,13 +1439,17 @@ class GrowingSurface(PerviousSurface):
                 temp_func = 1
             
             #Calculate uptake
-            uptake_par = (self.uptake1 - self.uptake2) * exp(-self.uptake3 * days_after_sow) * temp_func
+            uptake_par = (self.uptake1 - self.uptake2) * exp(-self.uptake3 * days_after_sow)
             if (uptake_par + self.uptake2) > 0 :
                 N_common_uptake = self.uptake1 * self.uptake2 * self.uptake3 * uptake_par / ((self.uptake2 + uptake_par) ** 2)
-            N_common_uptake *= constants.G_M2_TO_KG_M2
+            N_common_uptake *= temp_func * constants.G_M2_TO_KG_M2 * self.area # [kg]
             P_common_uptake = N_common_uptake * self.uptake_PNratio
-            uptake = {'P' : P_common_uptake,
-                      'N' : N_common_uptake}
+            # calculate maximum uptake
+            N_maximum_available_uptake = max(0, self.storage['volume'] - self.wilting_point * self.area) / self.storage['volume'] * self.nutrient_pool.dissolved_inorganic_pool.storage['N']
+            P_maximum_available_uptake = max(0, self.storage['volume'] - self.wilting_point * self.area) / self.storage['volume'] * self.nutrient_pool.dissolved_inorganic_pool.storage['P']            
+            
+            uptake = {'P' : min(P_common_uptake, P_maximum_available_uptake),
+                      'N' : min(N_common_uptake, N_maximum_available_uptake)}
             crop_uptake = self.nutrient_pool.dissolved_inorganic_pool.extract(uptake)
             out_ = self.empty_vqip()
             
@@ -1487,7 +1639,7 @@ class GrowingSurface(PerviousSurface):
         #Calculate coefficient and concentration of adsorbed phosphorus
         soil_moisture_content = self.get_smc() * constants.M_TO_MM # [mm] (not sure why HYPE has this in mm but whatever)
         conc_sol = self.nutrient_pool.adsorbed_inorganic_pool.storage['P'] * constants.KG_TO_MG / (self.bulk_density * self.rooting_depth * self.area)# [mg P/kg soil]
-        coeff = self.kfr * self.bulk_density * self.rooting_depth * constants.M_TO_MM # [mm]
+        coeff = self.kfr * self.bulk_density * self.rooting_depth # [mm]
         
         # calculate equilibrium concentration
         if conc_sol <= 0 :
@@ -1577,6 +1729,7 @@ class GrowingSurface(PerviousSurface):
         return vqip
         
     def wet_deposition_to_tank(self, vqip):
+        # LEON: be cautious about the wet deposition - only happens when precipitation is applied
         """Allocate wet deposition to surface tank, updating nutrient pool accordingly.
 
         Args:

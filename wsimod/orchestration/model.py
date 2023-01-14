@@ -211,22 +211,19 @@ class Model(WSIObj):
         if nodes == None:
             nodes = self.nodes_type['Land'].values()
         
-        if isinstance(relative_change,float):
-            relative_change = {x : relative_change for x in nodes}
-
         for node in nodes:
             surface_dict = {x.surface : x for x in node.surfaces}
             if 'Impervious' in surface_dict.keys():
                 impervious_area = surface_dict['Impervious'].area
                 grass_area = surface_dict['Grass'].area
                 
-                new_impervious_area = impervious_area * relative_change[node]
+                new_impervious_area = impervious_area * relative_change
                 new_grass_area = grass_area + (impervious_area - new_impervious_area)
                 if new_grass_area < 0:
                     print('not enough grass')
                     break
                 surface_dict['Impervious'].area = new_impervious_area
-                surface_dict['Impervious'].capacity *= relative_change[node]
+                surface_dict['Impervious'].capacity *= relative_change
                 
                 surface_dict['Grass'].area = new_grass_area
                 surface_dict['Grass'].capacity *= (new_grass_area / grass_area)
@@ -322,25 +319,25 @@ class Model(WSIObj):
             #Discharge WWTW
             for node in self.nodes_type['WWTW'].values():
                 node.calculate_discharge()
+                
+            for node in self.nodes_type['WWTW'].values():    
+                node.make_discharge()
             
             #Discharge GW
             for node in self.nodes_type['Groundwater'].values():
                 node.distribute()
             
-            #river
-            for node in self.nodes_type['River'].values():
-                node.calculate_discharge()
-            
             #Abstract
             for node in self.nodes_type['Reservoir'].values():
                 node.make_abstractions()
-                
-            for node in self.nodes_type['WWTW'].values():    
-                node.make_discharge()
             
             #Catchment routing
             for node in self.nodes_type['Catchment'].values():
                 node.route()
+            
+            #discharge_points
+            for node in self.nodes_type['Discharge_point'].values():
+                node.make_discharge()
             
             #river
             for node_name in self.river_discharge_order:
@@ -440,7 +437,7 @@ class Model(WSIObj):
                                               'capacity' : surface.capacity,
                                               'time' : date,
                                               'et0_coef' : surface.et0_coefficient,
-                                              # 'crop_factor' : surface.crop_factor
+                                              #'crop_factor' : surface.crop_factor
                                               })
                             for pol in constants.POLLUTANTS:
                                 surfaces[-1][pol] = surface.storage[pol]

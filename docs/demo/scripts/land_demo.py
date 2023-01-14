@@ -53,8 +53,7 @@ from matplotlib import pyplot as plt
 # Load input data
 # %%
 
-data_folder= os.path.join(os.path.abspath(''),
-                               "docs","demo","data")
+data_folder= os.path.join(os.path.abspath(os.path.join(os.path.dirname("__file__"),os.path.pardir)), "data")
 # data_folder = os.path.join(os.path.split(os.path.abspath(''))[0],"data") #Use this path if opening in jupyter
 
 input_fid = os.path.join(data_folder, "processed", "timeseries_data.csv")
@@ -456,9 +455,9 @@ results = my_model.run()
 
 flows = pd.DataFrame(results[0])
 
-f, axs = plt.subplots(2,1)
-flows.groupby('arc').get_group('outflow').set_index('time').flow.plot(ax=axs[0])
-flows.groupby('arc').get_group('outflow').set_index('time').phosphate.plot(ax=axs[1])
+# f, axs = plt.subplots(2,1)
+# flows.groupby('arc').get_group('outflow').set_index('time').flow.plot(ax=axs[0])
+# flows.groupby('arc').get_group('outflow').set_index('time').phosphate.plot(ax=axs[1])
 
 # %% [markdown]
 # Observe the differences between the two sets of timeseries:
@@ -468,3 +467,59 @@ flows.groupby('arc').get_group('outflow').set_index('time').phosphate.plot(ax=ax
 #
 # Meanwhile, phosphate levels look much more interesting with the 
 # GrowingSurface, and are not solely dependent on the hydrology.
+# %% [markdown] LEON
+# compare with mijic_conceptual
+crop_factor_stages = [0.   , 0.   , 0.3  , 0.3  , 1.2  , 1.2  , 0.325, 0.   , 0.   ]
+crop_factor_stage_dates =[  0,  90,  91, 121, 161, 213, 244, 245, 366]
+sowing_day = 91
+harvest_day = 244
+ET_depletion_factor = 0.55
+rooting_depth = 0.5
+
+surface = {'type_' : 'GrowingSurface',
+            'surface' : 'my_growing_surface',
+            'area' : 10,
+            'rooting_depth' : rooting_depth,
+            'crop_factor_stage_dates' : crop_factor_stage_dates,
+            'crop_factor_stages' : crop_factor_stages,
+            'sowing_day' : sowing_day,
+            'harvest_day' : harvest_day,
+            'ET_depletion_factor' : ET_depletion_factor,
+            'data_input_dict' : surface_input_data,
+            'wilting_point' : 0.05,
+            'field_capacity' : 0.1
+            }
+
+land = Land(name = 'my_land',
+            data_input_dict = land_inputs,
+            surfaces = [surface])
+land.surfaces[0].inflows[[land.surfaces[0].inflows.index(i) for i in land.surfaces[0].inflows if i.__name__ == 'ihacres'][0]] = land.surfaces[0].mijic_conceptual
+
+node = Node(name = 'my_river')
+gw = Groundwater(name = 'my_groundwater',
+                  area = 10,
+                  capacity = 100)
+outlet = Waste(name = 'my_outlet')
+
+arc1 = Arc(in_port = land, out_port = node, name = 'quickflow')
+arc2 = Arc(in_port = land, out_port = gw, name = 'percolation')
+arc3 = Arc(in_port = gw, out_port = node, name = 'baseflow')
+arc4 = Arc(in_port = node, out_port = outlet, name = 'outflow')
+my_model = Model()
+
+my_model.add_instantiated_nodes([land,node,gw,outlet])
+my_model.add_instantiated_arcs([arc1,arc2,arc3,arc4])
+
+my_model.dates = dates
+
+results = my_model.run()
+
+flows1 = pd.DataFrame(results[0])
+
+f, axs = plt.subplots(2,1)
+x = flows.groupby('arc').get_group('outflow').set_index('time').index
+y1 = flows.groupby('arc').get_group('outflow').set_index('time').flow
+y2 = flows1.groupby('arc').get_group('outflow').set_index('time').flow
+axs[0].plot(x, y1)
+axs[0].plot(x, y2)
+axs[1].plot(x, y2-y1)
