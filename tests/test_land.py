@@ -67,7 +67,7 @@ class MyTestClass(TestCase):
         surface.dry_deposition_to_tank(d1)
         self.assertDictAlmostEqual(d1, surface.storage)
         
-        d2 = {'volume' : 0.5,
+        d2 = {'volume' : 0.2,
               'phosphate' : 4,
               'temperature' : 5}
         surface.wet_deposition_to_tank(d1)
