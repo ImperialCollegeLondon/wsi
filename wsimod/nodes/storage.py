@@ -9,7 +9,7 @@ Converted to totals on 2022-05-03
 from wsimod.nodes.nodes import Node, Tank, QueueTank, DecayTank, DecayQueueTank
 from wsimod.core import constants
 from math import exp
-import pandas as pd
+
 class Storage(Node):
     def __init__(self, 
                         name,

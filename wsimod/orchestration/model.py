@@ -6,18 +6,14 @@ Created on Mon Jul  4 16:01:48 2022
 """
 from wsimod import nodes
 from wsimod.arcs import arcs as arcs_mod
-import dill as pickle
 from tqdm import tqdm
 from wsimod.nodes.land import ImperviousSurface
 from wsimod.core import constants
 from wsimod.core.core import WSIObj
 from wsimod.nodes.nodes import QueueTank, Tank, Node
-from pandas import to_datetime
 import os
 os.environ['USE_PYGEOS'] = '0'
-import geopandas as gpd
-import pandas as pd
-import sys, inspect
+import sys
 
 from math import log10
 class Model(WSIObj):
@@ -162,21 +158,6 @@ class Model(WSIObj):
         else:
             upstreamness = self.assign_upstream(arcs,upstreamness)
             return upstreamness
-    
-
-    def save(self, fid):
-        """Save model as a pickled dill object
-
-        Args:
-            fid (str): file address to save model
-
-        Returns:
-            file close exit message
-        """
-        #Note - dodgy if you are still editing the model! Only use for running the model
-        file = open(fid, 'wb')
-        pickle.dump(self, file)
-        return file.close()
     
     def debug_node_mb(self):
         """Simple function that iterates over nodes

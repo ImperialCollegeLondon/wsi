@@ -16,8 +16,6 @@ from wsimod.nodes.storage import Storage, Groundwater, QueueGroundwater, River, 
 from wsimod.nodes.nodes import Node
 from wsimod.nodes.sewer import Sewer
 from wsimod.arcs.arcs import Arc
-from pandas import to_datetime
-
     
 
 class MyTestClass(TestCase):

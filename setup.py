@@ -1,5 +1,6 @@
 import setuptools
 
+
 setuptools.setup(
    name='WSIMOD',
    version='0.2',
@@ -9,23 +10,13 @@ setuptools.setup(
    license='LICENSE',
    description='WSIMOD is for simulating water quality and quantity',
    long_description=open('README.md').read(),
-   install_requires=['pandas',
-      'geopandas',
-      'dill',
-      'matplotlib',
-      'gitpython',
-      'numpy',
-      'ukcensusapi',
-      'xarray',
-      'OSGridConverter',
-      'shapely',
-      'snkit',
-      'networkx',
-      'rasterio',
-      'tqdm',
-      'requests',
-      'pytest',
-      'pyarrow',
-      'fastparquet'
-      ],
+   install_requires=['tqdm','pytest'],
+   extras_require={
+        'demos': [ 
+            'pandas', 
+            'geopandas', 
+            'matplotlib', 
+            'shapely', 
+            ],
+    }
       )
