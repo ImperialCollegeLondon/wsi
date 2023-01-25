@@ -9,7 +9,23 @@ Install a GUI if you like
 conda install spyder -c conda-forge
 ```
 
-Download or clone this folder, navigate to it, and run:
+Install WSIMOD directly from GitHub
 ```
-python setup.py develop
+pip install https://github.com/barneydobson/wsi/archive/refs/heads/main.zip
+```
+
+Use `[demos]` to include the demos and tutorials.
+```
+pip install -e https://github.com/barneydobson/wsi/archive/refs/heads/main.zip[demos]
+```
+
+If you want to make changes WSIMOD you can download/clone this folder, navigate to it, and run:
+```
+pip install .
+```
+
+or (with demos)
+
+```
+pip install -e .[demos]
 ```

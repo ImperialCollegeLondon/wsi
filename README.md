@@ -2,7 +2,25 @@
 
 WSIMOD stands for the Water Systems Integrated Modelling framework.
 
+The terrestrial water cycle is a highly interconnected system where the 
+movement of water is affected by physical and human processes. Thus, 
+environmental models may become inaccurate if they do not provide a complete 
+picture of the water cycle, missing out on unexpected opportunities and 
+omitting impacts that arise from complex interactions. WSIMOD is a modelling 
+framework to integrate these different processes. It provides a message passing 
+interface to enable different subsystem models to communicate water flux and 
+water quality information between each other, and self-contained 
+representations of the key parts of the water cycle (rivers, reservoirs, urban 
+and rural hydrological catchments, treatment plants, and pipe networks).
+We created WSIMOD to enable a user greater flexibility in setting up their 
+water cycle models, motivated by the abundance of non-textbook water systems 
+that we have experienced in industry collaboration. The WSIMOD Python package 
+provides tutorials and examples to help modellers create nodes, connect them 
+with arcs, and create simulations.
+
 You can access our documentation below or at [https://barneydobson.github.io/wsi](https://barneydobson.github.io/wsi).
+
+*Optional requirements to run demos*: [Pandas](#https://pandas.pydata.org/), [GeoPandas](#https://geopandas.org/en/stable/), [Matplotlib](#https://matplotlib.org/), [Shapely](#https://shapely.readthedocs.io/en/stable/manual.html), [tqdm](#https://tqdm.github.io/)
 
 ## Table Of Contents
 
@@ -16,40 +34,45 @@ and consists of:
 2. [Installation](https://barneydobson.github.io/wsi/installation/)
 
 3. [Tutorials](https://barneydobson.github.io/wsi/tutorials/)
-    
-    3.1. [Quickstart](https://barneydobson.github.io/wsi/demo/scripts/quickstart_demo/)
-    
-    3.2. [WSIMOD model demonstration - Oxford](https://barneydobson.github.io/wsi/demo/scripts/oxford_demo/)
-    
-    3.3. [Land nodes - hydrology and agriculture](https://barneydobson.github.io/wsi/demo/scripts/land_demo/)
 
 4. [How-To Guides](https://barneydobson.github.io/wsi/how-to/)
 
-    4.1. [Customise a node](https://barneydobson.github.io/wsi/demo/scripts/customise_a_node/)
-
-    4.2. [Customise an arc](https://barneydobson.github.io/wsi/demo/scripts/customise_an_arc/)
-
 5. [API reference](https://barneydobson.github.io/wsi/reference/)
-    
-    5.1. [API reference - arc](https://barneydobson.github.io/wsi/reference-arc/)
-    
-    5.2. [API reference - core](https://barneydobson.github.io/wsi/reference-core/)
-    
-    5.3. [API reference - land](https://barneydobson.github.io/wsi/reference-land/)
-    
-    5.4. [API reference - nodes](https://barneydobson.github.io/wsi/reference-nodes/)
-    
-    5.5. [API reference - sewer](https://barneydobson.github.io/wsi/reference-sewer/)
-    
-    5.6. [API reference - storage (reservoir, river, groundwater)](https://barneydobson.github.io/wsi/reference-storage/)
-    
-    5.7. [API reference - wtw](https://barneydobson.github.io/wsi/reference-wtw/)
-    
-    5.8. [API reference - other components](https://barneydobson.github.io/wsi/reference-other/)
-
-    5.9. [API reference - model](https://barneydobson.github.io/wsi/reference-model/)
 
 6. [Coverage](https://barneydobson.github.io/wsi/coverage/)
+
+## Installation
+Create and activate new conda environment
+```
+conda create --name wsimod python=3.10
+conda activate wsimod
+```
+
+Install a GUI if you like
+```
+conda install spyder -c conda-forge
+```
+
+Install WSIMOD directly from GitHub
+```
+pip install https://github.com/barneydobson/wsi/archive/refs/heads/main.zip
+```
+
+Use `[demos]` to include the demos and tutorials.
+```
+pip install -e https://github.com/barneydobson/wsi/archive/refs/heads/main.zip[demos]
+```
+
+If you want to make changes WSIMOD you can download/clone this folder, navigate to it, and run:
+```
+pip install .
+```
+
+or (with demos)
+
+```
+pip install -e .[demos]
+```
 
 ## Acknowledgements
 
@@ -57,7 +80,8 @@ WSIMOD was developed by Barnaby Dobson and Leyang Liu.
 Theoretical support was provided by Ana Mijic.
 Testing the WSIMOD over a variety of applications has been performed by 
 Fangjun Peng, Vladimir Krivstov and Samer Muhandes.
-Software development support was provided by Imperial College's Research Software Engineering service, in particular from Diego Alonso and Dan Davies.
+Software development support was provided by Imperial College's Research 
+Software Engineering service, in particular from Diego Alonso and Dan Davies.
 
 The design of WSIMOD was significantly influenced by 
 [CityDrain3](https://github.com/gregorburger/CityDrain3), 
