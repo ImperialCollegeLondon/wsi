@@ -646,6 +646,11 @@ class PerviousSurface(Surface):
         #Depth of soil moisture
         return self.storage['volume'] / self.area
     
+    def get_climate(self):
+        precipitation_depth = self.get_data_input('precipitation')
+        evaporation_depth = self.get_data_input('et0') * self.et0_coefficient
+        return precipitation_depth, evaporation_depth
+    
     def ihacres(self):
         """Inflow function that runs the IHACRES model equations, updates tanks, and 
         store flows in state variables (which are later sent to the parent land node in 
@@ -657,8 +662,7 @@ class PerviousSurface(Surface):
         """
         
         #Read data (leave in depth units since that is what IHACRES equations are in)
-        precipitation_depth = self.get_data_input('precipitation')
-        evaporation_depth = self.get_data_input('et0') * self.et0_coefficient
+        precipitation_depth, evaporation_depth = self.get_climate()
         temperature = self.get_data_input('temperature')
         
         #Apply infiltration
@@ -1697,4 +1701,20 @@ class GardenSurface(GrowingSurface):
         """
         #update tank
         return self.push_storage(vqip, force = True)
-            
+
+class VariableAreaSurface(GrowingSurface):
+    def __init__(self, 
+                 current_surface_area = 0,
+                 **kwargs):
+        super().__init__(**kwargs)
+        self.get_climate = self.get_climate_
+        self.current_surface_area = current_surface_area
+        
+    def get_climate_(self):
+        precipitation_depth = self.get_data_input('precipitation')
+        evaporation_depth = self.get_data_input('et0') * self.et0_coefficient
+        
+        precipitation_depth *= (self.current_surface_area / self.area)
+        evaporation_depth *= (self.current_surface_area / self.area)
+        
+        return precipitation_depth, evaporation_depth
