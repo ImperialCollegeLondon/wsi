@@ -20,7 +20,7 @@ with arcs, and create simulations.
 
 You can access our documentation below or at [https://barneydobson.github.io/wsi](https://barneydobson.github.io/wsi).
 
-*Optional requirements to run demos*: [Pandas](#https://pandas.pydata.org/), [GeoPandas](#https://geopandas.org/en/stable/), [Matplotlib](#https://matplotlib.org/), [Shapely](#https://shapely.readthedocs.io/en/stable/manual.html), [tqdm](#https://tqdm.github.io/)
+*Optional requirements to run demos*: [Pandas](https://pandas.pydata.org/), [GeoPandas](https://geopandas.org/en/stable/), [Matplotlib](https://matplotlib.org/), [Shapely](https://shapely.readthedocs.io/en/stable/manual.html), [tqdm](https://tqdm.github.io/)
 
 ## Table Of Contents
 
