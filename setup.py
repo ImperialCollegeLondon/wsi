@@ -10,7 +10,7 @@ setuptools.setup(
    license='LICENSE',
    description='WSIMOD is for simulating water quality and quantity',
    long_description=open('README.md').read(),
-   install_requires=['tqdm','pytest'],
+   install_requires=['tqdm','pytest','PyYAML'],
    extras_require={
         'demos': [ 
             'pandas', 

@@ -18,21 +18,8 @@ from wsimod.nodes.sewer import Sewer
 from wsimod.nodes.storage import Reservoir
 from wsimod.arcs.arcs import Arc
 from math import exp
-from datetime import datetime
-class to_datetime():
-      def __init__(self, date_string):
-            self._date = datetime.strptime(date_string, "%Y-%m-%d")
+from wsimod.orchestration.model import to_datetime
 
-      @property
-      def dayofyear(self):
-            return self._date.timetuple().tm_yday
-
-      def to_period(self, args = None):
-            return f"{self._date.year}-{str(self._date.month).zfill(2)}"    
-
-      def is_leap_year(self):
-            year = self._date.year
-            return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
 
 class MyTestClass(TestCase):
     

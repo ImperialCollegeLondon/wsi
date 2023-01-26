@@ -14,8 +14,63 @@ from wsimod.nodes.nodes import QueueTank, Tank, Node
 import os
 os.environ['USE_PYGEOS'] = '0'
 import sys
-
+import inspect
+import csv
+import gzip
+import yaml
 from math import log10
+from datetime import datetime
+
+class to_datetime():
+    def __init__(self, date_string):
+        self._date = self._parse_date(date_string)
+        
+    def __str__(self):
+        return self._date.strftime("%Y-%m-%d")
+    
+    @property
+    def dayofyear(self):
+        return self._date.timetuple().tm_yday
+    
+    @property
+    def day(self):
+        return self._date.day
+    
+    @property
+    def year(self):
+        return self._date.year
+    
+    @property
+    def month(self):
+        return self._date.month
+    
+    def to_period(self, args = 'M'):
+        return f"{self._date.year}-{str(self._date.month).zfill(2)}"    
+    
+    def is_leap_year(self):
+        year = self._date.year
+        return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
+    
+    def _parse_date(self, date_string, date_format = "%Y-%m-%d %H:%M:%S"):
+        try:
+            return datetime.strptime(date_string, date_format)
+        except ValueError:
+            try:
+                return datetime.strptime(date_string, "%Y-%m-%d")
+            except ValueError:
+                try:
+                    return datetime.strptime(date_string, "%Y-%m")
+                except ValueError:
+                    raise ValueError
+                    
+    def __eq__(self, other):
+        if isinstance(other, to_datetime):
+            return self._date == other._date
+        return False
+
+    def __hash__(self):
+        return hash(self._date)
+    
 class Model(WSIObj):
     def __init__(self):
         """Object to contain nodes and arcs that provides a default
@@ -38,6 +93,144 @@ class Model(WSIObj):
         self.nodes_type = set(getattr(nodes,x)(name='').__class__.__name__ for x in self.nodes_type).union(['Foul'])
         self.nodes_type = {x : {} for x in self.nodes_type}
         
+    def get_init_args(self,cls):
+        """
+        Get the arguments of the __init__ method for a class and its superclasses
+        """
+        init_args = []
+        for c in cls.__mro__:
+            # Get the arguments of the __init__ method
+            args = inspect.getfullargspec(c.__init__).args[1:]
+            init_args.extend(args)
+        return init_args
+
+    def open_func(self, file_path, mode):
+        if mode == "rt" and file_path.endswith(".gz"):
+            return gzip.open(file_path, mode)
+        else:
+            return open(file_path, mode)
+        
+    def read_csv(self, file_path, delimiter=","):
+        with self.open_func(file_path, "rt") as f:
+            reader = csv.DictReader(f, delimiter=delimiter)
+            data = {}
+            for row in reader:
+                key = (row['variable'], to_datetime(row['time']))
+                value = float(row['value'])
+                data[key] = value
+            return data
+
+    def write_csv(self, data, fixed_data, filename, compress = False):
+        if compress:
+            open_func = gzip.open
+            mode = 'wt'
+        else:
+            open_func = open
+            mode = 'w'
+        with open_func(filename, mode, newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(list(fixed_data.keys()) + ['variable', 'time', 'value'])
+            fixed_data_values = list(fixed_data.values())
+            for key, value in data.items():
+                writer.writerow(fixed_data_values + list(key) + [str(value)])
+    
+    def load(self, address, config_name = 'config.yml'):
+        
+        with open(os.path.join(address, config_name), "r") as file:
+            data = yaml.safe_load(file)
+        
+        nodes = data['nodes']
+        
+        for name, node in nodes.items():
+            if 'data_address' in node.keys():
+                node['data_input_dict'] = self.read_csv(node['data_address'])
+                del node['data_address']
+            if 'surfaces' in node.keys():
+                node['surfaces'] = list(node['surfaces'].values())
+        arcs = data['arcs']
+        self.add_nodes(list(nodes.values()))
+        self.add_arcs(list(arcs.values()))
+        if 'dates' in data.keys():
+            self.dates = [to_datetime(x) for x in data['dates']]
+            
+    def save(self, address, config_name = 'config.yml', compress = False):
+        """Save the model object to a yaml file and input data to csv.gz format 
+        in the directory specified
+
+        Args:
+            address (str): Path to a directory
+            config_name (str, optional): Name of yaml model file. 
+                Defaults to 'model.yml'
+        """
+        if not os.path.exists(address):
+            os.mkdir(address)
+        nodes = {}
+        
+        if compress:
+            file_type = 'csv.gz'
+        else:
+            file_type = 'csv'
+        for node in self.nodes.values():
+            init_args = self.get_init_args(node.__class__)
+            special_args = set(['surfaces', 'parent', 'data_input_dict'])
+            
+            node_props = {x : getattr(node, x) for x in set(init_args).difference(special_args)}
+            node_props['type_'] = node.__class__.__name__
+            node_props['node_type_override'] = repr(node.__class__).split('.')[-1].replace("'>","")
+            
+            if 'surfaces' in init_args:
+                surfaces = {}
+                for surface in node.surfaces:
+                    surface_args = self.get_init_args(surface.__class__)
+                    surface_props = {x : getattr(surface, x) for x in set(surface_args).difference(special_args)}
+                    surface_props['type_'] = surface.__class__.__name__
+                    
+                    #Exceptions... 
+                    #TODO I need a better way to do this
+                    del surface_props['capacity']
+                    if set(['rooting_depth','pore_depth']).intersection(surface_args):
+                        del surface_props['depth']
+                    if 'data_input_dict' in surface_args:
+                        if surface.data_input_dict:
+                            fid = os.path.join(address, "{0}-{1}-inputs.{2}".format(node.name, surface.surface, file_type))
+                            self.write_csv(surface.data_input_dict, 
+                                           {'node' : node.name, 
+                                            'surface' : surface.surface}, 
+                                           fid,
+                                           compress = compress)
+                            surface_props['data_address'] = fid
+                    surfaces[surface_props['surface']] = surface_props
+                node_props['surfaces'] = surfaces
+            
+            if 'data_input_dict' in init_args:
+                if node.data_input_dict:                    
+                    fid = os.path.join(address, "{0}-inputs.{1}".format(node.name,file_type))
+                    self.write_csv(node.data_input_dict, 
+                                   {'node' : node.name}, 
+                                   fid,
+                                   compress = compress)
+                    node_props['data_address'] = fid
+            
+            nodes[node.name] = node_props
+        
+        arcs = {}
+        for arc in self.arcs.values():
+            init_args = self.get_init_args(arc.__class__)
+            special_args = set(['in_port', 'out_port'])
+            arc_props = {x : getattr(arc, x) for x in set(init_args).difference(special_args)}
+            arc_props['type_'] = arc.__class__.__name__
+            arc_props['in_port'] = arc.in_port.name
+            arc_props['out_port'] = arc.out_port.name
+            arcs[arc.name] = arc_props
+        with open(os.path.join(address, config_name), 'w') as file:
+            data = {'nodes' : nodes,
+                    'arcs' : arcs}
+            if hasattr(self, 'dates'):
+                data['dates'] = [str(x) for x in self.dates]
+            yaml.dump(data,
+                      file, 
+                      default_flow_style = False,
+                      sort_keys = False)
     def add_nodes(self, nodelist):
         """Add nodes to the model object from a list of dicts, where
         each dict contains all of the parameters for a node. Intended

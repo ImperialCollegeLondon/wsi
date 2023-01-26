@@ -460,7 +460,7 @@ class ImperviousSurface(Surface):
                         
         #Assign parameters 
         self.et0_to_e = et0_to_e #Total evaporation
-        
+        self.pore_depth = pore_depth
         
         super().__init__(depth = pore_depth,**kwargs)
 
@@ -587,9 +587,11 @@ class PerviousSurface(Surface):
             ihacres_p (float, optional): The IHACRES p parameter. Unless it is an 
                 ephemeral stream this parameter probably can stay high. Defaults to 10.
         """
-       #Assign parameters (converting field capacity and wilting point to depth)
-        self.field_capacity = field_capacity * depth
-        self.wilting_point = wilting_point * depth
+        #Assign parameters (converting field capacity and wilting point to depth)
+        self.field_capacity = field_capacity
+        self.field_capacity_m = field_capacity * depth
+        self.wilting_point = wilting_point
+        self.wilting_point_m = wilting_point * depth
         self.infiltration_capacity = infiltration_capacity
         self.surface_coefficient = surface_coefficient
         self.percolation_coefficient = percolation_coefficient
@@ -672,9 +674,9 @@ class PerviousSurface(Surface):
         #Get current moisture deficit
         current_moisture_deficit_depth = self.get_cmd()
         
-        #IHACRES equations (we do (depth - wilting_point or field capacity) to convert from a deficit to storage tank)
-        evaporation = evaporation_depth * min(1, exp(2 * (1 - current_moisture_deficit_depth / (self.depth - self.wilting_point))))
-        outflow = infiltrated_precipitation * (1 - min(1, (current_moisture_deficit_depth / (self.depth - self.field_capacity)) ** self.ihacres_p))
+        #IHACRES equations (we do (depth - wilting_point_m or field capacity) to convert from a deficit to storage tank)
+        evaporation = evaporation_depth * min(1, exp(2 * (1 - current_moisture_deficit_depth / (self.depth - self.wilting_point_m))))
+        outflow = infiltrated_precipitation * (1 - min(1, (current_moisture_deficit_depth / (self.depth - self.field_capacity_m)) ** self.ihacres_p))
         
         #Can't evaporate more than available moisture (presumably the IHACRES equation prevents this ever being needed)
         evaporation = min(evaporation, precipitation_depth + self.get_smc())
@@ -894,7 +896,7 @@ class GrowingSurface(PerviousSurface):
         self.et0_coefficient = 1
 
         #Calculate parameters based on capacity/wp
-        self.total_available_water = (self.field_capacity - self.wilting_point)
+        self.total_available_water = (self.field_capacity_m - self.wilting_point_m)
         if self.total_available_water < 0:
             print('warning: TAW < 0...')
         self.readily_available_water = self.total_available_water * self.ET_depletion_factor
@@ -1029,7 +1031,7 @@ class GrowingSurface(PerviousSurface):
             self.crop_cover = self.quick_interp(doy, self.harvest_sow_calendar, self.crop_cover_stages)
             self.ground_cover = self.quick_interp(doy, self.harvest_sow_calendar, self.ground_cover_stages)
         
-        root_zone_depletion = max(self.field_capacity - self.get_smc(),0)
+        root_zone_depletion = max(self.field_capacity_m - self.get_smc(),0)
         if root_zone_depletion < self.readily_available_water :
             crop_water_stress_coefficient = 1
         else:
@@ -1256,15 +1258,15 @@ class GrowingSurface(PerviousSurface):
         """
         #Parameters/equations from HYPE documentation
         current_soil_moisture = self.get_smc()
-        if current_soil_moisture  >= self.field_capacity: 
+        if current_soil_moisture  >= self.field_capacity_m: 
             self.nutrient_pool.soil_moisture_dependence_factor = self.satact
-        elif current_soil_moisture <= self.wilting_point: 
+        elif current_soil_moisture <= self.wilting_point_m: 
             self.nutrient_pool.soil_moisture_dependence_factor = 0
         else:
-            fc_diff = self.field_capacity - current_soil_moisture
+            fc_diff = self.field_capacity_m - current_soil_moisture
             fc_comp = (fc_diff / (self.thetaupp * self.rooting_depth)) ** self.thetapow
             fc_comp = (1 - self.satact) * fc_comp + self.satact
-            wp_diff = current_soil_moisture - self.wilting_point
+            wp_diff = current_soil_moisture - self.wilting_point_m
             wp_comp = (wp_diff / (self.thetalow * self.rooting_depth)) ** self.thetapow
             self.nutrient_pool.soil_moisture_dependence_factor = min(1, wp_comp, fc_comp)
         return (self.empty_vqip(), self.empty_vqip())
@@ -1432,10 +1434,10 @@ class GrowingSurface(PerviousSurface):
         #TODO could more of this be moved to NutrientPool
         #Calculate soil moisture dependence of denitrification
         soil_moisture_content = self.get_smc()
-        if soil_moisture_content > self.field_capacity:
+        if soil_moisture_content > self.field_capacity_m:
             denitrifying_soil_moisture_dependence = 1
-        elif soil_moisture_content / self.field_capacity > self.limpar:
-            denitrifying_soil_moisture_dependence = (((soil_moisture_content / self.field_capacity) - self.limpar) / (1 - self.limpar)) ** self.exppar
+        elif soil_moisture_content / self.field_capacity_m > self.limpar:
+            denitrifying_soil_moisture_dependence = (((soil_moisture_content / self.field_capacity_m) - self.limpar) / (1 - self.limpar)) ** self.exppar
         else:
             denitrifying_soil_moisture_dependence = 0
             return (self.empty_vqip(), self.empty_vqip())
