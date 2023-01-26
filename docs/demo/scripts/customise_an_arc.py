@@ -41,11 +41,11 @@ from wsimod.demo.create_oxford import create_oxford_model_mrf
 # %% [markdown]
 # The model can be automatically created using the data_folder
 # %%
+#Use this path if compiling documentation
 data_folder= os.path.join(os.path.abspath(''),
                                "docs","demo","data")
-
-#Use this path if opening in jupyter
-# data_folder = os.path.join(os.path.split(os.path.abspath(''))[0],"data") 
+#Use this path otherwise
+data_folder = os.path.join(os.path.split(os.path.abspath(''))[0],"data") 
 
 baseline_model = create_oxford_model_mrf(data_folder)
 
