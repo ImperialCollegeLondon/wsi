@@ -20,7 +20,7 @@ with arcs, and create simulations.
 
 You can access our documentation below or at [https://barneydobson.github.io/wsi](https://barneydobson.github.io/wsi).
 
-*Requires*: Python 3 (tested on versions >=3.7), [tqdm](https://tqdm.github.io/)
+*Requires*: Python 3 (tested on versions >=3.7), [tqdm](https://tqdm.github.io/), [PyYAML](https://pyyaml.org/), [pyarrow](https://pypi.org/project/pyarrow/), [fastparquet](https://pypi.org/project/fastparquet/)
 
 *Optional requirements to run demos*: [Pandas](https://pandas.pydata.org/), [GeoPandas](https://geopandas.org/en/stable/), [Matplotlib](https://matplotlib.org/), [Shapely](https://shapely.readthedocs.io/en/stable/manual.html)
 

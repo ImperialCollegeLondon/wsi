@@ -9,7 +9,7 @@ setuptools.setup(
    license='LICENSE',
    description='WSIMOD is for simulating water quality and quantity',
    long_description=open('README.md').read(),
-   install_requires=['tqdm','pytest','PyYAML'],
+   install_requires=['tqdm','pytest','PyYAML','pyarrow','fastparquet'],
    extras_require={
         'demos': [ 
             'pandas', 
@@ -29,7 +29,10 @@ setuptools.setup(
         'mkdocstrings',
         'mkdocstrings-python',
         'pypandoc',
-        'demos'
+        'pandas', 
+        'geopandas', 
+        'matplotlib', 
+        'shapely', 
       ]
     }
       )
