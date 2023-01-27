@@ -1,6 +1,5 @@
 import setuptools
 
-
 setuptools.setup(
    name='WSIMOD',
    version='0.2',
@@ -18,5 +17,19 @@ setuptools.setup(
             'matplotlib', 
             'shapely', 
             ],
+      'documentation': 
+      [
+        'mkdocs',
+        'mkdocs-autorefs',
+        'mkdocs-bibtex',
+        'mkdocs-coverage',
+        'mkdocs-jupyter',
+        'mkdocs-material',
+        'mkdocs-material-extensions',
+        'mkdocstrings',
+        'mkdocstrings-python',
+        'pypandoc',
+        'demos'
+      ]
     }
       )

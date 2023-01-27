@@ -21,11 +21,23 @@ pip install -e https://github.com/barneydobson/wsi/archive/refs/heads/main.zip[d
 
 If you want to make changes WSIMOD you can download/clone this folder, navigate to it, and run:
 ```
-pip install .
+python setup.py develop
 ```
 
 or (with demos)
 
 ```
-pip install -e .[demos]
+python setup.py develop easy_install "wsimod[demos]"
+```
+
+If you want to compile new documentation you will need to install some additional packages
+
+```
+python setup.py develop easy_install "wsimod[documentation]"
+```
+
+And then open python, and run:
+```
+import pypandoc
+pypandoc.download_pandoc()
 ```
