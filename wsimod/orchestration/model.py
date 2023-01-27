@@ -154,14 +154,14 @@ class Model(WSIObj):
         nodes = data['nodes']
         
         for name, node in nodes.items():
-            if 'data_address' in node.keys():
-                node['data_input_dict'] = self.read_csv(node['data_address'])
-                del node['data_address']
+            if 'filename' in node.keys():
+                node['data_input_dict'] = self.read_csv(os.path.join(address, node['filename']))
+                del node['filename']
             if 'surfaces' in node.keys():
                 for key, surface in node['surfaces'].items():
-                    if 'data_address' in surface.keys():
-                        node['surfaces'][key]['data_input_dict'] = self.read_csv(surface['data_address'])
-                        del surface['data_address']
+                    if 'filename' in surface.keys():
+                        node['surfaces'][key]['data_input_dict'] = self.read_csv(os.path.join(address,surface['filename']))
+                        del surface['filename']
                 node['surfaces'] = list(node['surfaces'].values())
         arcs = data['arcs']
         self.add_nodes(list(nodes.values()))
@@ -210,24 +210,23 @@ class Model(WSIObj):
                     if 'data_input_dict' in surface_args:
                         if surface.data_input_dict:
                             filename = "{0}-{1}-inputs.{2}".format(node.name, surface.surface, file_type).replace("(", "_").replace(")", "_").replace("/", "_").replace(" ", "_")
-                            fid = os.path.join(address, filename)
                             self.write_csv(surface.data_input_dict, 
                                            {'node' : node.name, 
                                             'surface' : surface.surface}, 
-                                           fid,
+                                           os.path.join(address,filename),
                                            compress = compress)
-                            surface_props['data_address'] = fid
+                            surface_props['filename'] = filename
                     surfaces[surface_props['surface']] = surface_props
                 node_props['surfaces'] = surfaces
             
             if 'data_input_dict' in init_args:
                 if node.data_input_dict:                    
-                    fid = os.path.join(address, "{0}-inputs.{1}".format(node.name,file_type))
+                    filename = "{0}-inputs.{1}".format(node.name,file_type)
                     self.write_csv(node.data_input_dict, 
                                    {'node' : node.name}, 
-                                   fid,
+                                   os.path.join(address, filename),
                                    compress = compress)
-                    node_props['data_address'] = fid
+                    node_props['filename'] = filename
             
             nodes[node.name] = node_props
         
