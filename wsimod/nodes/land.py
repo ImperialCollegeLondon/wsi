@@ -927,6 +927,7 @@ class GrowingSurface(PerviousSurface):
             self.nutrient_pool.dissolved_organic_pool.storage['P'] = self.storage['org-phosphorus']
             self.nutrient_pool.dissolved_organic_pool.storage['N'] = self.storage['org-nitrogen']
             if initial_soil_storage:
+                self.initial_soil_storage = initial_soil_storage
                 #Reflect initial nutrient stores in solid nutrient pools
                 self.nutrient_pool.adsorbed_inorganic_pool.storage['P'] = initial_soil_storage['phosphate']
                 self.nutrient_pool.adsorbed_inorganic_pool.storage['N'] = initial_soil_storage['ammonia'] + initial_soil_storage['nitrate'] + initial_soil_storage['nitrite']

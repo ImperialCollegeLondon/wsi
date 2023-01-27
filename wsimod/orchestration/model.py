@@ -22,6 +22,7 @@ from math import log10
 from datetime import datetime
 
 class to_datetime():
+    #TODO document and make better
     def __init__(self, date_string):
         self._date = self._parse_date(date_string)
         
@@ -45,7 +46,7 @@ class to_datetime():
         return self._date.month
     
     def to_period(self, args = 'M'):
-        return f"{self._date.year}-{str(self._date.month).zfill(2)}"    
+        return to_datetime(f"{self._date.year}-{str(self._date.month).zfill(2)}")
     
     def is_leap_year(self):
         year = self._date.year
@@ -59,7 +60,12 @@ class to_datetime():
                 return datetime.strptime(date_string, "%Y-%m-%d")
             except ValueError:
                 try:
-                    return datetime.strptime(date_string, "%Y-%m")
+                    #Check if valid 'YYYY-MM' format
+                    if len(date_string.split('-')[0]) == 4:
+                        int(date_string.split('-')[0])
+                    if len(date_string.split('-')[1]) == 2:
+                        int(date_string.split('-')[1])
+                    return date_string
                 except ValueError:
                     raise ValueError
                     
@@ -139,6 +145,12 @@ class Model(WSIObj):
         with open(os.path.join(address, config_name), "r") as file:
             data = yaml.safe_load(file)
         
+        constants.POLLUTANTS =data['pollutants']
+        constants.ADDITIVE_POLLUTANTS =data['additive_pollutants']
+        constants.NON_ADDITIVE_POLLUTANTS =data['non_additive_pollutants']
+        constants.FLOAT_ACCURACY = float(data['float_accuracy'])
+        self.__dict__.update(Model().__dict__)
+
         nodes = data['nodes']
         
         for name, node in nodes.items():
@@ -146,13 +158,18 @@ class Model(WSIObj):
                 node['data_input_dict'] = self.read_csv(node['data_address'])
                 del node['data_address']
             if 'surfaces' in node.keys():
+                for key, surface in node['surfaces'].items():
+                    if 'data_address' in surface.keys():
+                        node['surfaces'][key]['data_input_dict'] = self.read_csv(surface['data_address'])
+                        del surface['data_address']
                 node['surfaces'] = list(node['surfaces'].values())
         arcs = data['arcs']
         self.add_nodes(list(nodes.values()))
         self.add_arcs(list(arcs.values()))
         if 'dates' in data.keys():
             self.dates = [to_datetime(x) for x in data['dates']]
-            
+        
+        
     def save(self, address, config_name = 'config.yml', compress = False):
         """Save the model object to a yaml file and input data to csv.gz format 
         in the directory specified
@@ -192,7 +209,8 @@ class Model(WSIObj):
                         del surface_props['depth']
                     if 'data_input_dict' in surface_args:
                         if surface.data_input_dict:
-                            fid = os.path.join(address, "{0}-{1}-inputs.{2}".format(node.name, surface.surface, file_type))
+                            filename = "{0}-{1}-inputs.{2}".format(node.name, surface.surface, file_type).replace("(", "_").replace(")", "_").replace("/", "_").replace(" ", "_")
+                            fid = os.path.join(address, filename)
                             self.write_csv(surface.data_input_dict, 
                                            {'node' : node.name, 
                                             'surface' : surface.surface}, 
@@ -222,15 +240,66 @@ class Model(WSIObj):
             arc_props['in_port'] = arc.in_port.name
             arc_props['out_port'] = arc.out_port.name
             arcs[arc.name] = arc_props
+        
+        data = {'nodes' : nodes,
+                'arcs' : arcs,
+                'pollutants':constants.POLLUTANTS,
+                'additive_pollutants':constants.ADDITIVE_POLLUTANTS,
+                'non_additive_pollutants':constants.NON_ADDITIVE_POLLUTANTS,
+                'float_accuracy' : constants.FLOAT_ACCURACY}
+        if hasattr(self, 'dates'):
+            data['dates'] = [str(x) for x in self.dates]
+
+    
+        def coerce_value(value):
+            conversion_options = {'__float__' : float,
+                                    '__iter__' : list,
+                                    '__int__' : int,
+                                    '__str__' : str,
+                                    '__bool__' : bool,
+                                    }
+            converted = False
+            for property, func in conversion_options.items():
+                if hasattr(value, property):
+                    try:
+                        yaml.safe_dump(func(value))
+                        value = func(value)
+                        converted = True
+                        break
+                    except:
+                        raise ValueError(f"Cannot dump: {value} of type {type(value)}")
+            if not converted:
+                raise ValueError(f"Cannot dump: {value} of type {type(value)}")
+
+            return value
+        def check_and_coerce_dict(data_dict):
+            
+            for key, value in data_dict.items():
+                if isinstance(value, dict):
+                    check_and_coerce_dict(value)
+                else:
+                    try:
+                        yaml.safe_dump(value)
+                    except yaml.representer.RepresenterError:
+                        if hasattr(value, '__iter__'):
+                            for idx, val in enumerate(value):
+                                if isinstance(val, dict):
+                                    check_and_coerce_dict(val)
+                                else:
+                                    value[idx] = coerce_value(val)
+                        data_dict[key] = coerce_value(value)
+        check_and_coerce_dict(data)
+        
+        
+        
+        
         with open(os.path.join(address, config_name), 'w') as file:
-            data = {'nodes' : nodes,
-                    'arcs' : arcs}
-            if hasattr(self, 'dates'):
-                data['dates'] = [str(x) for x in self.dates]
             yaml.dump(data,
                       file, 
                       default_flow_style = False,
-                      sort_keys = False)
+                      sort_keys = False,
+                      Dumper=yaml.SafeDumper)
+            
     def add_nodes(self, nodelist):
         """Add nodes to the model object from a list of dicts, where
         each dict contains all of the parameters for a node. Intended

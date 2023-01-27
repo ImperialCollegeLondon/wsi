@@ -374,11 +374,15 @@ class River(Storage):
         self.damp = damp # [>=0] flow delay and attenuation
         self.mrf = mrf
         area = length * width # [m2]
+        
         capacity = depth * area
         
-        super().__init__(capacity = capacity,
-                                area = area,
-                                **kwargs)
+        #Required in cases where 'area' conflicts with length*width
+        kwargs['area'] = area
+        #Required in cases where 'capacity' conflicts with depth*area
+        kwargs['capacity'] = capacity
+        
+        super().__init__(**kwargs)
         
         
         
@@ -716,7 +720,7 @@ class River(Storage):
         reply = self.push_distributed(outflow, of_type = ['River','Node','Waste'])
         _ = self.tank.push_storage(reply, force = True)
         if reply['volume'] > constants.FLOAT_ACCURACY:
-            print('river cant push')
+            print('river cant push: {0}'.format(reply['volume']))
             
     def pull_check_fp(self, vqip = None):
         #TODO Pull checking for riparian buffer, needs updating
@@ -747,7 +751,7 @@ class Reservoir(Storage):
         spill = self.tank.push_storage(reply)
         _ = self.tank.push_storage(spill, force = True)
         if spill['volume'] > constants.FLOAT_ACCURACY:
-            print('Spill at reservoir')
+            print('Spill at reservoir by {0}'.format(spill['volume']))
             
 
 class RiverReservoir(Reservoir):
