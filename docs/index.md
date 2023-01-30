@@ -38,6 +38,8 @@ and consists of:
     
     3.3. [Land nodes - hydrology and agriculture](./demo/scripts/land_demo.py)
 
+    3.4. [Model object - WSIMOD models](wsimod_models.md)
+
 4. [How-To Guides](how-to.md)
 
     4.1. [Customise a node](./demo/scripts/customise_a_node.py)

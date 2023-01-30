@@ -24,6 +24,13 @@ from datetime import datetime
 class to_datetime():
     #TODO document and make better
     def __init__(self, date_string):
+        """Simple datetime wrapper that has key properties used in WSIMOD 
+        components.
+
+        Args:
+            date_string (str): A string containing the date, expected in 
+                format %Y-%m-%d or %Y-%m.
+        """
         self._date = self._parse_date(date_string)
         
     def __str__(self):
