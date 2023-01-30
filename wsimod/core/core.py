@@ -94,7 +94,6 @@ class WSIObj:
         Examples: 
             >>> t1 = {'phosphate' : 0.25, 'volume' : 100, 'temperature' : 10}
             >>> t2 = {'phosphate' : 0.25, 'volume' : 10, 'temperature' : 15}
-
             >>> t = sum_vqip(t1, t2)
             >>> print(t)
             {'phosphate' : 0.5, 'volume' : 110, 'temperature' : 10.45}
