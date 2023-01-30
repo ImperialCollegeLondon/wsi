@@ -20,11 +20,11 @@ setuptools.setup(
       'documentation': 
       [
         'mkdocs',
+        'mkdocs-material',
         'mkdocs-autorefs',
         'mkdocs-bibtex',
         'mkdocs-coverage',
         'mkdocs-jupyter',
-        'mkdocs-material',
         'mkdocs-material-extensions',
         'mkdocstrings',
         'mkdocstrings-python',
@@ -33,6 +33,7 @@ setuptools.setup(
         'geopandas', 
         'matplotlib', 
         'shapely', 
+        'ipykernel',
       ]
     }
       )
