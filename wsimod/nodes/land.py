@@ -611,6 +611,33 @@ class PerviousSurface(Surface):
                 surface. Defaults to=0.5,
             ihacres_p (float, optional): The IHACRES p parameter. Unless it is an 
                 ephemeral stream this parameter probably can stay high. Defaults to 10.
+                
+        Key assumptions:
+             - In IHACRES, the maximum infiltration per time step is controlled by an 
+                infiltration capacity, beyond which the precipitation will flow directly
+                as surface runoff.
+             - Evapotranspiration and effective precipitation are calculated based on 
+                soil moisture content.
+             - Effective precipitation is then divided into percolation, surface runoff, 
+                and subsurface runoff by multiplying the corresponding coefficient.
+             - Percolation, surface runoff, and subsurface runoff are sent into the 
+                corresponding residence tanks for rounting to downstream.  
+             - The mass of pollutants in soil water tank proportionately leaves the
+                soil water tank into the routing residence tanks. Evapotranspiration can
+                only bring out water, with pollutants left in the soil tank.
+
+        Input data and parameter requirements:
+             - Field capacity and wilting point.
+                _Units_: -, both should in [0-1], with field capacity > wilting point
+             - Infiltration capacity.
+                _Units_: m/day
+             - Surface, percolation coefficient.
+                _Units_: -, both should in [0-1]
+             - et0 coefficient.
+                _Units_: -
+             - ihacres_p.
+                _Units_: -
+
         """
         #Assign parameters (converting field capacity and wilting point to depth)
         self.field_capacity = field_capacity
@@ -849,6 +876,34 @@ class GrowingSurface(PerviousSurface):
                 to 365.
             initial_soil_storage (dict or float, optional): Initial mass of solid pollutants
                 in the soil nutrient pools (fast and adsorbed inorganic pools)
+        
+        Key assumptions:
+             - In the soil water module, crop stages and crop coefficients control the evapotranspiration.
+             - Fertiliser and manure application are the major source of soil nutrients, which are added
+                into soil nutrient pools, including dissovled inorganic, dissolved organic, fast and humus
+                for both nitrogen and phosphorus.
+             - Nutrient transformation processes in soil are simulated, including fluxes between the soil 
+                nutrient pools, denitrification for nitrogen, adsorption/desorption for phosphorus. These 
+                processes are affected by temperature and soil moisture.
+             - Crop uptake of nutrients are simulated based on crop stages, which is different for spring-sown
+                and autumn-sown crops.
+             - Soil erosion from the growing surface is simulated as one of the major sources of suspended solids
+                in rivers, which is mainly affected by rainfall energy and crop/ground cover. Phosphorus  
+                will also be eroded along with the soil particles, in both adsorbed inorganic and 
+                humus form.
+
+        Input data and parameter requirements:
+             - Rooting depth.
+                _Units_: m
+             - Evapotranspiration depletion factor.
+                _Units_: -
+             - Sowing day, harvest day and crop calendars.
+                _Units_: day number in Julian calendar
+             - Crop factor.
+                _Units_: -
+             - Initial storage for solid pollutants.
+                _Units_: kg
+
         """
         
         #Crop factors (set when creating object)
