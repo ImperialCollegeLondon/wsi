@@ -13,6 +13,13 @@ class Distribution(Node):
 
         Functions intended to call in orchestration:
             None
+        
+        Key assumptions:
+            - No distribution processes yet represented, this class is just 
+                for conveyance.
+        
+        Input data and parameter requirements:
+            - None
         """
         super().__init__(**kwargs)
         #Update handlers        
@@ -26,6 +33,12 @@ class UnlimitedDistribution(Distribution):
 
         Functions intended to call in orchestration:
             None
+        
+        Key assumptions:
+            - Water demand is always satisfied.
+        
+        Input data and parameter requirements:
+            - None
         """
         super().__init__(**kwargs)
         #Update handlers        

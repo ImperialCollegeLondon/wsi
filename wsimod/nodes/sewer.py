@@ -48,6 +48,31 @@ class Sewer(Node):
         Functions intended to call in orchestration:
             make_discharge
 
+        Key assumptions:
+            - Sewer networks can be represented in an aggregated manner, where 
+                the behaviour of collections of manholes/pipes can be captured 
+                in a single component.
+            - Travel time of water received from either `land.py/Land` objects 
+                or `demand.py/Demand` objects is assumed to be received as a 
+                non-point source and thus can be represented with the time-area 
+                method.
+            - Travel time of water from an upstream `Sewer` object has a fixed 
+                travel time through the node.
+            - The flow capacity of sewer network can be represented as with a 
+                `Tank`.
+            - The `Sewer` object is not currently biochemically active.
+
+        Input data and parameter requirements:
+            - `pipe_timearea` is a dictionary containing the timearea diagram.
+                _Units_: duration of flow (in timesteps) and proportion of flow
+            - `pipe_time` describes the travel time of water received from upstream `Sewer`
+                objects.
+                _Units_: number of timesteps
+            - `capacity`, `chamber_area`, `chamber_datum` describe the dimensions of the 
+                `Tank` that controls flow.
+                _Units_: cubic metres, squared metres, metres
+            
+
         """
         #Set parameters
         self.capacity = capacity

@@ -137,6 +137,30 @@ class Groundwater(Storage):
             infiltrate (before sewers are discharged)
 
             distribute
+
+        Key assumptions:
+            - Conceptualises groundwater as a tank.
+            - Baseflow is generated following a residence-time method.
+            - Baseflow is sent to `storage.py/River`, `nodes.py/Node` or 
+                `waste.py/Waste` nodes.
+            - Infiltration to `sewer.py/Sewer` nodes occurs when the storage 
+                in the tank is greater than a specified threshold, at a rate 
+                proportional to the sqrt of volume above the threshold. (Note, 
+                this behaviour is __not validated__ and a high uncertainty process 
+                in general)
+            - If `decays` are provided to model water quality transformations, 
+                see `core.py/DecayObj`.
+
+        Input data and parameter requirements:
+            - Groundwater tank `capacity`, `area`, and `datum`.
+                _Units_: cubic metres, squared metres, metres
+            - Infiltration behaviour determined by an `infiltration_threshold` 
+                and `infiltration_pct`.
+                _Units_: proportion of capacity
+            - Optional dictionary of decays with pollutants as keys and decay 
+                parameters (a constant and a temperature sensitivity exponent) 
+                as values.
+                _Units_: -
         """
         self.residence_time = residence_time
         self.infiltration_threshold = infiltration_threshold
@@ -197,6 +221,25 @@ class QueueGroundwater(Storage):
         
         Functions intended to call in orchestration:
             distribute
+        
+        Key assumptions:
+            - Conceptualises groundwater as a tank.
+            - Baseflow is generated following a timearea method.
+            - Baseflow is sent to `storage.py/River`, `nodes.py/Node` or 
+                `waste.py/Waste` nodes.
+            - No infiltration to sewers is modelled.
+            - If `decays` are provided to model water quality transformations, 
+                see `core.py/DecayObj`.
+
+        Input data and parameter requirements:
+            - Groundwater tank `capacity`, `area`, and `datum`.
+                _Units_: cubic metres, squared metres, metres
+            - `timearea` is a dictionary containing the timearea diagram.
+                _Units_: duration of flow (in timesteps) and proportion of flow
+            - Optional dictionary of decays with pollutants as keys and decay 
+                parameters (a constant and a temperature sensitivity exponent) 
+                as values.
+                _Units_: -
         """
         self.timearea = timearea
         #TODO not used
@@ -741,6 +784,21 @@ class Reservoir(Storage):
 
         Functions intended to call in orchestration:
             make_abstractions (before any river routing)
+        
+        Key assumptions:
+            - Conceptualised as a `Tank`.
+            - Recharged only via pumped abstractions.
+            - Evaporation/precipitation onto surface area currently ignored.
+            - If `decays` are provided to model water quality transformations, 
+                see `core.py/DecayObj`.
+
+        Input data and parameter requirements:
+            - Tank `capacity`, `area`, and `datum`.
+                _Units_: cubic metres, squared metres, metres
+            - Optional dictionary of decays with pollutants as keys and decay 
+                parameters (a constant and a temperature sensitivity exponent) 
+                as values.
+                _Units_: -
         """
         super().__init__(**kwargs)
     
@@ -768,6 +826,30 @@ class RiverReservoir(Reservoir):
                 
                 satisfy_environmental (before river routing.. possibly before 
                     downstream river abstractions depending on licence)
+        
+        Key assumptions:
+            - Conceptualised as a `Tank`.
+            - Recharged via pumped abstractions and receives water from 
+                inflowing arcs.
+            - Reservoir aims to satisfy a static `environmental_flow`.
+            - If tank capacity is exceeded, reservoir spills downstream 
+                towards `nodes.py/Node`, `storage.py/River` or `waste.py/Waste` 
+                nodes. Spill counts towards `environmental_flow`.
+            - Evaporation/precipitation onto surface area currently ignored.
+            - Currently, if a reservoir satisfies a pull from a downstream 
+                node, it does __not__ count towards `environmental_flow`.
+            - If `decays` are provided to model water quality transformations, 
+                see `core.py/DecayObj`.
+            
+        Input data and parameter requirements:
+            - Tank `capacity`, `area`, and `datum`.
+                _Units_: cubic metres, squared metres, metres
+            - `environmental_flow`
+                _Units_: cubic metres/timestep
+            - Optional dictionary of decays with pollutants as keys and decay 
+                parameters (a constant and a temperature sensitivity exponent) 
+                as values.
+                _Units_: -
         """
 
         #Parameters
