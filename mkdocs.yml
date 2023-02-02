@@ -29,6 +29,7 @@ nav:
   - Installation: installation.md
   - Tutorials: tutorials.md
   - How to guide: how-to.md
+  - Component library: component-library.md
   - API reference: reference.md
   - Quickstart: ./demo/scripts/quickstart_demo.py
   - Coverage report: coverage.md

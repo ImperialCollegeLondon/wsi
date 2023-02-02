@@ -46,27 +46,29 @@ and consists of:
 
     4.2. [Customise an arc](./demo/scripts/customise_an_arc.py)
 
-5. [API reference](reference.md)
-    
-    5.1. [API reference - arc](reference-arc.md)
-    
-    5.2. [API reference - core](reference-core.md)
-    
-    5.3. [API reference - land](reference-land.md)
-    
-    5.4. [API reference - nodes](reference-nodes.md)
-    
-    5.5. [API reference - sewer](reference-sewer.md)
-    
-    5.6. [API reference - storage (reservoir, river, groundwater)](reference-storage.md)
-    
-    5.7. [API reference - wtw](reference-wtw.md)
-    
-    5.8. [API reference - other components](reference-other.md)
+5. [Component library](component-library.md)
 
-    5.9. [API reference - model](reference-model.md)
+6. [API reference](reference.md)
+    
+    6.1. [API reference - arc](reference-arc.md)
+    
+    6.2. [API reference - core](reference-core.md)
+    
+    6.3. [API reference - land](reference-land.md)
+    
+    6.4. [API reference - nodes](reference-nodes.md)
+    
+    6.5. [API reference - sewer](reference-sewer.md)
+    
+    6.6. [API reference - storage (reservoir, river, groundwater)](reference-storage.md)
+    
+    6.7. [API reference - wtw](reference-wtw.md)
+    
+    6.8. [API reference - other components](reference-other.md)
 
-6. [Coverage](coverage.md)
+    6.9. [API reference - model](reference-model.md)
+
+7. [Coverage](coverage.md)
 
 ## Acknowledgements
 

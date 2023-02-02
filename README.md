@@ -39,9 +39,13 @@ and consists of:
 
 4. [How-To Guides](https://barneydobson.github.io/wsi/how-to/)
 
-5. [API reference](https://barneydobson.github.io/wsi/reference/)
+5. [Component library](https://barneydobson.github.io/wsi/component-library/)
 
-6. [Coverage](https://barneydobson.github.io/wsi/coverage/)
+6. [API reference](https://barneydobson.github.io/wsi/reference/)
+
+7. [Quickstart](https://barneydobson.github.io/wsi/demo/scripts/quickstart_demo/)
+
+8. [Coverage](https://barneydobson.github.io/wsi/coverage/)
 
 ## Installation
 Create and activate new conda environment

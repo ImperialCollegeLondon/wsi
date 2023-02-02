@@ -140,7 +140,7 @@ The `dates` entry is written if the model object has a `dates` property and is a
 ## Input data
 While the `config.yml` file contains information to parameterise and initialise
 WSIMOD objects, timeseries input data is stored separately to create a more 
-manageable model directory. As established through the [tutorials](tutorials.d),
+manageable model directory. As established through the [tutorials](tutorials.md),
 any node timeseries input data must be provided as a dictionary where the keys
 are tuples containing the variable and time, and stored in the `data_input_dict`
 property. For example, using the [`Catchment`](./../reference-other/#wsimod.nodes.catchment.Catchment) 
