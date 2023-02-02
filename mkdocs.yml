@@ -11,6 +11,7 @@ plugins:
   - mkdocstrings
   - mkdocs-jupyter:
       execute: true
+      ignore: ["./docs/create_class_page.py"]
   - search
   - bibtex:
       bib_file: "./docs/paper/paper.bib"
