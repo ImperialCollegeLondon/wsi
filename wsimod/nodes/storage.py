@@ -408,6 +408,33 @@ class River(Storage):
         
         Functions intended to call in orchestration:
             distribute
+            
+        Key assumptions:
+             - River is conceptualised as a water tank that receives flows from various 
+                sources (e.g., runoffs from urban and rural land, baseflow from groundwater), 
+                interacts with water infrastructure (e.g., abstraction for irrigation and 
+                domestic supply, sewage and treated effluent discharge), and discharges 
+                flows downstream. It has length and width as shape parameters, average 
+                velocity to indicate flow speed and capacity to indicate the maximum storage limit.
+             - Flows from different sources into rivers will fully mix. River tank is assumed to
+                have delay and attenuation effects when generate outflows. These effects are 
+                simulated based on the average velocity.
+             - In-river biochemical processes are simulated as sources/sinks of nutrients
+                in the river tank, including
+                - denitrification (for nitrogen)
+                - phytoplankton absorption/release (for nitrogen and phosphorus)
+                - macrophyte uptake (for nitrogen and phosphorus)
+                These processes are affected by river temperature.
+
+        Input data and parameter requirements:
+             - depth, length, width
+                _Units_: m
+             - velocity
+                _Units_: m/day
+             - damping coefficient
+                _Units_: -
+             - minimum required flow
+                _Units_: m3/day
         """
         #Set parameters
         self.depth = depth # [m]
@@ -728,11 +755,11 @@ class River(Storage):
         return in_, out_
     
     def get_riverrc(self):
-        """Get river runoff coefficient (i.e., how much water leaves the tank in this 
+        """Get river outflow coefficient (i.e., how much water leaves the tank in this 
         timestep)
 
         Returns:
-            riverrc (float): runoff coeffficient
+            riverrc (float): outflow coeffficient
         """
         #Calculate travel time
         total_time = self.length / self.velocity
