@@ -434,7 +434,7 @@ class River(Storage):
         
         #Update handlers
         self.push_set_handler['default'] = self.push_set_river
-        self.push_check_handler['default'] = lambda x : self.push_check_basic(x, of_type = ['Node', 'River', 'Waste'])
+        self.push_check_handler['default'] = self.push_check_accept
 
         self.pull_check_handler['default'] = self.pull_check_river
         self.pull_set_handler['default'] = self.pull_set_river

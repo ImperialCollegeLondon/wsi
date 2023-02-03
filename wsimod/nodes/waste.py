@@ -40,17 +40,3 @@ class Waste(Node):
         """
 
         return self.empty_vqip()
-    
-    def push_check_accept(self, vqip = None):
-        """Push check function that accepts all water
-
-        Args:
-            vqip (dict, optional): A VQIP that has been pushed (ignored)
-
-        Returns:
-            (dict): VQIP or an unbounded capacity, indicating all water can be received
-        """
-        if not vqip:
-            vqip = self.empty_vqip()
-            vqip['volume'] = constants.UNBOUNDED_CAPACITY
-        return vqip

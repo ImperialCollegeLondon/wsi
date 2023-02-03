@@ -571,6 +571,20 @@ class Node(WSIObj):
         print('Attempted push check to deny')
         return self.empty_vqip()
     
+    def push_check_accept(self, vqip = None):
+       """Push check function that accepts all water
+
+       Args:
+           vqip (dict, optional): A VQIP that has been pushed (ignored)
+
+       Returns:
+           (dict): VQIP or an unbounded capacity, indicating all water can be received
+       """
+       if not vqip:
+           vqip = self.empty_vqip()
+           vqip['volume'] = constants.UNBOUNDED_CAPACITY
+       return vqip
+   
     def get_data_input(self, var):
         """Read data from data_input_dict. Keys are tuples with the first entry as 
         the variable to read and second entry the time
