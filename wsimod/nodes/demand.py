@@ -13,39 +13,22 @@ from wsimod.core import constants
 class Demand(Node):
     def __init__(self,
                         name,
-                        population = 1,
-                        pollutant_load = {},
-                        per_capita = 0.12,
-                        gardening_efficiency = 0.6 * 0.7, #Watering efficiency by irrigated area
-                        data_input_dict = {}, #For temperature
-                        constant_temp = 30,
-                        constant_weighting = 0.2,
                         constant_demand = 0,
+                        pollutant_load = {},
+                        data_input_dict = {},
                         ):
-        """Node that generates and moves water associated with population. 
+        """Node that generates and moves water. Currently only subclass ResidentialDemand is in use.
 
         Args:
             name (str): node name
-            population (float, optional): population of node. Defaults to 1.
-            pollutant_load (dict, optional): Mass per person per timestep of 
-                different pollutants generated. Defaults to {}.
-            per_capita (float, optional): Volume per person per timestep of water 
-                used. Defaults to 0.12.
-            gardening_efficiency (float, optional): Value between 0 and 1 that 
-                translates irrigation demand from GardenSurface into water requested 
-                from the distribution network. Should account for percent of garden 
-                that is irrigated and the efficacy of people in meeting their garden 
-                water demand. Defaults to 0.6*0.7.
+            constant_demand (float, optional): A constant portion of demand if no subclass
+                is used. Defaults to 0.
+            pollutant_load (dict, optional): Pollutant mass per timestep of constant_demand.
+                Defaults to {}.
             data_input_dict (dict, optional):  Dictionary of data inputs relevant for 
                 the node (temperature). Keys are tuples where first value is the name of 
                 the variable to read from the dict and the second value is the 
                 time. Defaults to {}
-            constant_temp (float, optional): A constant temperature associated with 
-                generated water. Defaults to 30
-            constant_weighting (float, optional): Proportion of temperature that is 
-                made up from by cconstant_temp. Defaults to 0.2.
-            constant_demand (float, optional): A constant portion of demand if no subclass
-                is used. Defaults to 0.
         
         Functions intended to call in orchestration:
             create_demand
@@ -53,14 +36,8 @@ class Demand(Node):
         #TODO should temperature be defined in pollutant dict?
         #TODO a lot of this should be moved to ResidentialDemand
         #Assign parameters
-        self.gardening_efficiency = gardening_efficiency
-        self.population = population
-        self.per_capita = per_capita
-        self.pollutant_load = pollutant_load
-        self.constant_weighting = constant_weighting
-        self.constant_temp = constant_temp
         self.constant_demand = constant_demand
-        
+        self.pollutant_load = pollutant_load
         #Update args
         super().__init__(name, data_input_dict = data_input_dict)
         #Update handlers
@@ -158,10 +135,60 @@ class NonResidentialDemand(Demand):
         return {'house' : self.get_demand()}
 
 class ResidentialDemand(Demand):
-    """Subclass of demand with functions to handle internal and external water use
-    """
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self,
+                        population = 1,
+                        pollutant_load = {},
+                        per_capita = 0.12,
+                        gardening_efficiency = 0.6 * 0.7, #Watering efficiency by irrigated area
+                        data_input_dict = {}, #For temperature
+                        constant_temp = 30,
+                        constant_weighting = 0.2, 
+                        **kwargs):
+        """Subclass of demand with functions to handle internal and external water use
+        
+
+        Args:
+            population (float, optional): population of node. Defaults to 1.
+            per_capita (float, optional): Volume per person per timestep of water 
+                used. Defaults to 0.12.
+            pollutant_load (dict, optional): Mass per person per timestep of 
+                different pollutants generated. Defaults to {}.
+            gardening_efficiency (float, optional): Value between 0 and 1 that 
+                translates irrigation demand from GardenSurface into water requested 
+                from the distribution network. Should account for percent of garden 
+                that is irrigated and the efficacy of people in meeting their garden 
+                water demand. Defaults to 0.6*0.7.
+            data_input_dict (dict, optional):  Dictionary of data inputs relevant for 
+                the node (temperature). Keys are tuples where first value is the name of 
+                the variable to read from the dict and the second value is the 
+                time. Defaults to {}
+            constant_temp (float, optional): A constant temperature associated with 
+                generated water. Defaults to 30
+            constant_weighting (float, optional): Proportion of temperature that is 
+                made up from by constant_temp. Defaults to 0.2.
+
+        Key assumptions:
+            - Per capita calculations to generate demand based on population.
+            - Pollutant concentration of generated demand uses a fixed mass per person per timestep.
+            - Temperature of generated wastewater is based partially on air temperature and partially on a constant.
+            - Can interact with `land.py/GardenSurface` to simulate garden water use.
+
+        Input data and parameter requirements:
+            - `population`.
+                _Units_: n
+            - `per_capita`.
+                _Units_: m3/timestep
+            - `data_input_dict` should contain air temperature at model timestep.
+                _Units_: C
+        """
+        self.gardening_efficiency = gardening_efficiency
+        self.population = population
+        self.per_capita = per_capita
+        self.constant_weighting = constant_weighting
+        self.constant_temp = constant_temp
+        super().__init__(data_input_dict = data_input_dict,
+                         pollutant_load=pollutant_load,
+                         **kwargs)
         #Label as Demand class so that other nodes treat it the same
         self.__class__.__name__ = 'Demand'
         
