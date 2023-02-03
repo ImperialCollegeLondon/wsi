@@ -7,6 +7,7 @@ Created on Thu Feb  2 10:37:05 2023
 
 from wsimod.core.core import WSIObj
 from wsimod import nodes
+from wsimod.nodes.nutrient_pool import NutrientPool
 import pandas as pd
 import os
 
@@ -37,6 +38,7 @@ for file in os.listdir(os.getcwd()):
 
 #Iterate over classes
 subclasses = get_classes()
+subclasses['NutrientPool'] = NutrientPool
 mytable = []
 for subclass, obj in subclasses.items():
     #Get docstring
@@ -60,17 +62,20 @@ for subclass, obj in subclasses.items():
 
 #Convert to table
 mytable = pd.DataFrame(mytable).sort_values(by = 'Component')
-
+mytable['Assumptions'] = mytable['Assumptions'].str.replace('\n', '\n - ')
+mytable['Component'] = mytable['Component'].str.replace('\n', '\n - ')
 front_text = """
-WSIMOD contains a variety of components to represent physical processes. We
-recommend viewing the [API](#reference) for a detailed description of the
-models included, however, we provide an overview of documented components, their
-assumptions and required input data on this page.
+## Introduction\n
+WSIMOD contains a variety of components to represent physical processes.
+We recommend viewing the [API](#reference) for a detailed description of the
+models included, however, we provide an overview of documented
+components, their assumptions and required input data on this page.
+\n\n
+
+## Component Library
 """
 
 #Write
 with open('component-library.md', 'w') as f:
     f.write(front_text)
-    f.write(mytable.to_markdown(index = False))
-    
-    
+    f.write(mytable.to_markdown(index = False)) 
