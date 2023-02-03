@@ -278,6 +278,20 @@ class Surface(DecayTank):
             pollutant_load (dict, optional): A dict of different pollutant amounts that 
                 are deposited on the surface (units are mass per area per timestep). 
                 Defaults to {}.
+        
+        Key assumptions:
+            - Generic `Surface` that reads data and can apply simple forms of pollution deposition.
+            - Formulated as a `Tank` object.
+            - Ammonia->Nitrite->Nitrate decay takes place if parameters describing this 
+                process are provided in `decays` (see `core.py/DecayObj` for transformation 
+                details).
+        
+        Input data and parameter requirements:
+            - `data_input_dict` can contain a variety of pollutant deposition data.  
+                `srp-dry` describes phosphate. `noy-dry` describes nitrogen as 
+                nitrates. `nhx-dry` describes nitrogen as ammonia. `srp/noy/
+                nhx-wet` can also be used to specify wet deposition. 
+                _Units_: kg/m2/timestep (data is read at a monthly timestep)
         """
         #Assign parameters
         self.depth = depth
@@ -893,6 +907,11 @@ class GrowingSurface(PerviousSurface):
                 humus form.
 
         Input data and parameter requirements:
+             - `data_input_dict` can contain a variety of pollutant deposition data.  
+                `srp-fertiliser` describes phosphate. `noy-fertiliser` describes nitrogen as 
+                nitrates. `nhx-fertiliser` describes nitrogen as ammonia. `srp/noy/
+                nhx-manure` can also be used to specify manure application. 
+                _Units_: kg/m2/timestep (data is read at a monthly timestep)
              - Rooting depth.
                 _Units_: m
              - Evapotranspiration depletion factor.
