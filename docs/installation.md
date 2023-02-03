@@ -31,17 +31,3 @@ or (with develop)
 ```
 python setup.py develop easy_install "wsimod[demos]"
 ```
-
-## Create documentation
-
-If you want to compile new documentation you will need to install some additional packages:
-
-```
-pip install -e https://github.com/barneydobson/wsi/archive/refs/heads/main.zip[documentation]
-```
-
-And then open python, and run:
-```
-import pypandoc
-pypandoc.download_pandoc()
-```
