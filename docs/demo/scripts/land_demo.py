@@ -4,19 +4,19 @@
 # Note - this script can also be opened in interactive Python if you wanted to
 # play around. On the GitHub it is in [docs/demo/scripts](https://github.com/barneydobson/wsi/blob/main/docs/demo/scripts/land_demo.py)
 #
-# 1. [Introduction](#Introduction)
+# 1. [Introduction](#introduction)
 #
-# 2. [Data](#Imports-and-forcing-data)
+# 2. [Data](#imports-and-forcing-data)
 #
-# 3. [Basic surface](#Basic-surface)
+# 3. [Basic surface](#basic-surface)
 #
-# 4. [Pervious surface](#Pervious-surface)
+# 4. [Pervious surface](#pervious-surface)
 #
-# 5. [Connecting land nodes in a model](#Connecting-land-nodes-in-a-model)
+# 5. [Connecting land nodes in a model](#connecting-land-nodes-in-a-model)
 #
-#     5.1 [Model object](#Model-object)
+#     5.1 [Model object](#model-object)
 #
-# 6. [Growing surface](#Growing-surface)
+# 6. [Growing surface](#growing-surface)
 # 
 # %% [markdown]
 # ## Introduction

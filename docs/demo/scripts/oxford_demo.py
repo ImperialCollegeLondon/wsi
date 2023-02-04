@@ -4,47 +4,47 @@
 # Note - this script can also be opened in interactive Python if you wanted to
 # play around. On the GitHub it is in [docs/demo/scripts](https://github.com/barneydobson/wsi/blob/main/docs/demo/scripts/oxford_demo.py)
 #
-# 1. [Introduction](#We-will-cover-a-demo-WSIMOD-case-study)
+# 1. [Introduction](#we-will-cover-a-demo-WSIMOD-case-study)
 #
-# 2. [Data](#Imports-and-forcing-data)
+# 2. [Data](#imports-and-forcing-data)
 #
-# 3. [Nodes](#Create-nodes)
+# 3. [Nodes](#create-nodes)
 #
-#     3.1 [Freshwater Treatment Works](#Freshwater-treatment-works)
+#     3.1 [Freshwater Treatment Works](#freshwater-treatment-works)
 #
-#     3.2 [Land](#Land)
+#     3.2 [Land](#land)
 #
-#     3.3 [Demand](#Residential-demand)
+#     3.3 [Demand](#residential-demand)
 #
-#     3.4 [Reservoir](#Reservoir)
+#     3.4 [Reservoir](#reservoir)
 #
-#     3.5 [Distribution](#Distribution)
+#     3.5 [Distribution](#distribution)
 #
-#     3.6 [Wastewater Treatment Works](#Wastewater-treatment-works)
+#     3.6 [Wastewater Treatment Works](#wastewater-treatment-works)
 #
-#     3.7 [Sewers](#Sewers)
+#     3.7 [Sewers](#sewers)
 #
-#     3.8 [Groundwater](#Groundwater)
+#     3.8 [Groundwater](#groundwater)
 #
 #     3.9 [Node list](#create-a-nodelist)
 #
-# 4. [Arcs](#Arcs)
+# 4. [Arcs](#arcs)
 #
-#     4.1 [Arc parameters](#Arc-parameters)
+#     4.1 [Arc parameters](#arc-parameters)
 #
-#     4.2 [Create the arcs](#Create-arcs)
+#     4.2 [Create the arcs](#create-arcs)
 #
-# 5. [Mapping](#Mapping)
+# 5. [Mapping](#mapping)
 #
-# 6. [Orchestration](#Orchestration)
+# 6. [Orchestration](#orchestration)
 #
-#     6.1 [Orchestrating an individual timestep](#Orchestrating-an-individual-timestep)
+#     6.1 [Orchestrating an individual timestep](#orchestrating-an-individual-timestep)
 #
-#     6.2 [Ending a timestep](#Ending-to-timestep)
+#     6.2 [Ending a timestep](#ending-to-timestep)
 #
-# 7. [Model object](#Model-object)
+# 7. [Model object](#model-object)
 #
-#     7.1 [Validation](#Validation-plots)
+#     7.1 [Validation](#validation-plots)
 # %% [markdown]
 # ## We will cover a demo WSIMOD case study
 #

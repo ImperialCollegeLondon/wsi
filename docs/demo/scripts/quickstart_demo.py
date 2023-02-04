@@ -3,19 +3,19 @@
 # Note - this script can also be opened in interactive Python if you wanted to
 # play around. On the GitHub it is in [docs/demo/scripts](https://github.com/barneydobson/wsi/blob/main/docs/demo/scripts/quickstart_demo.py)
 #
-# 1. [Introduction](#Introduction)
+# 1. [Introduction](#introduction)
 #
-# 2. [Data](#Imports-and-forcing-data)
+# 2. [Data](#imports-and-forcing-data)
 #
-# 3. [Create nodes](#Create-nodes)
+# 3. [Create nodes](#create-nodes)
 #
-# 4. [Create arcs](#Create-arcs)
+# 4. [Create arcs](#create-arcs)
 #
-# 5. [Create model](#Create-model)
+# 5. [Create model](#create-model)
 #
-# 6. [Run model](#Run-model)
+# 6. [Run model](#run-model)
 #
-# 7. [What next?](#What-next?)
+# 7. [What next?](#what-next?)
 # %% [markdown]
 # ## Introduction
 #

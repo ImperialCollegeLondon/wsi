@@ -3,15 +3,15 @@
 # Note - this script can also be opened in interactive Python if you wanted to
 # play around. On the GitHub it is in [docs/demo/scripts](https://github.com/barneydobson/wsi/blob/main/docs/demo/scripts/customise_a_node.py)
 #
-# 1. [Introduction](#Introduction)
+# 1. [Introduction](#introduction)
 #
-# 2. [Create baseline](#Create-baseline)
+# 2. [Create baseline](#create-baseline)
 #
-# 3. [Customise node](#Customise-node)
+# 3. [Customise node](#customise-node)
 #
-# 4. [Inspect results](#Inspect-results)
+# 4. [Inspect results](#inspect-results)
 #
-# 5. [What next](#What-next?)
+# 5. [What next](#what-next?)
 #
 # %% [markdown]
 # ## Introduction

@@ -3,13 +3,13 @@
 # Note - this script can also be opened in interactive Python if you wanted to
 # play around. On the GitHub it is in [docs/demo/scripts](https://github.com/barneydobson/wsi/blob/main/docs/demo/scripts/customise_an_arc.py)
 #
-# 1. [Introduction](#Introduction)
+# 1. [Introduction](#introduction)
 #
-# 2. [Create baseline](#Create-baseline)
+# 2. [Create baseline](#create-baseline)
 #
-# 3. [Customise arc](#Customise-arc)
+# 3. [Customise arc](#customise-arc)
 #
-# 4. [Inspect results](#Inspect-results)
+# 4. [Inspect results](#inspect-results)
 #
 # %% [markdown]
 # ## Introduction
