@@ -28,9 +28,9 @@ If you want to compile new documentation you will need to clone the reposistory 
 pip install .[documentation]
 ```
 
-Run the following to create the component library:
+Navigate to `docs` and run the following to create the component library:
 ```
-python docs\create_class_page.py
+python create_class_page.py
 ```
 
 
@@ -40,4 +40,8 @@ import pypandoc
 pypandoc.download_pandoc()
 ```
 
-From here, you can make changes to the documentation pages in `docs` and view how they appear 
+From here, you can make changes to the documentation pages in `docs` and view how they appear by navigating to and hosting them locally:
+
+```
+mkdocs serve
+```
