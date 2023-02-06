@@ -57,7 +57,7 @@ from matplotlib import pyplot as plt
 data_folder= os.path.join(os.path.abspath(''),
                                "docs","demo","data")
 #Use this path otherwise
-data_folder = os.path.join(os.path.split(os.path.abspath(''))[0],"data") 
+#data_folder = os.path.join(os.path.split(os.path.abspath(''))[0],"data") 
 
 input_fid = os.path.join(data_folder, "processed", "timeseries_data.csv")
 input_data = pd.read_csv(input_fid)
@@ -192,6 +192,8 @@ print(land.get_surface('my_surface').outflows)
 # 
 # We can create the surface, again via parameters stored in a dictionary that 
 # is passed to the Land node.
+# is passed to the Land node. Note that the subclass of surface to be created 
+# must be specified by the `type_` keyword.
 # %%
 surface = {'type_' : 'PerviousSurface',
            'surface' : 'my_surface',
