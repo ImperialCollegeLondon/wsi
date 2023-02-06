@@ -20,6 +20,17 @@ Although the development of new functionality will depend highly on the case, th
     pytest tests/test_file.py # run a specific file's tests
     ```
 
+    You can check the coverage for these tests by running:
+    ```
+    coverage run -m pytest
+    coverage report
+    ```
+
+    And generate a new coverage html for the documentation with
+    ```
+    coverage html
+    ```
+
 ## Create documentation
 
 If you want to compile new documentation you will need to clone the reposistory and `pip install` WSIMOD with some additional packages:
