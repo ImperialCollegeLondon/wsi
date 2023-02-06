@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.5.2">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
     
     
       
@@ -17,10 +17,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.9f9400aa.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.975780f9.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.cbb835fc.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.2505c338.min.css">
         
       
       
@@ -56,7 +56,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
   
     
     
@@ -270,6 +270,21 @@
   
   
     <li class="md-nav__item">
+      <a href="../../component-library/" class="md-nav__link">
+        Component library
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../reference/" class="md-nav__link">
         API reference
       </a>
@@ -361,33 +376,62 @@ physical and human processes throughout. For example, rivers are a water
 supply, a receiver of wastewater, and an aggregate of many hydrological, 
 biological, and chemical processes. Thus, simulations of the water cycle that
 have highly constrained boundaries may miss key interactions that create 
-unanticipated impacts or unexpected opportunities <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>. 
+unanticipated impacts or unexpected opportunities<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>. 
 Integrated environmental models aim to resolve the issue of boundary 
-conditions, however they have some key limitations <sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>, and in 
+conditions, however they have some key limitations<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>, and in 
 particular we find a significant need for a parsimonious, self-contained suite 
 that is accessible and easy to setup. </p>
 <h1 id="statement-of-need">Statement of need</h1>
-<p>WSIMOD is a Python package for integrated modelling of the water cycle. It 
+<p>Traditional approaches to water system modelling broadly fall into highly 
+numerical models that excel in representing individual subsystems, or systems 
+dynamics models that create broad representations but that lack a physical 
+basis. Early attempts at a physical representation of the water cycle combined 
+existing numerical models through an integration framework<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup>. While 
+successful, this approach has an incredibly high user burden because each 
+subsystem model is so detailed, and as a consequence is also difficult to 
+customise. To illustrate, SWAT is one of the most widespread models of the 
+rural water cycle<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>, while SWMM is the same but for the urban 
+water cycle<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>. It has been demonstrated that these two software 
+can interface using the OpenMI integration framework<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup>. Despite 
+this seemingly powerful combination of two near-ubiquitous models, integrated 
+applications have been limited, and we propose that this is for the same 
+reasons presented in<sup id="fnref3:3"><a class="footnote-ref" href="#fn:3">3</a></sup>: user burden and customisation difficulty. </p>
+<p>Because of this need, we provide a parsimonious and self-contained suite for integrated water cycle modelling in the WSIMOD Python package. It 
 brings together a range of software developed over the course of three years 
 on the <a href="https://www.camelliawater.org/">CAMELLIA project</a>. Urban water 
-processes are based on those presented and validated in the CityWat model 
-<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup><sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup><sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup>, while hydrological 
-and agricultural processes are from the CatchWat model <sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref:7"><a class="footnote-ref" href="#fn:7">7</a></sup>. 
-WSIMOD also provides an interface for message passing between different 
-model components, enabling all parts of the water cycle to interact with all 
-other parts. The result is a simulation model that is easy to set up, highly 
-flexible and ideal for representing water quality and quantity in 'non-
-textbook' water systems (which in our experience is nearly all of them). </p>
+processes are based on those presented and validated in the CityWat 
+model<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:7"><a class="footnote-ref" href="#fn:7">7</a></sup><sup id="fnref:8"><a class="footnote-ref" href="#fn:8">8</a></sup><sup id="fnref:9"><a class="footnote-ref" href="#fn:9">9</a></sup>, while
+hydrological and agricultural processes are from the CatchWat 
+model<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref:10"><a class="footnote-ref" href="#fn:10">10</a></sup>. WSIMOD also provides an interface for message
+passing between different model components, enabling all parts of the water 
+cycle to interact with all other parts. The result is a simulation model that
+is easy to set up, highly flexible and ideal for representing water quality and
+quantity in 'non-textbook' water systems (which in our experience is nearly 
+all of them). </p>
 <p>The package provides a variety of tutorials and examples to help modellers 
 create nodes (i.e., representations of subsystems within the water cycle), 
 connect them together with arcs (i.e., representing the fluxes between 
 subsystems), and orchestrate them into a model that creates simulations. </p>
+<h2 id="limitations">Limitations</h2>
+<p>We highlight that WSIMOD is not intended to be a substitute for sophisticated 
+physical models, nor for a system dynamics approach. In applications where 
+detailed hydraulic/hydrological process representations are (e.g.,) needed to 
+inform design, or in cases where capturing (e.g.,) hard to quantify social 
+processes, there are likely better tools available. Our case studies highlight 
+that WSIMOD is most useful in situations where physically representing 
+cross-sytem processes and thus capturing the impacts of cross-system 
+interactions are essential towards the questions you ask of your model. 
+Secondary benefits are that the parsimonious representations utilised are 
+computationally fast and flexible in capturing a wide range of system 
+interventions.</p>
 <h1 id="acknowledgements">Acknowledgements</h1>
-<p>WSIMOD was developed by Barnaby Dobson and Leyang Liu. 
+<p>WSIMOD was developed by <a href="https://github.com/barneydobson">Barnaby Dobson</a> and <a href="https://github.com/liuly12">Leyang Liu</a>. 
 Theoretical support was provided by Ana Mijic.
 Testing the WSIMOD over a variety of applications has been performed by 
 Fangjun Peng, Vladimir Krivstov and Samer Muhandes.
-Software development support was provided by Imperial College's Research Software Engineering service, in particular from Diego Alonso and Dan Davies.</p>
+Software development support was provided by Imperial College's Research 
+Software Engineering service, in particular from Diego Alonso and Dan Davies.</p>
+<p>We are incredibly grateful for the detailed software reviews provided by <a href="https://github.com/cheginit">Taher Chegini</a> and <a href="https://github.com/jlarsen-usgs">Joshua Larsen</a> and editing by <a href="https://github.com/crvernon">Chris Vernon</a>. Their suggestions have significantly improved WSIMOD.</p>
 <p>The design of WSIMOD was significantly influenced by 
 <a href="https://github.com/gregorburger/CityDrain3">CityDrain3</a>, 
 <a href="https://www.ogc.org/standards/openmi">OpenMI</a>, 
@@ -403,46 +447,62 @@ for a Liveable London), funded by the Natural Environment Research Council
 <li id="fn:1">
 <p>Dobson, B., &amp; Mijic, A. (2020). Protecting rivers by integrating
  supply-wastewater infrastructure planning and coordinating operational
- decisions. <em>Environmental Research Letters</em>, <em>15</em>(11), 114025. Retrieved
- from <a href="https://doi.org/10.1088/1748-9326/abb050">https://doi.org/10.1088/1748-9326/abb050</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+ decisions. <em>Environmental Research Letters</em>, <em>15</em>(11), 114025.
+ <a href="https://doi.org/10.1088/1748-9326/abb050">https://doi.org/10.1088/1748-9326/abb050</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
 <p>Liu, L., Dobson, B., &amp; Mijic, A. (2022). Hierarchical systems
  integration for coordinated urban-rural water quality management at a
  catchment scale. <em>Science of The Total Environment</em>, <em>806</em>, 150642.
- Retrieved from <a href="https://doi.org/10.1016/j.scitotenv.2021.150642">https://doi.org/10.1016/j.scitotenv.2021.150642</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+ <a href="https://doi.org/10.1016/j.scitotenv.2021.150642">https://doi.org/10.1016/j.scitotenv.2021.150642</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:3">
 <p>Rauch, W., Urich, C., Bach, P., Rogers, B., De Haan, F., Brown, R., et
  al.others. (2017). Modelling transitions in urban water systems. <em>Water
- Research</em>, <em>126</em>, 501–514. Retrieved from
- <a href="https://doi.org/10.1016/j.watres.2017.09.039">https://doi.org/10.1016/j.watres.2017.09.039</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+ Research</em>, <em>126</em>, 501–514.
+ <a href="https://doi.org/10.1016/j.watres.2017.09.039">https://doi.org/10.1016/j.watres.2017.09.039</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 <li id="fn:4">
+<p>Arnold, J. G., Moriasi, D. N., Gassman, P. W., Abbaspour, K. C., White,
+ M. J., Srinivasan, R., et al.others. (2012). SWAT: Model use,
+ calibration, and validation. <em>Transactions of the ASABE</em>, <em>55</em>(4),
+ 1491–1508. <a href="https://doi.org/10.13031/2013.42259">https://doi.org/10.13031/2013.42259</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p>Gironás, J., Roesner, L. A., Rossman, L. A., &amp; Davis, J. (2010). A new
+ applications manual for the storm water management model(SWMM).
+ <em>Environmental Modelling<br />
+ &amp; Software</em>, <em>25</em>(6), 813–814. <a href="https://doi.org/j.envsoft.2009.11.009">https://doi.org/j.envsoft.2009.11.009</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6">
+<p>Shrestha, N. K., Leta, O. T., De Fraine, B., Van Griensven, A., &amp;
+ Bauwens, W. (2013). OpenMI-based integrated sediment transport modelling
+ of the river zenne, belgium. <em>Environmental Modelling<br />
+ &amp; Software</em>, <em>47</em>, 193–206.
+ <a href="https://doi.org/10.1016/j.envsoft.2013.05.004">https://doi.org/10.1016/j.envsoft.2013.05.004</a>&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7">
 <p>Dobson, B., Jovanovic, T., Chen, Y., Paschalis, A., Butler, A., &amp; Mijic,
  A. (2021). Integrated modelling to support analysis of COVID-19 impacts
  on london’s water system and in-river water quality. <em>Frontiers in
- Water</em>, <em>3</em>, 641462. Retrieved from
- <a href="https://doi.org/10.3389/frwa.2021.641462">https://doi.org/10.3389/frwa.2021.641462</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+ Water</em>, <em>3</em>, 641462. <a href="https://doi.org/10.3389/frwa.2021.641462">https://doi.org/10.3389/frwa.2021.641462</a>&#160;<a class="footnote-backref" href="#fnref:7" title="Jump back to footnote 7 in the text">&#8617;</a></p>
 </li>
-<li id="fn:5">
+<li id="fn:8">
 <p>Dobson, B., Watson-Hill, H., Muhandes, S., Borup, M., &amp; Mijic, A.
  (2022). A reduced complexity model with graph partitioning for rapid
  hydraulic assessment of sewer networks. <em>Water Resources Research</em>,
- <em>58</em>(1), e2021WR030778. Retrieved from
- <a href="https://doi.org/10.1029/2021WR030778">https://doi.org/10.1029/2021WR030778</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+ <em>58</em>(1), e2021WR030778. <a href="https://doi.org/10.1029/2021WR030778">https://doi.org/10.1029/2021WR030778</a>&#160;<a class="footnote-backref" href="#fnref:8" title="Jump back to footnote 8 in the text">&#8617;</a></p>
 </li>
-<li id="fn:6">
+<li id="fn:9">
 <p>Muhandes, S., Dobson, B., &amp; Mijic, A. (2022). The value of aggregated
  city scale models to rapidly assess SuDS in combined sewer systems.
- <em>Frontiers in Water</em>, 206. Retrieved from
- <a href="https://doi.org/10.3389/frwa.2021.773974">https://doi.org/10.3389/frwa.2021.773974</a>&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+ <em>Frontiers in Water</em>, 206. <a href="https://doi.org/10.3389/frwa.2021.773974">https://doi.org/10.3389/frwa.2021.773974</a>&#160;<a class="footnote-backref" href="#fnref:9" title="Jump back to footnote 9 in the text">&#8617;</a></p>
 </li>
-<li id="fn:7">
-<p>Liu, L., Dobson, B., &amp; Mijic, A. (2022). Optimisation of urban-rural
+<li id="fn:10">
+<p>Liu, L., Dobson, B., &amp; Mijic, A. (2023). Optimisation of urban-rural
  nature-based solutions for integrated catchment water management.
- <em>ESSOAr: Earth and Space Science Open Archive</em>. Retrieved from
- <a href="https://www.essoar.org/doi/abs/10.1002/essoar.10511984.1">https://www.essoar.org/doi/abs/10.1002/essoar.10511984.1</a>&#160;<a class="footnote-backref" href="#fnref:7" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+ <em>Journal of Environmental Management</em>.
+ <a href="https://doi.org/10.1016/j.jenvman.2022.117045">https://doi.org/10.1016/j.jenvman.2022.117045</a>&#160;<a class="footnote-backref" href="#fnref:10" title="Jump back to footnote 10 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
@@ -519,11 +579,12 @@ for a Liveable London), funded by the Natural Environment Research Council
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.39f04ddb.min.js"></script>
+      <script src="../../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
       
+    
     
   </body>
 </html>

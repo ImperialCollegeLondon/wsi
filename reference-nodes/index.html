@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.5.2">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
     
     
       
@@ -17,10 +17,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.9f9400aa.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.975780f9.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.cbb835fc.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.2505c338.min.css">
         
       
       
@@ -56,7 +56,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
   
     
     
@@ -247,6 +247,21 @@
     <li class="md-nav__item">
       <a href="../how-to/" class="md-nav__link">
         How to guide
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../component-library/" class="md-nav__link">
+        Component library
       </a>
     </li>
   
@@ -825,13 +840,7 @@
 
         <details class="quote">
           <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1277</span>
-<span class="normal">1278</span>
-<span class="normal">1279</span>
-<span class="normal">1280</span>
-<span class="normal">1281</span>
-<span class="normal">1282</span>
-<span class="normal">1283</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1283</span>
 <span class="normal">1284</span>
 <span class="normal">1285</span>
 <span class="normal">1286</span>
@@ -861,13 +870,19 @@
 <span class="normal">1310</span>
 <span class="normal">1311</span>
 <span class="normal">1312</span>
-<span class="normal">1313</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">DecayQueueTank</span><span class="p">(</span><span class="n">QueueTank</span><span class="p">):</span>
+<span class="normal">1313</span>
+<span class="normal">1314</span>
+<span class="normal">1315</span>
+<span class="normal">1316</span>
+<span class="normal">1317</span>
+<span class="normal">1318</span>
+<span class="normal">1319</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">DecayQueueTank</span><span class="p">(</span><span class="n">QueueTank</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                         <span class="n">decays</span> <span class="o">=</span> <span class="p">{},</span>
                         <span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                         <span class="n">number_of_timesteps</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                         <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Adds a DecayAltArc in QueueTank to enable decay to occur within the </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds a DecayAltArc in QueueTank to enable decay to occur within the </span>
 <span class="sd">        internal_arc queue.</span>
 
 <span class="sd">        Args:</span>
@@ -890,7 +905,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">end_timestep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_end_timestep</span>
 
     <span class="k">def</span> <span class="nf">_end_timestep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;End timestep wrapper that removes decayed pollutants and calls internal </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;End timestep wrapper that removes decayed pollutants and calls internal </span>
 <span class="sd">        arc</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -977,13 +992,7 @@ provided with pushes only. Defaults to 0.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1278</span>
-<span class="normal">1279</span>
-<span class="normal">1280</span>
-<span class="normal">1281</span>
-<span class="normal">1282</span>
-<span class="normal">1283</span>
-<span class="normal">1284</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1284</span>
 <span class="normal">1285</span>
 <span class="normal">1286</span>
 <span class="normal">1287</span>
@@ -1002,12 +1011,18 @@ provided with pushes only. Defaults to 0.</p></td>
 <span class="normal">1300</span>
 <span class="normal">1301</span>
 <span class="normal">1302</span>
-<span class="normal">1303</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<span class="normal">1303</span>
+<span class="normal">1304</span>
+<span class="normal">1305</span>
+<span class="normal">1306</span>
+<span class="normal">1307</span>
+<span class="normal">1308</span>
+<span class="normal">1309</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                     <span class="n">decays</span> <span class="o">=</span> <span class="p">{},</span>
                     <span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="n">number_of_timesteps</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                     <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Adds a DecayAltArc in QueueTank to enable decay to occur within the </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adds a DecayAltArc in QueueTank to enable decay to occur within the </span>
 <span class="sd">    internal_arc queue.</span>
 
 <span class="sd">    Args:</span>
@@ -1061,13 +1076,7 @@ provided with pushes only. Defaults to 0.</p></td>
 
         <details class="quote">
           <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1054</span>
-<span class="normal">1055</span>
-<span class="normal">1056</span>
-<span class="normal">1057</span>
-<span class="normal">1058</span>
-<span class="normal">1059</span>
-<span class="normal">1060</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1060</span>
 <span class="normal">1061</span>
 <span class="normal">1062</span>
 <span class="normal">1063</span>
@@ -1106,12 +1115,18 @@ provided with pushes only. Defaults to 0.</p></td>
 <span class="normal">1096</span>
 <span class="normal">1097</span>
 <span class="normal">1098</span>
-<span class="normal">1099</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">DecayTank</span><span class="p">(</span><span class="n">Tank</span><span class="p">,</span> <span class="n">DecayObj</span><span class="p">):</span>
+<span class="normal">1099</span>
+<span class="normal">1100</span>
+<span class="normal">1101</span>
+<span class="normal">1102</span>
+<span class="normal">1103</span>
+<span class="normal">1104</span>
+<span class="normal">1105</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">DecayTank</span><span class="p">(</span><span class="n">Tank</span><span class="p">,</span> <span class="n">DecayObj</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">decays</span> <span class="o">=</span> <span class="p">{},</span>
                  <span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;A tank that has DecayObj functions. Decay occurs in end_timestep, after </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A tank that has DecayObj functions. Decay occurs in end_timestep, after </span>
 <span class="sd">        updating state variables. In this sense, decay is occurring at the very </span>
 <span class="sd">        beginning of the timestep.</span>
 
@@ -1136,7 +1151,7 @@ provided with pushes only. Defaults to 0.</p></td>
         <span class="bp">self</span><span class="o">.</span><span class="n">ds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decay_ds</span>
 
     <span class="k">def</span> <span class="nf">end_timestep_decay</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Update state variables and call make_decay</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update state variables and call make_decay</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">total_decayed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storage_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_vqip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">)</span>
@@ -1144,7 +1159,7 @@ provided with pushes only. Defaults to 0.</p></td>
         <span class="bp">self</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_decay</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">decay_ds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Track storage and amount decayed</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Track storage and amount decayed</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            ds (dict): A VQIP of change in storage and total decayed</span>
@@ -1220,13 +1235,7 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1055</span>
-<span class="normal">1056</span>
-<span class="normal">1057</span>
-<span class="normal">1058</span>
-<span class="normal">1059</span>
-<span class="normal">1060</span>
-<span class="normal">1061</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1061</span>
 <span class="normal">1062</span>
 <span class="normal">1063</span>
 <span class="normal">1064</span>
@@ -1246,11 +1255,17 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
 <span class="normal">1078</span>
 <span class="normal">1079</span>
 <span class="normal">1080</span>
-<span class="normal">1081</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<span class="normal">1081</span>
+<span class="normal">1082</span>
+<span class="normal">1083</span>
+<span class="normal">1084</span>
+<span class="normal">1085</span>
+<span class="normal">1086</span>
+<span class="normal">1087</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
              <span class="n">decays</span> <span class="o">=</span> <span class="p">{},</span>
              <span class="n">parent</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
              <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A tank that has DecayObj functions. Decay occurs in end_timestep, after </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A tank that has DecayObj functions. Decay occurs in end_timestep, after </span>
 <span class="sd">    updating state variables. In this sense, decay is occurring at the very </span>
 <span class="sd">    beginning of the timestep.</span>
 
@@ -1313,16 +1328,16 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1091</span>
-<span class="normal">1092</span>
-<span class="normal">1093</span>
-<span class="normal">1094</span>
-<span class="normal">1095</span>
-<span class="normal">1096</span>
-<span class="normal">1097</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1097</span>
 <span class="normal">1098</span>
-<span class="normal">1099</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">decay_ds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Track storage and amount decayed</span>
+<span class="normal">1099</span>
+<span class="normal">1100</span>
+<span class="normal">1101</span>
+<span class="normal">1102</span>
+<span class="normal">1103</span>
+<span class="normal">1104</span>
+<span class="normal">1105</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">decay_ds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Track storage and amount decayed</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        ds (dict): A VQIP of change in storage and total decayed</span>
@@ -1352,14 +1367,14 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1083</span>
-<span class="normal">1084</span>
-<span class="normal">1085</span>
-<span class="normal">1086</span>
-<span class="normal">1087</span>
-<span class="normal">1088</span>
-<span class="normal">1089</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">end_timestep_decay</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Update state variables and call make_decay</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1089</span>
+<span class="normal">1090</span>
+<span class="normal">1091</span>
+<span class="normal">1092</span>
+<span class="normal">1093</span>
+<span class="normal">1094</span>
+<span class="normal">1095</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">end_timestep_decay</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update state variables and call make_decay</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">total_decayed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">storage_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_vqip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">)</span>
@@ -1980,10 +1995,16 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
 <span class="normal">593</span>
 <span class="normal">594</span>
 <span class="normal">595</span>
-<span class="normal">596</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Node</span><span class="p">(</span><span class="n">WSIObj</span><span class="p">):</span>
+<span class="normal">596</span>
+<span class="normal">597</span>
+<span class="normal">598</span>
+<span class="normal">599</span>
+<span class="normal">600</span>
+<span class="normal">601</span>
+<span class="normal">602</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Node</span><span class="p">(</span><span class="n">WSIObj</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span> <span class="n">data_input_dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Base class for CWSD nodes.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Base class for CWSD nodes.</span>
 <span class="sd">        Constructs all the necessary attributes for the node object</span>
 
 <span class="sd">        Args:</span>
@@ -1995,6 +2016,12 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
 
 <span class="sd">        Examples:    </span>
 <span class="sd">            &gt;&gt;&gt; my_node = nodes.Node(name = &#39;london_river_junction&#39;)</span>
+
+<span class="sd">        Key assumptions:</span>
+<span class="sd">            - No physical processes represented, can be used as a junction.</span>
+
+<span class="sd">        Input data and parameter requirements:</span>
+<span class="sd">            - All nodes require a `name`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1">#Get node types</span>
         <span class="k">def</span> <span class="nf">all_subclasses</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
@@ -2028,7 +2055,7 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
         <span class="bp">self</span><span class="o">.</span><span class="n">mass_balance_ds</span> <span class="o">=</span> <span class="p">[</span><span class="k">lambda</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()]</span>     
 
     <span class="k">def</span> <span class="nf">total_in</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Sum flow and pollutant amounts entering a node via in_arcs</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sum flow and pollutant amounts entering a node via in_arcs</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            in_ (dict): Summed VQIP of in_arcs</span>
@@ -2044,7 +2071,7 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
         <span class="k">return</span> <span class="n">in_</span>
 
     <span class="k">def</span> <span class="nf">total_out</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Sum flow and pollutant amounts leaving a node via out_arcs</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sum flow and pollutant amounts leaving a node via out_arcs</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            out_ (dict): Summed VQIP of out_arcs</span>
@@ -2059,7 +2086,7 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
         <span class="k">return</span> <span class="n">out_</span>
 
     <span class="k">def</span> <span class="nf">node_mass_balance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Wrapper for core.py/WSIObj/mass_balance. Tracks change in mass balance</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrapper for core.py/WSIObj/mass_balance. Tracks change in mass balance</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            in_ (dict): A VQIP of the total from mass_balance_in functions</span>
@@ -2076,7 +2103,7 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
 
 
     <span class="k">def</span> <span class="nf">pull_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Receives pull set requests from arcs and passes request </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Receives pull set requests from arcs and passes request </span>
 <span class="sd">        to query handler</span>
 
 <span class="sd">        Args:</span>
@@ -2095,7 +2122,7 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pull_set_handler</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">push_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Receives push set requests from arcs and passes request </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Receives push set requests from arcs and passes request </span>
 <span class="sd">        to query handler</span>
 
 <span class="sd">        Args:</span>
@@ -2113,7 +2140,7 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">push_set_handler</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">pull_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Receives pull check requests from arcs and passes request </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Receives pull check requests from arcs and passes request </span>
 <span class="sd">        to query handler</span>
 
 <span class="sd">        Args:</span>
@@ -2134,7 +2161,7 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pull_check_handler</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">push_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Receives push check requests from arcs and passes request </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Receives push check requests from arcs and passes request </span>
 <span class="sd">        to query handler</span>
 
 <span class="sd">        Args:</span>
@@ -2154,7 +2181,7 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_handler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">push_check_handler</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_direction_arcs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">of_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Identify arcs to/from all attached nodes in a given direction</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Identify arcs to/from all attached nodes in a given direction</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            direction (str): can be either &#39;pull&#39; or &#39;push&#39; to send checks to </span>
@@ -2207,7 +2234,7 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
         <span class="k">return</span> <span class="n">f</span><span class="p">,</span> <span class="n">arcs</span>
 
     <span class="k">def</span> <span class="nf">get_connected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;pull&#39;</span><span class="p">,</span> <span class="n">of_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Send push/pull checks to all attached arcs in a given direction</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send push/pull checks to all attached arcs in a given direction</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            direction (str, optional): The type of check to send to all attached </span>
@@ -2259,7 +2286,7 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
         <span class="k">return</span> <span class="n">connected</span>
 
     <span class="k">def</span> <span class="nf">query_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="n">ip</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Sends all push/pull requests/checks using the handler (i.e., ensures the </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sends all push/pull requests/checks using the handler (i.e., ensures the </span>
 <span class="sd">        correct function is used that lines up with &#39;tag&#39;)</span>
 
 <span class="sd">        Args:</span>
@@ -2286,7 +2313,7 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
                 <span class="k">return</span> <span class="n">handler</span><span class="p">[</span><span class="n">tag</span><span class="p">](</span><span class="n">ip</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">pull_distributed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">of_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Send pull requests to all (or specified by type) nodes connecting to self.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send pull requests to all (or specified by type) nodes connecting to self.</span>
 <span class="sd">        Iterate until request is met or maximum iterations are hit. </span>
 <span class="sd">        Streamlines if only one in_arc exists.</span>
 
@@ -2343,7 +2370,7 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
         <span class="k">return</span> <span class="n">pulled</span>
 
     <span class="k">def</span> <span class="nf">push_distributed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">of_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Send push requests to all (or specified by type) nodes connecting to self.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Send push requests to all (or specified by type) nodes connecting to self.</span>
 <span class="sd">        Iterate until request is met or maximum iterations are hit. </span>
 <span class="sd">        Streamlines if only one in_arc exists.</span>
 
@@ -2410,7 +2437,7 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
         <span class="k">return</span> <span class="n">not_pushed_</span>
 
     <span class="k">def</span> <span class="nf">check_basic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">of_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Generic function that conveys a pull or push check onwards to connected </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generic function that conveys a pull or push check onwards to connected </span>
 <span class="sd">        nodes. It is the default behaviour that treats a node like a junction.</span>
 
 <span class="sd">        Args:</span>
@@ -2440,7 +2467,7 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
         <span class="k">return</span> <span class="n">avail</span>
 
     <span class="k">def</span> <span class="nf">pull_check_basic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">of_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Default node check behaviour that treats a node like a junction. Water </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Default node check behaviour that treats a node like a junction. Water </span>
 <span class="sd">        available to pull is just the water available to pull from upstream </span>
 <span class="sd">        connected nodes.</span>
 
@@ -2459,7 +2486,7 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_basic</span><span class="p">(</span><span class="s1">&#39;pull&#39;</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">of_type</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">push_check_basic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">of_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Default node check behaviour that treats a node like a junction. Water </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Default node check behaviour that treats a node like a junction. Water </span>
 <span class="sd">        available to push is just the water available to push to downstream </span>
 <span class="sd">        connected nodes.</span>
 
@@ -2477,7 +2504,7 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_basic</span><span class="p">(</span><span class="s1">&#39;push&#39;</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">of_type</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">pull_set_deny</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Responds that no water is available to pull from a request</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Responds that no water is available to pull from a request</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            vqip (dict): A VQIP amount of water requested (ignored)</span>
@@ -2493,7 +2520,7 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">pull_check_deny</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Responds that no water is available to pull from a check</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Responds that no water is available to pull from a check</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            vqip (dict): A VQIP amount of water requested (ignored)</span>
@@ -2509,7 +2536,7 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">push_set_deny</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Responds that no water is available to push in a request</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Responds that no water is available to push in a request</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            vqip (dict): A VQIP amount of water to push</span>
@@ -2525,7 +2552,7 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
         <span class="k">return</span> <span class="n">vqip</span>
 
     <span class="k">def</span> <span class="nf">push_check_deny</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Responds that no water is available to push in a check</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Responds that no water is available to push in a check</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            vqip (dict): A VQIP amount of water to push check (ignored)</span>
@@ -2541,7 +2568,7 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">get_data_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Read data from data_input_dict. Keys are tuples with the first entry as </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read data from data_input_dict. Keys are tuples with the first entry as </span>
 <span class="sd">        the variable to read and second entry the time</span>
 
 <span class="sd">        Args:</span>
@@ -2554,13 +2581,13 @@ and, within that, a key for each parameter (a constant and exponent)</p></td>
 
 
     <span class="k">def</span> <span class="nf">end_timestep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Empty function intended to be called at the end of every timestep. </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Empty function intended to be called at the end of every timestep. </span>
 <span class="sd">        Subclasses will overwrite this functions</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Empty function to be written if reinitialisation capability is added</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Empty function to be written if reinitialisation capability is added</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 </code></pre></div></td></tr></table></div>
@@ -2632,6 +2659,18 @@ Defaults to None.</p></td>
       <p>Examples:  <br />
     &gt;&gt;&gt; my_node = nodes.Node(name = 'london_river_junction')</p>
 
+<details class="key-assumptions">
+  <summary>Key assumptions</summary>
+  <ul>
+<li>No physical processes represented, can be used as a junction.</li>
+</ul>
+</details>
+<details class="input-data-and-parameter-requirements">
+  <summary>Input data and parameter requirements</summary>
+  <ul>
+<li>All nodes require a <code>name</code></li>
+</ul>
+</details>
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
         <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">16</span>
@@ -2677,8 +2716,14 @@ Defaults to None.</p></td>
 <span class="normal">56</span>
 <span class="normal">57</span>
 <span class="normal">58</span>
-<span class="normal">59</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span> <span class="n">data_input_dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Base class for CWSD nodes.</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">name</span><span class="p">,</span> <span class="n">data_input_dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Base class for CWSD nodes.</span>
 <span class="sd">    Constructs all the necessary attributes for the node object</span>
 
 <span class="sd">    Args:</span>
@@ -2690,6 +2735,12 @@ Defaults to None.</p></td>
 
 <span class="sd">    Examples:    </span>
 <span class="sd">        &gt;&gt;&gt; my_node = nodes.Node(name = &#39;london_river_junction&#39;)</span>
+
+<span class="sd">    Key assumptions:</span>
+<span class="sd">        - No physical processes represented, can be used as a junction.</span>
+
+<span class="sd">    Input data and parameter requirements:</span>
+<span class="sd">        - All nodes require a `name`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1">#Get node types</span>
     <span class="k">def</span> <span class="nf">all_subclasses</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
@@ -2821,13 +2872,7 @@ function to call. Defaults to 'default'.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">443</span>
-<span class="normal">444</span>
-<span class="normal">445</span>
-<span class="normal">446</span>
-<span class="normal">447</span>
-<span class="normal">448</span>
-<span class="normal">449</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">449</span>
 <span class="normal">450</span>
 <span class="normal">451</span>
 <span class="normal">452</span>
@@ -2849,8 +2894,14 @@ function to call. Defaults to 'default'.</p></td>
 <span class="normal">468</span>
 <span class="normal">469</span>
 <span class="normal">470</span>
-<span class="normal">471</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">check_basic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">of_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Generic function that conveys a pull or push check onwards to connected </span>
+<span class="normal">471</span>
+<span class="normal">472</span>
+<span class="normal">473</span>
+<span class="normal">474</span>
+<span class="normal">475</span>
+<span class="normal">476</span>
+<span class="normal">477</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">check_basic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">of_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generic function that conveys a pull or push check onwards to connected </span>
 <span class="sd">    nodes. It is the default behaviour that treats a node like a junction.</span>
 
 <span class="sd">    Args:</span>
@@ -2901,12 +2952,12 @@ Subclasses will overwrite this functions</p>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">587</span>
-<span class="normal">588</span>
-<span class="normal">589</span>
-<span class="normal">590</span>
-<span class="normal">591</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">end_timestep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Empty function intended to be called at the end of every timestep. </span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">593</span>
+<span class="normal">594</span>
+<span class="normal">595</span>
+<span class="normal">596</span>
+<span class="normal">597</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">end_timestep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Empty function intended to be called at the end of every timestep. </span>
 <span class="sd">    Subclasses will overwrite this functions</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span>
@@ -3012,13 +3063,7 @@ Dictionary containing keys:
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">240</span>
-<span class="normal">241</span>
-<span class="normal">242</span>
-<span class="normal">243</span>
-<span class="normal">244</span>
-<span class="normal">245</span>
-<span class="normal">246</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">246</span>
 <span class="normal">247</span>
 <span class="normal">248</span>
 <span class="normal">249</span>
@@ -3062,8 +3107,14 @@ Dictionary containing keys:
 <span class="normal">287</span>
 <span class="normal">288</span>
 <span class="normal">289</span>
-<span class="normal">290</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_connected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;pull&#39;</span><span class="p">,</span> <span class="n">of_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Send push/pull checks to all attached arcs in a given direction</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_connected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;pull&#39;</span><span class="p">,</span> <span class="n">of_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Send push/pull checks to all attached arcs in a given direction</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        direction (str, optional): The type of check to send to all attached </span>
@@ -3177,18 +3228,18 @@ the variable to read and second entry the time</p>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">574</span>
-<span class="normal">575</span>
-<span class="normal">576</span>
-<span class="normal">577</span>
-<span class="normal">578</span>
-<span class="normal">579</span>
-<span class="normal">580</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">580</span>
 <span class="normal">581</span>
 <span class="normal">582</span>
 <span class="normal">583</span>
-<span class="normal">584</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_data_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Read data from data_input_dict. Keys are tuples with the first entry as </span>
+<span class="normal">584</span>
+<span class="normal">585</span>
+<span class="normal">586</span>
+<span class="normal">587</span>
+<span class="normal">588</span>
+<span class="normal">589</span>
+<span class="normal">590</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_data_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read data from data_input_dict. Keys are tuples with the first entry as </span>
 <span class="sd">    the variable to read and second entry the time</span>
 
 <span class="sd">    Args:</span>
@@ -3287,13 +3338,7 @@ direction</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">187</span>
-<span class="normal">188</span>
-<span class="normal">189</span>
-<span class="normal">190</span>
-<span class="normal">191</span>
-<span class="normal">192</span>
-<span class="normal">193</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">193</span>
 <span class="normal">194</span>
 <span class="normal">195</span>
 <span class="normal">196</span>
@@ -3338,8 +3383,14 @@ direction</p></td>
 <span class="normal">235</span>
 <span class="normal">236</span>
 <span class="normal">237</span>
-<span class="normal">238</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_direction_arcs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">of_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Identify arcs to/from all attached nodes in a given direction</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_direction_arcs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">direction</span><span class="p">,</span> <span class="n">of_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Identify arcs to/from all attached nodes in a given direction</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        direction (str): can be either &#39;pull&#39; or &#39;push&#39; to send checks to </span>
@@ -3446,21 +3497,21 @@ direction</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 92</span>
-<span class="normal"> 93</span>
-<span class="normal"> 94</span>
-<span class="normal"> 95</span>
-<span class="normal"> 96</span>
-<span class="normal"> 97</span>
-<span class="normal"> 98</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 98</span>
 <span class="normal"> 99</span>
 <span class="normal">100</span>
 <span class="normal">101</span>
 <span class="normal">102</span>
 <span class="normal">103</span>
 <span class="normal">104</span>
-<span class="normal">105</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">node_mass_balance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Wrapper for core.py/WSIObj/mass_balance. Tracks change in mass balance</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">node_mass_balance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper for core.py/WSIObj/mass_balance. Tracks change in mass balance</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        in_ (dict): A VQIP of the total from mass_balance_in functions</span>
@@ -3556,13 +3607,7 @@ function to call. Defaults to 'default'.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">146</span>
-<span class="normal">147</span>
-<span class="normal">148</span>
-<span class="normal">149</span>
-<span class="normal">150</span>
-<span class="normal">151</span>
-<span class="normal">152</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">152</span>
 <span class="normal">153</span>
 <span class="normal">154</span>
 <span class="normal">155</span>
@@ -3575,8 +3620,14 @@ function to call. Defaults to 'default'.</p></td>
 <span class="normal">162</span>
 <span class="normal">163</span>
 <span class="normal">164</span>
-<span class="normal">165</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Receives pull check requests from arcs and passes request </span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Receives pull check requests from arcs and passes request </span>
 <span class="sd">    to query handler</span>
 
 <span class="sd">    Args:</span>
@@ -3685,13 +3736,7 @@ function to call. Defaults to 'default'.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">473</span>
-<span class="normal">474</span>
-<span class="normal">475</span>
-<span class="normal">476</span>
-<span class="normal">477</span>
-<span class="normal">478</span>
-<span class="normal">479</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">479</span>
 <span class="normal">480</span>
 <span class="normal">481</span>
 <span class="normal">482</span>
@@ -3702,8 +3747,14 @@ function to call. Defaults to 'default'.</p></td>
 <span class="normal">487</span>
 <span class="normal">488</span>
 <span class="normal">489</span>
-<span class="normal">490</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_check_basic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">of_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Default node check behaviour that treats a node like a junction. Water </span>
+<span class="normal">490</span>
+<span class="normal">491</span>
+<span class="normal">492</span>
+<span class="normal">493</span>
+<span class="normal">494</span>
+<span class="normal">495</span>
+<span class="normal">496</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_check_basic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">of_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Default node check behaviour that treats a node like a junction. Water </span>
 <span class="sd">    available to pull is just the water available to pull from upstream </span>
 <span class="sd">    connected nodes.</span>
 
@@ -3784,13 +3835,7 @@ function to call. Defaults to 'default'.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">526</span>
-<span class="normal">527</span>
-<span class="normal">528</span>
-<span class="normal">529</span>
-<span class="normal">530</span>
-<span class="normal">531</span>
-<span class="normal">532</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">532</span>
 <span class="normal">533</span>
 <span class="normal">534</span>
 <span class="normal">535</span>
@@ -3798,8 +3843,14 @@ function to call. Defaults to 'default'.</p></td>
 <span class="normal">537</span>
 <span class="normal">538</span>
 <span class="normal">539</span>
-<span class="normal">540</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_check_deny</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Responds that no water is available to pull from a check</span>
+<span class="normal">540</span>
+<span class="normal">541</span>
+<span class="normal">542</span>
+<span class="normal">543</span>
+<span class="normal">544</span>
+<span class="normal">545</span>
+<span class="normal">546</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_check_deny</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Responds that no water is available to pull from a check</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        vqip (dict): A VQIP amount of water requested (ignored)</span>
@@ -3902,13 +3953,7 @@ function to call. Defaults to 'default'.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">319</span>
-<span class="normal">320</span>
-<span class="normal">321</span>
-<span class="normal">322</span>
-<span class="normal">323</span>
-<span class="normal">324</span>
-<span class="normal">325</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">325</span>
 <span class="normal">326</span>
 <span class="normal">327</span>
 <span class="normal">328</span>
@@ -3957,8 +4002,14 @@ function to call. Defaults to 'default'.</p></td>
 <span class="normal">371</span>
 <span class="normal">372</span>
 <span class="normal">373</span>
-<span class="normal">374</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_distributed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">of_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Send pull requests to all (or specified by type) nodes connecting to self.</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_distributed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">of_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Send pull requests to all (or specified by type) nodes connecting to self.</span>
 <span class="sd">    Iterate until request is met or maximum iterations are hit. </span>
 <span class="sd">    Streamlines if only one in_arc exists.</span>
 
@@ -4094,13 +4145,7 @@ function to call. Defaults to 'default'.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">109</span>
-<span class="normal">110</span>
-<span class="normal">111</span>
-<span class="normal">112</span>
-<span class="normal">113</span>
-<span class="normal">114</span>
-<span class="normal">115</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">115</span>
 <span class="normal">116</span>
 <span class="normal">117</span>
 <span class="normal">118</span>
@@ -4111,8 +4156,14 @@ function to call. Defaults to 'default'.</p></td>
 <span class="normal">123</span>
 <span class="normal">124</span>
 <span class="normal">125</span>
-<span class="normal">126</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Receives pull set requests from arcs and passes request </span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Receives pull set requests from arcs and passes request </span>
 <span class="sd">    to query handler</span>
 
 <span class="sd">    Args:</span>
@@ -4193,13 +4244,7 @@ function to call. Defaults to 'default'.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">510</span>
-<span class="normal">511</span>
-<span class="normal">512</span>
-<span class="normal">513</span>
-<span class="normal">514</span>
-<span class="normal">515</span>
-<span class="normal">516</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">516</span>
 <span class="normal">517</span>
 <span class="normal">518</span>
 <span class="normal">519</span>
@@ -4207,8 +4252,14 @@ function to call. Defaults to 'default'.</p></td>
 <span class="normal">521</span>
 <span class="normal">522</span>
 <span class="normal">523</span>
-<span class="normal">524</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_set_deny</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Responds that no water is available to pull from a request</span>
+<span class="normal">524</span>
+<span class="normal">525</span>
+<span class="normal">526</span>
+<span class="normal">527</span>
+<span class="normal">528</span>
+<span class="normal">529</span>
+<span class="normal">530</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_set_deny</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Responds that no water is available to pull from a request</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        vqip (dict): A VQIP amount of water requested (ignored)</span>
@@ -4304,13 +4355,7 @@ function to call. Defaults to 'default'</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">167</span>
-<span class="normal">168</span>
-<span class="normal">169</span>
-<span class="normal">170</span>
-<span class="normal">171</span>
-<span class="normal">172</span>
-<span class="normal">173</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">173</span>
 <span class="normal">174</span>
 <span class="normal">175</span>
 <span class="normal">176</span>
@@ -4322,8 +4367,14 @@ function to call. Defaults to 'default'</p></td>
 <span class="normal">182</span>
 <span class="normal">183</span>
 <span class="normal">184</span>
-<span class="normal">185</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Receives push check requests from arcs and passes request </span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Receives push check requests from arcs and passes request </span>
 <span class="sd">    to query handler</span>
 
 <span class="sd">    Args:</span>
@@ -4430,13 +4481,7 @@ function to call. Defaults to 'default'.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">492</span>
-<span class="normal">493</span>
-<span class="normal">494</span>
-<span class="normal">495</span>
-<span class="normal">496</span>
-<span class="normal">497</span>
-<span class="normal">498</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">498</span>
 <span class="normal">499</span>
 <span class="normal">500</span>
 <span class="normal">501</span>
@@ -4446,8 +4491,14 @@ function to call. Defaults to 'default'.</p></td>
 <span class="normal">505</span>
 <span class="normal">506</span>
 <span class="normal">507</span>
-<span class="normal">508</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_check_basic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">of_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Default node check behaviour that treats a node like a junction. Water </span>
+<span class="normal">508</span>
+<span class="normal">509</span>
+<span class="normal">510</span>
+<span class="normal">511</span>
+<span class="normal">512</span>
+<span class="normal">513</span>
+<span class="normal">514</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_check_basic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">of_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Default node check behaviour that treats a node like a junction. Water </span>
 <span class="sd">    available to push is just the water available to push to downstream </span>
 <span class="sd">    connected nodes.</span>
 
@@ -4527,13 +4578,7 @@ function to call. Defaults to 'default'.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">558</span>
-<span class="normal">559</span>
-<span class="normal">560</span>
-<span class="normal">561</span>
-<span class="normal">562</span>
-<span class="normal">563</span>
-<span class="normal">564</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">564</span>
 <span class="normal">565</span>
 <span class="normal">566</span>
 <span class="normal">567</span>
@@ -4541,8 +4586,14 @@ function to call. Defaults to 'default'.</p></td>
 <span class="normal">569</span>
 <span class="normal">570</span>
 <span class="normal">571</span>
-<span class="normal">572</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_check_deny</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Responds that no water is available to push in a check</span>
+<span class="normal">572</span>
+<span class="normal">573</span>
+<span class="normal">574</span>
+<span class="normal">575</span>
+<span class="normal">576</span>
+<span class="normal">577</span>
+<span class="normal">578</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_check_deny</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Responds that no water is available to push in a check</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        vqip (dict): A VQIP amount of water to push check (ignored)</span>
@@ -4644,13 +4695,7 @@ function to call. Defaults to 'default'.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">376</span>
-<span class="normal">377</span>
-<span class="normal">378</span>
-<span class="normal">379</span>
-<span class="normal">380</span>
-<span class="normal">381</span>
-<span class="normal">382</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">382</span>
 <span class="normal">383</span>
 <span class="normal">384</span>
 <span class="normal">385</span>
@@ -4709,8 +4754,14 @@ function to call. Defaults to 'default'.</p></td>
 <span class="normal">438</span>
 <span class="normal">439</span>
 <span class="normal">440</span>
-<span class="normal">441</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_distributed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">of_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Send push requests to all (or specified by type) nodes connecting to self.</span>
+<span class="normal">441</span>
+<span class="normal">442</span>
+<span class="normal">443</span>
+<span class="normal">444</span>
+<span class="normal">445</span>
+<span class="normal">446</span>
+<span class="normal">447</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_distributed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">of_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Send push requests to all (or specified by type) nodes connecting to self.</span>
 <span class="sd">    Iterate until request is met or maximum iterations are hit. </span>
 <span class="sd">    Streamlines if only one in_arc exists.</span>
 
@@ -4854,13 +4905,7 @@ function to call. Defaults to 'default'.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">128</span>
-<span class="normal">129</span>
-<span class="normal">130</span>
-<span class="normal">131</span>
-<span class="normal">132</span>
-<span class="normal">133</span>
-<span class="normal">134</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">134</span>
 <span class="normal">135</span>
 <span class="normal">136</span>
 <span class="normal">137</span>
@@ -4870,8 +4915,14 @@ function to call. Defaults to 'default'.</p></td>
 <span class="normal">141</span>
 <span class="normal">142</span>
 <span class="normal">143</span>
-<span class="normal">144</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Receives push set requests from arcs and passes request </span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Receives push set requests from arcs and passes request </span>
 <span class="sd">    to query handler</span>
 
 <span class="sd">    Args:</span>
@@ -4951,13 +5002,7 @@ function to call. Defaults to 'default'.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">542</span>
-<span class="normal">543</span>
-<span class="normal">544</span>
-<span class="normal">545</span>
-<span class="normal">546</span>
-<span class="normal">547</span>
-<span class="normal">548</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">548</span>
 <span class="normal">549</span>
 <span class="normal">550</span>
 <span class="normal">551</span>
@@ -4965,8 +5010,14 @@ function to call. Defaults to 'default'.</p></td>
 <span class="normal">553</span>
 <span class="normal">554</span>
 <span class="normal">555</span>
-<span class="normal">556</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_set_deny</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Responds that no water is available to push in a request</span>
+<span class="normal">556</span>
+<span class="normal">557</span>
+<span class="normal">558</span>
+<span class="normal">559</span>
+<span class="normal">560</span>
+<span class="normal">561</span>
+<span class="normal">562</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_set_deny</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Responds that no water is available to push in a request</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        vqip (dict): A VQIP amount of water to push</span>
@@ -5065,13 +5116,7 @@ correct function is used that lines up with 'tag')</p>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">292</span>
-<span class="normal">293</span>
-<span class="normal">294</span>
-<span class="normal">295</span>
-<span class="normal">296</span>
-<span class="normal">297</span>
-<span class="normal">298</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">298</span>
 <span class="normal">299</span>
 <span class="normal">300</span>
 <span class="normal">301</span>
@@ -5090,8 +5135,14 @@ correct function is used that lines up with 'tag')</p>
 <span class="normal">314</span>
 <span class="normal">315</span>
 <span class="normal">316</span>
-<span class="normal">317</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">query_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="n">ip</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Sends all push/pull requests/checks using the handler (i.e., ensures the </span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">query_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handler</span><span class="p">,</span> <span class="n">ip</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sends all push/pull requests/checks using the handler (i.e., ensures the </span>
 <span class="sd">    correct function is used that lines up with &#39;tag&#39;)</span>
 
 <span class="sd">    Args:</span>
@@ -5138,11 +5189,11 @@ correct function is used that lines up with 'tag')</p>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">593</span>
-<span class="normal">594</span>
-<span class="normal">595</span>
-<span class="normal">596</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Empty function to be written if reinitialisation capability is added</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">599</span>
+<span class="normal">600</span>
+<span class="normal">601</span>
+<span class="normal">602</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Empty function to be written if reinitialisation capability is added</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">pass</span>
 </code></pre></div></td></tr></table></div>
@@ -5189,13 +5240,7 @@ correct function is used that lines up with 'tag')</p>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">61</span>
-<span class="normal">62</span>
-<span class="normal">63</span>
-<span class="normal">64</span>
-<span class="normal">65</span>
-<span class="normal">66</span>
-<span class="normal">67</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">67</span>
 <span class="normal">68</span>
 <span class="normal">69</span>
 <span class="normal">70</span>
@@ -5203,8 +5248,14 @@ correct function is used that lines up with 'tag')</p>
 <span class="normal">72</span>
 <span class="normal">73</span>
 <span class="normal">74</span>
-<span class="normal">75</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">total_in</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Sum flow and pollutant amounts entering a node via in_arcs</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">total_in</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sum flow and pollutant amounts entering a node via in_arcs</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        in_ (dict): Summed VQIP of in_arcs</span>
@@ -5262,21 +5313,21 @@ correct function is used that lines up with 'tag')</p>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">77</span>
-<span class="normal">78</span>
-<span class="normal">79</span>
-<span class="normal">80</span>
-<span class="normal">81</span>
-<span class="normal">82</span>
-<span class="normal">83</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">83</span>
 <span class="normal">84</span>
 <span class="normal">85</span>
 <span class="normal">86</span>
 <span class="normal">87</span>
 <span class="normal">88</span>
 <span class="normal">89</span>
-<span class="normal">90</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">total_out</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Sum flow and pollutant amounts leaving a node via out_arcs</span>
+<span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span>
+<span class="normal">96</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">total_out</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sum flow and pollutant amounts leaving a node via out_arcs</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        out_ (dict): Summed VQIP of out_arcs</span>
@@ -5322,13 +5373,7 @@ correct function is used that lines up with 'tag')</p>
 
         <details class="quote">
           <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1101</span>
-<span class="normal">1102</span>
-<span class="normal">1103</span>
-<span class="normal">1104</span>
-<span class="normal">1105</span>
-<span class="normal">1106</span>
-<span class="normal">1107</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1107</span>
 <span class="normal">1108</span>
 <span class="normal">1109</span>
 <span class="normal">1110</span>
@@ -5496,11 +5541,17 @@ correct function is used that lines up with 'tag')</p>
 <span class="normal">1272</span>
 <span class="normal">1273</span>
 <span class="normal">1274</span>
-<span class="normal">1275</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">QueueTank</span><span class="p">(</span><span class="n">Tank</span><span class="p">):</span>
+<span class="normal">1275</span>
+<span class="normal">1276</span>
+<span class="normal">1277</span>
+<span class="normal">1278</span>
+<span class="normal">1279</span>
+<span class="normal">1280</span>
+<span class="normal">1281</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">QueueTank</span><span class="p">(</span><span class="n">Tank</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                         <span class="n">number_of_timesteps</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
                         <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;A tank with an internal queue arc, whose queue must be completed before </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A tank with an internal queue arc, whose queue must be completed before </span>
 <span class="sd">        storage is available for use. The storage that has completed the queue </span>
 <span class="sd">        is under the &#39;active_storage&#39; property.</span>
 
@@ -5527,7 +5578,7 @@ correct function is used that lines up with 'tag')</p>
         <span class="c1">#TODO should mass balance call internal arc (is this arc called in arc mass balance?)</span>
 
     <span class="k">def</span> <span class="nf">get_avail</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the active_storage of the tank</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the active_storage of the tank</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (dict): VQIP of active_storage</span>
@@ -5535,7 +5586,7 @@ correct function is used that lines up with 'tag')</p>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_vqip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">active_storage</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">push_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">time</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">force</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Push storage into QueueTank, applying travel time, unless forced.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Push storage into QueueTank, applying travel time, unless forced.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            vqip (dict): A VQIP of the amount to push</span>
@@ -5564,7 +5615,7 @@ correct function is used that lines up with 'tag')</p>
         <span class="k">return</span> <span class="n">reply</span>
 
     <span class="k">def</span> <span class="nf">pull_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>        
-        <span class="sd">&quot;&quot;&quot;Pull storage from the QueueTank, only water in active_storage is </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pull storage from the QueueTank, only water in active_storage is </span>
 <span class="sd">        available. Returning water pulled and updating tank states. Pollutants are </span>
 <span class="sd">        removed from tank in proportion to &#39;volume&#39; in vqip (pollutant values </span>
 <span class="sd">        in vqip are ignored)</span>
@@ -5591,7 +5642,7 @@ correct function is used that lines up with 'tag')</p>
         <span class="k">return</span> <span class="n">reply</span>
 
     <span class="k">def</span> <span class="nf">pull_storage_exact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Pull storage from the QueueTank, only water in active_storage is </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pull storage from the QueueTank, only water in active_storage is </span>
 <span class="sd">        available. Pollutants are removed from tank in according to their values in </span>
 <span class="sd">        vqip</span>
 
@@ -5614,7 +5665,7 @@ correct function is used that lines up with 'tag')</p>
         <span class="k">return</span> <span class="n">reply</span>
 
     <span class="k">def</span> <span class="nf">push_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Wrapper for get_excess but applies comparison to volume in VQIP. </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrapper for get_excess but applies comparison to volume in VQIP. </span>
 <span class="sd">        Needed to enable use of internal_arc, which assumes it is connecting nodes .</span>
 <span class="sd">        rather than tanks.</span>
 <span class="sd">        NOTE: this is intended only for use with the internal_arc. Pushing to </span>
@@ -5637,7 +5688,7 @@ correct function is used that lines up with 'tag')</p>
         <span class="k">return</span> <span class="n">excess</span>
 
     <span class="k">def</span> <span class="nf">push_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Behaves differently from normal push setting, it assumes sufficient tank </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Behaves differently from normal push setting, it assumes sufficient tank </span>
 <span class="sd">        capacity and receives VQIPs that have reached the END of the internal_arc. </span>
 <span class="sd">        NOTE: this is intended only for use with the internal_arc. Pushing to </span>
 <span class="sd">        QueueTanks should use &#39;push_storage&#39;.</span>
@@ -5658,14 +5709,14 @@ correct function is used that lines up with 'tag')</p>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_end_timestep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Wrapper for end_timestep that also ends the timestep in the internal_arc</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrapper for end_timestep that also ends the timestep in the internal_arc</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">internal_arc</span><span class="o">.</span><span class="n">end_timestep</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">internal_arc</span><span class="o">.</span><span class="n">update_queue</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storage_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_vqip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Zeros storages and arc</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Zeros storages and arc</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">internal_arc</span><span class="o">.</span><span class="n">reinit</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
@@ -5730,13 +5781,7 @@ provided with pushes only. Defaults to 0.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1102</span>
-<span class="normal">1103</span>
-<span class="normal">1104</span>
-<span class="normal">1105</span>
-<span class="normal">1106</span>
-<span class="normal">1107</span>
-<span class="normal">1108</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1108</span>
 <span class="normal">1109</span>
 <span class="normal">1110</span>
 <span class="normal">1111</span>
@@ -5756,10 +5801,16 @@ provided with pushes only. Defaults to 0.</p></td>
 <span class="normal">1125</span>
 <span class="normal">1126</span>
 <span class="normal">1127</span>
-<span class="normal">1128</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+<span class="normal">1128</span>
+<span class="normal">1129</span>
+<span class="normal">1130</span>
+<span class="normal">1131</span>
+<span class="normal">1132</span>
+<span class="normal">1133</span>
+<span class="normal">1134</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                     <span class="n">number_of_timesteps</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
                     <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A tank with an internal queue arc, whose queue must be completed before </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A tank with an internal queue arc, whose queue must be completed before </span>
 <span class="sd">    storage is available for use. The storage that has completed the queue </span>
 <span class="sd">    is under the &#39;active_storage&#39; property.</span>
 
@@ -5823,14 +5874,14 @@ provided with pushes only. Defaults to 0.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1131</span>
-<span class="normal">1132</span>
-<span class="normal">1133</span>
-<span class="normal">1134</span>
-<span class="normal">1135</span>
-<span class="normal">1136</span>
-<span class="normal">1137</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_avail</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return the active_storage of the tank</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1137</span>
+<span class="normal">1138</span>
+<span class="normal">1139</span>
+<span class="normal">1140</span>
+<span class="normal">1141</span>
+<span class="normal">1142</span>
+<span class="normal">1143</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_avail</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the active_storage of the tank</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (dict): VQIP of active_storage</span>
@@ -5903,13 +5954,7 @@ in vqip are ignored)</p>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1168</span>
-<span class="normal">1169</span>
-<span class="normal">1170</span>
-<span class="normal">1171</span>
-<span class="normal">1172</span>
-<span class="normal">1173</span>
-<span class="normal">1174</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1174</span>
 <span class="normal">1175</span>
 <span class="normal">1176</span>
 <span class="normal">1177</span>
@@ -5928,8 +5973,14 @@ in vqip are ignored)</p>
 <span class="normal">1190</span>
 <span class="normal">1191</span>
 <span class="normal">1192</span>
-<span class="normal">1193</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>        
-    <span class="sd">&quot;&quot;&quot;Pull storage from the QueueTank, only water in active_storage is </span>
+<span class="normal">1193</span>
+<span class="normal">1194</span>
+<span class="normal">1195</span>
+<span class="normal">1196</span>
+<span class="normal">1197</span>
+<span class="normal">1198</span>
+<span class="normal">1199</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>        
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pull storage from the QueueTank, only water in active_storage is </span>
 <span class="sd">    available. Returning water pulled and updating tank states. Pollutants are </span>
 <span class="sd">    removed from tank in proportion to &#39;volume&#39; in vqip (pollutant values </span>
 <span class="sd">    in vqip are ignored)</span>
@@ -6020,13 +6071,7 @@ vqip</p>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1195</span>
-<span class="normal">1196</span>
-<span class="normal">1197</span>
-<span class="normal">1198</span>
-<span class="normal">1199</span>
-<span class="normal">1200</span>
-<span class="normal">1201</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1201</span>
 <span class="normal">1202</span>
 <span class="normal">1203</span>
 <span class="normal">1204</span>
@@ -6041,8 +6086,14 @@ vqip</p>
 <span class="normal">1213</span>
 <span class="normal">1214</span>
 <span class="normal">1215</span>
-<span class="normal">1216</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_storage_exact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Pull storage from the QueueTank, only water in active_storage is </span>
+<span class="normal">1216</span>
+<span class="normal">1217</span>
+<span class="normal">1218</span>
+<span class="normal">1219</span>
+<span class="normal">1220</span>
+<span class="normal">1221</span>
+<span class="normal">1222</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_storage_exact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pull storage from the QueueTank, only water in active_storage is </span>
 <span class="sd">    available. Pollutants are removed from tank in according to their values in </span>
 <span class="sd">    vqip</span>
 
@@ -6143,13 +6194,7 @@ used for a QueueTank since there are no handlers. Defaults to
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1218</span>
-<span class="normal">1219</span>
-<span class="normal">1220</span>
-<span class="normal">1221</span>
-<span class="normal">1222</span>
-<span class="normal">1223</span>
-<span class="normal">1224</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1224</span>
 <span class="normal">1225</span>
 <span class="normal">1226</span>
 <span class="normal">1227</span>
@@ -6164,8 +6209,14 @@ used for a QueueTank since there are no handlers. Defaults to
 <span class="normal">1236</span>
 <span class="normal">1237</span>
 <span class="normal">1238</span>
-<span class="normal">1239</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Wrapper for get_excess but applies comparison to volume in VQIP. </span>
+<span class="normal">1239</span>
+<span class="normal">1240</span>
+<span class="normal">1241</span>
+<span class="normal">1242</span>
+<span class="normal">1243</span>
+<span class="normal">1244</span>
+<span class="normal">1245</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper for get_excess but applies comparison to volume in VQIP. </span>
 <span class="sd">    Needed to enable use of internal_arc, which assumes it is connecting nodes .</span>
 <span class="sd">    rather than tanks.</span>
 <span class="sd">    NOTE: this is intended only for use with the internal_arc. Pushing to </span>
@@ -6266,13 +6317,7 @@ assumes capacity was checked before entering the internal arc)</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1241</span>
-<span class="normal">1242</span>
-<span class="normal">1243</span>
-<span class="normal">1244</span>
-<span class="normal">1245</span>
-<span class="normal">1246</span>
-<span class="normal">1247</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1247</span>
 <span class="normal">1248</span>
 <span class="normal">1249</span>
 <span class="normal">1250</span>
@@ -6285,8 +6330,14 @@ assumes capacity was checked before entering the internal arc)</p></td>
 <span class="normal">1257</span>
 <span class="normal">1258</span>
 <span class="normal">1259</span>
-<span class="normal">1260</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Behaves differently from normal push setting, it assumes sufficient tank </span>
+<span class="normal">1260</span>
+<span class="normal">1261</span>
+<span class="normal">1262</span>
+<span class="normal">1263</span>
+<span class="normal">1264</span>
+<span class="normal">1265</span>
+<span class="normal">1266</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Behaves differently from normal push setting, it assumes sufficient tank </span>
 <span class="sd">    capacity and receives VQIPs that have reached the END of the internal_arc. </span>
 <span class="sd">    NOTE: this is intended only for use with the internal_arc. Pushing to </span>
 <span class="sd">    QueueTanks should use &#39;push_storage&#39;.</span>
@@ -6391,13 +6442,7 @@ and ignore travel time. Defaults to False.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1139</span>
-<span class="normal">1140</span>
-<span class="normal">1141</span>
-<span class="normal">1142</span>
-<span class="normal">1143</span>
-<span class="normal">1144</span>
-<span class="normal">1145</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1145</span>
 <span class="normal">1146</span>
 <span class="normal">1147</span>
 <span class="normal">1148</span>
@@ -6418,8 +6463,14 @@ and ignore travel time. Defaults to False.</p></td>
 <span class="normal">1163</span>
 <span class="normal">1164</span>
 <span class="normal">1165</span>
-<span class="normal">1166</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">time</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">force</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Push storage into QueueTank, applying travel time, unless forced.</span>
+<span class="normal">1166</span>
+<span class="normal">1167</span>
+<span class="normal">1168</span>
+<span class="normal">1169</span>
+<span class="normal">1170</span>
+<span class="normal">1171</span>
+<span class="normal">1172</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">time</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">force</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Push storage into QueueTank, applying travel time, unless forced.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        vqip (dict): A VQIP of the amount to push</span>
@@ -6468,14 +6519,14 @@ and ignore travel time. Defaults to False.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1269</span>
-<span class="normal">1270</span>
-<span class="normal">1271</span>
-<span class="normal">1272</span>
-<span class="normal">1273</span>
-<span class="normal">1274</span>
-<span class="normal">1275</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Zeros storages and arc</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1275</span>
+<span class="normal">1276</span>
+<span class="normal">1277</span>
+<span class="normal">1278</span>
+<span class="normal">1279</span>
+<span class="normal">1280</span>
+<span class="normal">1281</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Zeros storages and arc</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">internal_arc</span><span class="o">.</span><span class="n">reinit</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
@@ -6514,13 +6565,7 @@ and ignore travel time. Defaults to False.</p></td>
 
         <details class="quote">
           <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1021</span>
-<span class="normal">1022</span>
-<span class="normal">1023</span>
-<span class="normal">1024</span>
-<span class="normal">1025</span>
-<span class="normal">1026</span>
-<span class="normal">1027</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1027</span>
 <span class="normal">1028</span>
 <span class="normal">1029</span>
 <span class="normal">1030</span>
@@ -6544,12 +6589,18 @@ and ignore travel time. Defaults to False.</p></td>
 <span class="normal">1048</span>
 <span class="normal">1049</span>
 <span class="normal">1050</span>
-<span class="normal">1051</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ResidenceTank</span><span class="p">(</span><span class="n">Tank</span><span class="p">):</span>
+<span class="normal">1051</span>
+<span class="normal">1052</span>
+<span class="normal">1053</span>
+<span class="normal">1054</span>
+<span class="normal">1055</span>
+<span class="normal">1056</span>
+<span class="normal">1057</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">ResidenceTank</span><span class="p">(</span><span class="n">Tank</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                         <span class="n">residence_time</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
                         <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;A tank that has a residence time property that limits storage </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A tank that has a residence time property that limits storage </span>
 <span class="sd">        pulled from the &#39;pull_outflow&#39; function</span>
 
 <span class="sd">        Args:</span>
@@ -6562,7 +6613,7 @@ and ignore travel time. Defaults to False.</p></td>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">pull_outflow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Pull storage by residence time from the tank, updating tank storage</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pull storage by residence time from the tank, updating tank storage</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            outflow (dict): A VQIP with volume of pulled volume and pollutants </span>
@@ -6634,23 +6685,23 @@ Defaults to 2.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1023</span>
-<span class="normal">1024</span>
-<span class="normal">1025</span>
-<span class="normal">1026</span>
-<span class="normal">1027</span>
-<span class="normal">1028</span>
-<span class="normal">1029</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1029</span>
 <span class="normal">1030</span>
 <span class="normal">1031</span>
 <span class="normal">1032</span>
 <span class="normal">1033</span>
 <span class="normal">1034</span>
 <span class="normal">1035</span>
-<span class="normal">1036</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<span class="normal">1036</span>
+<span class="normal">1037</span>
+<span class="normal">1038</span>
+<span class="normal">1039</span>
+<span class="normal">1040</span>
+<span class="normal">1041</span>
+<span class="normal">1042</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                     <span class="n">residence_time</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
                     <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A tank that has a residence time property that limits storage </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A tank that has a residence time property that limits storage </span>
 <span class="sd">    pulled from the &#39;pull_outflow&#39; function</span>
 
 <span class="sd">    Args:</span>
@@ -6702,21 +6753,21 @@ proportionate to the tank's pollutants</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1038</span>
-<span class="normal">1039</span>
-<span class="normal">1040</span>
-<span class="normal">1041</span>
-<span class="normal">1042</span>
-<span class="normal">1043</span>
-<span class="normal">1044</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1044</span>
 <span class="normal">1045</span>
 <span class="normal">1046</span>
 <span class="normal">1047</span>
 <span class="normal">1048</span>
 <span class="normal">1049</span>
 <span class="normal">1050</span>
-<span class="normal">1051</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_outflow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Pull storage by residence time from the tank, updating tank storage</span>
+<span class="normal">1051</span>
+<span class="normal">1052</span>
+<span class="normal">1053</span>
+<span class="normal">1054</span>
+<span class="normal">1055</span>
+<span class="normal">1056</span>
+<span class="normal">1057</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_outflow</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pull storage by residence time from the tank, updating tank storage</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        outflow (dict): A VQIP with volume of pulled volume and pollutants </span>
@@ -6762,13 +6813,7 @@ proportionate to the tank's pollutants</p></td>
 
         <details class="quote">
           <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 702</span>
-<span class="normal"> 703</span>
-<span class="normal"> 704</span>
-<span class="normal"> 705</span>
-<span class="normal"> 706</span>
-<span class="normal"> 707</span>
-<span class="normal"> 708</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 708</span>
 <span class="normal"> 709</span>
 <span class="normal"> 710</span>
 <span class="normal"> 711</span>
@@ -7079,14 +7124,20 @@ proportionate to the tank's pollutants</p></td>
 <span class="normal">1016</span>
 <span class="normal">1017</span>
 <span class="normal">1018</span>
-<span class="normal">1019</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Tank</span><span class="p">(</span><span class="n">WSIObj</span><span class="p">):</span>
+<span class="normal">1019</span>
+<span class="normal">1020</span>
+<span class="normal">1021</span>
+<span class="normal">1022</span>
+<span class="normal">1023</span>
+<span class="normal">1024</span>
+<span class="normal">1025</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Tank</span><span class="p">(</span><span class="n">WSIObj</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">capacity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
                  <span class="n">area</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
                  <span class="n">datum</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
                  <span class="n">initial_storage</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;A standard storage object</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A standard storage object</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            capacity (float, optional): Volumetric tank capacity. Defaults to 0.</span>
@@ -7123,7 +7174,7 @@ proportionate to the tank's pollutants</p></td>
             <span class="bp">self</span><span class="o">.</span><span class="n">storage_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span> <span class="c1">#Lagged storage for mass balance  </span>
 
     <span class="k">def</span> <span class="nf">ds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Should be called by parent object to get change in storage</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Should be called by parent object to get change in storage</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (dict): Change in storage</span>
@@ -7131,7 +7182,7 @@ proportionate to the tank's pollutants</p></td>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds_vqip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage_</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">pull_ponded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Pull any volume that is above the tank&#39;s capacity</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pull any volume that is above the tank&#39;s capacity</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            ponded (vqip): Amount of ponded water that has been removed from the </span>
@@ -7155,7 +7206,7 @@ proportionate to the tank's pollutants</p></td>
         <span class="k">return</span> <span class="n">ponded</span>
 
     <span class="k">def</span> <span class="nf">get_avail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get minimum of the amount of water in storage and vqip (if provided)</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get minimum of the amount of water in storage and vqip (if provided)</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            vqip (dict, optional): Maximum water required (only &#39;volume&#39; is used). </span>
@@ -7184,7 +7235,7 @@ proportionate to the tank's pollutants</p></td>
             <span class="k">return</span> <span class="n">reply</span>
 
     <span class="k">def</span> <span class="nf">get_excess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get difference between current storage and tank capacity</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get difference between current storage and tank capacity</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            vqip (dict, optional): Maximum capacity required (only &#39;volume&#39; is </span>
@@ -7211,7 +7262,7 @@ proportionate to the tank's pollutants</p></td>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">v_change_vqip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">,</span> <span class="n">vol</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">push_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">force</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Push water into tank, updating the storage VQIP. Force argument can </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Push water into tank, updating the storage VQIP. Force argument can </span>
 <span class="sd">        be used to ignore tank capacity.</span>
 
 <span class="sd">        Args:</span>
@@ -7259,7 +7310,7 @@ proportionate to the tank's pollutants</p></td>
         <span class="k">return</span> <span class="n">reply</span>
 
     <span class="k">def</span> <span class="nf">pull_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Pull water from tank, updating the storage VQIP. Pollutants are </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pull water from tank, updating the storage VQIP. Pollutants are </span>
 <span class="sd">        removed from tank in proportion to &#39;volume&#39; in vqip (pollutant values </span>
 <span class="sd">        in vqip are ignored)</span>
 
@@ -7293,7 +7344,7 @@ proportionate to the tank's pollutants</p></td>
         <span class="k">return</span> <span class="n">reply</span>
 
     <span class="k">def</span> <span class="nf">pull_pollutants</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Pull water from tank, updating the storage VQIP. Pollutants are </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pull water from tank, updating the storage VQIP. Pollutants are </span>
 <span class="sd">        removed from tank in according to their values in vqip</span>
 
 <span class="sd">        Args:</span>
@@ -7320,7 +7371,7 @@ proportionate to the tank's pollutants</p></td>
         <span class="k">return</span> <span class="n">vqip</span>
 
     <span class="k">def</span> <span class="nf">get_head</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datum</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">non_head_storage</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Area volume calculation for head calcuations. Datum and storage </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Area volume calculation for head calcuations. Datum and storage </span>
 <span class="sd">        that does not contribute to head can be specified</span>
 
 <span class="sd">        Args:</span>
@@ -7356,7 +7407,7 @@ proportionate to the tank's pollutants</p></td>
         <span class="k">return</span> <span class="n">head</span>
 
     <span class="k">def</span> <span class="nf">evaporate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evap</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Wrapper for v_distill_vqip to apply a volumetric subtraction from </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrapper for v_distill_vqip to apply a volumetric subtraction from </span>
 <span class="sd">        tank storage. Volume removed from storage and no change in pollutant </span>
 <span class="sd">        values.</span>
 
@@ -7387,13 +7438,13 @@ proportionate to the tank's pollutants</p></td>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">end_timestep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Function to be called by parent object, tracks previously </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Function to be called by parent object, tracks previously </span>
 <span class="sd">        timestep&#39;s storage</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storage_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_vqip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set storage to an empty VQIP</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set storage to an empty VQIP</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storage_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
@@ -7487,13 +7538,7 @@ Defaults to 0 (i.e., no volume, no pollutants).</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">704</span>
-<span class="normal">705</span>
-<span class="normal">706</span>
-<span class="normal">707</span>
-<span class="normal">708</span>
-<span class="normal">709</span>
-<span class="normal">710</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">710</span>
 <span class="normal">711</span>
 <span class="normal">712</span>
 <span class="normal">713</span>
@@ -7526,12 +7571,18 @@ Defaults to 0 (i.e., no volume, no pollutants).</p></td>
 <span class="normal">740</span>
 <span class="normal">741</span>
 <span class="normal">742</span>
-<span class="normal">743</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<span class="normal">743</span>
+<span class="normal">744</span>
+<span class="normal">745</span>
+<span class="normal">746</span>
+<span class="normal">747</span>
+<span class="normal">748</span>
+<span class="normal">749</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
              <span class="n">capacity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
              <span class="n">area</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
              <span class="n">datum</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
              <span class="n">initial_storage</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A standard storage object</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A standard storage object</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        capacity (float, optional): Volumetric tank capacity. Defaults to 0.</span>
@@ -7606,14 +7657,14 @@ Defaults to 0 (i.e., no volume, no pollutants).</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">745</span>
-<span class="normal">746</span>
-<span class="normal">747</span>
-<span class="normal">748</span>
-<span class="normal">749</span>
-<span class="normal">750</span>
-<span class="normal">751</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Should be called by parent object to get change in storage</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">751</span>
+<span class="normal">752</span>
+<span class="normal">753</span>
+<span class="normal">754</span>
+<span class="normal">755</span>
+<span class="normal">756</span>
+<span class="normal">757</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Should be called by parent object to get change in storage</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (dict): Change in storage</span>
@@ -7642,12 +7693,12 @@ timestep's storage</p>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1009</span>
-<span class="normal">1010</span>
-<span class="normal">1011</span>
-<span class="normal">1012</span>
-<span class="normal">1013</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">end_timestep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Function to be called by parent object, tracks previously </span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1015</span>
+<span class="normal">1016</span>
+<span class="normal">1017</span>
+<span class="normal">1018</span>
+<span class="normal">1019</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">end_timestep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to be called by parent object, tracks previously </span>
 <span class="sd">    timestep&#39;s storage</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">storage_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_vqip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">)</span>
@@ -7717,25 +7768,25 @@ values.</p>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">978</span>
-<span class="normal">979</span>
-<span class="normal">980</span>
-<span class="normal">981</span>
-<span class="normal">982</span>
-<span class="normal">983</span>
-<span class="normal">984</span>
-<span class="normal">985</span>
-<span class="normal">986</span>
-<span class="normal">987</span>
-<span class="normal">988</span>
-<span class="normal">989</span>
-<span class="normal">990</span>
-<span class="normal">991</span>
-<span class="normal">992</span>
-<span class="normal">993</span>
-<span class="normal">994</span>
-<span class="normal">995</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">evaporate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evap</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Wrapper for v_distill_vqip to apply a volumetric subtraction from </span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 984</span>
+<span class="normal"> 985</span>
+<span class="normal"> 986</span>
+<span class="normal"> 987</span>
+<span class="normal"> 988</span>
+<span class="normal"> 989</span>
+<span class="normal"> 990</span>
+<span class="normal"> 991</span>
+<span class="normal"> 992</span>
+<span class="normal"> 993</span>
+<span class="normal"> 994</span>
+<span class="normal"> 995</span>
+<span class="normal"> 996</span>
+<span class="normal"> 997</span>
+<span class="normal"> 998</span>
+<span class="normal"> 999</span>
+<span class="normal">1000</span>
+<span class="normal">1001</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">evaporate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evap</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper for v_distill_vqip to apply a volumetric subtraction from </span>
 <span class="sd">    tank storage. Volume removed from storage and no change in pollutant </span>
 <span class="sd">    values.</span>
 
@@ -7828,13 +7879,7 @@ Defaults to None.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">777</span>
-<span class="normal">778</span>
-<span class="normal">779</span>
-<span class="normal">780</span>
-<span class="normal">781</span>
-<span class="normal">782</span>
-<span class="normal">783</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">783</span>
 <span class="normal">784</span>
 <span class="normal">785</span>
 <span class="normal">786</span>
@@ -7855,8 +7900,14 @@ Defaults to None.</p></td>
 <span class="normal">801</span>
 <span class="normal">802</span>
 <span class="normal">803</span>
-<span class="normal">804</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_avail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get minimum of the amount of water in storage and vqip (if provided)</span>
+<span class="normal">804</span>
+<span class="normal">805</span>
+<span class="normal">806</span>
+<span class="normal">807</span>
+<span class="normal">808</span>
+<span class="normal">809</span>
+<span class="normal">810</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_avail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get minimum of the amount of water in storage and vqip (if provided)</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        vqip (dict, optional): Maximum water required (only &#39;volume&#39; is used). </span>
@@ -7957,13 +8008,7 @@ used). Defaults to None.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">806</span>
-<span class="normal">807</span>
-<span class="normal">808</span>
-<span class="normal">809</span>
-<span class="normal">810</span>
-<span class="normal">811</span>
-<span class="normal">812</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">812</span>
 <span class="normal">813</span>
 <span class="normal">814</span>
 <span class="normal">815</span>
@@ -7982,8 +8027,14 @@ used). Defaults to None.</p></td>
 <span class="normal">828</span>
 <span class="normal">829</span>
 <span class="normal">830</span>
-<span class="normal">831</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_excess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get difference between current storage and tank capacity</span>
+<span class="normal">831</span>
+<span class="normal">832</span>
+<span class="normal">833</span>
+<span class="normal">834</span>
+<span class="normal">835</span>
+<span class="normal">836</span>
+<span class="normal">837</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_excess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get difference between current storage and tank capacity</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        vqip (dict, optional): Maximum capacity required (only &#39;volume&#39; is </span>
@@ -8096,13 +8147,7 @@ this value to generate any pressure head. Defaults to 0.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">942</span>
-<span class="normal">943</span>
-<span class="normal">944</span>
-<span class="normal">945</span>
-<span class="normal">946</span>
-<span class="normal">947</span>
-<span class="normal">948</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">948</span>
 <span class="normal">949</span>
 <span class="normal">950</span>
 <span class="normal">951</span>
@@ -8130,8 +8175,14 @@ this value to generate any pressure head. Defaults to 0.</p></td>
 <span class="normal">973</span>
 <span class="normal">974</span>
 <span class="normal">975</span>
-<span class="normal">976</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_head</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datum</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">non_head_storage</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Area volume calculation for head calcuations. Datum and storage </span>
+<span class="normal">976</span>
+<span class="normal">977</span>
+<span class="normal">978</span>
+<span class="normal">979</span>
+<span class="normal">980</span>
+<span class="normal">981</span>
+<span class="normal">982</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_head</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datum</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">non_head_storage</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Area volume calculation for head calcuations. Datum and storage </span>
 <span class="sd">    that does not contribute to head can be specified</span>
 
 <span class="sd">    Args:</span>
@@ -8239,13 +8290,7 @@ removed from tank in according to their values in vqip</p>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">915</span>
-<span class="normal">916</span>
-<span class="normal">917</span>
-<span class="normal">918</span>
-<span class="normal">919</span>
-<span class="normal">920</span>
-<span class="normal">921</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">921</span>
 <span class="normal">922</span>
 <span class="normal">923</span>
 <span class="normal">924</span>
@@ -8264,8 +8309,14 @@ removed from tank in according to their values in vqip</p>
 <span class="normal">937</span>
 <span class="normal">938</span>
 <span class="normal">939</span>
-<span class="normal">940</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_pollutants</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Pull water from tank, updating the storage VQIP. Pollutants are </span>
+<span class="normal">940</span>
+<span class="normal">941</span>
+<span class="normal">942</span>
+<span class="normal">943</span>
+<span class="normal">944</span>
+<span class="normal">945</span>
+<span class="normal">946</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_pollutants</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pull water from tank, updating the storage VQIP. Pollutants are </span>
 <span class="sd">    removed from tank in according to their values in vqip</span>
 
 <span class="sd">    Args:</span>
@@ -8342,13 +8393,7 @@ tank</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">753</span>
-<span class="normal">754</span>
-<span class="normal">755</span>
-<span class="normal">756</span>
-<span class="normal">757</span>
-<span class="normal">758</span>
-<span class="normal">759</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">759</span>
 <span class="normal">760</span>
 <span class="normal">761</span>
 <span class="normal">762</span>
@@ -8364,8 +8409,14 @@ tank</p></td>
 <span class="normal">772</span>
 <span class="normal">773</span>
 <span class="normal">774</span>
-<span class="normal">775</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_ponded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Pull any volume that is above the tank&#39;s capacity</span>
+<span class="normal">775</span>
+<span class="normal">776</span>
+<span class="normal">777</span>
+<span class="normal">778</span>
+<span class="normal">779</span>
+<span class="normal">780</span>
+<span class="normal">781</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_ponded</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pull any volume that is above the tank&#39;s capacity</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        ponded (vqip): Amount of ponded water that has been removed from the </span>
@@ -8462,13 +8513,7 @@ in vqip are ignored)</p>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">881</span>
-<span class="normal">882</span>
-<span class="normal">883</span>
-<span class="normal">884</span>
-<span class="normal">885</span>
-<span class="normal">886</span>
-<span class="normal">887</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">887</span>
 <span class="normal">888</span>
 <span class="normal">889</span>
 <span class="normal">890</span>
@@ -8494,8 +8539,14 @@ in vqip are ignored)</p>
 <span class="normal">910</span>
 <span class="normal">911</span>
 <span class="normal">912</span>
-<span class="normal">913</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Pull water from tank, updating the storage VQIP. Pollutants are </span>
+<span class="normal">913</span>
+<span class="normal">914</span>
+<span class="normal">915</span>
+<span class="normal">916</span>
+<span class="normal">917</span>
+<span class="normal">918</span>
+<span class="normal">919</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pull water from tank, updating the storage VQIP. Pollutants are </span>
 <span class="sd">    removed from tank in proportion to &#39;volume&#39; in vqip (pollutant values </span>
 <span class="sd">    in vqip are ignored)</span>
 
@@ -8620,13 +8671,7 @@ capacity, possibly resulting in pooling. Defaults to False.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">833</span>
-<span class="normal">834</span>
-<span class="normal">835</span>
-<span class="normal">836</span>
-<span class="normal">837</span>
-<span class="normal">838</span>
-<span class="normal">839</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">839</span>
 <span class="normal">840</span>
 <span class="normal">841</span>
 <span class="normal">842</span>
@@ -8666,8 +8711,14 @@ capacity, possibly resulting in pooling. Defaults to False.</p></td>
 <span class="normal">876</span>
 <span class="normal">877</span>
 <span class="normal">878</span>
-<span class="normal">879</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">force</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Push water into tank, updating the storage VQIP. Force argument can </span>
+<span class="normal">879</span>
+<span class="normal">880</span>
+<span class="normal">881</span>
+<span class="normal">882</span>
+<span class="normal">883</span>
+<span class="normal">884</span>
+<span class="normal">885</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">force</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Push water into tank, updating the storage VQIP. Force argument can </span>
 <span class="sd">    be used to ignore tank capacity.</span>
 
 <span class="sd">    Args:</span>
@@ -8735,12 +8786,12 @@ capacity, possibly resulting in pooling. Defaults to False.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\nodes.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1015</span>
-<span class="normal">1016</span>
-<span class="normal">1017</span>
-<span class="normal">1018</span>
-<span class="normal">1019</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Set storage to an empty VQIP</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1021</span>
+<span class="normal">1022</span>
+<span class="normal">1023</span>
+<span class="normal">1024</span>
+<span class="normal">1025</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Set storage to an empty VQIP</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">storage_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
@@ -8803,11 +8854,12 @@ capacity, possibly resulting in pooling. Defaults to False.</p></td>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.39f04ddb.min.js"></script>
+      <script src="../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
       
+    
     
   </body>
 </html>

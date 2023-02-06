@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.5.2">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
     
     
       
@@ -17,10 +17,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.9f9400aa.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.975780f9.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.cbb835fc.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.2505c338.min.css">
         
       
       
@@ -56,7 +56,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
   
     
     
@@ -247,6 +247,21 @@
     <li class="md-nav__item">
       <a href="../how-to/" class="md-nav__link">
         How to guide
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../component-library/" class="md-nav__link">
+        Component library
       </a>
     </li>
   
@@ -697,7 +712,7 @@
     <span class="c1">#diamonds are problems is because there can be conflicts in functions. But</span>
     <span class="c1">#I don&#39;t want anyone to overwrite WSIObj functions so I don&#39;t see an issue?</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">decays</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;A WSIObj that has decay functions built in. </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A WSIObj that has decay functions built in. </span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            decays (dict): A dict of dicts containing a key for each pollutant that decays</span>
@@ -733,7 +748,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">total_decayed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">make_decay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Make decay, reading tempature and updating pollutant amounts. A wrapper </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make decay, reading tempature and updating pollutant amounts. A wrapper </span>
 <span class="sd">        for generic_temperature_decay</span>
 
 <span class="sd">        Args:</span>
@@ -751,7 +766,7 @@
         <span class="k">return</span> <span class="n">vqip_</span>
 
     <span class="k">def</span> <span class="nf">generic_temperature_decay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">temperature</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Performs temperature sensitive pollutant decay calculations for a VQIP </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs temperature sensitive pollutant decay calculations for a VQIP </span>
 <span class="sd">        where pollutants are given as mass totals</span>
 
 <span class="sd">        Args:</span>
@@ -777,7 +792,7 @@
         <span class="k">return</span> <span class="n">t</span><span class="p">,</span> <span class="n">diff</span>
 
     <span class="k">def</span> <span class="nf">generic_temperature_decay_c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">temperature</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Performs temperature sensitive pollutant decay calculations for a VQIP </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Performs temperature sensitive pollutant decay calculations for a VQIP </span>
 <span class="sd">        where pollutants are given as concentrations.</span>
 
 <span class="sd">        Args:</span>
@@ -901,7 +916,7 @@ Values expected to vary between 1 (no temperature sensitivity) and 1.1
 <span class="normal">463</span>
 <span class="normal">464</span>
 <span class="normal">465</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">decays</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A WSIObj that has decay functions built in. </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A WSIObj that has decay functions built in. </span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        decays (dict): A dict of dicts containing a key for each pollutant that decays</span>
@@ -1052,7 +1067,7 @@ stored as positive numbers)</p></td>
 <span class="normal">507</span>
 <span class="normal">508</span>
 <span class="normal">509</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">generic_temperature_decay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">temperature</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Performs temperature sensitive pollutant decay calculations for a VQIP </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Performs temperature sensitive pollutant decay calculations for a VQIP </span>
 <span class="sd">    where pollutants are given as mass totals</span>
 
 <span class="sd">    Args:</span>
@@ -1192,7 +1207,7 @@ stored as positive numbers). Pollutants as mass totals.</p></td>
 <span class="normal">531</span>
 <span class="normal">532</span>
 <span class="normal">533</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">generic_temperature_decay_c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">temperature</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Performs temperature sensitive pollutant decay calculations for a VQIP </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Performs temperature sensitive pollutant decay calculations for a VQIP </span>
 <span class="sd">    where pollutants are given as concentrations.</span>
 
 <span class="sd">    Args:</span>
@@ -1296,7 +1311,7 @@ for generic_temperature_decay</p>
 <span class="normal">481</span>
 <span class="normal">482</span>
 <span class="normal">483</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">make_decay</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Make decay, reading tempature and updating pollutant amounts. A wrapper </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Make decay, reading tempature and updating pollutant amounts. A wrapper </span>
 <span class="sd">    for generic_temperature_decay</span>
 
 <span class="sd">    Args:</span>
@@ -1757,7 +1772,7 @@ for generic_temperature_decay</p>
 <span class="normal">424</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">WSIObj</span><span class="p">:</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;WSIObj is the base object of everything in WSIMOD. It is used to perform</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;WSIObj is the base object of everything in WSIMOD. It is used to perform</span>
 <span class="sd">        VQIP operations and mass balance checking behaviour.</span>
 
 <span class="sd">        RSE has suggested that it would make more sense to leave VQIP operations as</span>
@@ -1773,7 +1788,7 @@ for generic_temperature_decay</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip_predefined</span> <span class="o">=</span> <span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">POLLUTANTS</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">],</span><span class="mi">0</span><span class="p">)</span>        
 
     <span class="k">def</span> <span class="nf">empty_vqip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return a copy of the predefined empty vqip. All pollutants and volume </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a copy of the predefined empty vqip. All pollutants and volume </span>
 <span class="sd">        initialised in a dict and set to 0.</span>
 
 <span class="sd">        Returns:</span>
@@ -1787,7 +1802,7 @@ for generic_temperature_decay</p>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip_predefined</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">copy_vqip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Wrapper to copy VQIP</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Wrapper to copy VQIP</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            t (dict): A VQIP</span>
@@ -1798,7 +1813,7 @@ for generic_temperature_decay</p>
         <span class="k">return</span> <span class="n">t</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">blend_vqip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Blends together two VQIPs that are assumed to have pollutant entries set </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Blends together two VQIPs that are assumed to have pollutant entries set </span>
 <span class="sd">        as pollution concentrations, blending occurs with proportionate mixing.</span>
 
 <span class="sd">        NOTE: VQIPs in WSIMOD in general store pollution as a total rather than a </span>
@@ -1823,7 +1838,7 @@ for generic_temperature_decay</p>
         <span class="k">return</span> <span class="n">c</span>
 
     <span class="k">def</span> <span class="nf">sum_vqip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Combines two VQIPs where pollutant entries are assumed to be given as </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Combines two VQIPs where pollutant entries are assumed to be given as </span>
 <span class="sd">        mass. Volume and additive pollutants are summed while non additive pollutants</span>
 <span class="sd">        are proportionately blended.</span>
 
@@ -1857,7 +1872,7 @@ for generic_temperature_decay</p>
         <span class="k">return</span> <span class="n">t</span>
 
     <span class="k">def</span> <span class="nf">concentration_to_total</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Convert a VQIP that has pollutant entries as concentrations into mass </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert a VQIP that has pollutant entries as concentrations into mass </span>
 <span class="sd">        totals.</span>
 
 <span class="sd">        Args:</span>
@@ -1873,7 +1888,7 @@ for generic_temperature_decay</p>
         <span class="k">return</span> <span class="n">c</span>
 
     <span class="k">def</span> <span class="nf">total_to_concentration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Converts a VQIP that has pollutant entries as mass totals into </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Converts a VQIP that has pollutant entries as mass totals into </span>
 <span class="sd">        concentrations. Note, that this won&#39;t work for VQIPs with 0 volume.</span>
 
 <span class="sd">        Args:</span>
@@ -1889,7 +1904,7 @@ for generic_temperature_decay</p>
         <span class="k">return</span> <span class="n">c</span>
 
     <span class="k">def</span> <span class="nf">extract_vqip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Extract one VQIP from another where both VQIPs have pollutants as </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract one VQIP from another where both VQIPs have pollutants as </span>
 <span class="sd">        mass totals. Each volume and additive pollutant is directly subtracted.</span>
 
 <span class="sd">        Args:</span>
@@ -1919,7 +1934,7 @@ for generic_temperature_decay</p>
         <span class="k">return</span> <span class="n">t</span>
 
     <span class="k">def</span> <span class="nf">extract_vqip_c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Extract one VQIP from another where both VQIPs have pollutants as </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract one VQIP from another where both VQIPs have pollutants as </span>
 <span class="sd">        concentrations. Operation performed for volume and additive pollutants.</span>
 
 <span class="sd">        NOTE: VQIPs in WSIMOD in general store pollution as a total rather than a </span>
@@ -1948,7 +1963,7 @@ for generic_temperature_decay</p>
         <span class="k">return</span> <span class="n">c</span>
 
     <span class="k">def</span> <span class="nf">v_distill_vqip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Directly remove a volume from a VQIP.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Directly remove a volume from a VQIP.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            t (dict): A VQIP where pollutant entries are mass totals to remove      </span>
@@ -1964,7 +1979,7 @@ for generic_temperature_decay</p>
         <span class="k">return</span> <span class="n">t</span>
 
     <span class="k">def</span> <span class="nf">v_distill_vqip_c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Directly remove a volume from a VQIP, where pollutant entries are </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Directly remove a volume from a VQIP, where pollutant entries are </span>
 <span class="sd">        concentrations.</span>
 
 <span class="sd">        NOTE: VQIPs in WSIMOD in general store pollution as a total rather than a </span>
@@ -1989,7 +2004,7 @@ for generic_temperature_decay</p>
         <span class="k">return</span> <span class="n">c_</span>
 
     <span class="k">def</span> <span class="nf">v_change_vqip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Change the volume of a VQIP, where pollutants are mass totals, and update </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Change the volume of a VQIP, where pollutants are mass totals, and update </span>
 <span class="sd">        pollutant values in proportion to the change in volume.</span>
 
 <span class="sd">        Args:</span>
@@ -2024,7 +2039,7 @@ for generic_temperature_decay</p>
         <span class="k">return</span> <span class="n">t</span>
 
     <span class="k">def</span> <span class="nf">v_change_vqip_c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Change the volume of a VQIP, where pollutants are concentrations</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Change the volume of a VQIP, where pollutants are concentrations</span>
 
 <span class="sd">        NOTE: VQIPs in WSIMOD in general store pollution as a total rather than a </span>
 <span class="sd">        concentration. So you should only work with concentrations if you are doing it intentionally and know what you&#39;re doing. </span>
@@ -2042,7 +2057,7 @@ for generic_temperature_decay</p>
         <span class="k">return</span> <span class="n">c</span>
 
     <span class="k">def</span> <span class="nf">ds_vqip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">t_</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get difference between each additive pollutant and volume for VQIPs where </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get difference between each additive pollutant and volume for VQIPs where </span>
 <span class="sd">        pollutants are given as mass totals.</span>
 
 <span class="sd">        Args:</span>
@@ -2067,7 +2082,7 @@ for generic_temperature_decay</p>
         <span class="k">return</span> <span class="n">ds</span>
 
     <span class="k">def</span> <span class="nf">ds_vqip_c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">c_</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get difference between each additive pollutant and volume for VQIPs where </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get difference between each additive pollutant and volume for VQIPs where </span>
 <span class="sd">        pollutants are given as concentrations but difference is given as mass </span>
 <span class="sd">        totals.</span>
 
@@ -2092,7 +2107,7 @@ for generic_temperature_decay</p>
         <span class="k">return</span> <span class="n">ds</span>
 
     <span class="k">def</span> <span class="nf">compare_vqip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Compare two VQIPs and check if the difference between each key is less &#39;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compare two VQIPs and check if the difference between each key is less &#39;</span>
 <span class="sd">        than constants.FLOAT_ACCURACY.</span>
 
 <span class="sd">        Args:</span>
@@ -2109,7 +2124,7 @@ for generic_temperature_decay</p>
         <span class="k">return</span> <span class="n">reply</span>
 
     <span class="k">def</span> <span class="nf">mass_balance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Call all mass balance functions and compare to see if discrepancy (i.e., </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call all mass balance functions and compare to see if discrepancy (i.e., </span>
 <span class="sd">        if in_ != (out_ + ds_) for volume or for any additive pollutant).</span>
 
 <span class="sd">        Comparison is performed in the magnitude of the largest value of in_, ds_ or </span>
@@ -2219,7 +2234,7 @@ many times quicker than copying a class.</p>
 <span class="normal">27</span>
 <span class="normal">28</span>
 <span class="normal">29</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;WSIObj is the base object of everything in WSIMOD. It is used to perform</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;WSIObj is the base object of everything in WSIMOD. It is used to perform</span>
 <span class="sd">    VQIP operations and mass balance checking behaviour.</span>
 
 <span class="sd">    RSE has suggested that it would make more sense to leave VQIP operations as</span>
@@ -2335,7 +2350,7 @@ know what you're doing. This won't do anything on VQIPs with 0 volume.   </p>
 <span class="normal">77</span>
 <span class="normal">78</span>
 <span class="normal">79</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">blend_vqip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Blends together two VQIPs that are assumed to have pollutant entries set </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Blends together two VQIPs that are assumed to have pollutant entries set </span>
 <span class="sd">    as pollution concentrations, blending occurs with proportionate mixing.</span>
 
 <span class="sd">    NOTE: VQIPs in WSIMOD in general store pollution as a total rather than a </span>
@@ -2448,7 +2463,7 @@ than constants.FLOAT_ACCURACY.</p>
 <span class="normal">363</span>
 <span class="normal">364</span>
 <span class="normal">365</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">compare_vqip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Compare two VQIPs and check if the difference between each key is less &#39;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compare two VQIPs and check if the difference between each key is less &#39;</span>
 <span class="sd">    than constants.FLOAT_ACCURACY.</span>
 
 <span class="sd">    Args:</span>
@@ -2543,7 +2558,7 @@ totals.</p>
 <span class="normal">127</span>
 <span class="normal">128</span>
 <span class="normal">129</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">concentration_to_total</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Convert a VQIP that has pollutant entries as concentrations into mass </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a VQIP that has pollutant entries as concentrations into mass </span>
 <span class="sd">    totals.</span>
 
 <span class="sd">    Args:</span>
@@ -2631,7 +2646,7 @@ totals.</p>
 <span class="normal">52</span>
 <span class="normal">53</span>
 <span class="normal">54</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">copy_vqip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Wrapper to copy VQIP</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Wrapper to copy VQIP</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        t (dict): A VQIP</span>
@@ -2749,7 +2764,7 @@ values from</p></td>
 <span class="normal">321</span>
 <span class="normal">322</span>
 <span class="normal">323</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ds_vqip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">t_</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get difference between each additive pollutant and volume for VQIPs where </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get difference between each additive pollutant and volume for VQIPs where </span>
 <span class="sd">    pollutants are given as mass totals.</span>
 
 <span class="sd">    Args:</span>
@@ -2876,7 +2891,7 @@ subtract </p></td>
 <span class="normal">346</span>
 <span class="normal">347</span>
 <span class="normal">348</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ds_vqip_c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">c_</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get difference between each additive pollutant and volume for VQIPs where </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get difference between each additive pollutant and volume for VQIPs where </span>
 <span class="sd">    pollutants are given as concentrations but difference is given as mass </span>
 <span class="sd">    totals.</span>
 
@@ -2958,7 +2973,7 @@ initialised in a dict and set to 0.</p>
 <span class="normal">41</span>
 <span class="normal">42</span>
 <span class="normal">43</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">empty_vqip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return a copy of the predefined empty vqip. All pollutants and volume </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a copy of the predefined empty vqip. All pollutants and volume </span>
 <span class="sd">    initialised in a dict and set to 0.</span>
 
 <span class="sd">    Returns:</span>
@@ -3083,7 +3098,7 @@ t2 subtracted from it</p></td>
 <span class="normal">173</span>
 <span class="normal">174</span>
 <span class="normal">175</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">extract_vqip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Extract one VQIP from another where both VQIPs have pollutants as </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract one VQIP from another where both VQIPs have pollutants as </span>
 <span class="sd">    mass totals. Each volume and additive pollutant is directly subtracted.</span>
 
 <span class="sd">    Args:</span>
@@ -3218,7 +3233,7 @@ c2 proportionately extracted from it</p></td>
 <span class="normal">202</span>
 <span class="normal">203</span>
 <span class="normal">204</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">extract_vqip_c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Extract one VQIP from another where both VQIPs have pollutants as </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract one VQIP from another where both VQIPs have pollutants as </span>
 <span class="sd">    concentrations. Operation performed for volume and additive pollutants.</span>
 
 <span class="sd">    NOTE: VQIPs in WSIMOD in general store pollution as a total rather than a </span>
@@ -3359,7 +3374,7 @@ actually occurred</p>
 <span class="normal">422</span>
 <span class="normal">423</span>
 <span class="normal">424</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">mass_balance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Call all mass balance functions and compare to see if discrepancy (i.e., </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Call all mass balance functions and compare to see if discrepancy (i.e., </span>
 <span class="sd">    if in_ != (out_ + ds_) for volume or for any additive pollutant).</span>
 
 <span class="sd">    Comparison is performed in the magnitude of the largest value of in_, ds_ or </span>
@@ -3533,7 +3548,7 @@ pollutants)</p></td>
 <span class="normal">111</span>
 <span class="normal">112</span>
 <span class="normal">113</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">sum_vqip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Combines two VQIPs where pollutant entries are assumed to be given as </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Combines two VQIPs where pollutant entries are assumed to be given as </span>
 <span class="sd">    mass. Volume and additive pollutants are summed while non additive pollutants</span>
 <span class="sd">    are proportionately blended.</span>
 
@@ -3645,7 +3660,7 @@ concentrations. Note, that this won't work for VQIPs with 0 volume.</p>
 <span class="normal">143</span>
 <span class="normal">144</span>
 <span class="normal">145</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">total_to_concentration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Converts a VQIP that has pollutant entries as mass totals into </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Converts a VQIP that has pollutant entries as mass totals into </span>
 <span class="sd">    concentrations. Note, that this won&#39;t work for VQIPs with 0 volume.</span>
 
 <span class="sd">    Args:</span>
@@ -3779,7 +3794,7 @@ understand how much phosphate to extract in addition to volume.</p>
 <span class="normal">278</span>
 <span class="normal">279</span>
 <span class="normal">280</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">v_change_vqip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Change the volume of a VQIP, where pollutants are mass totals, and update </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Change the volume of a VQIP, where pollutants are mass totals, and update </span>
 <span class="sd">    pollutant values in proportion to the change in volume.</span>
 
 <span class="sd">    Args:</span>
@@ -3905,7 +3920,7 @@ concentration. So you should only work with concentrations if you are doing it i
 <span class="normal">296</span>
 <span class="normal">297</span>
 <span class="normal">298</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">v_change_vqip_c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Change the volume of a VQIP, where pollutants are concentrations</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Change the volume of a VQIP, where pollutants are concentrations</span>
 
 <span class="sd">    NOTE: VQIPs in WSIMOD in general store pollution as a total rather than a </span>
 <span class="sd">    concentration. So you should only work with concentrations if you are doing it intentionally and know what you&#39;re doing. </span>
@@ -4011,7 +4026,7 @@ volume from</p></td>
 <span class="normal">218</span>
 <span class="normal">219</span>
 <span class="normal">220</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">v_distill_vqip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Directly remove a volume from a VQIP.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Directly remove a volume from a VQIP.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        t (dict): A VQIP where pollutant entries are mass totals to remove      </span>
@@ -4127,7 +4142,7 @@ volume from</p></td>
 <span class="normal">243</span>
 <span class="normal">244</span>
 <span class="normal">245</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">v_distill_vqip_c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Directly remove a volume from a VQIP, where pollutant entries are </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Directly remove a volume from a VQIP, where pollutant entries are </span>
 <span class="sd">    concentrations.</span>
 
 <span class="sd">    NOTE: VQIPs in WSIMOD in general store pollution as a total rather than a </span>
@@ -4238,11 +4253,12 @@ volume from</p></td>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.39f04ddb.min.js"></script>
+      <script src="../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
       
+    
     
   </body>
 </html>
