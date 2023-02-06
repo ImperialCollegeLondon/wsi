@@ -24,6 +24,8 @@ You can access our documentation below or at [https://barneydobson.github.io/wsi
 
 *Optional requirements to run demos*: [Pandas](https://pandas.pydata.org/), [GeoPandas](https://geopandas.org/en/stable/), [Matplotlib](https://matplotlib.org/), [Shapely](https://shapely.readthedocs.io/en/stable/manual.html)
 
+Please consider [contributing](./docs/CONTRIBUTING.md) and note the [code of conduct](./docs/CODE_OF_CONDUCT.md)
+
 ## Table Of Contents
 
 The documentation follows the best practice for

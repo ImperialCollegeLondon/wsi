@@ -56,3 +56,13 @@ From here, you can make changes to the documentation pages in `docs` and view ho
 ```
 mkdocs serve
 ```
+
+If compiling documentation, you will need to install `git`:
+```
+conda install git
+```
+
+And deploy:
+```
+mkdocs gh-deploy
+```
