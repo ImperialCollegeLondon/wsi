@@ -95,7 +95,6 @@ Software Engineering service, in particular from Diego Alonso and Dan Davies.
 
 We are incredibly grateful for the detailed software reviews provided by [Taher Chegini](https://github.com/cheginit) and [Joshua Larsen](https://github.com/jlarsen-usgs) and editing by [Chris Vernon](https://github.com/crvernon). Their suggestions have significantly improved WSIMOD.
 
-
 The design of WSIMOD was significantly influenced by 
 [CityDrain3](https://github.com/gregorburger/CityDrain3), 
 [OpenMI](https://www.ogc.org/standards/openmi), 

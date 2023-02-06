@@ -84,12 +84,14 @@ python setup.py develop easy_install "wsimod[demos]"
 
 ## Acknowledgements
 
-WSIMOD was developed by Barnaby Dobson and Leyang Liu. 
+WSIMOD was developed by [Barnaby Dobson](https://github.com/barneydobson) and [Leyang Liu](https://github.com/liuly12). 
 Theoretical support was provided by Ana Mijic.
 Testing the WSIMOD over a variety of applications has been performed by 
 Fangjun Peng, Vladimir Krivstov and Samer Muhandes.
 Software development support was provided by Imperial College's Research 
 Software Engineering service, in particular from Diego Alonso and Dan Davies.
+
+We are incredibly grateful for the detailed software reviews provided by [Taher Chegini](https://github.com/cheginit) and [Joshua Larsen](https://github.com/jlarsen-usgs) and editing by [Chris Vernon](https://github.com/crvernon). Their suggestions have significantly improved WSIMOD.
 
 The design of WSIMOD was significantly influenced by 
 [CityDrain3](https://github.com/gregorburger/CityDrain3), 
