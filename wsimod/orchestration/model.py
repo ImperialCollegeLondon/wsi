@@ -583,7 +583,10 @@ class Model(WSIObj):
             #Abstract
             for node in self.nodes_type['Reservoir'].values():
                 node.make_abstractions()
-                
+            
+            for node in self.nodes_type['Land'].values():
+                node.apply_irrigation()
+
             for node in self.nodes_type['WWTW'].values():    
                 node.make_discharge()
             
