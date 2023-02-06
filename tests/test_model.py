@@ -16,7 +16,7 @@ from wsimod.nodes.land import Land
 from wsimod.nodes.waste import Waste
 from wsimod.nodes.sewer import Sewer
 from wsimod.arcs.arcs import Arc
-from pandas import to_datetime
+from wsimod.orchestration.model import to_datetime
 
 
 class MyTestClass(TestCase):

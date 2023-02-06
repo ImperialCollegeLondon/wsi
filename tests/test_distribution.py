@@ -16,8 +16,6 @@ from wsimod.nodes.distribution import UnlimitedDistribution
 from wsimod.nodes.nodes import Node
 from wsimod.nodes.land import Land
 from wsimod.arcs.arcs import Arc
-from pandas import to_datetime
-
     
 
 class MyTestClass(TestCase):

@@ -27,6 +27,17 @@ class Catchment(Node):
         
         Functions intended to call in orchestration:
             route
+
+        Key assumptions:
+            - Flows from `Catchment` nodes are simply read from data, thus 
+                assumed to be unresponsive to wider water cycle changes.
+        
+        Input data and parameter requirements:
+            - Flow data in the `data_input_dict` at the model timestep.
+                _Units_: cubic metres/timestep
+            - Values for each variable defined in `constants.POLLUTANTS` also 
+                stored in `data_input_dict` at the model timestep.
+                _Units_: kg/timestep (additive pollutants)            
         """
         
         #Update args

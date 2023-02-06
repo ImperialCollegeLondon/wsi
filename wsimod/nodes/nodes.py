@@ -26,6 +26,12 @@ class Node(WSIObj):
             
         Examples:    
             >>> my_node = nodes.Node(name = 'london_river_junction')
+        
+        Key assumptions:
+            - No physical processes represented, can be used as a junction.
+        
+        Input data and parameter requirements:
+            - All nodes require a `name`
         """
         #Get node types
         def all_subclasses(cls):

@@ -18,8 +18,8 @@ from wsimod.nodes.sewer import Sewer
 from wsimod.nodes.storage import Reservoir
 from wsimod.arcs.arcs import Arc
 from math import exp
-from pandas import to_datetime
-    
+from wsimod.orchestration.model import to_datetime
+
 
 class MyTestClass(TestCase):
     

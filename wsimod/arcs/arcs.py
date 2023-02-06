@@ -13,18 +13,32 @@ from wsimod.core.core import WSIObj, DecayObj
 # from wsimod.nodes import nodes #Complains about circular imports.. I don't think it should do..
 
 class Arc(WSIObj):
-    def __init__(self,**kwargs):
+    def __init__(self,
+                        name = '',
+                        capacity = constants.UNBOUNDED_CAPACITY,
+                        preference = 1,
+                        in_port = None,
+                        out_port = None,
+                        **kwargs):                       
         """Arc objects are the way for information to be passed between nodes in WSIMOD. They 
         have an in_port (where a message comes from) and an out_port (where a message goes to). 
+
+        Returns:
+            name (str): Name of arc. Defaults to ''.
+            capacity (float): Capacity of flow along an arc (vol/timestep). 
+                Defaults to constants.UNBOUNDED_CAPACITY.
+            preference (float): Number used to prioritise or deprioritise use of an arc 
+                when flexibility exists
+            in_port: A WSIMOD node object where the arc starts
+            out_port: A WSIMOD node object where the arc ends
         """
 
         #Default essential parameters
-        #TODO put these as explicit arguments!
-        self.name = None
-        self.in_port = None
-        self.out_port = None
-        self.capacity = constants.UNBOUNDED_CAPACITY
-        self.preference = 1
+        self.name = name
+        self.in_port = in_port
+        self.out_port = out_port
+        self.capacity = capacity
+        self.preference = preference
         
         #Update args
         WSIObj.__init__(self)

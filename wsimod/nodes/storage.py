@@ -9,7 +9,7 @@ Converted to totals on 2022-05-03
 from wsimod.nodes.nodes import Node, Tank, QueueTank, DecayTank, DecayQueueTank
 from wsimod.core import constants
 from math import exp
-import pandas as pd
+
 class Storage(Node):
     def __init__(self, 
                         name,
@@ -137,6 +137,30 @@ class Groundwater(Storage):
             infiltrate (before sewers are discharged)
 
             distribute
+
+        Key assumptions:
+            - Conceptualises groundwater as a tank.
+            - Baseflow is generated following a residence-time method.
+            - Baseflow is sent to `storage.py/River`, `nodes.py/Node` or 
+                `waste.py/Waste` nodes.
+            - Infiltration to `sewer.py/Sewer` nodes occurs when the storage 
+                in the tank is greater than a specified threshold, at a rate 
+                proportional to the sqrt of volume above the threshold. (Note, 
+                this behaviour is __not validated__ and a high uncertainty process 
+                in general)
+            - If `decays` are provided to model water quality transformations, 
+                see `core.py/DecayObj`.
+
+        Input data and parameter requirements:
+            - Groundwater tank `capacity`, `area`, and `datum`.
+                _Units_: cubic metres, squared metres, metres
+            - Infiltration behaviour determined by an `infiltration_threshold` 
+                and `infiltration_pct`.
+                _Units_: proportion of capacity
+            - Optional dictionary of decays with pollutants as keys and decay 
+                parameters (a constant and a temperature sensitivity exponent) 
+                as values.
+                _Units_: -
         """
         self.residence_time = residence_time
         self.infiltration_threshold = infiltration_threshold
@@ -197,6 +221,25 @@ class QueueGroundwater(Storage):
         
         Functions intended to call in orchestration:
             distribute
+        
+        Key assumptions:
+            - Conceptualises groundwater as a tank.
+            - Baseflow is generated following a timearea method.
+            - Baseflow is sent to `storage.py/River`, `nodes.py/Node` or 
+                `waste.py/Waste` nodes.
+            - No infiltration to sewers is modelled.
+            - If `decays` are provided to model water quality transformations, 
+                see `core.py/DecayObj`.
+
+        Input data and parameter requirements:
+            - Groundwater tank `capacity`, `area`, and `datum`.
+                _Units_: cubic metres, squared metres, metres
+            - `timearea` is a dictionary containing the timearea diagram.
+                _Units_: duration of flow (in timesteps) and proportion of flow
+            - Optional dictionary of decays with pollutants as keys and decay 
+                parameters (a constant and a temperature sensitivity exponent) 
+                as values.
+                _Units_: -
         """
         self.timearea = timearea
         #TODO not used
@@ -365,6 +408,33 @@ class River(Storage):
         
         Functions intended to call in orchestration:
             distribute
+            
+        Key assumptions:
+             - River is conceptualised as a water tank that receives flows from various 
+                sources (e.g., runoffs from urban and rural land, baseflow from groundwater), 
+                interacts with water infrastructure (e.g., abstraction for irrigation and 
+                domestic supply, sewage and treated effluent discharge), and discharges 
+                flows downstream. It has length and width as shape parameters, average 
+                velocity to indicate flow speed and capacity to indicate the maximum storage limit.
+             - Flows from different sources into rivers will fully mix. River tank is assumed to
+                have delay and attenuation effects when generate outflows. These effects are 
+                simulated based on the average velocity.
+             - In-river biochemical processes are simulated as sources/sinks of nutrients
+                in the river tank, including
+                - denitrification (for nitrogen)
+                - phytoplankton absorption/release (for nitrogen and phosphorus)
+                - macrophyte uptake (for nitrogen and phosphorus)
+                These processes are affected by river temperature.
+
+        Input data and parameter requirements:
+             - depth, length, width
+                _Units_: m
+             - velocity
+                _Units_: m/day
+             - damping coefficient
+                _Units_: -
+             - minimum required flow
+                _Units_: m3/day
         """
         #Set parameters
         self.depth = depth # [m]
@@ -374,11 +444,15 @@ class River(Storage):
         self.damp = damp # [>=0] flow delay and attenuation
         self.mrf = mrf
         area = length * width # [m2]
+        
         capacity = depth * area
         
-        super().__init__(capacity = capacity,
-                                area = area,
-                                **kwargs)
+        #Required in cases where 'area' conflicts with length*width
+        kwargs['area'] = area
+        #Required in cases where 'capacity' conflicts with depth*area
+        kwargs['capacity'] = capacity
+        
+        super().__init__(**kwargs)
         
         
         
@@ -681,11 +755,11 @@ class River(Storage):
         return in_, out_
     
     def get_riverrc(self):
-        """Get river runoff coefficient (i.e., how much water leaves the tank in this 
+        """Get river outflow coefficient (i.e., how much water leaves the tank in this 
         timestep)
 
         Returns:
-            riverrc (float): runoff coeffficient
+            riverrc (float): outflow coeffficient
         """
         #Calculate travel time
         total_time = self.length / self.velocity
@@ -716,7 +790,7 @@ class River(Storage):
         reply = self.push_distributed(outflow, of_type = ['River','Node','Waste'])
         _ = self.tank.push_storage(reply, force = True)
         if reply['volume'] > constants.FLOAT_ACCURACY:
-            print('river cant push')
+            print('river cant push: {0}'.format(reply['volume']))
             
     def pull_check_fp(self, vqip = None):
         #TODO Pull checking for riparian buffer, needs updating
@@ -737,6 +811,21 @@ class Reservoir(Storage):
 
         Functions intended to call in orchestration:
             make_abstractions (before any river routing)
+        
+        Key assumptions:
+            - Conceptualised as a `Tank`.
+            - Recharged only via pumped abstractions.
+            - Evaporation/precipitation onto surface area currently ignored.
+            - If `decays` are provided to model water quality transformations, 
+                see `core.py/DecayObj`.
+
+        Input data and parameter requirements:
+            - Tank `capacity`, `area`, and `datum`.
+                _Units_: cubic metres, squared metres, metres
+            - Optional dictionary of decays with pollutants as keys and decay 
+                parameters (a constant and a temperature sensitivity exponent) 
+                as values.
+                _Units_: -
         """
         super().__init__(**kwargs)
     
@@ -747,7 +836,7 @@ class Reservoir(Storage):
         spill = self.tank.push_storage(reply)
         _ = self.tank.push_storage(spill, force = True)
         if spill['volume'] > constants.FLOAT_ACCURACY:
-            print('Spill at reservoir')
+            print('Spill at reservoir by {0}'.format(spill['volume']))
             
 
 class RiverReservoir(Reservoir):
@@ -764,6 +853,30 @@ class RiverReservoir(Reservoir):
                 
                 satisfy_environmental (before river routing.. possibly before 
                     downstream river abstractions depending on licence)
+        
+        Key assumptions:
+            - Conceptualised as a `Tank`.
+            - Recharged via pumped abstractions and receives water from 
+                inflowing arcs.
+            - Reservoir aims to satisfy a static `environmental_flow`.
+            - If tank capacity is exceeded, reservoir spills downstream 
+                towards `nodes.py/Node`, `storage.py/River` or `waste.py/Waste` 
+                nodes. Spill counts towards `environmental_flow`.
+            - Evaporation/precipitation onto surface area currently ignored.
+            - Currently, if a reservoir satisfies a pull from a downstream 
+                node, it does __not__ count towards `environmental_flow`.
+            - If `decays` are provided to model water quality transformations, 
+                see `core.py/DecayObj`.
+            
+        Input data and parameter requirements:
+            - Tank `capacity`, `area`, and `datum`.
+                _Units_: cubic metres, squared metres, metres
+            - `environmental_flow`
+                _Units_: cubic metres/timestep
+            - Optional dictionary of decays with pollutants as keys and decay 
+                parameters (a constant and a temperature sensitivity exponent) 
+                as values.
+                _Units_: -
         """
 
         #Parameters

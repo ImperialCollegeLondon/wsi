@@ -34,12 +34,30 @@ class WTW(Node):
                 explanation). Defaults to {}.
             liquor_multiplier (dict, optional): Keys for each pollutant that 
                 describes how much influent becomes liquor. Defaults to {}.
-            percent_solids (float, optional): Percent of volume that becomes solids. 
+            percent_solids (float, optional): Proportion of volume that becomes solids. 
                 All pollutants that do not become effluent or liquor become solids. 
                 Defaults to 0.0002.
         
         Functions intended to call in orchestration:
             None (use FWTW or WWTW subclass)
+        
+        Key assumptions:
+            - Throughput can be modelled entirely with a set capacity.
+            - Pollutant reduction for the entire treatment process can be modelled 
+                primarily with a single (temperature sensitive) transformation for 
+                each pollutant.
+            - Liquor and solids are tracked and calculated with proportional 
+                multiplier parameters.
+
+        Input data and parameter requirements:
+            - `treatment_throughput_capacity`
+                _Units_: cubic metres/timestep
+            - `process_parameters` contains the constant (non temperature 
+                sensitive) and exponent (temperature sensitive) transformations 
+                applied to treated water for each pollutant.
+                _Units_: -
+            - `liquor_multiplier` and `percent_solids` describe the proportion of 
+                throughput that goes to liquor/solids.
         """
         #Set/Default parameters
         self.treatment_throughput_capacity = treatment_throughput_capacity
@@ -145,6 +163,18 @@ class WWTW(WTW):
             calculate_discharge
             
             make_discharge
+        
+        Key assumptions:
+            - See `wtw.py/WTW` for treatment.
+            - When `treatment_throughput_capacity` is exceeded, water is first sent 
+                to a stormwater storage tank before denying pushes. Leftover water 
+                in this tank aims to be treated in subsequent timesteps.
+            - Can be pulled from to simulate active wastewater effluent use.
+    
+        Input data and parameter requirements:
+            - See `wtw.py/WTW` for treatment.
+            - Stormwater tank `capacity`, `area`, and `datum`.
+                _Units_: cubic metres, squared metres, metres
         """
         #Set parameters
         self.stormwater_storage_capacity = stormwater_storage_capacity
@@ -344,6 +374,20 @@ class FWTW(WTW):
         
         Functions intended to call in orchestration:
             treat_water
+        
+        Key assumptions:
+            - See `wtw.py/WTW` for treatment.
+            - Stores treated water in a service reservoir tank, with a single tank 
+                per `FWTW` node.
+            - Aims to satisfy a throughput that would top up the service reservoirs until full.
+            - Currently, will not allow a deficit, thus introducing water from 
+                'other measures' if pulls cannot fulfil demand. Behaviour under a 
+                deficit should be determined and validated before introducing.
+    
+        Input data and parameter requirements:
+            - See `wtw.py/WTW` for treatment.
+            - Service reservoir tank `capacity`, `area`, and `datum`.
+                _Units_: cubic metres, squared metres, metres
         """
         #Default parameters
         self.service_reservoir_storage_capacity = service_reservoir_storage_capacity

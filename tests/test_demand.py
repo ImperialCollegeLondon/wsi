@@ -16,8 +16,7 @@ from wsimod.nodes.demand import Demand, ResidentialDemand
 from wsimod.nodes.nodes import Node
 from wsimod.nodes.land import Land
 from wsimod.arcs.arcs import Arc
-from pandas import to_datetime
-
+from wsimod.orchestration.model import to_datetime
     
 
 class MyTestClass(TestCase):

@@ -16,6 +16,12 @@ class Waste(Node):
         
         Functions intended to call in orchestration:
             None
+        
+        Key assumptions:
+            - Water 'disappears' (leaves the model) from these nodes.
+
+        Input data and parameter requirements:
+            - None
         """
         #Update args
         super().__init__(name)
