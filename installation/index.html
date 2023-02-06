@@ -65,11 +65,6 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
-        
-        <a href="#run-demos" class="md-skip">
-          Skip to content
-        </a>
-      
     </div>
     <div data-md-component="announce">
       
@@ -222,38 +217,9 @@
       
       
       
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          Installation
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
       <a href="./" class="md-nav__link md-nav__link--active">
         Installation
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#run-demos" class="md-nav__link">
-    Run demos
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
       
     </li>
   
@@ -382,21 +348,6 @@
   
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#run-demos" class="md-nav__link">
-    Run demos
-  </a>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -422,14 +373,14 @@ conda activate wsimod
 <p>Install WSIMOD directly from GitHub</p>
 <pre><code>pip install https://github.com/barneydobson/wsi/archive/refs/heads/main.zip
 </code></pre>
+<p>Use <code>[demos]</code> to include the demos and tutorials.</p>
+<pre><code>pip install https://github.com/barneydobson/wsi/archive/refs/heads/main.zip
+pip install wsimod[demos]
+</code></pre>
 <p>If you want to make changes WSIMOD you can download/clone this folder, navigate to it, and run:</p>
 <pre><code>python setup.py develop
 </code></pre>
-<h2 id="run-demos">Run demos</h2>
-<p>Use <code>[demos]</code> to include the demos and tutorials.</p>
-<pre><code>pip install -e https://github.com/barneydobson/wsi/archive/refs/heads/main.zip[demos]
-</code></pre>
-<p>or (with develop)</p>
+<p>or (with demos)</p>
 <pre><code>python setup.py develop easy_install &quot;wsimod[demos]&quot;
 </code></pre>
 

@@ -629,13 +629,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#wsimod.nodes.waste.Waste.push_check_accept" class="md-nav__link">
-    push_check_accept()
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#wsimod.nodes.waste.Waste.push_set_accept" class="md-nav__link">
     push_set_accept()
   </a>
@@ -3955,21 +3948,7 @@ balance</p>
 <span class="normal">45</span>
 <span class="normal">46</span>
 <span class="normal">47</span>
-<span class="normal">48</span>
-<span class="normal">49</span>
-<span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span>
-<span class="normal">59</span>
-<span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Waste</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+<span class="normal">48</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Waste</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Outlet node that can receive any amount of water by pushes</span>
 
@@ -4008,20 +3987,6 @@ balance</p>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">push_check_accept</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Push check function that accepts all water</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            vqip (dict, optional): A VQIP that has been pushed (ignored)</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            (dict): VQIP or an unbounded capacity, indicating all water can be received</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">vqip</span><span class="p">:</span>
-            <span class="n">vqip</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
-            <span class="n">vqip</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">UNBOUNDED_CAPACITY</span>
-        <span class="k">return</span> <span class="n">vqip</span>
 </code></pre></div></td></tr></table></div>
         </details>
 
@@ -4144,95 +4109,6 @@ balance</p>
 
     <span class="c1">#Mass balance</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">mass_balance_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_in</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-      </details>
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h3 id="wsimod.nodes.waste.Waste.push_check_accept" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">push_check_accept</span><span class="p">(</span><span class="n">vqip</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
-
-</h3>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>Push check function that accepts all water</p>
-
-  <p><strong>Parameters:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>vqip</code></td>
-          <td>
-                <code>dict</code>
-          </td>
-          <td><p>A VQIP that has been pushed (ignored)</p></td>
-          <td>
-                <code>None</code>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-  <p><strong>Returns:</strong></p>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code>dict</code>
-          </td>
-          <td><p>VQIP or an unbounded capacity, indicating all water can be received</p></td>
-        </tr>
-    </tbody>
-  </table>
-
-      <details class="quote">
-        <summary>Source code in <code>wsimod\nodes\waste.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">50</span>
-<span class="normal">51</span>
-<span class="normal">52</span>
-<span class="normal">53</span>
-<span class="normal">54</span>
-<span class="normal">55</span>
-<span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span>
-<span class="normal">59</span>
-<span class="normal">60</span>
-<span class="normal">61</span>
-<span class="normal">62</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_check_accept</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Push check function that accepts all water</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        vqip (dict, optional): A VQIP that has been pushed (ignored)</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        (dict): VQIP or an unbounded capacity, indicating all water can be received</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">vqip</span><span class="p">:</span>
-        <span class="n">vqip</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
-        <span class="n">vqip</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">UNBOUNDED_CAPACITY</span>
-    <span class="k">return</span> <span class="n">vqip</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
