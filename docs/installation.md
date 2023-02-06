@@ -16,7 +16,8 @@ pip install https://github.com/barneydobson/wsi/archive/refs/heads/main.zip
 
 Use `[demos]` to include the demos and tutorials.
 ```
-pip install -e https://github.com/barneydobson/wsi/archive/refs/heads/main.zip[demos]
+pip install https://github.com/barneydobson/wsi/archive/refs/heads/main.zip
+pip install wsimod[demos]
 ```
 
 If you want to make changes WSIMOD you can download/clone this folder, navigate to it, and run:
