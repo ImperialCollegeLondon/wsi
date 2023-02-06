@@ -14,20 +14,18 @@ Install WSIMOD directly from GitHub
 pip install https://github.com/barneydobson/wsi/archive/refs/heads/main.zip
 ```
 
-If you want to make changes WSIMOD you can download/clone this folder, navigate to it, and run:
-```
-python setup.py develop
-```
-
-## Run demos
-
 Use `[demos]` to include the demos and tutorials.
 ```
 pip install -e https://github.com/barneydobson/wsi/archive/refs/heads/main.zip[demos]
 ```
 
-or (with develop)
+If you want to make changes WSIMOD you can download/clone this folder, navigate to it, and run:
+```
+pip install .
+```
+
+or (with demos)
 
 ```
-python setup.py develop easy_install "wsimod[demos]"
+pip install -e .[demos]
 ```
