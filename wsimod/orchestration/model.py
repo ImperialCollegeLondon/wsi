@@ -366,8 +366,8 @@ class Model(WSIObj):
             arc['out_port'] = self.nodes[arc['out_port']]
             self.arcs[name] = getattr(arcs_mod,type_)(**dict(arc))
             
-            if arc['in_port'].__class__.__name__ in ['River', 'Node', 'Waste']:
-                if arc['out_port'].__class__.__name__ in ['River', 'Node', 'Waste']:
+            if arc['in_port'].__class__.__name__ in ['River', 'Node', 'Waste','Reservoir']:
+                if arc['out_port'].__class__.__name__ in ['River', 'Node', 'Waste','Reservoir']:
                     river_arcs[name] = self.arcs[name]
                 
         if any(river_arcs):
@@ -390,8 +390,8 @@ class Model(WSIObj):
         self.arcs = {x.name : x for x in arclist}
         river_arcs = {}
         for arc in arclist:
-            if arc.in_port.__class__.__name__ in ['River', 'Node', 'Waste']:
-                if arc.out_port.__class__.__name__ in ['River', 'Node', 'Waste']:
+            if arc.in_port.__class__.__name__ in ['River', 'Node', 'Waste','Reservoir']:
+                if arc.out_port.__class__.__name__ in ['River', 'Node', 'Waste','Reservoir']:
                     river_arcs[arc.name] = arc
         upstreamness = {x : 0 for x in self.nodes_type['Waste'].keys()}
         
