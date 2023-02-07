@@ -53,9 +53,9 @@ class Node(WSIObj):
 
         #Initiailise default handlers
         self.pull_set_handler = {'default' : self.pull_distributed}
-        self.push_set_handler = {'default' : lambda x : self.push_distributed(x, of_type = ['Node', 'River', 'Waste'])}
+        self.push_set_handler = {'default' : lambda x : self.push_distributed(x, of_type = ['Node', 'River', 'Waste', 'Reservoir'])}
         self.pull_check_handler = {'default' : self.pull_check_basic}
-        self.push_check_handler = {'default' : lambda x : self.push_check_basic(x, of_type = ['Node', 'River', 'Waste'])}
+        self.push_check_handler = {'default' : lambda x : self.push_check_basic(x, of_type = ['Node', 'River', 'Waste', 'Reservoir'])}
         
         super().__init__()
 
