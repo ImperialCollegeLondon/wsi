@@ -546,6 +546,40 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#wsimod.arcs.arcs.PullArc" class="md-nav__link">
+    PullArc
+  </a>
+  
+    <nav class="md-nav" aria-label="PullArc">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#wsimod.arcs.arcs.PullArc.__init__" class="md-nav__link">
+    __init__()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wsimod.arcs.arcs.PullArc.send_push_check_deny" class="md-nav__link">
+    send_push_check_deny()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#wsimod.arcs.arcs.PullArc.send_push_deny" class="md-nav__link">
+    send_push_deny()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#wsimod.arcs.arcs.QueueArc" class="md-nav__link">
     QueueArc
   </a>
@@ -3662,6 +3696,379 @@ time under the 'time' key.</p></td>
     <span class="k">else</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">queue</span><span class="p">[</span><span class="n">request</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]]</span>  <span class="o">=</span> <span class="n">request</span><span class="p">[</span><span class="s1">&#39;vqip&#39;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_travel</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_travel</span><span class="p">,</span> <span class="n">request</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">])</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+<h2 id="wsimod.arcs.arcs.PullArc" class="doc doc-heading">
+        <code>PullArc</code>
+
+
+</h2>
+
+
+  <div class="doc doc-contents ">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-internal" title="wsimod.arcs.arcs.Arc" href="#wsimod.arcs.arcs.Arc">Arc</a></code></p>
+
+
+
+        <details class="quote">
+          <summary>Source code in <code>wsimod\arcs\arcs.py</code></summary>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">779</span>
+<span class="normal">780</span>
+<span class="normal">781</span>
+<span class="normal">782</span>
+<span class="normal">783</span>
+<span class="normal">784</span>
+<span class="normal">785</span>
+<span class="normal">786</span>
+<span class="normal">787</span>
+<span class="normal">788</span>
+<span class="normal">789</span>
+<span class="normal">790</span>
+<span class="normal">791</span>
+<span class="normal">792</span>
+<span class="normal">793</span>
+<span class="normal">794</span>
+<span class="normal">795</span>
+<span class="normal">796</span>
+<span class="normal">797</span>
+<span class="normal">798</span>
+<span class="normal">799</span>
+<span class="normal">800</span>
+<span class="normal">801</span>
+<span class="normal">802</span>
+<span class="normal">803</span>
+<span class="normal">804</span>
+<span class="normal">805</span>
+<span class="normal">806</span>
+<span class="normal">807</span>
+<span class="normal">808</span>
+<span class="normal">809</span>
+<span class="normal">810</span>
+<span class="normal">811</span>
+<span class="normal">812</span>
+<span class="normal">813</span>
+<span class="normal">814</span>
+<span class="normal">815</span>
+<span class="normal">816</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PullArc</span><span class="p">(</span><span class="n">Arc</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Subclass of Arc where pushes return no availability to push. This creates</span>
+<span class="sd">        an Arc where only pull requests/checks can be sent, similar to a river</span>
+<span class="sd">        abstraction.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_push_request</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_push_deny</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">send_push_check</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_push_check_deny</span>
+    <span class="k">def</span> <span class="nf">send_push_deny</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">force</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Function used to deny any push requests.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            vqip (dict): A dict VQIP of water to push</span>
+<span class="sd">            tag (str, optional):  optional message to direct the out_port&#39;s query_handler which </span>
+<span class="sd">                function to call. Defaults to &#39;default&#39;.</span>
+<span class="sd">            force (bool, optional): Argument used to cause function to ignore tank </span>
+<span class="sd">                capacity of out_port, possibly resulting in pooling. Should not be used unless </span>
+<span class="sd">                out_port is a tank object. Defaults to False.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (dict): A VQIP amount of water that was not successfully pushed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">vqip</span>
+
+    <span class="k">def</span> <span class="nf">send_push_check_deny</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Function used to deny any push checks.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            vqip (dict): A dict VQIP of water to push that can be specified. Defaults to None, </span>
+<span class="sd">                which returns maximum capacity to push.</span>
+<span class="sd">            tag (str, optional):  optional message to direct the out_port&#39;s query_handler which </span>
+<span class="sd">                function to call. Defaults to &#39;default&#39;.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (dict): An empty VQIP amount of water indicating no water can be pushed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+        </details>
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="wsimod.arcs.arcs.PullArc.__init__" class="doc doc-heading">
+<code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Subclass of Arc where pushes return no availability to push. This creates
+an Arc where only pull requests/checks can be sent, similar to a river
+abstraction.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>wsimod\arcs\arcs.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">780</span>
+<span class="normal">781</span>
+<span class="normal">782</span>
+<span class="normal">783</span>
+<span class="normal">784</span>
+<span class="normal">785</span>
+<span class="normal">786</span>
+<span class="normal">787</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Subclass of Arc where pushes return no availability to push. This creates</span>
+<span class="sd">    an Arc where only pull requests/checks can be sent, similar to a river</span>
+<span class="sd">    abstraction.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">send_push_request</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_push_deny</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">send_push_check</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">send_push_check_deny</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="wsimod.arcs.arcs.PullArc.send_push_check_deny" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">send_push_check_deny</span><span class="p">(</span><span class="n">vqip</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Function used to deny any push checks.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>vqip</code></td>
+          <td>
+                <code>dict</code>
+          </td>
+          <td><p>A dict VQIP of water to push that can be specified. Defaults to None, 
+which returns maximum capacity to push.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>tag</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>optional message to direct the out_port's query_handler which 
+function to call. Defaults to 'default'.</p></td>
+          <td>
+                <code>&#39;default&#39;</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code>dict</code>
+          </td>
+          <td><p>An empty VQIP amount of water indicating no water can be pushed</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>wsimod\arcs\arcs.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">804</span>
+<span class="normal">805</span>
+<span class="normal">806</span>
+<span class="normal">807</span>
+<span class="normal">808</span>
+<span class="normal">809</span>
+<span class="normal">810</span>
+<span class="normal">811</span>
+<span class="normal">812</span>
+<span class="normal">813</span>
+<span class="normal">814</span>
+<span class="normal">815</span>
+<span class="normal">816</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">send_push_check_deny</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function used to deny any push checks.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        vqip (dict): A dict VQIP of water to push that can be specified. Defaults to None, </span>
+<span class="sd">            which returns maximum capacity to push.</span>
+<span class="sd">        tag (str, optional):  optional message to direct the out_port&#39;s query_handler which </span>
+<span class="sd">            function to call. Defaults to &#39;default&#39;.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (dict): An empty VQIP amount of water indicating no water can be pushed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="wsimod.arcs.arcs.PullArc.send_push_deny" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">send_push_deny</span><span class="p">(</span><span class="n">vqip</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Function used to deny any push requests.</p>
+
+  <p><strong>Parameters:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>vqip</code></td>
+          <td>
+                <code>dict</code>
+          </td>
+          <td><p>A dict VQIP of water to push</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>tag</code></td>
+          <td>
+                <code>str</code>
+          </td>
+          <td><p>optional message to direct the out_port's query_handler which 
+function to call. Defaults to 'default'.</p></td>
+          <td>
+                <code>&#39;default&#39;</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>force</code></td>
+          <td>
+                <code>bool</code>
+          </td>
+          <td><p>Argument used to cause function to ignore tank 
+capacity of out_port, possibly resulting in pooling. Should not be used unless 
+out_port is a tank object. Defaults to False.</p></td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <p><strong>Returns:</strong></p>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code>dict</code>
+          </td>
+          <td><p>A VQIP amount of water that was not successfully pushed</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+      <details class="quote">
+        <summary>Source code in <code>wsimod\arcs\arcs.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">788</span>
+<span class="normal">789</span>
+<span class="normal">790</span>
+<span class="normal">791</span>
+<span class="normal">792</span>
+<span class="normal">793</span>
+<span class="normal">794</span>
+<span class="normal">795</span>
+<span class="normal">796</span>
+<span class="normal">797</span>
+<span class="normal">798</span>
+<span class="normal">799</span>
+<span class="normal">800</span>
+<span class="normal">801</span>
+<span class="normal">802</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">send_push_deny</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">tag</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">force</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function used to deny any push requests.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        vqip (dict): A dict VQIP of water to push</span>
+<span class="sd">        tag (str, optional):  optional message to direct the out_port&#39;s query_handler which </span>
+<span class="sd">            function to call. Defaults to &#39;default&#39;.</span>
+<span class="sd">        force (bool, optional): Argument used to cause function to ignore tank </span>
+<span class="sd">            capacity of out_port, possibly resulting in pooling. Should not be used unless </span>
+<span class="sd">            out_port is a tank object. Defaults to False.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (dict): A VQIP amount of water that was not successfully pushed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">vqip</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
