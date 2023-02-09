@@ -418,6 +418,7 @@ class River(Storage):
         
         # Initialise paramters
         self.current_depth = 0 # [m]
+        self.riverrc = 1 # [-]
         # self.river_temperature = 0 # [degree C]
         # self.river_denitrification = 0 # [kg/day]
         # self.macrophyte_uptake_N = 0 # [kg/day]
@@ -481,7 +482,7 @@ class River(Storage):
         avail['volume'] += upstream['avail']
         
         #convert mrf from volume/timestep to discrete value
-        mrf = self.mrf / self.get_riverrc()
+        mrf = self.mrf / self.riverrc
 
         #Apply mrf
         avail_vol = max(avail['volume'] - mrf, 0)
@@ -708,7 +709,8 @@ class River(Storage):
             self.bio_out = out_
         
         #Get outflow
-        outflow = self.tank.pull_storage({'volume' : self.tank.storage['volume'] * self.get_riverrc()})
+        self.riverrc = self.get_riverrc()
+        outflow = self.tank.pull_storage({'volume' : self.tank.storage['volume'] * self.riverrc})
         #Distribute outflow
         reply = self.push_distributed(outflow, of_type = ['River','Node','Waste'])
         _ = self.tank.push_storage(reply, force = True)
