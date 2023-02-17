@@ -1789,17 +1789,17 @@ print(input_data.sample(10))</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>           site       date   variable         value
-26705       ray 2010-07-13    nitrate      0.011016
-73770       ray 2011-10-29       flow  14256.000000
-49882       ray 2010-03-16  potassium      0.005500
-11608    thames 2013-01-17    silicon      0.006970
-14644       ray 2009-05-26   fluoride      0.000200
-37719  evenlode 2012-10-12   nitrogen      0.006425
-69395    thames 2011-10-22      boron      0.000058
-20710       ray 2010-01-23   chloride      0.028623
-24104  cherwell 2011-05-20    nitrate      0.004816
-9305        ray 2010-09-23    silicon      0.008545
+<pre>              site       date     variable     value
+78940  oxford_land 2010-01-13  temperature  3.328571
+38349          ray 2010-07-09     nitrogen  0.009269
+10830       thames 2010-12-01      silicon  0.007597
+43258     evenlode 2012-01-01       sodium  0.022407
+58806     cherwell 2010-09-20    magnesium  0.008829
+61257          ray 2009-06-16    magnesium  0.006271
+22666       thames 2011-06-07     chloride  0.042150
+8640      evenlode 2012-11-22      silicon  0.007533
+53324     cherwell 2011-08-28      calcium  0.103643
+60273     evenlode 2010-10-01    magnesium  0.004414
 </pre>
 </div>
 </div>
@@ -3664,7 +3664,7 @@ print(nodelist)</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>[&lt;wsimod.nodes.waste.Waste object at 0x000002318FC1BB80&gt;, &lt;wsimod.nodes.catchment.Catchment object at 0x00000231856339A0&gt;, &lt;wsimod.nodes.catchment.Catchment object at 0x0000023185633910&gt;, &lt;wsimod.nodes.catchment.Catchment object at 0x0000023185631480&gt;, &lt;wsimod.nodes.catchment.Catchment object at 0x0000023185633A00&gt;, &lt;wsimod.nodes.demand.ResidentialDemand object at 0x000002318FC1AF20&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000002318FC1A500&gt;, &lt;wsimod.nodes.storage.Reservoir object at 0x000002318FC1AE60&gt;, &lt;wsimod.nodes.wtw.FWTW object at 0x00000231856329E0&gt;, &lt;wsimod.nodes.wtw.WWTW object at 0x000002318FC1A680&gt;, &lt;wsimod.nodes.sewer.Sewer object at 0x000002318FC1ADD0&gt;, &lt;wsimod.nodes.land.Land object at 0x000002318FC1B670&gt;, &lt;wsimod.nodes.storage.Groundwater object at 0x000002318FC1BEE0&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000002318FC1B9A0&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000002318FC1A3E0&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000002318FC1B910&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000002318FC1B6A0&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000002318FC1B7F0&gt;]
+<pre>[&lt;wsimod.nodes.waste.Waste object at 0x000001D17FEB7700&gt;, &lt;wsimod.nodes.catchment.Catchment object at 0x000001D1768A0D30&gt;, &lt;wsimod.nodes.catchment.Catchment object at 0x000001D17FB9F2B0&gt;, &lt;wsimod.nodes.catchment.Catchment object at 0x000001D1768A29B0&gt;, &lt;wsimod.nodes.catchment.Catchment object at 0x000001D1768A25F0&gt;, &lt;wsimod.nodes.demand.ResidentialDemand object at 0x000001D17FEB6AD0&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000001D1768A3CD0&gt;, &lt;wsimod.nodes.storage.Reservoir object at 0x000001D1768A1450&gt;, &lt;wsimod.nodes.wtw.FWTW object at 0x000001D1768A3580&gt;, &lt;wsimod.nodes.wtw.WWTW object at 0x000001D17FEB7340&gt;, &lt;wsimod.nodes.sewer.Sewer object at 0x000001D1768A02B0&gt;, &lt;wsimod.nodes.land.Land object at 0x000001D17FEB7400&gt;, &lt;wsimod.nodes.storage.Groundwater object at 0x000001D17FEB6D40&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000001D17FEB6530&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000001D17FEB73D0&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000001D17FEB76D0&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000001D17FEB6EC0&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000001D17FEB6E00&gt;]
 </pre>
 </div>
 </div>
@@ -3741,7 +3741,7 @@ print(fwtw_to_distribution)</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>&lt;wsimod.arcs.arcs.Arc object at 0x000002318FC1B010&gt;
+<pre>&lt;wsimod.arcs.arcs.Arc object at 0x000001D17FEB6CE0&gt;
 </pre>
 </div>
 </div>
@@ -3877,7 +3877,7 @@ print(fwtw_to_distribution.in_port)</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>&lt;wsimod.nodes.wtw.FWTW object at 0x00000231856329E0&gt;
+<pre>&lt;wsimod.nodes.wtw.FWTW object at 0x000001D1768A3580&gt;
 </pre>
 </div>
 </div>
@@ -3934,7 +3934,7 @@ print(fwtw_to_distribution.out_port)</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>&lt;wsimod.nodes.nodes.Node object at 0x000002318FC1A500&gt;
+<pre>&lt;wsimod.nodes.nodes.Node object at 0x000001D1768A3CD0&gt;
 </pre>
 </div>
 </div>
@@ -4003,7 +4003,7 @@ print(oxford_fwtw.out_arcs)</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>{&#39;fwtw_to_distribution&#39;: &lt;wsimod.arcs.arcs.Arc object at 0x000002318FC1B010&gt;}
+<pre>{&#39;fwtw_to_distribution&#39;: &lt;wsimod.arcs.arcs.Arc object at 0x000001D17FEB6CE0&gt;}
 </pre>
 </div>
 </div>
@@ -4060,7 +4060,7 @@ print(distribution.in_arcs)</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>{&#39;fwtw_to_distribution&#39;: &lt;wsimod.arcs.arcs.Arc object at 0x000002318FC1B010&gt;}
+<pre>{&#39;fwtw_to_distribution&#39;: &lt;wsimod.arcs.arcs.Arc object at 0x000001D17FEB6CE0&gt;}
 </pre>
 </div>
 </div>
@@ -5161,7 +5161,7 @@ print(oxford_fwtw.in_arcs)</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>{&#39;reservoir_to_fwtw&#39;: &lt;wsimod.arcs.arcs.Arc object at 0x000002319094CCD0&gt;}
+<pre>{&#39;reservoir_to_fwtw&#39;: &lt;wsimod.arcs.arcs.Arc object at 0x000001D101990D00&gt;}
 </pre>
 </div>
 </div>
@@ -5810,7 +5810,7 @@ flows, _, _, _ = my_model.run()</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>100%|██████████████████████████████████████████████████████████████████████████| 1456/1456 [00:09&lt;00:00, 152.66it/s]
+<pre>100%|██████████████████████████████████████████████████████████████████████████| 1456/1456 [00:08&lt;00:00, 168.62it/s]
 </pre>
 </div>
 </div>
@@ -5883,52 +5883,52 @@ print(flows.sample(10))</div>
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
 <pre>                          arc           flow       time  temperature  \
-9802     fwtw_to_distribution   30000.000000 2010-06-12     8.870710   
-2000         farmoor_to_mixer  362185.786760 2009-06-06    16.979121   
-23145    cherwell_to_cherwell  180576.000000 2012-03-09     7.771429   
-22400           sewer_to_wwtw   30934.213235 2012-02-02     9.067076   
-9568            land_to_sewer    7000.000000 2010-06-01    15.814286   
-8544               land_to_gw   15078.387196 2010-04-13     7.808343   
-20360  distribution_to_demand   30000.000000 2011-10-28    12.360143   
-9286        thames_to_farmoor  728352.000000 2010-05-19    13.842972   
-18619           land_to_sewer       0.000000 2011-08-06     0.000000   
-24799            garden_to_gw       0.000000 2012-05-26     0.000000   
+247      fwtw_to_distribution   30000.000000 2009-03-14     0.261834   
+21321       cherwell_to_mixer  220492.800000 2011-12-13     5.314655   
+667      fwtw_to_distribution   30000.000000 2009-04-03     0.801082   
+12956             gw_to_mixer   13293.709002 2010-11-09    13.386081   
+22845              land_to_gw    8902.207167 2012-02-23     6.454873   
+28403  distribution_to_demand   30000.000000 2012-11-14    11.804755   
+4791     cherwell_to_cherwell   73872.000000 2009-10-17    12.414286   
+956    distribution_to_demand   30000.000000 2009-04-17     1.254366   
+28978            garden_to_gw       0.000000 2012-12-11     0.000000   
+12008       reservoir_to_fwtw   30934.213240 2010-09-25    11.406995   
 
            silicon   fluoride      chloride      nitrate      sulphate  \
-9802      1.409332   0.030581      6.983544     1.464497     10.851496   
-2000   2087.112369  36.218579  11563.221892  2022.311253  16846.187728   
-23145   556.463002  39.468754  14657.353920   928.851266  14987.550034   
-22400   789.340331  16.082140   6546.531425  1968.299501   9175.329813   
-9568      0.210000   0.600000      0.180000     0.060000    210.000000   
-8544      0.097772   0.279349      0.083805     0.027935     97.772161   
-20360     1.799920   0.040175     10.847834     1.650444     15.856285   
-9286   2793.034354  73.236960  19918.748880  4693.180226  32859.820800   
-18619     0.000000   0.000000      0.000000     0.000000      0.000000   
-24799     0.000000   0.000000      0.000000     0.000000      0.000000   
+247       0.047418   0.001060      0.254865     0.078712      0.424326   
+21321  1740.773652  41.062464  22524.181056  1727.724222  21008.851200   
+667       0.100176   0.002887      0.722896     0.207271      1.182623   
+12956     0.113728   0.324937      0.097481     0.032494    113.727858   
+22845     0.119977   0.342792      0.102838     0.034279    119.977092   
+28403     1.956865   0.042311      9.831590     1.715540     14.938379   
+4791    817.530871   8.125920   5646.775680   348.968374   5629.996183   
+956       0.117597   0.004101      1.067228     0.288754      1.696494   
+28978     0.000000   0.000000      0.000000     0.000000      0.000000   
+12008   155.848387   3.373687    812.274922   147.329528   1232.149042   
 
           nitrogen        sodium    potassium       calcium    magnesium  \
-9802      1.524343      4.336004     0.906413     24.294463     1.117239   
-2000   2111.878599   7420.146268  1541.762919  35954.814176  1755.776624   
-23145  1000.649006   8376.146743  1269.191314  19804.027886  1488.462171   
-22400  1682.426927   6774.637681  1053.882175   7494.930042  1048.312955   
-9568     12.000000      0.900000    21.000000    210.000000    18.000000   
-8544      5.586981      0.419024     9.777216     97.772161     8.380471   
-20360     1.770325      7.352825     1.431982     29.913305     1.471670   
-9286   4725.164160  12025.810800  2365.232400  74946.675600  3311.960400   
-18619     0.000000      0.000000     0.000000      0.000000     0.000000   
-24799     0.000000      0.000000     0.000000      0.000000     0.000000   
+247       0.084223      0.144932     0.028838      1.172124     0.047044   
+21321  2120.869440  16123.777920  3043.025280  22803.932160  1908.593280   
+667       0.216313      0.427791     0.082671      3.148706     0.132828   
+12956     6.498735      0.487405    11.372786    113.727858     9.748102   
+22845     6.855834      0.514188    11.997709    119.977092    10.283751   
+28403     1.857402      6.335158     1.320754     31.552950     1.459564   
+4791    376.747200   4821.730971   743.996571   8430.905829   747.162514   
+956       0.294482      0.645182     0.126946      4.441078     0.194284   
+28978     0.000000      0.000000     0.000000      0.000000     0.000000   
+12008   154.740755    513.069458   104.715785   2562.969352   121.451412   
 
            boron  
-9802    0.011076  
-2000   18.263375  
-23145  13.432275  
-22400  16.555440  
-9568    0.300000  
-8544    0.139675  
-20360   0.015116  
-9286   29.652156  
-18619   0.000000  
-24799   0.000000  
+247     0.000409  
+21321  21.058186  
+667     0.001074  
+12956   0.162468  
+22845   0.171396  
+28403   0.014663  
+4791    7.767113  
+956     0.001498  
+28978   0.000000  
+12008   1.247807  
 </pre>
 </div>
 </div>
@@ -6163,7 +6163,7 @@ plt.legend()</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>&lt;matplotlib.legend.Legend at 0x23190207e20&gt;</pre>
+<pre>&lt;matplotlib.legend.Legend at 0x1d10152bb50&gt;</pre>
 </div>
 
 </div>

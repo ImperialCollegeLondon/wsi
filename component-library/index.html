@@ -444,7 +444,7 @@ components, their assumptions and required input data on this page.</p>
 <tr>
 <td align="left"><a href="./../reference-other/#wsimod.nodes.catchment.Catchment"><code>Catchment</code></a></td>
 <td align="left">- Flows from <code>Catchment</code> nodes are simply read from data, thus assumed to be unresponsive to wider water cycle changes.</td>
-<td align="left">- Flow data in the <code>data_input_dict</code> at the model timestep. <em>Units</em>: cubic metres/timestep<br> - Values for each variable defined in <code>constants.POLLUTANTS</code> also stored in <code>data_input_dict</code> at the model timestep. <em>Units</em>: kg/timestep (additive pollutants)</td>
+<td align="left">- Flow data in the <code>data_input_dict</code> at the model timestep. <em>Units</em>: cubic metres/timestep<br> - Values for each variable defined in <code>constants.POLLUTANTS</code> also stored in <code>data_input_dict</code> at the model timestep. <em>Units</em>: kg/m3/timestep (additive pollutants)</td>
 </tr>
 <tr>
 <td align="left"><a href="./../reference-other/#wsimod.nodes.distribution.Distribution"><code>Distribution</code></a></td>
@@ -464,7 +464,7 @@ components, their assumptions and required input data on this page.</p>
 <tr>
 <td align="left"><a href="./../reference-land/#wsimod.nodes.land.GrowingSurface"><code>GrowingSurface</code></a></td>
 <td align="left">- In the soil water module, crop stages and crop coefficients control the evapotranspiration.<br> - Fertiliser and manure application are the major source of soil nutrients, which are added into soil nutrient pools, including dissovled inorganic, dissolved organic, fast and humus for both nitrogen and phosphorus.<br> - Nutrient transformation processes in soil are simulated, including fluxes between the soil nutrient pools, denitrification for nitrogen, adsorption/desorption for phosphorus. These processes are affected by temperature and soil moisture.<br> - Crop uptake of nutrients are simulated based on crop stages, which is different for spring-sown and autumn-sown crops.<br> - Soil erosion from the growing surface is simulated as one of the major sources of suspended solids in rivers, which is mainly affected by rainfall energy and crop/ground cover. Phosphorus will also be eroded along with the soil particles, in both adsorbed inorganic and humus form.</td>
-<td align="left">- Rooting depth. <em>Units</em>: m<br> - Evapotranspiration depletion factor. <em>Units</em>:<br> - Sowing day, harvest day and crop calendars. <em>Units</em>: day number in Julian calendar<br> - Crop factor. <em>Units</em>:<br> - Initial storage for solid pollutants. <em>Units</em>: kg</td>
+<td align="left">- <code>data_input_dict</code> can contain a variety of pollutant deposition data. <code>srp-fertiliser</code> describes phosphate. <code>noy-fertiliser</code> describes nitrogen as nitrates. <code>nhx-fertiliser</code> describes nitrogen as ammonia. <code>srp/noy/ nhx-manure</code> can also be used to specify manure application. <em>Units</em>: kg/m2/timestep (data is read at a monthly timestep)<br> - Rooting depth. <em>Units</em>: m<br> - Evapotranspiration depletion factor. <em>Units</em>:<br> - Sowing day, harvest day and crop calendars. <em>Units</em>: day number in Julian calendar<br> - Crop factor. <em>Units</em>:<br> - Initial storage for solid pollutants. <em>Units</em>: kg</td>
 </tr>
 <tr>
 <td align="left"><a href="./../reference-land/#wsimod.nodes.land.Land"><code>Land</code></a></td>
@@ -497,6 +497,11 @@ components, their assumptions and required input data on this page.</p>
 <td align="left">- Tank <code>capacity</code>, <code>area</code>, and <code>datum</code>. <em>Units</em>: cubic metres, squared metres, metres<br> - Optional dictionary of decays with pollutants as keys and decay parameters (a constant and a temperature sensitivity exponent) as values. <em>Units</em>: -</td>
 </tr>
 <tr>
+<td align="left"><a href="./../reference-other/#wsimod.nodes.demand.ResidentialDemand"><code>ResidentialDemand</code></a></td>
+<td align="left">- Per capita calculations to generate demand based on population.<br> - Pollutant concentration of generated demand uses a fixed mass per person per timestep.<br> - Temperature of generated wastewater is based partially on air temperature and partially on a constant.<br> - Can interact with <code>land.py/GardenSurface</code> to simulate garden water use.</td>
+<td align="left">- <code>population</code>. <em>Units</em>: n<br> - <code>per_capita</code>. <em>Units</em>: m3/timestep<br> - <code>data_input_dict</code> should contain air temperature at model timestep. <em>Units</em>: C</td>
+</tr>
+<tr>
 <td align="left"><a href="./../reference-storage/#wsimod.nodes.storage.RiverReservoir"><code>RiverReservoir</code></a></td>
 <td align="left">- Conceptualised as a <code>Tank</code>.<br> - Recharged via pumped abstractions and receives water from inflowing arcs.<br> - Reservoir aims to satisfy a static <code>environmental_flow</code>.<br> - If tank capacity is exceeded, reservoir spills downstream towards <code>nodes.py/Node</code>, <code>storage.py/River</code> or <code>waste.py/Waste</code> nodes. Spill counts towards <code>environmental_flow</code>.<br> - Evaporation/precipitation onto surface area currently ignored.<br> - Currently, if a reservoir satisfies a pull from a downstream node, it does <strong>not</strong> count towards <code>environmental_flow</code>.<br> - If <code>decays</code> are provided to model water quality transformations, see <code>core.py/DecayObj</code>.</td>
 <td align="left">- Tank <code>capacity</code>, <code>area</code>, and <code>datum</code>. <em>Units</em>: cubic metres, squared metres, metres<br> - <code>environmental_flow</code> <em>Units</em>: cubic metres/timestep<br> - Optional dictionary of decays with pollutants as keys and decay parameters (a constant and a temperature sensitivity exponent) as values. <em>Units</em>: -</td>
@@ -510,6 +515,11 @@ components, their assumptions and required input data on this page.</p>
 <td align="left"><a href="./../reference-sewer/#wsimod.nodes.sewer.Sewer"><code>Sewer</code></a></td>
 <td align="left">- Sewer networks can be represented in an aggregated manner, where the behaviour of collections of manholes/pipes can be captured in a single component.<br> - Travel time of water received from either <code>land.py/Land</code> objects or <code>demand.py/Demand</code> objects is assumed to be received as a non-point source and thus can be represented with the time-area method.<br> - Travel time of water from an upstream <code>Sewer</code> object has a fixed travel time through the node.<br> - The flow capacity of sewer network can be represented as with a <code>Tank</code>.<br> - The <code>Sewer</code> object is not currently biochemically active.</td>
 <td align="left">- <code>pipe_timearea</code> is a dictionary containing the timearea diagram. <em>Units</em>: duration of flow (in timesteps) and proportion of flow<br> - <code>pipe_time</code> describes the travel time of water received from upstream <code>Sewer</code> objects. <em>Units</em>: number of timesteps<br> - <code>capacity</code>, <code>chamber_area</code>, <code>chamber_datum</code> describe the dimensions of the <code>Tank</code> that controls flow. <em>Units</em>: cubic metres, squared metres, metres</td>
+</tr>
+<tr>
+<td align="left"><a href="./../reference-land/#wsimod.nodes.land.Surface"><code>Surface</code></a></td>
+<td align="left">- Generic <code>Surface</code> that reads data and can apply simple forms of pollution deposition.<br> - Formulated as a <code>Tank</code> object.<br> - Ammonia-&gt;Nitrite-&gt;Nitrate decay takes place if parameters describing this process are provided in <code>decays</code> (see <code>core.py/DecayObj</code> for transformation details).</td>
+<td align="left">- <code>data_input_dict</code> can contain a variety of pollutant deposition data. <code>srp-dry</code> describes phosphate. <code>noy-dry</code> describes nitrogen as nitrates. <code>nhx-dry</code> describes nitrogen as ammonia. <code>srp/noy/ nhx-wet</code> can also be used to specify wet deposition. <em>Units</em>: kg/m2/timestep (data is read at a monthly timestep)</td>
 </tr>
 <tr>
 <td align="left"><a href="./../reference-other/#wsimod.nodes.distribution.UnlimitedDistribution"><code>UnlimitedDistribution</code></a></td>
