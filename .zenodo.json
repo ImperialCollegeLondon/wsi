@@ -23,10 +23,15 @@
             "orcid": "0000-0001-7096-9405"
         }
     ],
-    "access_right": [
-        {
+    "access_right": {
         "id": "open",
         "description": "Open access"
+    },
+    "related_identifiers": [
+        {
+            "scheme": "url", 
+            "identifier": "https://github.com/barneydobson/wsi/tree/0.3_joss_reviewed", 
+            "relation": "isSupplementTo"
         }
     ]
 }
