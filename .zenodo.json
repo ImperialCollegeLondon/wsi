@@ -1,0 +1,43 @@
+{
+    "description": "<p>Release following the JOSS review process</p>", 
+    "license": "BSD-3-Clause", 
+    "title": "Water Systems Integrated Modelling framework, WSIMOD: A Python package for integrated modelling of water quality and quantity across the water cycle", 
+    "version": "0.3_joss_reviewed", 
+    "upload_type": "software", 
+    "publication_date": "2023-02-21", 
+    "creators": [
+        {
+            "name": "barneydobson"
+        }, 
+        {
+            "name": "liuly12"
+        }
+    ],
+    "authors" : [
+        {
+            "name": "Barnaby Dobson",
+            "orcid": "0000-0002-0149-4124"
+        },
+        {
+            "name": "Leyang Liu",
+            "orcid": "0000-0001-7556-1134"
+        },
+        {
+            "name": "Ana Mijic",
+            "orcid": "0000-0001-7096-9405"
+        }
+    ],
+    "access_right": "open", 
+    "related_identifiers": [
+        {
+            "scheme": "url", 
+            "identifier": "https://github.com/barneydobson/wsi/tree/0.3_joss_reviewed", 
+            "relation": "isSupplementTo"
+        }, 
+        {
+            "scheme": "doi", 
+            "identifier": "10.5281/zenodo.7662478", 
+            "relation": "isVersionOf"
+        }
+    ]
+}
