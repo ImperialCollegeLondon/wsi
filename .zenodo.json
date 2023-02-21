@@ -5,15 +5,7 @@
     "version": "0.3_joss_reviewed", 
     "upload_type": "software", 
     "publication_date": "2023-02-21", 
-    "creators": [
-        {
-            "name": "barneydobson"
-        }, 
-        {
-            "name": "liuly12"
-        }
-    ],
-    "authors" : [
+    "creators" : [
         {
             "name": "Barnaby Dobson",
             "orcid": "0000-0002-0149-4124"
