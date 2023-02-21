@@ -23,8 +23,10 @@
             "orcid": "0000-0001-7096-9405"
         }
     ],
-    "access_right": {
+    "access_right": [
+        {
         "id": "open",
         "description": "Open access"
-    }
+        }
+    ]
 }
