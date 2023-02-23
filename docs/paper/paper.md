@@ -75,10 +75,10 @@ subsystems), and orchestrate them into a model that creates simulations.
 ## Limitations
 We highlight that WSIMOD is not intended to be a substitute for sophisticated 
 physical models, nor for a system dynamics approach. In applications where 
-detailed hydraulic/hydrological process representations are needed, for example, to 
-inform the design of specific pipes, or in cases where processes are hard to quantify, 
-for example, in representing social drivers of population growth,
-there are likely better tools available. Our case studies highlight 
+detailed hydraulic/hydrological process representations are needed (e.g., 
+informing the design of specific pipes, cases where processes are hard to
+quantify such as representing social drivers of population growth, etc.) there 
+are likely better tools available. Our case studies highlight 
 that WSIMOD is most useful in situations where physically representing 
 cross-sytem processes and thus capturing the impacts of cross-system 
 interactions are essential towards the questions you ask of your model. 
