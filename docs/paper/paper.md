@@ -98,10 +98,9 @@ Software Engineering service, in particular from Diego Alonso and Dan Davies.
 We are incredibly grateful for the detailed software reviews provided by [Taher Chegini](https://github.com/cheginit) and [Joshua Larsen](https://github.com/jlarsen-usgs) and editing by [Chris Vernon](https://github.com/crvernon). Their suggestions have significantly improved WSIMOD.
 
 The design of WSIMOD was significantly influenced by 
-[CityDrain3](https://github.com/gregorburger/CityDrain3), 
-[OpenMI](https://www.ogc.org/standards/openmi), 
-[Belete, Voinov and Laniak, (2017)](https://doi.org/10.1016/j.envsoft.2016.10.013), 
-and [smif](https://github.com/tomalrussell/smif).
+[CityDrain3](https://github.com/gregorburger/CityDrain3) [@Burger:2016], 
+[OpenMI](https://www.ogc.org/standards/openmi) [@Gregersen:2007], [smif](https://github.com/tomalrussell/smif) [@smif_paper;@smif_software], and the 
+following review [@Belete:2017].
 
 We acknowledge funding from the CAMELLIA project (Community Water Management 
 for a Liveable London), funded by the Natural Environment Research Council 
