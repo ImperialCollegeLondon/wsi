@@ -37,7 +37,7 @@ class Catchment(Node):
                 _Units_: cubic metres/timestep
             - Values for each variable defined in `constants.POLLUTANTS` also 
                 stored in `data_input_dict` at the model timestep.
-                _Units_: kg/timestep (additive pollutants)            
+                _Units_: kg/m3/timestep (additive pollutants)            
         """
         
         #Update args
