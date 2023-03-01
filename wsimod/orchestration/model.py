@@ -10,7 +10,7 @@ from tqdm import tqdm
 from wsimod.nodes.land import ImperviousSurface
 from wsimod.core import constants
 from wsimod.core.core import WSIObj
-from wsimod.nodes.nodes import QueueTank, Tank, Node
+from wsimod.nodes.nodes import QueueTank, Tank, ResidenceTank, Node
 import os
 os.environ['USE_PYGEOS'] = '0'
 import sys
@@ -668,12 +668,13 @@ class Model(WSIObj):
                                   'time' : date})
     
                 for node in self.nodes.values():
-                    for prop in dir(node):
-                        prop = node.__getattribute__(prop)
-                        if (prop.__class__ == Tank) | (prop.__class__ == QueueTank):
+                    for prop_ in dir(node):
+                        prop = node.__getattribute__(prop_)
+                        if prop.__class__ in [QueueTank, Tank, ResidenceTank]:
                             tanks.append({'node' : node.name,
                                           'time' : date,
-                                          'storage' : prop.storage['volume']})
+                                          'storage' : prop.storage['volume'],
+                                          'prop' : prop_})
                             for pol in constants.POLLUTANTS:
                                 tanks[-1][pol] = prop.storage[pol]
                                     

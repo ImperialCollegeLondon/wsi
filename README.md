@@ -26,6 +26,8 @@ You can access our documentation below or at [https://barneydobson.github.io/wsi
 
 Please consider [contributing](./docs/CONTRIBUTING.md) and note the [code of conduct](./docs/CODE_OF_CONDUCT.md)
 
+If you use WSIMOD, please make sure to [cite](#how-to-cite-wsimod).
+
 ## Table Of Contents
 
 The documentation follows the best practice for
@@ -81,6 +83,20 @@ or (with demos)
 
 ```
 python setup.py develop easy_install "wsimod[demos]"
+```
+
+## How to cite WSIMOD
+
+```
+@article{Dobson2023,
+  doi = {10.21105/joss.04996},
+  url = {https://doi.org/10.21105/joss.04996},
+  year  = {2023},
+  publisher = {The Open Journal},
+  author = {Dobson, Barnaby; Liu, Leyang; Mijic, Ana},
+  title = {Water Systems Integrated Modelling framework, WSIMOD: A Python package for integrated modelling of water quality and quantity across the water cycle},
+  journal = {The Journal of Open Source Software}
+}
 ```
 
 ## Acknowledgements
