@@ -1756,13 +1756,12 @@ class IrrigationSurface(GrowingSurface):
 
 class GardenSurface(GrowingSurface):
     #TODO - probably a simplier version of this is useful, building just on pervioussurface
-    def __init__(self, irrigation_coefficient = 0.05, **kwargs):
+    def __init__(self, **kwargs):
         """A specific surface for gardens that treats the garden as a grass crop, but 
         that can calculate/receive irrigation through functions that are assigned by 
         the parent land node's handlers, which in turn are expected to be triggered by 
         a query from an attached Demand node.
         """
-        self.irrigation_coefficient = irrigation_coefficient #proportion area irrigated * proportion of demand met
         super().__init__(**kwargs)
         
     def calculate_irrigation_demand(self,ignore_vqip = None):
@@ -1780,7 +1779,7 @@ class GardenSurface(GrowingSurface):
                 is used)
         """
         #Calculate irrigation demand
-        irrigation_demand = max(self.evaporation['volume'] - self.precipitation['volume'], 0) * self.irrigation_coefficient
+        irrigation_demand = max(self.evaporation['volume'] - self.precipitation['volume'], 0)
         
         root_zone_depletion = self.get_cmd()
         if root_zone_depletion <= constants.FLOAT_ACCURACY:
