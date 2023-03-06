@@ -1065,6 +1065,7 @@ class MyTestClass(TestCase):
                                 wilting_point = 0.1,
                                 field_capacity = 0.2,
                                 initial_storage = 0.2 * 0.5 * 1.5,
+                                irrigation_coefficient = 1,
                                 parent = node)
         
         _ = surface.ihacres()
