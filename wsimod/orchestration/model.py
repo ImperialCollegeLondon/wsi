@@ -116,36 +116,6 @@ class Model(WSIObj):
             args = inspect.getfullargspec(c.__init__).args[1:]
             init_args.extend(args)
         return init_args
-
-    def open_func(self, file_path, mode):
-        if mode == "rt" and file_path.endswith(".gz"):
-            return gzip.open(file_path, mode)
-        else:
-            return open(file_path, mode)
-        
-    def read_csv(self, file_path, delimiter=","):
-        with self.open_func(file_path, "rt") as f:
-            reader = csv.DictReader(f, delimiter=delimiter)
-            data = {}
-            for row in reader:
-                key = (row['variable'], to_datetime(row['time']))
-                value = float(row['value'])
-                data[key] = value
-            return data
-
-    def write_csv(self, data, fixed_data, filename, compress = False):
-        if compress:
-            open_func = gzip.open
-            mode = 'wt'
-        else:
-            open_func = open
-            mode = 'w'
-        with open_func(filename, mode, newline='') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerow(list(fixed_data.keys()) + ['variable', 'time', 'value'])
-            fixed_data_values = list(fixed_data.values())
-            for key, value in data.items():
-                writer.writerow(fixed_data_values + list(key) + [str(value)])
     
     def load(self, address, config_name = 'config.yml'):
         
@@ -162,12 +132,12 @@ class Model(WSIObj):
         
         for name, node in nodes.items():
             if 'filename' in node.keys():
-                node['data_input_dict'] = self.read_csv(os.path.join(address, node['filename']))
+                node['data_input_dict'] = read_csv(os.path.join(address, node['filename']))
                 del node['filename']
             if 'surfaces' in node.keys():
                 for key, surface in node['surfaces'].items():
                     if 'filename' in surface.keys():
-                        node['surfaces'][key]['data_input_dict'] = self.read_csv(os.path.join(address,surface['filename']))
+                        node['surfaces'][key]['data_input_dict'] = read_csv(os.path.join(address,surface['filename']))
                         del surface['filename']
                 node['surfaces'] = list(node['surfaces'].values())
         arcs = data['arcs']
@@ -217,7 +187,7 @@ class Model(WSIObj):
                     if 'data_input_dict' in surface_args:
                         if surface.data_input_dict:
                             filename = "{0}-{1}-inputs.{2}".format(node.name, surface.surface, file_type).replace("(", "_").replace(")", "_").replace("/", "_").replace(" ", "_")
-                            self.write_csv(surface.data_input_dict, 
+                            write_csv(surface.data_input_dict, 
                                            {'node' : node.name, 
                                             'surface' : surface.surface}, 
                                            os.path.join(address,filename),
@@ -229,7 +199,7 @@ class Model(WSIObj):
             if 'data_input_dict' in init_args:
                 if node.data_input_dict:                    
                     filename = "{0}-inputs.{1}".format(node.name,file_type)
-                    self.write_csv(node.data_input_dict, 
+                    write_csv(node.data_input_dict, 
                                    {'node' : node.name}, 
                                    os.path.join(address, filename),
                                    compress = compress)
@@ -296,15 +266,7 @@ class Model(WSIObj):
                         data_dict[key] = coerce_value(value)
         check_and_coerce_dict(data)
         
-        
-        
-        
-        with open(os.path.join(address, config_name), 'w') as file:
-            yaml.dump(data,
-                      file, 
-                      default_flow_style = False,
-                      sort_keys = False,
-                      Dumper=yaml.SafeDumper)
+        write_yaml(address, config_name, data)
             
     def add_nodes(self, nodelist):
         """Add nodes to the model object from a list of dicts, where
@@ -732,3 +694,211 @@ class Model(WSIObj):
 
         for arc in self.arcs.values():
             arc.end_timestep()
+            
+def write_yaml(address, config_name, data):
+    with open(os.path.join(address, config_name), 'w') as file:
+        yaml.dump(data,
+                  file, 
+                  default_flow_style = False,
+                  sort_keys = False,
+                  Dumper=yaml.SafeDumper)
+        
+def open_func(file_path, mode):
+    if mode == "rt" and file_path.endswith(".gz"):
+        return gzip.open(file_path, mode)
+    else:
+        return open(file_path, mode)
+    
+def read_csv(file_path, delimiter=","):
+    with open_func(file_path, "rt") as f:
+        reader = csv.DictReader(f, delimiter=delimiter)
+        data = {}
+        for row in reader:
+            key = (row['variable'], to_datetime(row['time']))
+            value = float(row['value'])
+            data[key] = value
+        return data
+
+def write_csv(data, fixed_data = {}, filename = '', compress = False):
+    if compress:
+        open_func = gzip.open
+        mode = 'wt'
+    else:
+        open_func = open
+        mode = 'w'
+    with open_func(filename, mode, newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(list(fixed_data.keys()) + ['variable', 'time', 'value'])
+        fixed_data_values = list(fixed_data.values())
+        for key, value in data.items():
+            writer.writerow(fixed_data_values + list(key) + [str(value)])
+            
+def flatten_dict(d, parent_key='', sep='-'):
+    # Initialize an empty dictionary
+    flat_dict = {}
+    # Loop through each key-value pair in the input dictionary
+    for k, v in d.items():
+        # Construct a new key by appending the parent key and separator
+        new_key = str(parent_key) + sep + str(k) if parent_key else k
+        # If the value is another dictionary, call the function recursively
+        if isinstance(v, dict):
+            flat_dict.update(flatten_dict(v, new_key, sep))
+        # Otherwise, add the key-value pair to the flat dictionary
+        else:
+            flat_dict[new_key] = v
+    # Return the flattened dictionary
+    return flat_dict
+
+def check_and_convert_string(value):
+    try:
+        return int(value)
+    except:
+        try:
+            return float(value)
+        except:
+            if value == 'None':
+                return None
+            else:
+                return value
+        
+def unflatten_dict(d, sep=':'):
+    result = {}
+    for k, v in d.items():
+        keys = k.split(sep)
+        current = result
+        for key in keys[:-1]:
+            current = current.setdefault(key, {})
+        current[keys[-1]] = v
+    return result
+
+def convert_keys(d):
+  # base case: if d is not a dict, return d
+  if not isinstance(d, dict):
+    return d
+  # recursive case: create a new dict with int keys and converted values
+  new_d = {}
+  for k, v in d.items():
+    new_d[check_and_convert_string(k)] = convert_keys(v)
+  return new_d
+
+
+def csv2yaml(address, config_name = 'config_csv.yml', csv_folder_name = 'csv'):
+    
+    csv_path = os.path.join(address, csv_folder_name)
+    csv_list = [os.path.join(csv_path, f) for f in os.listdir(csv_path) if os.path.isfile(os.path.join(csv_path, f))]
+    objs_type = {'nodes' : {},
+                 'arcs'  : {}}
+    for fid in csv_list:
+        
+        with open(fid, "rt") as f:
+            if 'Dates' in fid:
+                reader = csv.reader(f, delimiter=',')
+                dates = []
+                for row in reader:
+                    dates.append(row[0])
+                objs_type['dates'] = dates[1:]
+            else:
+                reader = csv.DictReader(f, delimiter=',')
+                data = {}
+                for row in reader:
+                    formatted_row = {}
+                    for key, value in row.items():
+                        
+                        if ('[' in value) & (']' in value):
+                            #Convert lists
+                            value = value.strip('[]') # Remove the brackets
+                            value = value.replace("'",'') # Remove the string bits
+                            value = value.split(', ') # Split by comma
+                            value = [check_and_convert_string(x) for x in value]
+                        else:
+                            #Convert ints, floats and strings
+                            value = check_and_convert_string(value)
+                        
+                        #Convert key and store converted values
+                        formatted_row[key] = value
+                    if 'Sim_params' not in fid:
+                        label = formatted_row['label']
+                        del formatted_row['label']
+                    
+                    formatted_row = unflatten_dict(formatted_row)
+                    formatted_row = convert_keys(formatted_row)
+                    
+                    #Convert nested dicts dicts
+                    data[row['name']] = formatted_row
+                if 'Sim_params' in fid:
+                    objs_type = {**objs_type, **{x : y['value'] for x, y in data.items()}}
+                else:
+                    objs_type[label] = {**objs_type[label], **data}
+    write_yaml(address, config_name, objs_type)
+                
+def yaml2csv(address, config_name = 'config.yml', csv_folder_name = 'csv'):
+
+    with open(os.path.join(address, config_name), "r") as file:
+        data = yaml.safe_load(file)
+        
+    #Format to easy format to write to database
+    objs_type = {}
+    for objects, object_label in zip([data['nodes'],data['arcs']],['nodes','arcs']):
+        for key, value in objects.items():
+            if isinstance(value, dict):
+                #Identify node type
+                if 'node_type_override' in value.keys():
+                    type_ = value['node_type_override']
+                elif 'type_' in value.keys():
+                    type_ = value['type_']
+                else:
+                    type_ = False
+                
+                if type_:
+                    #Flatten dictionaries
+                    new_dict = {}
+                    if type_ not in objs_type.keys():
+                        objs_type[type_] = {}
+                        
+                    for key_, value_ in value.items():
+                        if isinstance(value_,dict):
+                            new_dict[key_] = flatten_dict(value_, key_, ':')
+                    
+                    for key_, value_ in new_dict.items():
+                        del value[key_]
+                        value = {**value, **value_}
+                    value['label'] = object_label
+                    objs_type[type_][key] = value
+                    
+                    
+                
+    del data['nodes']
+    del data['arcs']
+    if 'dates' in data.keys():
+        objs_type['Dates'] = data['dates']
+        del data['dates']
+        
+    objs_type['Sim_params'] = {x : {'name':x,'value':y} for x, y in data.items()}
+    
+    csv_dir = os.path.join(address,csv_folder_name)
+    
+    if not os.path.exists(csv_dir):
+        os.mkdir(csv_dir)
+    
+    for key, value in objs_type.items():
+        if key == 'Sim_params':
+            fields = ['name','value']
+        elif key == 'Dates':
+            fields = ['date']
+        else:
+            fields = {}
+            for value_ in value.values():
+                 fields = {**fields, **value_}
+            
+            del fields['name']
+            fields = ['name'] + list(fields.keys())
+        
+        with open(os.path.join(csv_dir, '{0}.csv'.format(key)), 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(fields)
+            if key == 'Dates':
+                for date in value:
+                    writer.writerow([date])
+            else:        
+                for key_, value_ in value.items():
+                    writer.writerow([str(value_[x]) if x in value_.keys() else None for x in fields])
