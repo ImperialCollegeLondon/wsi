@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.5.2">
     
     
       
@@ -17,10 +17,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.975780f9.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.9f9400aa.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.2505c338.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.cbb835fc.min.css">
         
       
       
@@ -56,7 +56,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
   
     
     
@@ -1069,7 +1069,7 @@
 <span class="normal">1805</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">GardenSurface</span><span class="p">(</span><span class="n">GrowingSurface</span><span class="p">):</span>
     <span class="c1">#TODO - probably a simplier version of this is useful, building just on pervioussurface</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A specific surface for gardens that treats the garden as a grass crop, but </span>
+        <span class="sd">&quot;&quot;&quot;A specific surface for gardens that treats the garden as a grass crop, but </span>
 <span class="sd">        that can calculate/receive irrigation through functions that are assigned by </span>
 <span class="sd">        the parent land node&#39;s handlers, which in turn are expected to be triggered by </span>
 <span class="sd">        a query from an attached Demand node.</span>
@@ -1077,7 +1077,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">calculate_irrigation_demand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ignore_vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A check function (assigned by parent to push check from demand nodes) that </span>
+        <span class="sd">&quot;&quot;&quot;A check function (assigned by parent to push check from demand nodes) that </span>
 <span class="sd">        calculations irrigation demand (i.e., difference between evaporation and </span>
 <span class="sd">        preciptiation)</span>
 
@@ -1104,7 +1104,7 @@
         <span class="k">return</span> <span class="n">reply</span>
 
     <span class="k">def</span> <span class="nf">receive_irrigation_demand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A set function (assigned by parent to push set from demand nodes) that assigns irrigation water supply to the surface tank</span>
+        <span class="sd">&quot;&quot;&quot;A set function (assigned by parent to push set from demand nodes) that assigns irrigation water supply to the surface tank</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            vqip (dict): A VQIP amount of irrigation to receive</span>
@@ -1156,7 +1156,7 @@ a query from an attached Demand node.</p>
 <span class="normal">1763</span>
 <span class="normal">1764</span>
 <span class="normal">1765</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A specific surface for gardens that treats the garden as a grass crop, but </span>
+    <span class="sd">&quot;&quot;&quot;A specific surface for gardens that treats the garden as a grass crop, but </span>
 <span class="sd">    that can calculate/receive irrigation through functions that are assigned by </span>
 <span class="sd">    the parent land node&#39;s handlers, which in turn are expected to be triggered by </span>
 <span class="sd">    a query from an attached Demand node.</span>
@@ -1257,7 +1257,7 @@ is used)</p></td>
 <span class="normal">1790</span>
 <span class="normal">1791</span>
 <span class="normal">1792</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calculate_irrigation_demand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ignore_vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A check function (assigned by parent to push check from demand nodes) that </span>
+    <span class="sd">&quot;&quot;&quot;A check function (assigned by parent to push check from demand nodes) that </span>
 <span class="sd">    calculations irrigation demand (i.e., difference between evaporation and </span>
 <span class="sd">    preciptiation)</span>
 
@@ -1359,7 +1359,7 @@ be empty)</p></td>
 <span class="normal">1803</span>
 <span class="normal">1804</span>
 <span class="normal">1805</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">receive_irrigation_demand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A set function (assigned by parent to push set from demand nodes) that assigns irrigation water supply to the surface tank</span>
+    <span class="sd">&quot;&quot;&quot;A set function (assigned by parent to push set from demand nodes) that assigns irrigation water supply to the surface tank</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        vqip (dict): A VQIP amount of irrigation to receive</span>
@@ -2285,7 +2285,7 @@ be empty)</p></td>
                         <span class="n">initial_soil_storage</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                        <span class="o">**</span><span class="n">kwargs</span>
                         <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extensive surface subclass that implements the CatchWat equations (Liu, </span>
+        <span class="sd">&quot;&quot;&quot;Extensive surface subclass that implements the CatchWat equations (Liu, </span>
 <span class="sd">        Dobson &amp; Mijic (2022) Science of the total environment), which in turn are </span>
 <span class="sd">        primarily based on FAO document: </span>
 <span class="sd">        https://www.fao.org/3/x0490e/x0490e0ehtm#soil%20water%20availability. </span>
@@ -2477,7 +2477,7 @@ be empty)</p></td>
 
 
     <span class="k">def</span> <span class="nf">pull_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pull water from the surface, updating the surface storage VQIP. Nutrient </span>
+        <span class="sd">&quot;&quot;&quot;Pull water from the surface, updating the surface storage VQIP. Nutrient </span>
 <span class="sd">        pool pollutants (nitrate/nitrite/ammonia/phosphate/org-phosphorus/</span>
 <span class="sd">        org-nitrogen) are removed in proportion to their amounts in the dissolved </span>
 <span class="sd">        nutrient pools, if they are simulated. Other pollutants are removed in proportion to their amount in the surface tank.</span>
@@ -2515,7 +2515,7 @@ be empty)</p></td>
         <span class="k">return</span> <span class="n">reply</span>
 
     <span class="k">def</span> <span class="nf">quick_interp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">xp</span><span class="p">,</span> <span class="n">yp</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A simple version of np.interp to intepolate crop information on the fly</span>
+        <span class="sd">&quot;&quot;&quot;A simple version of np.interp to intepolate crop information on the fly</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            x (int): Current time (i.e., day of year)</span>
@@ -2535,7 +2535,7 @@ be empty)</p></td>
         <span class="k">return</span> <span class="n">y</span>
 
     <span class="k">def</span> <span class="nf">calc_crop_cover</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process function that calculates how much crop cover there is, assigns </span>
+        <span class="sd">&quot;&quot;&quot;Process function that calculates how much crop cover there is, assigns </span>
 <span class="sd">        whether crops are sown/harvested, and calculates et0_coefficient based on </span>
 <span class="sd">        growth stage of crops.</span>
 
@@ -2586,7 +2586,7 @@ be empty)</p></td>
 
 
     <span class="k">def</span> <span class="nf">adjust_vqip_to_liquid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">deposition</span><span class="p">,</span> <span class="n">in_</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Function to interoperate between surface tank and nutrient pool. Most </span>
+        <span class="sd">&quot;&quot;&quot;Function to interoperate between surface tank and nutrient pool. Most </span>
 <span class="sd">        depositions are given in terms of ammonia/nitrate/phosphate - they are then </span>
 <span class="sd">        aggregated to total N or P to enter the nutrient pools. Depending on the </span>
 <span class="sd">        source of deposition these may transform (e.g., some go to dissolved and some </span>
@@ -2618,7 +2618,7 @@ be empty)</p></td>
         <span class="k">return</span> <span class="n">vqip</span>
 
     <span class="k">def</span> <span class="nf">fertiliser</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read, scale and allocate fertiliser, updating the tank</span>
+        <span class="sd">&quot;&quot;&quot;Read, scale and allocate fertiliser, updating the tank</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (tuple): A tuple containing a VQIP amount for model inputs and outputs </span>
@@ -2651,7 +2651,7 @@ be empty)</p></td>
         <span class="k">return</span> <span class="p">(</span><span class="n">vqip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">manure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read, scale and allocate manure, updating the tank</span>
+        <span class="sd">&quot;&quot;&quot;Read, scale and allocate manure, updating the tank</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (tuple): A tuple containing a VQIP amount for model inputs and outputs </span>
@@ -2682,7 +2682,7 @@ be empty)</p></td>
         <span class="k">return</span> <span class="p">(</span><span class="n">vqip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">residue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read, scale and allocate residue, updating the tank (NOT CURRENTLY USED </span>
+        <span class="sd">&quot;&quot;&quot;Read, scale and allocate residue, updating the tank (NOT CURRENTLY USED </span>
 <span class="sd">        BECAUSE NO DATA SOURCES FOR RESIDUE CAN BE IDENTIFIED)</span>
 
 <span class="sd">        Returns:</span>
@@ -2713,7 +2713,7 @@ be empty)</p></td>
         <span class="k">return</span> <span class="p">(</span><span class="n">vqip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">soil_pool_transformation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A process function that run transformation functions in the nutrient pool </span>
+        <span class="sd">&quot;&quot;&quot;A process function that run transformation functions in the nutrient pool </span>
 <span class="sd">        and updates the pollutant concentrations in the surface tank</span>
 
 <span class="sd">        Returns:</span>
@@ -2773,7 +2773,7 @@ be empty)</p></td>
         <span class="k">return</span> <span class="p">(</span><span class="n">in_</span><span class="p">,</span> <span class="n">out_</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">calc_temperature_dependence_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process function that calculates the temperature dependence factor for the </span>
+        <span class="sd">&quot;&quot;&quot;Process function that calculates the temperature dependence factor for the </span>
 <span class="sd">        nutrient pool (which impacts soil pool transformations)</span>
 
 <span class="sd">        Returns:</span>
@@ -2791,7 +2791,7 @@ be empty)</p></td>
         <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">calc_soil_moisture_dependence_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>        
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process function that calculates the soil moisture dependence factor for </span>
+        <span class="sd">&quot;&quot;&quot;Process function that calculates the soil moisture dependence factor for </span>
 <span class="sd">        the nutrient pool (which impacts soil pool transformations)</span>
 
 <span class="sd">        Returns:</span>
@@ -2814,7 +2814,7 @@ be empty)</p></td>
         <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">calc_crop_uptake</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process function that calculates how much nutrient crops uptake and updates </span>
+        <span class="sd">&quot;&quot;&quot;Process function that calculates how much nutrient crops uptake and updates </span>
 <span class="sd">        nutrient pool and surface tank</span>
 
 <span class="sd">        Returns:</span>
@@ -2862,7 +2862,7 @@ be empty)</p></td>
             <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">erosion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Outflow function that erodes adsorbed/humus phosphorus and sediment and sends onwards to percolation/surface runoff/subsurface runoff</span>
+        <span class="sd">&quot;&quot;&quot;Outflow function that erodes adsorbed/humus phosphorus and sediment and sends onwards to percolation/surface runoff/subsurface runoff</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (tuple): A tuple containing a VQIP amount for model inputs and outputs </span>
@@ -2966,7 +2966,7 @@ be empty)</p></td>
         <span class="k">return</span> <span class="p">(</span><span class="n">in_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">denitrification</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Outflow function that performs denitirication processes, updating nutrient pool and soil tank</span>
+        <span class="sd">&quot;&quot;&quot;Outflow function that performs denitirication processes, updating nutrient pool and soil tank</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (tuple): A tuple containing a VQIP amount for model inputs and outputs </span>
@@ -3011,7 +3011,7 @@ be empty)</p></td>
         <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">(),</span> <span class="n">out_</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">adsorption</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Outflow function that calculates phosphorus adsorption/desorptions and </span>
+        <span class="sd">&quot;&quot;&quot;Outflow function that calculates phosphorus adsorption/desorptions and </span>
 <span class="sd">        updates soil tank and nutrient pools</span>
 
 <span class="sd">        Returns:</span>
@@ -3101,7 +3101,7 @@ be empty)</p></td>
         <span class="k">return</span> <span class="p">(</span><span class="n">in_</span><span class="p">,</span> <span class="n">out_</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">dry_deposition_to_tank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Allocate dry deposition to surface tank, updating nutrient pool accordingly.</span>
+        <span class="sd">&quot;&quot;&quot;Allocate dry deposition to surface tank, updating nutrient pool accordingly.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            vqip (dict): A VQIP amount of dry deposition to send to tank</span>
@@ -3125,7 +3125,7 @@ be empty)</p></td>
         <span class="k">return</span> <span class="n">vqip</span>
 
     <span class="k">def</span> <span class="nf">wet_deposition_to_tank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Allocate wet deposition to surface tank, updating nutrient pool accordingly.</span>
+        <span class="sd">&quot;&quot;&quot;Allocate wet deposition to surface tank, updating nutrient pool accordingly.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            vqip (dict): A VQIP amount of dry deposition to send to tank</span>
@@ -3542,7 +3542,7 @@ in the soil nutrient pools (fast and adsorbed inorganic pools)</p></td>
                     <span class="n">initial_soil_storage</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                    <span class="o">**</span><span class="n">kwargs</span>
                     <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extensive surface subclass that implements the CatchWat equations (Liu, </span>
+    <span class="sd">&quot;&quot;&quot;Extensive surface subclass that implements the CatchWat equations (Liu, </span>
 <span class="sd">    Dobson &amp; Mijic (2022) Science of the total environment), which in turn are </span>
 <span class="sd">    primarily based on FAO document: </span>
 <span class="sd">    https://www.fao.org/3/x0490e/x0490e0ehtm#soil%20water%20availability. </span>
@@ -3856,7 +3856,7 @@ for nutrient pool transformations</p></td>
 <span class="normal">1174</span>
 <span class="normal">1175</span>
 <span class="normal">1176</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">adjust_vqip_to_liquid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">deposition</span><span class="p">,</span> <span class="n">in_</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to interoperate between surface tank and nutrient pool. Most </span>
+    <span class="sd">&quot;&quot;&quot;Function to interoperate between surface tank and nutrient pool. Most </span>
 <span class="sd">    depositions are given in terms of ammonia/nitrate/phosphate - they are then </span>
 <span class="sd">    aggregated to total N or P to enter the nutrient pools. Depending on the </span>
 <span class="sd">    source of deposition these may transform (e.g., some go to dissolved and some </span>
@@ -4017,7 +4017,7 @@ for mass balance checking.</p></td>
 <span class="normal">1657</span>
 <span class="normal">1658</span>
 <span class="normal">1659</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">adsorption</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Outflow function that calculates phosphorus adsorption/desorptions and </span>
+    <span class="sd">&quot;&quot;&quot;Outflow function that calculates phosphorus adsorption/desorptions and </span>
 <span class="sd">    updates soil tank and nutrient pools</span>
 
 <span class="sd">    Returns:</span>
@@ -4197,7 +4197,7 @@ for mass balance checking.</p></td>
 <span class="normal">1141</span>
 <span class="normal">1142</span>
 <span class="normal">1143</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calc_crop_cover</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Process function that calculates how much crop cover there is, assigns </span>
+    <span class="sd">&quot;&quot;&quot;Process function that calculates how much crop cover there is, assigns </span>
 <span class="sd">    whether crops are sown/harvested, and calculates et0_coefficient based on </span>
 <span class="sd">    growth stage of crops.</span>
 
@@ -4334,7 +4334,7 @@ for mass balance checking.</p></td>
 <span class="normal">1418</span>
 <span class="normal">1419</span>
 <span class="normal">1420</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calc_crop_uptake</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Process function that calculates how much nutrient crops uptake and updates </span>
+    <span class="sd">&quot;&quot;&quot;Process function that calculates how much nutrient crops uptake and updates </span>
 <span class="sd">    nutrient pool and surface tank</span>
 
 <span class="sd">    Returns:</span>
@@ -4444,7 +4444,7 @@ for mass balance checking.</p></td>
 <span class="normal">1370</span>
 <span class="normal">1371</span>
 <span class="normal">1372</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calc_soil_moisture_dependence_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>        
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Process function that calculates the soil moisture dependence factor for </span>
+    <span class="sd">&quot;&quot;&quot;Process function that calculates the soil moisture dependence factor for </span>
 <span class="sd">    the nutrient pool (which impacts soil pool transformations)</span>
 
 <span class="sd">    Returns:</span>
@@ -4524,7 +4524,7 @@ for mass balance checking.</p></td>
 <span class="normal">1347</span>
 <span class="normal">1348</span>
 <span class="normal">1349</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calc_temperature_dependence_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Process function that calculates the temperature dependence factor for the </span>
+    <span class="sd">&quot;&quot;&quot;Process function that calculates the temperature dependence factor for the </span>
 <span class="sd">    nutrient pool (which impacts soil pool transformations)</span>
 
 <span class="sd">    Returns:</span>
@@ -4625,7 +4625,7 @@ for mass balance checking.</p></td>
 <span class="normal">1567</span>
 <span class="normal">1568</span>
 <span class="normal">1569</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">denitrification</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Outflow function that performs denitirication processes, updating nutrient pool and soil tank</span>
+    <span class="sd">&quot;&quot;&quot;Outflow function that performs denitirication processes, updating nutrient pool and soil tank</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (tuple): A tuple containing a VQIP amount for model inputs and outputs </span>
@@ -4756,7 +4756,7 @@ for mass balance checking)</p></td>
 <span class="normal">1681</span>
 <span class="normal">1682</span>
 <span class="normal">1683</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">dry_deposition_to_tank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Allocate dry deposition to surface tank, updating nutrient pool accordingly.</span>
+    <span class="sd">&quot;&quot;&quot;Allocate dry deposition to surface tank, updating nutrient pool accordingly.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        vqip (dict): A VQIP amount of dry deposition to send to tank</span>
@@ -4922,7 +4922,7 @@ for mass balance checking.</p></td>
 <span class="normal">1522</span>
 <span class="normal">1523</span>
 <span class="normal">1524</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">erosion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Outflow function that erodes adsorbed/humus phosphorus and sediment and sends onwards to percolation/surface runoff/subsurface runoff</span>
+    <span class="sd">&quot;&quot;&quot;Outflow function that erodes adsorbed/humus phosphorus and sediment and sends onwards to percolation/surface runoff/subsurface runoff</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (tuple): A tuple containing a VQIP amount for model inputs and outputs </span>
@@ -5097,7 +5097,7 @@ for mass balance checking.</p></td>
 <span class="normal">1207</span>
 <span class="normal">1208</span>
 <span class="normal">1209</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fertiliser</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read, scale and allocate fertiliser, updating the tank</span>
+    <span class="sd">&quot;&quot;&quot;Read, scale and allocate fertiliser, updating the tank</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (tuple): A tuple containing a VQIP amount for model inputs and outputs </span>
@@ -5199,7 +5199,7 @@ for mass balance checking.</p></td>
 <span class="normal">1238</span>
 <span class="normal">1239</span>
 <span class="normal">1240</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">manure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read, scale and allocate manure, updating the tank</span>
+    <span class="sd">&quot;&quot;&quot;Read, scale and allocate manure, updating the tank</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (tuple): A tuple containing a VQIP amount for model inputs and outputs </span>
@@ -5332,7 +5332,7 @@ nutrient pools, if they are simulated. Other pollutants are removed in proportio
 <span class="normal">1071</span>
 <span class="normal">1072</span>
 <span class="normal">1073</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pull water from the surface, updating the surface storage VQIP. Nutrient </span>
+    <span class="sd">&quot;&quot;&quot;Pull water from the surface, updating the surface storage VQIP. Nutrient </span>
 <span class="sd">    pool pollutants (nitrate/nitrite/ammonia/phosphate/org-phosphorus/</span>
 <span class="sd">    org-nitrogen) are removed in proportion to their amounts in the dissolved </span>
 <span class="sd">    nutrient pools, if they are simulated. Other pollutants are removed in proportion to their amount in the surface tank.</span>
@@ -5471,7 +5471,7 @@ nutrient pools, if they are simulated. Other pollutants are removed in proportio
 <span class="normal">1091</span>
 <span class="normal">1092</span>
 <span class="normal">1093</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">quick_interp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">xp</span><span class="p">,</span> <span class="n">yp</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A simple version of np.interp to intepolate crop information on the fly</span>
+    <span class="sd">&quot;&quot;&quot;A simple version of np.interp to intepolate crop information on the fly</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        x (int): Current time (i.e., day of year)</span>
@@ -5561,7 +5561,7 @@ for mass balance checking.</p></td>
 <span class="normal">1269</span>
 <span class="normal">1270</span>
 <span class="normal">1271</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">residue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read, scale and allocate residue, updating the tank (NOT CURRENTLY USED </span>
+    <span class="sd">&quot;&quot;&quot;Read, scale and allocate residue, updating the tank (NOT CURRENTLY USED </span>
 <span class="sd">    BECAUSE NO DATA SOURCES FOR RESIDUE CAN BE IDENTIFIED)</span>
 
 <span class="sd">    Returns:</span>
@@ -5691,7 +5691,7 @@ for mass balance checking.</p></td>
 <span class="normal">1329</span>
 <span class="normal">1330</span>
 <span class="normal">1331</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">soil_pool_transformation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A process function that run transformation functions in the nutrient pool </span>
+    <span class="sd">&quot;&quot;&quot;A process function that run transformation functions in the nutrient pool </span>
 <span class="sd">    and updates the pollutant concentrations in the surface tank</span>
 
 <span class="sd">    Returns:</span>
@@ -5836,7 +5836,7 @@ for mass balance checking)</p></td>
 <span class="normal">1704</span>
 <span class="normal">1705</span>
 <span class="normal">1706</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">wet_deposition_to_tank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Allocate wet deposition to surface tank, updating nutrient pool accordingly.</span>
+    <span class="sd">&quot;&quot;&quot;Allocate wet deposition to surface tank, updating nutrient pool accordingly.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        vqip (dict): A VQIP amount of dry deposition to send to tank</span>
@@ -6011,7 +6011,7 @@ for mass balance checking)</p></td>
                         <span class="n">pore_depth</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
                         <span class="n">et0_to_e</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
                         <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A surface to represent impervious surfaces that drain to storm sewers. </span>
+        <span class="sd">&quot;&quot;&quot;A surface to represent impervious surfaces that drain to storm sewers. </span>
 <span class="sd">        Runoff is generated by the surface tank overflowing, if a user wants all </span>
 <span class="sd">        precipitation to immediately go to runoff then they should reduce &#39;pore_depth&#39;, </span>
 <span class="sd">        however generally this is not what happens and a small (a few mm) depth should </span>
@@ -6051,7 +6051,7 @@ for mass balance checking)</p></td>
 
 
     <span class="k">def</span> <span class="nf">precipitation_evaporation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Inflow function that is a simple rainfall-evaporation model, updating the </span>
+        <span class="sd">&quot;&quot;&quot;Inflow function that is a simple rainfall-evaporation model, updating the </span>
 <span class="sd">        surface tank. All precipitation that is not evaporated is forced into the tank </span>
 <span class="sd">        (even though some of that will later be pushed to sewers) - this enables runoff </span>
 <span class="sd">        to mix with the accumulated pollutants in the surface pores.</span>
@@ -6103,7 +6103,7 @@ for mass balance checking)</p></td>
 
 
     <span class="k">def</span> <span class="nf">push_to_sewers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Outflow function that distributes ponded water (i.e., surface runoff) to the </span>
+        <span class="sd">&quot;&quot;&quot;Outflow function that distributes ponded water (i.e., surface runoff) to the </span>
 <span class="sd">        parent node&#39;s attached sewers</span>
 
 <span class="sd">        Returns:</span>
@@ -6243,7 +6243,7 @@ ImperviousSurface. Defaults to 1.</p></td>
                     <span class="n">pore_depth</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
                     <span class="n">et0_to_e</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
                     <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A surface to represent impervious surfaces that drain to storm sewers. </span>
+    <span class="sd">&quot;&quot;&quot;A surface to represent impervious surfaces that drain to storm sewers. </span>
 <span class="sd">    Runoff is generated by the surface tank overflowing, if a user wants all </span>
 <span class="sd">    precipitation to immediately go to runoff then they should reduce &#39;pore_depth&#39;, </span>
 <span class="sd">    however generally this is not what happens and a small (a few mm) depth should </span>
@@ -6372,7 +6372,7 @@ for mass balance checking.</p></td>
 <span class="normal">565</span>
 <span class="normal">566</span>
 <span class="normal">567</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">precipitation_evaporation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Inflow function that is a simple rainfall-evaporation model, updating the </span>
+    <span class="sd">&quot;&quot;&quot;Inflow function that is a simple rainfall-evaporation model, updating the </span>
 <span class="sd">    surface tank. All precipitation that is not evaporated is forced into the tank </span>
 <span class="sd">    (even though some of that will later be pushed to sewers) - this enables runoff </span>
 <span class="sd">    to mix with the accumulated pollutants in the surface pores.</span>
@@ -6484,7 +6484,7 @@ for mass balance checking.</p></td>
 <span class="normal">588</span>
 <span class="normal">589</span>
 <span class="normal">590</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_to_sewers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Outflow function that distributes ponded water (i.e., surface runoff) to the </span>
+    <span class="sd">&quot;&quot;&quot;Outflow function that distributes ponded water (i.e., surface runoff) to the </span>
 <span class="sd">    parent node&#39;s attached sewers</span>
 
 <span class="sd">    Returns:</span>
@@ -6585,7 +6585,7 @@ for mass balance checking.</p></td>
 <span class="normal">1753</span>
 <span class="normal">1754</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">IrrigationSurface</span><span class="p">(</span><span class="n">GrowingSurface</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">irrigation_coefficient</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A subclass of GrowingSurface that can calculate water demand for the crops </span>
+        <span class="sd">&quot;&quot;&quot;A subclass of GrowingSurface that can calculate water demand for the crops </span>
 <span class="sd">        that is not met by precipitation and use the parent node to acquire water. </span>
 <span class="sd">        When the surface is created by the parent node, the irrigate function below is </span>
 <span class="sd">        assigned. </span>
@@ -6600,7 +6600,7 @@ for mass balance checking.</p></td>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">irrigate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate water demand for crops and call parent node to acquire water, </span>
+        <span class="sd">&quot;&quot;&quot;Calculate water demand for crops and call parent node to acquire water, </span>
 <span class="sd">        updating surface tank and nutrient pools</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">days_after_sow</span><span class="p">:</span>
@@ -6703,7 +6703,7 @@ proportion of demand met. Defaults to 0.1.</p></td>
 <span class="normal">1720</span>
 <span class="normal">1721</span>
 <span class="normal">1722</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">irrigation_coefficient</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A subclass of GrowingSurface that can calculate water demand for the crops </span>
+    <span class="sd">&quot;&quot;&quot;A subclass of GrowingSurface that can calculate water demand for the crops </span>
 <span class="sd">    that is not met by precipitation and use the parent node to acquire water. </span>
 <span class="sd">    When the surface is created by the parent node, the irrigate function below is </span>
 <span class="sd">    assigned. </span>
@@ -6770,7 +6770,7 @@ updating surface tank and nutrient pools</p>
 <span class="normal">1752</span>
 <span class="normal">1753</span>
 <span class="normal">1754</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">irrigate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate water demand for crops and call parent node to acquire water, </span>
+    <span class="sd">&quot;&quot;&quot;Calculate water demand for crops and call parent node to acquire water, </span>
 <span class="sd">    updating surface tank and nutrient pools</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">days_after_sow</span><span class="p">:</span>
@@ -7066,7 +7066,7 @@ updating surface tank and nutrient pools</p>
                         <span class="n">surface_residence_time</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
                         <span class="n">surfaces</span> <span class="o">=</span> <span class="p">[],</span>
                         <span class="n">data_input_dict</span> <span class="o">=</span> <span class="p">{}):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;An extensive node class that represents land processes (agriculture, soil, </span>
+        <span class="sd">&quot;&quot;&quot;An extensive node class that represents land processes (agriculture, soil, </span>
 <span class="sd">        subsurface flow, rural runoff, urban drainage, pollution deposition). The </span>
 <span class="sd">        expected use is that each distinctive type of land cover (different crop </span>
 <span class="sd">        types, gardens, forests, impervious urban drainage, etc.) each have a Surface </span>
@@ -7195,13 +7195,13 @@ updating surface tank and nutrient pools</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">mass_balance_ds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">percolation</span><span class="o">.</span><span class="n">ds</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">apply_irrigation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over any irrigation functions (needs further testing.. maybe)</span>
+        <span class="sd">&quot;&quot;&quot;Iterate over any irrigation functions (needs further testing.. maybe)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">irrigation_functions</span><span class="p">:</span>
             <span class="n">f</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call the run function in all surfaces, update surface/subsurface/</span>
+        <span class="sd">&quot;&quot;&quot;Call the run function in all surfaces, update surface/subsurface/</span>
 <span class="sd">        percolation tanks, discharge to rivers/groundwater</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -7241,7 +7241,7 @@ updating surface tank and nutrient pools</p>
                     <span class="bp">self</span><span class="o">.</span><span class="n">subsurface_runoff</span><span class="o">.</span><span class="n">push_storage</span><span class="p">(</span><span class="n">reply_subsurface</span><span class="p">,</span> <span class="n">force</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">push_set_sewer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Receive water from a sewer and send it to the first ImperviousSurface in </span>
+        <span class="sd">&quot;&quot;&quot;Receive water from a sewer and send it to the first ImperviousSurface in </span>
 <span class="sd">        surfaces. </span>
 
 <span class="sd">        Args:</span>
@@ -7258,7 +7258,7 @@ updating surface tank and nutrient pools</p>
         <span class="k">return</span> <span class="n">vqip</span>
 
     <span class="k">def</span> <span class="nf">end_timestep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update mass balance and end timestep of all tanks (and surfaces)</span>
+        <span class="sd">&quot;&quot;&quot;Update mass balance and end timestep of all tanks (and surfaces)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">running_inflow_mb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">running_outflow_mb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
@@ -7266,7 +7266,7 @@ updating surface tank and nutrient pools</p>
             <span class="n">tanks</span><span class="o">.</span><span class="n">end_timestep</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">get_surface</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">surface_</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a surface from the list of surfaces by the &#39;surface&#39; entry</span>
+        <span class="sd">&quot;&quot;&quot;Return a surface from the list of surfaces by the &#39;surface&#39; entry</span>
 <span class="sd">        in the surface. I.e., the name of the surface</span>
 
 <span class="sd">        Args:</span>
@@ -7582,7 +7582,7 @@ apply_irrigation (if used)  </p>
                     <span class="n">surface_residence_time</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
                     <span class="n">surfaces</span> <span class="o">=</span> <span class="p">[],</span>
                     <span class="n">data_input_dict</span> <span class="o">=</span> <span class="p">{}):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;An extensive node class that represents land processes (agriculture, soil, </span>
+    <span class="sd">&quot;&quot;&quot;An extensive node class that represents land processes (agriculture, soil, </span>
 <span class="sd">    subsurface flow, rural runoff, urban drainage, pollution deposition). The </span>
 <span class="sd">    expected use is that each distinctive type of land cover (different crop </span>
 <span class="sd">    types, gardens, forests, impervious urban drainage, etc.) each have a Surface </span>
@@ -7736,7 +7736,7 @@ apply_irrigation (if used)  </p>
 <span class="normal">152</span>
 <span class="normal">153</span>
 <span class="normal">154</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">apply_irrigation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Iterate over any irrigation functions (needs further testing.. maybe)</span>
+    <span class="sd">&quot;&quot;&quot;Iterate over any irrigation functions (needs further testing.. maybe)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">irrigation_functions</span><span class="p">:</span>
         <span class="n">f</span><span class="p">()</span>
@@ -7769,7 +7769,7 @@ apply_irrigation (if used)  </p>
 <span class="normal">217</span>
 <span class="normal">218</span>
 <span class="normal">219</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">end_timestep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update mass balance and end timestep of all tanks (and surfaces)</span>
+    <span class="sd">&quot;&quot;&quot;Update mass balance and end timestep of all tanks (and surfaces)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">running_inflow_mb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">running_outflow_mb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
@@ -7854,7 +7854,7 @@ in the surface. I.e., the name of the surface</p>
 <span class="normal">232</span>
 <span class="normal">233</span>
 <span class="normal">234</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_surface</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">surface_</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a surface from the list of surfaces by the &#39;surface&#39; entry</span>
+    <span class="sd">&quot;&quot;&quot;Return a surface from the list of surfaces by the &#39;surface&#39; entry</span>
 <span class="sd">    in the surface. I.e., the name of the surface</span>
 
 <span class="sd">    Args:</span>
@@ -7948,7 +7948,7 @@ surfaces. </p>
 <span class="normal">209</span>
 <span class="normal">210</span>
 <span class="normal">211</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_set_sewer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Receive water from a sewer and send it to the first ImperviousSurface in </span>
+    <span class="sd">&quot;&quot;&quot;Receive water from a sewer and send it to the first ImperviousSurface in </span>
 <span class="sd">    surfaces. </span>
 
 <span class="sd">    Args:</span>
@@ -8025,7 +8025,7 @@ percolation tanks, discharge to rivers/groundwater</p>
 <span class="normal">192</span>
 <span class="normal">193</span>
 <span class="normal">194</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Call the run function in all surfaces, update surface/subsurface/</span>
+    <span class="sd">&quot;&quot;&quot;Call the run function in all surfaces, update surface/subsurface/</span>
 <span class="sd">    percolation tanks, discharge to rivers/groundwater</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -8348,7 +8348,7 @@ percolation tanks, discharge to rivers/groundwater</p>
                         <span class="n">et0_coefficient</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
                         <span class="n">ihacres_p</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
                         <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A generic pervious surface that represents hydrology with the IHACRES model.</span>
+        <span class="sd">&quot;&quot;&quot;A generic pervious surface that represents hydrology with the IHACRES model.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            depth (float, optional): Soil tank (i.e., root) depth. Defaults to 0.75.</span>
@@ -8446,7 +8446,7 @@ percolation tanks, discharge to rivers/groundwater</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">outflows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">route</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate moisture deficit (i.e., the tank excess converted to depth)</span>
+        <span class="sd">&quot;&quot;&quot;Calculate moisture deficit (i.e., the tank excess converted to depth)</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (float): current moisture deficit</span>
@@ -8454,7 +8454,7 @@ percolation tanks, discharge to rivers/groundwater</p>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_excess</span><span class="p">()[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">area</span>
 
     <span class="k">def</span> <span class="nf">get_smc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate moisture content (i.e., the tank volume converted to depth)</span>
+        <span class="sd">&quot;&quot;&quot;Calculate moisture content (i.e., the tank volume converted to depth)</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (float): soil moisture content</span>
@@ -8468,7 +8468,7 @@ percolation tanks, discharge to rivers/groundwater</p>
         <span class="k">return</span> <span class="n">precipitation_depth</span><span class="p">,</span> <span class="n">evaporation_depth</span>
 
     <span class="k">def</span> <span class="nf">ihacres</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Inflow function that runs the IHACRES model equations, updates tanks, and </span>
+        <span class="sd">&quot;&quot;&quot;Inflow function that runs the IHACRES model equations, updates tanks, and </span>
 <span class="sd">        store flows in state variables (which are later sent to the parent land node in </span>
 <span class="sd">        the route function)</span>
 
@@ -8550,7 +8550,7 @@ percolation tanks, discharge to rivers/groundwater</p>
         <span class="k">return</span> <span class="p">(</span><span class="n">in_</span><span class="p">,</span> <span class="n">out_</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">route</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;An outflow function that sends percolation, subsurface runoff and surface runoff to their respective tanks in the parent land node.</span>
+        <span class="sd">&quot;&quot;&quot;An outflow function that sends percolation, subsurface runoff and surface runoff to their respective tanks in the parent land node.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (tuple): A tuple containing a VQIP amount for model inputs and outputs </span>
@@ -8565,7 +8565,7 @@ percolation tanks, discharge to rivers/groundwater</p>
 
 
     <span class="k">def</span> <span class="nf">calculate_soil_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Process function that calculates soil temperature based on a weighted </span>
+        <span class="sd">&quot;&quot;&quot;Process function that calculates soil temperature based on a weighted </span>
 <span class="sd">        average. This equation is from Lindstrom, Bishop &amp; Lofvenius (2002), </span>
 <span class="sd">        hydrological processes - but it is not clear what the parameters should be.</span>
 
@@ -8865,7 +8865,7 @@ ephemeral stream this parameter probably can stay high. Defaults to 10.</p></td>
                     <span class="n">et0_coefficient</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
                     <span class="n">ihacres_p</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
                     <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A generic pervious surface that represents hydrology with the IHACRES model.</span>
+    <span class="sd">&quot;&quot;&quot;A generic pervious surface that represents hydrology with the IHACRES model.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        depth (float, optional): Soil tank (i.e., root) depth. Defaults to 0.75.</span>
@@ -9019,7 +9019,7 @@ for mass balance checking.</p></td>
 <span class="normal">831</span>
 <span class="normal">832</span>
 <span class="normal">833</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calculate_soil_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Process function that calculates soil temperature based on a weighted </span>
+    <span class="sd">&quot;&quot;&quot;Process function that calculates soil temperature based on a weighted </span>
 <span class="sd">    average. This equation is from Lindstrom, Bishop &amp; Lofvenius (2002), </span>
 <span class="sd">    hydrological processes - but it is not clear what the parameters should be.</span>
 
@@ -9080,7 +9080,7 @@ for mass balance checking.</p></td>
 <span class="normal">704</span>
 <span class="normal">705</span>
 <span class="normal">706</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate moisture deficit (i.e., the tank excess converted to depth)</span>
+    <span class="sd">&quot;&quot;&quot;Calculate moisture deficit (i.e., the tank excess converted to depth)</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (float): current moisture deficit</span>
@@ -9134,7 +9134,7 @@ for mass balance checking.</p></td>
 <span class="normal">713</span>
 <span class="normal">714</span>
 <span class="normal">715</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_smc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate moisture content (i.e., the tank volume converted to depth)</span>
+    <span class="sd">&quot;&quot;&quot;Calculate moisture content (i.e., the tank volume converted to depth)</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (float): soil moisture content</span>
@@ -9265,7 +9265,7 @@ for mass balance checking.</p></td>
 <span class="normal">800</span>
 <span class="normal">801</span>
 <span class="normal">802</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ihacres</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Inflow function that runs the IHACRES model equations, updates tanks, and </span>
+    <span class="sd">&quot;&quot;&quot;Inflow function that runs the IHACRES model equations, updates tanks, and </span>
 <span class="sd">    store flows in state variables (which are later sent to the parent land node in </span>
 <span class="sd">    the route function)</span>
 
@@ -9399,7 +9399,7 @@ for mass balance checking.</p></td>
 <span class="normal">814</span>
 <span class="normal">815</span>
 <span class="normal">816</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">route</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;An outflow function that sends percolation, subsurface runoff and surface runoff to their respective tanks in the parent land node.</span>
+    <span class="sd">&quot;&quot;&quot;An outflow function that sends percolation, subsurface runoff and surface runoff to their respective tanks in the parent land node.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (tuple): A tuple containing a VQIP amount for model inputs and outputs </span>
@@ -9683,7 +9683,7 @@ for mass balance checking.</p></td>
                         <span class="n">data_input_dict</span> <span class="o">=</span> <span class="p">{},</span> 
                         <span class="n">pollutant_load</span> <span class="o">=</span> <span class="p">{},</span>
                         <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A subclass of DecayTank. Each Surface is anticipated to represent a </span>
+        <span class="sd">&quot;&quot;&quot;A subclass of DecayTank. Each Surface is anticipated to represent a </span>
 <span class="sd">        different land cover type of a Land node. Besides functioning as a Tank, </span>
 <span class="sd">        Surfaces have three lists of functions (inflows, processes and outflows) </span>
 <span class="sd">        where behaviour can be added by appending new functions. We anticipate that </span>
@@ -9756,7 +9756,7 @@ for mass balance checking.</p></td>
 
 
     <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call run function (called from Land node)</span>
+        <span class="sd">&quot;&quot;&quot;Call run function (called from Land node)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="s1">&#39;nitrite&#39;</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">POLLUTANTS</span><span class="p">:</span>
             <span class="c1">#Assume that if nitrite is modelled then nitrification is also modelled</span>
@@ -9778,7 +9778,7 @@ for mass balance checking.</p></td>
             <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">running_outflow_mb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum_vqip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">running_outflow_mb</span><span class="p">,</span> <span class="n">out_</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_data_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read data input from parent Land node (i.e., for precipitation/et0/temp)</span>
+        <span class="sd">&quot;&quot;&quot;Read data input from parent Land node (i.e., for precipitation/et0/temp)</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            var (str): Name of variable</span>
@@ -9789,7 +9789,7 @@ for mass balance checking.</p></td>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">get_data_input</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_data_input_surface</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read data input from this surface&#39;s data_input_dict</span>
+        <span class="sd">&quot;&quot;&quot;Read data input from this surface&#39;s data_input_dict</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            var (str): Name of variable</span>
@@ -9800,7 +9800,7 @@ for mass balance checking.</p></td>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_input_dict</span><span class="p">[(</span><span class="n">var</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">monthyear</span><span class="p">)]</span>
 
     <span class="k">def</span> <span class="nf">dry_deposition_to_tank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generic function for allocating dry pollution deposition to the surface.</span>
+        <span class="sd">&quot;&quot;&quot;Generic function for allocating dry pollution deposition to the surface.</span>
 <span class="sd">        Simply sends the pollution into the tank (some subclasses overwrite this </span>
 <span class="sd">        behaviour)</span>
 
@@ -9816,7 +9816,7 @@ for mass balance checking.</p></td>
         <span class="k">return</span> <span class="n">vqip</span>
 
     <span class="k">def</span> <span class="nf">wet_deposition_to_tank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generic function for allocating wet pollution deposition to the surface.</span>
+        <span class="sd">&quot;&quot;&quot;Generic function for allocating wet pollution deposition to the surface.</span>
 <span class="sd">        Simply sends the pollution into the tank (some subclasses overwrite this </span>
 <span class="sd">        behaviour)</span>
 
@@ -9832,7 +9832,7 @@ for mass balance checking.</p></td>
         <span class="k">return</span> <span class="n">vqip</span>
 
     <span class="k">def</span> <span class="nf">simple_deposition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Inflow function to cause simple pollution deposition to occur, updating the </span>
+        <span class="sd">&quot;&quot;&quot;Inflow function to cause simple pollution deposition to occur, updating the </span>
 <span class="sd">        surface tank</span>
 
 <span class="sd">        Returns:</span>
@@ -9855,7 +9855,7 @@ for mass balance checking.</p></td>
         <span class="k">return</span> <span class="p">(</span><span class="n">pollution</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">atmospheric_deposition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Inflow function to cause dry atmospheric deposition to occur, updating the </span>
+        <span class="sd">&quot;&quot;&quot;Inflow function to cause dry atmospheric deposition to occur, updating the </span>
 <span class="sd">        surface tank</span>
 
 <span class="sd">        Returns:</span>
@@ -9882,7 +9882,7 @@ for mass balance checking.</p></td>
         <span class="k">return</span> <span class="p">(</span><span class="n">in_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">precipitation_deposition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Inflow function to cause wet precipitation deposition to occur, updating </span>
+        <span class="sd">&quot;&quot;&quot;Inflow function to cause wet precipitation deposition to occur, updating </span>
 <span class="sd">        the surface tank</span>
 
 <span class="sd">        Returns:</span>
@@ -10128,7 +10128,7 @@ Defaults to {}.</p></td>
                     <span class="n">data_input_dict</span> <span class="o">=</span> <span class="p">{},</span> 
                     <span class="n">pollutant_load</span> <span class="o">=</span> <span class="p">{},</span>
                     <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A subclass of DecayTank. Each Surface is anticipated to represent a </span>
+    <span class="sd">&quot;&quot;&quot;A subclass of DecayTank. Each Surface is anticipated to represent a </span>
 <span class="sd">    different land cover type of a Land node. Besides functioning as a Tank, </span>
 <span class="sd">    Surfaces have three lists of functions (inflows, processes and outflows) </span>
 <span class="sd">    where behaviour can be added by appending new functions. We anticipate that </span>
@@ -10266,7 +10266,7 @@ for mass balance checking.</p></td>
 <span class="normal">443</span>
 <span class="normal">444</span>
 <span class="normal">445</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">atmospheric_deposition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Inflow function to cause dry atmospheric deposition to occur, updating the </span>
+    <span class="sd">&quot;&quot;&quot;Inflow function to cause dry atmospheric deposition to occur, updating the </span>
 <span class="sd">    surface tank</span>
 
 <span class="sd">    Returns:</span>
@@ -10373,7 +10373,7 @@ for mass balance checking)</p></td>
 <span class="normal">377</span>
 <span class="normal">378</span>
 <span class="normal">379</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">dry_deposition_to_tank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generic function for allocating dry pollution deposition to the surface.</span>
+    <span class="sd">&quot;&quot;&quot;Generic function for allocating dry pollution deposition to the surface.</span>
 <span class="sd">    Simply sends the pollution into the tank (some subclasses overwrite this </span>
 <span class="sd">    behaviour)</span>
 
@@ -10460,7 +10460,7 @@ for mass balance checking)</p></td>
 <span class="normal">350</span>
 <span class="normal">351</span>
 <span class="normal">352</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_data_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read data input from parent Land node (i.e., for precipitation/et0/temp)</span>
+    <span class="sd">&quot;&quot;&quot;Read data input from parent Land node (i.e., for precipitation/et0/temp)</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        var (str): Name of variable</span>
@@ -10542,7 +10542,7 @@ for mass balance checking)</p></td>
 <span class="normal">361</span>
 <span class="normal">362</span>
 <span class="normal">363</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_data_input_surface</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">var</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read data input from this surface&#39;s data_input_dict</span>
+    <span class="sd">&quot;&quot;&quot;Read data input from this surface&#39;s data_input_dict</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        var (str): Name of variable</span>
@@ -10619,7 +10619,7 @@ for mass balance checking.</p></td>
 <span class="normal">470</span>
 <span class="normal">471</span>
 <span class="normal">472</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">precipitation_deposition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Inflow function to cause wet precipitation deposition to occur, updating </span>
+    <span class="sd">&quot;&quot;&quot;Inflow function to cause wet precipitation deposition to occur, updating </span>
 <span class="sd">    the surface tank</span>
 
 <span class="sd">    Returns:</span>
@@ -10687,7 +10687,7 @@ for mass balance checking.</p></td>
 <span class="normal">339</span>
 <span class="normal">340</span>
 <span class="normal">341</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Call run function (called from Land node)</span>
+    <span class="sd">&quot;&quot;&quot;Call run function (called from Land node)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="s1">&#39;nitrite&#39;</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">POLLUTANTS</span><span class="p">:</span>
         <span class="c1">#Assume that if nitrite is modelled then nitrification is also modelled</span>
@@ -10771,7 +10771,7 @@ for mass balance checking.</p></td>
 <span class="normal">416</span>
 <span class="normal">417</span>
 <span class="normal">418</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">simple_deposition</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Inflow function to cause simple pollution deposition to occur, updating the </span>
+    <span class="sd">&quot;&quot;&quot;Inflow function to cause simple pollution deposition to occur, updating the </span>
 <span class="sd">    surface tank</span>
 
 <span class="sd">    Returns:</span>
@@ -10874,7 +10874,7 @@ for mass balance checking)</p></td>
 <span class="normal">393</span>
 <span class="normal">394</span>
 <span class="normal">395</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">wet_deposition_to_tank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generic function for allocating wet pollution deposition to the surface.</span>
+    <span class="sd">&quot;&quot;&quot;Generic function for allocating wet pollution deposition to the surface.</span>
 <span class="sd">    Simply sends the pollution into the tank (some subclasses overwrite this </span>
 <span class="sd">    behaviour)</span>
 
@@ -11392,7 +11392,7 @@ for mass balance checking)</p></td>
                         <span class="n">fraction_manure_to_dissolved_inorganic</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;N&#39;</span> <span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span> <span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span> 
                         <span class="n">fraction_residue_to_fast</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;N&#39;</span> <span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span> <span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span> 
                         <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A class to track nutrient pools in a soil tank, intended to be initialised </span>
+        <span class="sd">&quot;&quot;&quot;A class to track nutrient pools in a soil tank, intended to be initialised </span>
 <span class="sd">        and called by GrowingSurfaces (see wsimod/nodes/land.py/GrowingSurface) and </span>
 <span class="sd">        their subclasses. Contains five pools, which have a storage that tracks the </span>
 <span class="sd">        mass of nutrients. Equations and parameters are based on HYPE.</span>
@@ -11483,18 +11483,18 @@ for mass balance checking)</p></td>
 
 
     <span class="k">def</span> <span class="nf">init_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialise an empty nutrient to be copied</span>
+        <span class="sd">&quot;&quot;&quot;Initialise an empty nutrient to be copied</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">empty_nutrient</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span> <span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">NUTRIENTS</span><span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">init_store</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialise an empty store to track nutrients</span>
+        <span class="sd">&quot;&quot;&quot;Initialise an empty store to track nutrients</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init_empty</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_empty_nutrient</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">allocate_inorganic_irrigation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">irrigation</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign inorganic irrigation, which is assumed to contain dissolved inorganic </span>
+        <span class="sd">&quot;&quot;&quot;Assign inorganic irrigation, which is assumed to contain dissolved inorganic </span>
 <span class="sd">        nutrients and thus updates that pool</span>
 
 <span class="sd">        Args:</span>
@@ -11511,7 +11511,7 @@ for mass balance checking)</p></td>
         <span class="k">return</span> <span class="n">irrigation</span>
 
     <span class="k">def</span> <span class="nf">allocate_organic_irrigation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">irrigation</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign organic irrigation, which is assumed to contain dissolved organic </span>
+        <span class="sd">&quot;&quot;&quot;Assign organic irrigation, which is assumed to contain dissolved organic </span>
 <span class="sd">        nutrients and thus updates that pool</span>
 
 <span class="sd">        Args:</span>
@@ -11528,7 +11528,7 @@ for mass balance checking)</p></td>
         <span class="k">return</span> <span class="n">irrigation</span>
 
     <span class="k">def</span> <span class="nf">allocate_dry_deposition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deposition</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign dry deposition, which is assumed to go to both dissolved inorganic </span>
+        <span class="sd">&quot;&quot;&quot;Assign dry deposition, which is assumed to go to both dissolved inorganic </span>
 <span class="sd">        pool and fast pool (nitrogen) and the adsorbed pool (phosphorus).</span>
 
 <span class="sd">        Args:</span>
@@ -11547,7 +11547,7 @@ for mass balance checking)</p></td>
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;N&#39;</span> <span class="p">:</span> <span class="n">deposition</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fraction_dry_n_to_dissolved_inorganic</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">allocate_wet_deposition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deposition</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign wet deposition, which is assumed to contain dissolved inorganic </span>
+        <span class="sd">&quot;&quot;&quot;Assign wet deposition, which is assumed to contain dissolved inorganic </span>
 <span class="sd">        nutrients and thus updates that pool</span>
 
 <span class="sd">        Args:</span>
@@ -11564,7 +11564,7 @@ for mass balance checking)</p></td>
         <span class="k">return</span> <span class="n">deposition</span>
 
     <span class="k">def</span> <span class="nf">allocate_manure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manure</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign manure, which is assumed to go to both dissolved inorganic </span>
+        <span class="sd">&quot;&quot;&quot;Assign manure, which is assumed to go to both dissolved inorganic </span>
 <span class="sd">        pool and fast pool.</span>
 
 <span class="sd">        Args:</span>
@@ -11585,7 +11585,7 @@ for mass balance checking)</p></td>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiply_nutrients</span><span class="p">(</span><span class="n">manure</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">fraction_manure_to_dissolved_inorganic</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">allocate_residue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">residue</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign residue, which is assumed to go to both humus pool and fast pool.</span>
+        <span class="sd">&quot;&quot;&quot;Assign residue, which is assumed to go to both humus pool and fast pool.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            residue (dict): A dict that contains the amount of nutrients entering </span>
@@ -11605,7 +11605,7 @@ for mass balance checking)</p></td>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_nutrient</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">allocate_fertiliser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fertiliser</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Assign fertiliser, which is assumed to contain dissolved inorganic </span>
+        <span class="sd">&quot;&quot;&quot;Assign fertiliser, which is assumed to contain dissolved inorganic </span>
 <span class="sd">        nutrients and thus updates that pool</span>
 
 <span class="sd">        Args:</span>
@@ -11621,7 +11621,7 @@ for mass balance checking)</p></td>
         <span class="k">return</span> <span class="n">fertiliser</span>
 
     <span class="k">def</span> <span class="nf">extract_dissolved</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proportion</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Function to extract some amount of nutrients from all dissolved pools</span>
+        <span class="sd">&quot;&quot;&quot;Function to extract some amount of nutrients from all dissolved pools</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            proportion (float): proportion of the dissolved nutrient pools to extract</span>
@@ -11641,7 +11641,7 @@ for mass balance checking)</p></td>
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;organic&#39;</span> <span class="p">:</span> <span class="n">reply_do</span><span class="p">,</span> <span class="s1">&#39;inorganic&#39;</span> <span class="p">:</span> <span class="n">reply_di</span><span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">get_erodable_P</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return total phosphorus that can be eroded (i.e., humus and adsorbed </span>
+        <span class="sd">&quot;&quot;&quot;Return total phosphorus that can be eroded (i.e., humus and adsorbed </span>
 <span class="sd">        inorganic pools)</span>
 
 <span class="sd">        Returns:</span>
@@ -11650,7 +11650,7 @@ for mass balance checking)</p></td>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">adsorbed_inorganic_pool</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">humus_pool</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">erode_P</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amount_P</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update humus and adsorbed inorganic pools to erode some amount. Removed in </span>
+        <span class="sd">&quot;&quot;&quot;Update humus and adsorbed inorganic pools to erode some amount. Removed in </span>
 <span class="sd">        proportion to amount in both pools</span>
 
 <span class="sd">        Args:</span>
@@ -11677,7 +11677,7 @@ for mass balance checking)</p></td>
         <span class="k">return</span> <span class="n">reply_humus</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">],</span> <span class="n">reply_adsorbed</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">soil_pool_transformation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Function to be called by a GrowingSurface that performs and tracks changes resulting from soil transformation processes</span>
+        <span class="sd">&quot;&quot;&quot;Function to be called by a GrowingSurface that performs and tracks changes resulting from soil transformation processes</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (float): increase in dissolved inorganic nutrients resulting from   </span>
@@ -11714,7 +11714,7 @@ for mass balance checking)</p></td>
         <span class="k">return</span> <span class="n">increase_in_dissolved_inorganic</span><span class="p">,</span> <span class="n">increase_in_dissolved_organic</span>
 
     <span class="k">def</span> <span class="nf">temp_soil_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">extract_pool</span><span class="p">,</span> <span class="n">receive_pool</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Temperature function to take a parameter, calculate transformation, and remove nutrients </span>
+        <span class="sd">&quot;&quot;&quot;Temperature function to take a parameter, calculate transformation, and remove nutrients </span>
 <span class="sd">        from the extract pool and update the receive pool</span>
 
 <span class="sd">        Args:</span>
@@ -11741,7 +11741,7 @@ for mass balance checking)</p></td>
         <span class="k">return</span> <span class="n">to_extract</span>
 
     <span class="k">def</span> <span class="nf">get_empty_nutrient</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;An efficient way to get an empty nutrient</span>
+        <span class="sd">&quot;&quot;&quot;An efficient way to get an empty nutrient</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (dict): A dict containing 0 for each nutrient</span>
@@ -11749,7 +11749,7 @@ for mass balance checking)</p></td>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_nutrient</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">multiply_nutrients</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nutrient</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Multiply nutrients by factors</span>
+        <span class="sd">&quot;&quot;&quot;Multiply nutrients by factors</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            nutrient (dict): Dict of nutrients to multiply</span>
@@ -11761,7 +11761,7 @@ for mass balance checking)</p></td>
         <span class="k">return</span> <span class="p">{</span><span class="n">x</span> <span class="p">:</span> <span class="n">nutrient</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="o">*</span> <span class="n">factor</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">NUTRIENTS</span><span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">receive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nutrients</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update nutrient store by amounts</span>
+        <span class="sd">&quot;&quot;&quot;Update nutrient store by amounts</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            nutrients (dict): Amount of nutrients to update store by</span>
@@ -11771,7 +11771,7 @@ for mass balance checking)</p></td>
             <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="n">nutrient</span><span class="p">]</span> <span class="o">+=</span> <span class="n">amount</span>
 
     <span class="k">def</span> <span class="nf">sum_nutrients</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sum two nutrients</span>
+        <span class="sd">&quot;&quot;&quot;Sum two nutrients</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            n1 (dict): Dict of nutrients</span>
@@ -11786,7 +11786,7 @@ for mass balance checking)</p></td>
         <span class="k">return</span> <span class="n">reply</span>
 
     <span class="k">def</span> <span class="nf">subtract_nutrients</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Subtract two nutrients</span>
+        <span class="sd">&quot;&quot;&quot;Subtract two nutrients</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            n1 (dict): Dict of nutrients to subtract from</span>
@@ -11801,7 +11801,7 @@ for mass balance checking)</p></td>
         <span class="k">return</span> <span class="n">reply</span>
 
     <span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nutrients</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove nutrients from a store</span>
+        <span class="sd">&quot;&quot;&quot;Remove nutrients from a store</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            nutrients (dict): Dict of nutrients to remove from store</span>
@@ -12098,7 +12098,7 @@ mass of nutrients. Equations and parameters are based on HYPE.</p>
                     <span class="n">fraction_manure_to_dissolved_inorganic</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;N&#39;</span> <span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span> <span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span> 
                     <span class="n">fraction_residue_to_fast</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;N&#39;</span> <span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;P&#39;</span> <span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span> 
                     <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A class to track nutrient pools in a soil tank, intended to be initialised </span>
+    <span class="sd">&quot;&quot;&quot;A class to track nutrient pools in a soil tank, intended to be initialised </span>
 <span class="sd">    and called by GrowingSurfaces (see wsimod/nodes/land.py/GrowingSurface) and </span>
 <span class="sd">    their subclasses. Contains five pools, which have a storage that tracks the </span>
 <span class="sd">    mass of nutrients. Equations and parameters are based on HYPE.</span>
@@ -12272,7 +12272,7 @@ tank)</p></td>
 <span class="normal">170</span>
 <span class="normal">171</span>
 <span class="normal">172</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">allocate_dry_deposition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deposition</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Assign dry deposition, which is assumed to go to both dissolved inorganic </span>
+    <span class="sd">&quot;&quot;&quot;Assign dry deposition, which is assumed to go to both dissolved inorganic </span>
 <span class="sd">    pool and fast pool (nitrogen) and the adsorbed pool (phosphorus).</span>
 
 <span class="sd">    Args:</span>
@@ -12372,7 +12372,7 @@ that pool)</p></td>
 <span class="normal">244</span>
 <span class="normal">245</span>
 <span class="normal">246</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">allocate_fertiliser</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fertiliser</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Assign fertiliser, which is assumed to contain dissolved inorganic </span>
+    <span class="sd">&quot;&quot;&quot;Assign fertiliser, which is assumed to contain dissolved inorganic </span>
 <span class="sd">    nutrients and thus updates that pool</span>
 
 <span class="sd">    Args:</span>
@@ -12470,7 +12470,7 @@ that pool)</p></td>
 <span class="normal">134</span>
 <span class="normal">135</span>
 <span class="normal">136</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">allocate_inorganic_irrigation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">irrigation</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Assign inorganic irrigation, which is assumed to contain dissolved inorganic </span>
+    <span class="sd">&quot;&quot;&quot;Assign inorganic irrigation, which is assumed to contain dissolved inorganic </span>
 <span class="sd">    nutrients and thus updates that pool</span>
 
 <span class="sd">    Args:</span>
@@ -12573,7 +12573,7 @@ tank)</p></td>
 <span class="normal">208</span>
 <span class="normal">209</span>
 <span class="normal">210</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">allocate_manure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">manure</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Assign manure, which is assumed to go to both dissolved inorganic </span>
+    <span class="sd">&quot;&quot;&quot;Assign manure, which is assumed to go to both dissolved inorganic </span>
 <span class="sd">    pool and fast pool.</span>
 
 <span class="sd">    Args:</span>
@@ -12676,7 +12676,7 @@ that pool)</p></td>
 <span class="normal">151</span>
 <span class="normal">152</span>
 <span class="normal">153</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">allocate_organic_irrigation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">irrigation</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Assign organic irrigation, which is assumed to contain dissolved organic </span>
+    <span class="sd">&quot;&quot;&quot;Assign organic irrigation, which is assumed to contain dissolved organic </span>
 <span class="sd">    nutrients and thus updates that pool</span>
 
 <span class="sd">    Args:</span>
@@ -12777,7 +12777,7 @@ tank) - i.e., none because fast and humus pool are both solid</p></td>
 <span class="normal">228</span>
 <span class="normal">229</span>
 <span class="normal">230</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">allocate_residue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">residue</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Assign residue, which is assumed to go to both humus pool and fast pool.</span>
+    <span class="sd">&quot;&quot;&quot;Assign residue, which is assumed to go to both humus pool and fast pool.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        residue (dict): A dict that contains the amount of nutrients entering </span>
@@ -12879,7 +12879,7 @@ that pool)</p></td>
 <span class="normal">187</span>
 <span class="normal">188</span>
 <span class="normal">189</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">allocate_wet_deposition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">deposition</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Assign wet deposition, which is assumed to contain dissolved inorganic </span>
+    <span class="sd">&quot;&quot;&quot;Assign wet deposition, which is assumed to contain dissolved inorganic </span>
 <span class="sd">    nutrients and thus updates that pool</span>
 
 <span class="sd">    Args:</span>
@@ -12991,7 +12991,7 @@ proportion to amount in both pools</p>
 <span class="normal">300</span>
 <span class="normal">301</span>
 <span class="normal">302</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">erode_P</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amount_P</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update humus and adsorbed inorganic pools to erode some amount. Removed in </span>
+    <span class="sd">&quot;&quot;&quot;Update humus and adsorbed inorganic pools to erode some amount. Removed in </span>
 <span class="sd">    proportion to amount in both pools</span>
 
 <span class="sd">    Args:</span>
@@ -13095,7 +13095,7 @@ proportion to amount in both pools</p>
 <span class="normal">440</span>
 <span class="normal">441</span>
 <span class="normal">442</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">extract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nutrients</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove nutrients from a store</span>
+    <span class="sd">&quot;&quot;&quot;Remove nutrients from a store</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        nutrients (dict): Dict of nutrients to remove from store</span>
@@ -13194,7 +13194,7 @@ nutrients (i.e., N and P) have been extracted from those pools</p></td>
 <span class="normal">264</span>
 <span class="normal">265</span>
 <span class="normal">266</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">extract_dissolved</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">proportion</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to extract some amount of nutrients from all dissolved pools</span>
+    <span class="sd">&quot;&quot;&quot;Function to extract some amount of nutrients from all dissolved pools</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        proportion (float): proportion of the dissolved nutrient pools to extract</span>
@@ -13259,7 +13259,7 @@ nutrients (i.e., N and P) have been extracted from those pools</p></td>
 <span class="normal">372</span>
 <span class="normal">373</span>
 <span class="normal">374</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_empty_nutrient</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;An efficient way to get an empty nutrient</span>
+    <span class="sd">&quot;&quot;&quot;An efficient way to get an empty nutrient</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (dict): A dict containing 0 for each nutrient</span>
@@ -13314,7 +13314,7 @@ inorganic pools)</p>
 <span class="normal">273</span>
 <span class="normal">274</span>
 <span class="normal">275</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_erodable_P</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return total phosphorus that can be eroded (i.e., humus and adsorbed </span>
+    <span class="sd">&quot;&quot;&quot;Return total phosphorus that can be eroded (i.e., humus and adsorbed </span>
 <span class="sd">    inorganic pools)</span>
 
 <span class="sd">    Returns:</span>
@@ -13347,7 +13347,7 @@ inorganic pools)</p>
 <span class="normal">111</span>
 <span class="normal">112</span>
 <span class="normal">113</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">init_empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialise an empty nutrient to be copied</span>
+    <span class="sd">&quot;&quot;&quot;Initialise an empty nutrient to be copied</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">empty_nutrient</span> <span class="o">=</span> <span class="p">{</span><span class="n">x</span> <span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">NUTRIENTS</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
@@ -13377,7 +13377,7 @@ inorganic pools)</p>
 <span class="normal">117</span>
 <span class="normal">118</span>
 <span class="normal">119</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">init_store</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialise an empty store to track nutrients</span>
+    <span class="sd">&quot;&quot;&quot;Initialise an empty store to track nutrients</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">init_empty</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_empty_nutrient</span><span class="p">()</span>
@@ -13466,7 +13466,7 @@ inorganic pools)</p>
 <span class="normal">384</span>
 <span class="normal">385</span>
 <span class="normal">386</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">multiply_nutrients</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nutrient</span><span class="p">,</span> <span class="n">factor</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Multiply nutrients by factors</span>
+    <span class="sd">&quot;&quot;&quot;Multiply nutrients by factors</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        nutrient (dict): Dict of nutrients to multiply</span>
@@ -13531,7 +13531,7 @@ inorganic pools)</p>
 <span class="normal">394</span>
 <span class="normal">395</span>
 <span class="normal">396</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">receive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nutrients</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update nutrient store by amounts</span>
+    <span class="sd">&quot;&quot;&quot;Update nutrient store by amounts</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        nutrients (dict): Amount of nutrients to update store by</span>
@@ -13623,7 +13623,7 @@ transformations (negative value indicates a decrease)</p></td>
 <span class="normal">337</span>
 <span class="normal">338</span>
 <span class="normal">339</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">soil_pool_transformation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to be called by a GrowingSurface that performs and tracks changes resulting from soil transformation processes</span>
+    <span class="sd">&quot;&quot;&quot;Function to be called by a GrowingSurface that performs and tracks changes resulting from soil transformation processes</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (float): increase in dissolved inorganic nutrients resulting from   </span>
@@ -13746,7 +13746,7 @@ transformations (negative value indicates a decrease)</p></td>
 <span class="normal">424</span>
 <span class="normal">425</span>
 <span class="normal">426</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">subtract_nutrients</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Subtract two nutrients</span>
+    <span class="sd">&quot;&quot;&quot;Subtract two nutrients</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        n1 (dict): Dict of nutrients to subtract from</span>
@@ -13847,7 +13847,7 @@ transformations (negative value indicates a decrease)</p></td>
 <span class="normal">409</span>
 <span class="normal">410</span>
 <span class="normal">411</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">sum_nutrients</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Sum two nutrients</span>
+    <span class="sd">&quot;&quot;&quot;Sum two nutrients</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        n1 (dict): Dict of nutrients</span>
@@ -13973,7 +13973,7 @@ balance)</p></td>
 <span class="normal">364</span>
 <span class="normal">365</span>
 <span class="normal">366</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">temp_soil_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">extract_pool</span><span class="p">,</span> <span class="n">receive_pool</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Temperature function to take a parameter, calculate transformation, and remove nutrients </span>
+    <span class="sd">&quot;&quot;&quot;Temperature function to take a parameter, calculate transformation, and remove nutrients </span>
 <span class="sd">    from the extract pool and update the receive pool</span>
 
 <span class="sd">    Args:</span>
@@ -14037,7 +14037,7 @@ balance)</p></td>
 <span class="normal">447</span>
 <span class="normal">448</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">NutrientStore</span><span class="p">(</span><span class="n">NutrientPool</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Nutrient store, to be instantiated by a NutrientPool</span>
+        <span class="sd">&quot;&quot;&quot;Nutrient store, to be instantiated by a NutrientPool</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">init_store</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
@@ -14075,7 +14075,7 @@ balance)</p></td>
 <span class="normal">446</span>
 <span class="normal">447</span>
 <span class="normal">448</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Nutrient store, to be instantiated by a NutrientPool</span>
+    <span class="sd">&quot;&quot;&quot;Nutrient store, to be instantiated by a NutrientPool</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">init_store</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
@@ -14137,12 +14137,11 @@ balance)</p></td>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
+      <script src="../assets/javascripts/bundle.39f04ddb.min.js"></script>
       
-    
     
   </body>
 </html>

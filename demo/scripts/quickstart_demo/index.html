@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.5.2">
     
     
       
@@ -17,10 +17,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.975780f9.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.9f9400aa.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.2505c338.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.cbb835fc.min.css">
         
       
       
@@ -56,7 +56,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
   
     
     
@@ -1537,7 +1537,7 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="quickstart-py">Quickstart (.py)<a class="anchor-link" href="#quickstart-py">&#182;</a></h1><p>Note - this script can also be opened in interactive Python if you wanted to
+<h1 id="Quickstart-(.py)">Quickstart (.py)<a class="anchor-link" href="#Quickstart-(.py)">&#182;</a></h1><p>Note - this script can also be opened in interactive Python if you wanted to
 play around. On the GitHub it is in <a href="https://github.com/barneydobson/wsi/blob/main/docs/demo/scripts/quickstart_demo.py">docs/demo/scripts</a></p>
 <ol>
 <li><p><a href="#introduction">Introduction</a></p>
@@ -1566,7 +1566,7 @@ play around. On the GitHub it is in <a href="https://github.com/barneydobson/wsi
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="introduction">Introduction<a class="anchor-link" href="#introduction">&#182;</a></h2><p>WSIMOD is a Python package that lets you create nodes that represent physical
+<h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">&#182;</a></h2><p>WSIMOD is a Python package that lets you create nodes that represent physical
 things in the water cycle and enables them talk to each other. In this demo,
 we will create some nodes, some arcs (the things that link nodes), and make 
 a model that lets us simulate the flow of water through the water cycle.</p>
@@ -1584,7 +1584,7 @@ will simulate a mixed urban-rural catchment.</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="imports-and-forcing-data">Imports and forcing data<a class="anchor-link" href="#imports-and-forcing-data">&#182;</a></h2>
+<h2 id="Imports-and-forcing-data">Imports and forcing data<a class="anchor-link" href="#Imports-and-forcing-data">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -1716,25 +1716,23 @@ print(input_data.sample(10))</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
 <pre>              site       date       variable      value
-78048  oxford_land 2011-07-31            et0   0.002000
-77993  oxford_land 2011-06-06            et0   0.002000
-78329  oxford_land 2012-05-07            et0   0.002000
-77045  oxford_land 2012-10-26  precipitation   0.000000
-79811  oxford_land 2012-06-02    temperature  15.925000
-79868  oxford_land 2012-07-29    temperature  16.153571
-79448  oxford_land 2011-06-05    temperature  14.914286
-78391  oxford_land 2012-07-08            et0   0.002000
-77766  oxford_land 2010-10-22            et0   0.002000
-77579  oxford_land 2010-04-18            et0   0.002000
+77574  oxford_land 2010-04-13            et0   0.002000
+76634  oxford_land 2011-09-11  precipitation   0.002500
+80069  oxford_land 2013-02-15    temperature   5.067857
+78670  oxford_land 2009-04-18    temperature  12.016667
+78630  oxford_land 2009-03-09    temperature   6.850000
+77037  oxford_land 2012-10-18  precipitation   0.000300
+78098  oxford_land 2011-09-19            et0   0.002000
+78784  oxford_land 2009-08-10    temperature  18.350000
+77295  oxford_land 2009-07-08            et0   0.002000
+78055  oxford_land 2011-08-07            et0   0.002000
 </pre>
 </div>
 </div>
@@ -1806,9 +1804,7 @@ print(land_inputs[('temperature',example_date)])</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -1833,7 +1829,7 @@ print(land_inputs[('temperature',example_date)])</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="create-nodes">Create nodes<a class="anchor-link" href="#create-nodes">&#182;</a></h2>
+<h2 id="Create-nodes">Create nodes<a class="anchor-link" href="#Create-nodes">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -1952,7 +1948,7 @@ waste = {'type_' : 'Waste',
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="create-arcs">Create arcs<a class="anchor-link" href="#create-arcs">&#182;</a></h2>
+<h2 id="Create-arcs">Create arcs<a class="anchor-link" href="#Create-arcs">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -2068,7 +2064,7 @@ catchment_outflow = {'type_' : 'Arc',
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="create-model">Create model<a class="anchor-link" href="#create-model">&#182;</a></h2>
+<h2 id="Create-model">Create model<a class="anchor-link" href="#Create-model">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -2232,7 +2228,7 @@ entries.</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="run-model">Run model<a class="anchor-link" href="#run-model">&#182;</a></h2>
+<h2 id="Run-model">Run model<a class="anchor-link" href="#Run-model">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -2287,15 +2283,13 @@ flows = pd.DataFrame(flows)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>100%|██████████████████████████████████████████████████████████████████████████| 1456/1456 [00:02&lt;00:00, 666.49it/s]
+<pre>100%|█████████████████████████████████████████████████████████████████████████████| 1456/1456 [00:02&lt;00:00, 689.90it/s]
 </pre>
 </div>
 </div>
@@ -2378,9 +2372,7 @@ f.tight_layout()</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -2409,7 +2401,7 @@ class="
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="what-next">What next?<a class="anchor-link" href="#what-next">&#182;</a></h2><p>If you are hydrologically minded then you might be interested in a more detailed
+<h2 id="What-next?">What next?<a class="anchor-link" href="#What-next?">&#182;</a></h2><p>If you are hydrologically minded then you might be interested in a more detailed
 tutorial for our <a href="./../land_demo">Land node</a>. If you want an overview to 
 see how many different nodes in WSIMOD work, then the 
 <a href="./../oxford_demo">Oxford case study</a> might be more interesting.</p>
@@ -2494,12 +2486,11 @@ see how many different nodes in WSIMOD work, then the
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.39f04ddb.min.js"></script>
       
-    
     
   </body>
 </html>

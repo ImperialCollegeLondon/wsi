@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.5.2">
     
     
       
@@ -17,10 +17,10 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.975780f9.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.9f9400aa.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.2505c338.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.cbb835fc.min.css">
         
       
       
@@ -56,7 +56,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
   
     
     
@@ -376,9 +376,9 @@ physical and human processes throughout. For example, rivers are a water
 supply, a receiver of wastewater, and an aggregate of many hydrological, 
 biological, and chemical processes. Thus, simulations of the water cycle that
 have highly constrained boundaries may miss key interactions that create 
-unanticipated impacts or unexpected opportunities<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>. 
+unanticipated impacts or unexpected opportunities <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>. 
 Integrated environmental models aim to resolve the issue of boundary 
-conditions, however they have some key limitations<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>, and in 
+conditions, however they have some key limitations <sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>, and in 
 particular we find a significant need for a parsimonious, self-contained suite 
 that is accessible and easy to setup. </p>
 <h1 id="statement-of-need">Statement of need</h1>
@@ -386,23 +386,23 @@ that is accessible and easy to setup. </p>
 numerical models that excel in representing individual subsystems, or systems 
 dynamics models that create broad representations but that lack a physical 
 basis. Early attempts at a physical representation of the water cycle combined 
-existing numerical models through an integration framework<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup>. While 
+existing numerical models through an integration framework <sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup>. While 
 successful, this approach has an incredibly high user burden because each 
 subsystem model is so detailed, and as a consequence is also difficult to 
 customise. To illustrate, SWAT is one of the most widespread models of the 
-rural water cycle<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>, while SWMM is the same but for the urban 
-water cycle<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>. It has been demonstrated that these two software 
-can interface using the OpenMI integration framework<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup>. Despite 
+rural water cycle <sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>, while SWMM is the same but for the urban 
+water cycle <sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>. It has been demonstrated that these two software 
+can interface using the OpenMI integration framework <sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup>. Despite 
 this seemingly powerful combination of two near-ubiquitous models, integrated 
 applications have been limited, and we propose that this is for the same 
-reasons presented in<sup id="fnref3:3"><a class="footnote-ref" href="#fn:3">3</a></sup>: user burden and customisation difficulty. </p>
+reasons presented in <sup id="fnref3:3"><a class="footnote-ref" href="#fn:3">3</a></sup>: user burden and customisation difficulty. </p>
 <p>Because of this need, we provide a parsimonious and self-contained suite for integrated water cycle modelling in the WSIMOD Python package. It 
 brings together a range of software developed over the course of three years 
 on the <a href="https://www.camelliawater.org/">CAMELLIA project</a>. Urban water 
 processes are based on those presented and validated in the CityWat 
-model<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:7"><a class="footnote-ref" href="#fn:7">7</a></sup><sup id="fnref:8"><a class="footnote-ref" href="#fn:8">8</a></sup><sup id="fnref:9"><a class="footnote-ref" href="#fn:9">9</a></sup>, while
+model <sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:7"><a class="footnote-ref" href="#fn:7">7</a></sup><sup id="fnref:8"><a class="footnote-ref" href="#fn:8">8</a></sup><sup id="fnref:9"><a class="footnote-ref" href="#fn:9">9</a></sup>, while
 hydrological and agricultural processes are from the CatchWat 
-model<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref:10"><a class="footnote-ref" href="#fn:10">10</a></sup>. WSIMOD also provides an interface for message
+model <sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref:10"><a class="footnote-ref" href="#fn:10">10</a></sup>. WSIMOD also provides an interface for message
 passing between different model components, enabling all parts of the water 
 cycle to interact with all other parts. The result is a simulation model that
 is easy to set up, highly flexible and ideal for representing water quality and
@@ -415,9 +415,10 @@ subsystems), and orchestrate them into a model that creates simulations. </p>
 <h2 id="limitations">Limitations</h2>
 <p>We highlight that WSIMOD is not intended to be a substitute for sophisticated 
 physical models, nor for a system dynamics approach. In applications where 
-detailed hydraulic/hydrological process representations are (e.g.,) needed to 
-inform design, or in cases where capturing (e.g.,) hard to quantify social 
-processes, there are likely better tools available. Our case studies highlight 
+detailed hydraulic/hydrological process representations are needed (e.g., 
+informing the design of specific pipes, cases where processes are hard to
+quantify such as representing social drivers of population growth, etc.) there 
+are likely better tools available. Our case studies highlight 
 that WSIMOD is most useful in situations where physically representing 
 cross-sytem processes and thus capturing the impacts of cross-system 
 interactions are essential towards the questions you ask of your model. 
@@ -433,10 +434,9 @@ Software development support was provided by Imperial College's Research
 Software Engineering service, in particular from Diego Alonso and Dan Davies.</p>
 <p>We are incredibly grateful for the detailed software reviews provided by <a href="https://github.com/cheginit">Taher Chegini</a> and <a href="https://github.com/jlarsen-usgs">Joshua Larsen</a> and editing by <a href="https://github.com/crvernon">Chris Vernon</a>. Their suggestions have significantly improved WSIMOD.</p>
 <p>The design of WSIMOD was significantly influenced by 
-<a href="https://github.com/gregorburger/CityDrain3">CityDrain3</a>, 
-<a href="https://www.ogc.org/standards/openmi">OpenMI</a>, 
-<a href="https://doi.org/10.1016/j.envsoft.2016.10.013">Belete, Voinov and Laniak, (2017)</a>, 
-and <a href="https://github.com/tomalrussell/smif">smif</a>.</p>
+<a href="https://github.com/gregorburger/CityDrain3">CityDrain3</a> <sup id="fnref:11"><a class="footnote-ref" href="#fn:11">11</a></sup>, 
+<a href="https://www.ogc.org/standards/openmi">OpenMI</a> <sup id="fnref:12"><a class="footnote-ref" href="#fn:12">12</a></sup>, <a href="https://github.com/tomalrussell/smif">smif</a> <sup id="fnref:13"><a class="footnote-ref" href="#fn:13">13</a></sup><sup id="fnref:14"><a class="footnote-ref" href="#fn:14">14</a></sup>, and the 
+following review <sup id="fnref:15"><a class="footnote-ref" href="#fn:15">15</a></sup>.</p>
 <p>We acknowledge funding from the CAMELLIA project (Community Water Management 
 for a Liveable London), funded by the Natural Environment Research Council 
 (NERC) under grant NE/S003495/1.</p>
@@ -470,14 +470,15 @@ for a Liveable London), funded by the Natural Environment Research Council
 </li>
 <li id="fn:5">
 <p>Gironás, J., Roesner, L. A., Rossman, L. A., &amp; Davis, J. (2010). A new
- applications manual for the storm water management model(SWMM).
+ applications manual for the storm water management model (SWMM).
  <em>Environmental Modelling<br />
- &amp; Software</em>, <em>25</em>(6), 813–814. <a href="https://doi.org/j.envsoft.2009.11.009">https://doi.org/j.envsoft.2009.11.009</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+ &amp; Software</em>, <em>25</em>(6), 813–814.
+ <a href="https://doi.org/10.1016/j.envsoft.2009.11.009">https://doi.org/10.1016/j.envsoft.2009.11.009</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 <li id="fn:6">
 <p>Shrestha, N. K., Leta, O. T., De Fraine, B., Van Griensven, A., &amp;
  Bauwens, W. (2013). OpenMI-based integrated sediment transport modelling
- of the river zenne, belgium. <em>Environmental Modelling<br />
+ of the River Zenne, Belgium. <em>Environmental Modelling<br />
  &amp; Software</em>, <em>47</em>, 193–206.
  <a href="https://doi.org/10.1016/j.envsoft.2013.05.004">https://doi.org/10.1016/j.envsoft.2013.05.004</a>&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>
 </li>
@@ -503,6 +504,35 @@ for a Liveable London), funded by the Natural Environment Research Council
  nature-based solutions for integrated catchment water management.
  <em>Journal of Environmental Management</em>.
  <a href="https://doi.org/10.1016/j.jenvman.2022.117045">https://doi.org/10.1016/j.jenvman.2022.117045</a>&#160;<a class="footnote-backref" href="#fnref:10" title="Jump back to footnote 10 in the text">&#8617;</a></p>
+</li>
+<li id="fn:11">
+<p>Burger, G., Bach, P. M., Urich, C., Leonhardt, G., Kleidorfer, M., &amp;
+ Rauch, W. (2016). Designing and implementing a multi-core capable
+ integrated urban drainage modelling toolkit: Lessons from CityDrain3.
+ <em>Advances in Engineering Software</em>, <em>100</em>, 277–289.
+ <a href="https://doi.org/10.1016/j.advengsoft.2016.08.004">https://doi.org/10.1016/j.advengsoft.2016.08.004</a>&#160;<a class="footnote-backref" href="#fnref:11" title="Jump back to footnote 11 in the text">&#8617;</a></p>
+</li>
+<li id="fn:12">
+<p>Gregersen, J., Gijsbers, P., &amp; Westen, S. (2007). OpenMI: Open modelling
+ interface. <em>Journal of Hydroinformatics</em>, <em>9</em>(3), 175–191.
+ <a href="https://doi.org/10.2166/hydro.2007.023">https://doi.org/10.2166/hydro.2007.023</a>&#160;<a class="footnote-backref" href="#fnref:12" title="Jump back to footnote 12 in the text">&#8617;</a></p>
+</li>
+<li id="fn:13">
+<p>Usher, W., &amp; Russell, T. (2019). A software framework for the
+ integration of infrastructure simulation models.
+ <a href="https://doi.org/10.5334/jors.265">https://doi.org/10.5334/jors.265</a>&#160;<a class="footnote-backref" href="#fnref:13" title="Jump back to footnote 13 in the text">&#8617;</a></p>
+</li>
+<li id="fn:14">
+<p>Usher, W., Russell, T., Schoenmakers, R., Robson, C., Cooper, F.,
+ Lestang, T., &amp; Dickinson, R. (2018). <em>Nismod/smif v1.3.2</em>.
+ <a href="https://doi.org/10.5281/zenodo.1309336">https://doi.org/10.5281/zenodo.1309336</a>&#160;<a class="footnote-backref" href="#fnref:14" title="Jump back to footnote 14 in the text">&#8617;</a></p>
+</li>
+<li id="fn:15">
+<p>Belete, G. F., Voinov, A., &amp; Laniak, G. F. (2017). An overview of the
+ model integration process: From pre-integration assessment to testing.
+ <em>Environmental Modelling<br />
+ &amp; Software</em>, <em>87</em>, 49–63.
+ <a href="https://doi.org/10.1016/j.envsoft.2016.10.013">https://doi.org/10.1016/j.envsoft.2016.10.013</a>&#160;<a class="footnote-backref" href="#fnref:15" title="Jump back to footnote 15 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>
@@ -579,12 +609,11 @@ for a Liveable London), funded by the Natural Environment Research Council
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
+      <script src="../../assets/javascripts/bundle.39f04ddb.min.js"></script>
       
-    
     
   </body>
 </html>

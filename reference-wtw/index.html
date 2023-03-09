@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.5.2">
     
     
       
@@ -17,10 +17,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.975780f9.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.9f9400aa.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.2505c338.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.cbb835fc.min.css">
         
       
       
@@ -56,7 +56,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
   
     
     
@@ -749,7 +749,7 @@ Converted to totals on 2022-05-03</p>
                         <span class="n">service_reservoir_initial_storage</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
                         <span class="n">data_input_dict</span> <span class="o">=</span> <span class="p">{},</span>
                         <span class="o">**</span><span class="n">kwargs</span><span class="p">,):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A freshwater treatment works wrapper for WTW. Contains service reservoirs </span>
+        <span class="sd">&quot;&quot;&quot;A freshwater treatment works wrapper for WTW. Contains service reservoirs </span>
 <span class="sd">        that treated water is released to and pulled from. Cannot allow deficit (thus </span>
 <span class="sd">        any deficit is satisfied by water entering the model &#39;via other means&#39;). </span>
 <span class="sd">        Liquor and solids are sent to sewers</span>
@@ -823,7 +823,7 @@ Converted to totals on 2022-05-03</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">mass_balance_out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="k">lambda</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">unpushed_sludge</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">treat_water</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pulls water, aiming to fill service reservoirs, calls WTW treat_current_input, avoids deficit, sends liquor and solids to sewers</span>
+        <span class="sd">&quot;&quot;&quot;Pulls water, aiming to fill service reservoirs, calls WTW treat_current_input, avoids deficit, sends liquor and solids to sewers</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1">#Calculate how much water is needed</span>
         <span class="n">target_throughput</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">service_reservoir_tank</span><span class="o">.</span><span class="n">get_excess</span><span class="p">()</span>
@@ -866,7 +866,7 @@ Converted to totals on 2022-05-03</p>
 
 
     <span class="k">def</span> <span class="nf">pull_check_fwtw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pull checks query service reservoirs</span>
+        <span class="sd">&quot;&quot;&quot;Pull checks query service reservoirs</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            vqip (dict, optional): A VQIP that can be used to limit the volume in </span>
@@ -878,7 +878,7 @@ Converted to totals on 2022-05-03</p>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">service_reservoir_tank</span><span class="o">.</span><span class="n">get_avail</span><span class="p">(</span><span class="n">vqip</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">pull_set_fwtw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pull treated water from service reservoirs</span>
+        <span class="sd">&quot;&quot;&quot;Pull treated water from service reservoirs</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            vqip (dict): a VQIP amount to pull</span>
@@ -893,7 +893,7 @@ Converted to totals on 2022-05-03</p>
         <span class="k">return</span> <span class="n">pulled</span>
 
     <span class="k">def</span> <span class="nf">end_timestep_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update state variables</span>
+        <span class="sd">&quot;&quot;&quot;Update state variables</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">service_reservoir_tank</span><span class="o">.</span><span class="n">end_timestep</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">total_deficit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
@@ -903,7 +903,7 @@ Converted to totals on 2022-05-03</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">unpushed_sludge</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call tank reinit</span>
+        <span class="sd">&quot;&quot;&quot;Call tank reinit</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">service_reservoir_tank</span><span class="o">.</span><span class="n">reinit</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
@@ -1119,7 +1119,7 @@ the node (though I don't think it is used). Defaults to {}.</p></td>
                     <span class="n">service_reservoir_initial_storage</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
                     <span class="n">data_input_dict</span> <span class="o">=</span> <span class="p">{},</span>
                     <span class="o">**</span><span class="n">kwargs</span><span class="p">,):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A freshwater treatment works wrapper for WTW. Contains service reservoirs </span>
+    <span class="sd">&quot;&quot;&quot;A freshwater treatment works wrapper for WTW. Contains service reservoirs </span>
 <span class="sd">    that treated water is released to and pulled from. Cannot allow deficit (thus </span>
 <span class="sd">    any deficit is satisfied by water entering the model &#39;via other means&#39;). </span>
 <span class="sd">    Liquor and solids are sent to sewers</span>
@@ -1222,7 +1222,7 @@ the node (though I don't think it is used). Defaults to {}.</p></td>
 <span class="normal">506</span>
 <span class="normal">507</span>
 <span class="normal">508</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">end_timestep_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update state variables</span>
+    <span class="sd">&quot;&quot;&quot;Update state variables</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">service_reservoir_tank</span><span class="o">.</span><span class="n">end_timestep</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">total_deficit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
@@ -1306,7 +1306,7 @@ the return value (only volume key is used). Defaults to None.</p></td>
 <span class="normal">481</span>
 <span class="normal">482</span>
 <span class="normal">483</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_check_fwtw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pull checks query service reservoirs</span>
+    <span class="sd">&quot;&quot;&quot;Pull checks query service reservoirs</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        vqip (dict, optional): A VQIP that can be used to limit the volume in </span>
@@ -1394,7 +1394,7 @@ the return value (only volume key is used). Defaults to None.</p></td>
 <span class="normal">496</span>
 <span class="normal">497</span>
 <span class="normal">498</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_set_fwtw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pull treated water from service reservoirs</span>
+    <span class="sd">&quot;&quot;&quot;Pull treated water from service reservoirs</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        vqip (dict): a VQIP amount to pull</span>
@@ -1433,7 +1433,7 @@ the return value (only volume key is used). Defaults to None.</p></td>
 <span class="normal">511</span>
 <span class="normal">512</span>
 <span class="normal">513</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Call tank reinit</span>
+    <span class="sd">&quot;&quot;&quot;Call tank reinit</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">service_reservoir_tank</span><span class="o">.</span><span class="n">reinit</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
@@ -1499,7 +1499,7 @@ the return value (only volume key is used). Defaults to None.</p></td>
 <span class="normal">468</span>
 <span class="normal">469</span>
 <span class="normal">470</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">treat_water</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pulls water, aiming to fill service reservoirs, calls WTW treat_current_input, avoids deficit, sends liquor and solids to sewers</span>
+    <span class="sd">&quot;&quot;&quot;Pulls water, aiming to fill service reservoirs, calls WTW treat_current_input, avoids deficit, sends liquor and solids to sewers</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1">#Calculate how much water is needed</span>
     <span class="n">target_throughput</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">service_reservoir_tank</span><span class="o">.</span><span class="n">get_excess</span><span class="p">()</span>
@@ -1712,7 +1712,7 @@ the return value (only volume key is used). Defaults to None.</p></td>
                         <span class="n">process_parameters</span> <span class="o">=</span> <span class="p">{},</span>
                         <span class="n">liquor_multiplier</span> <span class="o">=</span> <span class="p">{},</span>
                         <span class="n">percent_solids</span> <span class="o">=</span> <span class="mf">0.0002</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generic treatment processes that apply temperature a sensitive transform </span>
+        <span class="sd">&quot;&quot;&quot;Generic treatment processes that apply temperature a sensitive transform </span>
 <span class="sd">        of pollutants into liquor and solids (behaviour depends on subclass). Push </span>
 <span class="sd">        requests are stored in the current_input state variable, but treatment must </span>
 <span class="sd">        be triggered with treat_current_input. This treated water is stored in the </span>
@@ -1785,7 +1785,7 @@ the return value (only volume key is used). Defaults to None.</p></td>
         <span class="bp">self</span><span class="o">.</span><span class="n">solids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">get_excess_throughput</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;How much excess treatment capacity is there</span>
+        <span class="sd">&quot;&quot;&quot;How much excess treatment capacity is there</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (float): Amount of volume that can still be treated this timestep</span>
@@ -1795,7 +1795,7 @@ the return value (only volume key is used). Defaults to None.</p></td>
                    <span class="mi">0</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">treat_current_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run treatment processes this timestep, including temperature sensitive </span>
+        <span class="sd">&quot;&quot;&quot;Run treatment processes this timestep, including temperature sensitive </span>
 <span class="sd">        transforms, liquoring, solids</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1">#Treat current input</span>
@@ -2057,7 +2057,7 @@ Defaults to 0.0002.</p></td>
                     <span class="n">process_parameters</span> <span class="o">=</span> <span class="p">{},</span>
                     <span class="n">liquor_multiplier</span> <span class="o">=</span> <span class="p">{},</span>
                     <span class="n">percent_solids</span> <span class="o">=</span> <span class="mf">0.0002</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generic treatment processes that apply temperature a sensitive transform </span>
+    <span class="sd">&quot;&quot;&quot;Generic treatment processes that apply temperature a sensitive transform </span>
 <span class="sd">    of pollutants into liquor and solids (behaviour depends on subclass). Push </span>
 <span class="sd">    requests are stored in the current_input state variable, but treatment must </span>
 <span class="sd">    be triggered with treat_current_input. This treated water is stored in the </span>
@@ -2177,7 +2177,7 @@ Defaults to 0.0002.</p></td>
 <span class="normal">97</span>
 <span class="normal">98</span>
 <span class="normal">99</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_excess_throughput</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;How much excess treatment capacity is there</span>
+    <span class="sd">&quot;&quot;&quot;How much excess treatment capacity is there</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (float): Amount of volume that can still be treated this timestep</span>
@@ -2248,7 +2248,7 @@ transforms, liquoring, solids</p>
 <span class="normal">138</span>
 <span class="normal">139</span>
 <span class="normal">140</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">treat_current_input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run treatment processes this timestep, including temperature sensitive </span>
+    <span class="sd">&quot;&quot;&quot;Run treatment processes this timestep, including temperature sensitive </span>
 <span class="sd">    transforms, liquoring, solids</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1">#Treat current input</span>
@@ -2526,7 +2526,7 @@ transforms, liquoring, solids</p>
                         <span class="n">stormwater_storage_area</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
                         <span class="n">stormwater_storage_elevation</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
                         <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;A wastewater treatment works wrapper for WTW. Contains a temporary </span>
+        <span class="sd">&quot;&quot;&quot;A wastewater treatment works wrapper for WTW. Contains a temporary </span>
 <span class="sd">        stormwater storage tank. Liquor is combined with current_effluent and </span>
 <span class="sd">        re-treated while solids leave the model.</span>
 
@@ -2587,7 +2587,7 @@ transforms, liquoring, solids</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">mass_balance_ds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="k">lambda</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds_vqip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">liquor</span><span class="p">,</span>
                                                           <span class="bp">self</span><span class="o">.</span><span class="n">liquor_</span><span class="p">))</span> <span class="c1">#Change in liquor</span>
     <span class="k">def</span> <span class="nf">calculate_discharge</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Clear stormwater tank if possible, and call treat_current_input. </span>
+        <span class="sd">&quot;&quot;&quot;Clear stormwater tank if possible, and call treat_current_input. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1">#Run WWTW model</span>
 
@@ -2608,7 +2608,7 @@ transforms, liquoring, solids</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">treat_current_input</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">make_discharge</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Discharge treated effluent</span>
+        <span class="sd">&quot;&quot;&quot;Discharge treated effluent</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">push_distributed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">treated</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">treated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
@@ -2617,7 +2617,7 @@ transforms, liquoring, solids</p>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;WWTW couldnt push&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">push_check_sewer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check throughput and stormwater tank capacity</span>
+        <span class="sd">&quot;&quot;&quot;Check throughput and stormwater tank capacity</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            vqip (dict, optional): A VQIP that can be used to limit the volume in </span>
@@ -2640,7 +2640,7 @@ transforms, liquoring, solids</p>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">v_change_vqip</span><span class="p">(</span><span class="n">vqip</span><span class="p">,</span> <span class="n">vol</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">push_set_sewer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Receive water, first try to update current_input, and then stormwater tank</span>
+        <span class="sd">&quot;&quot;&quot;Receive water, first try to update current_input, and then stormwater tank</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            vqip (dict): A VQIP amount to be treated and then stored</span>
@@ -2677,7 +2677,7 @@ transforms, liquoring, solids</p>
             <span class="k">return</span> <span class="n">vqip</span>
 
     <span class="k">def</span> <span class="nf">pull_set_reuse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Enables WWTW to receive pulls of the treated water (i.e., for wastewater </span>
+        <span class="sd">&quot;&quot;&quot;Enables WWTW to receive pulls of the treated water (i.e., for wastewater </span>
 <span class="sd">        reuse or satisfaction of environmental flows). Intended to be called in </span>
 <span class="sd">        between calculate_discharge and make_discharge</span>
 
@@ -2697,7 +2697,7 @@ transforms, liquoring, solids</p>
         <span class="k">return</span> <span class="n">reply</span>
 
     <span class="k">def</span> <span class="nf">pull_check_reuse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pull check available water. Simply returns the previous timestep&#39;s treated </span>
+        <span class="sd">&quot;&quot;&quot;Pull check available water. Simply returns the previous timestep&#39;s treated </span>
 <span class="sd">        throughput. This is of course inaccurate (which may lead to slightly longer </span>
 <span class="sd">        calulcations), but it is much more flexible. This hasn&#39;t been recently tested </span>
 <span class="sd">        so it might be that returning treated would be fine (and more accurate!)</span>
@@ -2714,7 +2714,7 @@ transforms, liquoring, solids</p>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_vqip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">treated</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">end_timestep_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;End timestep function to update state variables</span>
+        <span class="sd">&quot;&quot;&quot;End timestep function to update state variables</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">liquor_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_vqip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">liquor</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">previous_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_vqip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_input</span><span class="p">)</span>
@@ -2890,7 +2890,7 @@ re-treated while solids leave the model.</p>
                     <span class="n">stormwater_storage_area</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
                     <span class="n">stormwater_storage_elevation</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
                     <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A wastewater treatment works wrapper for WTW. Contains a temporary </span>
+    <span class="sd">&quot;&quot;&quot;A wastewater treatment works wrapper for WTW. Contains a temporary </span>
 <span class="sd">    stormwater storage tank. Liquor is combined with current_effluent and </span>
 <span class="sd">    re-treated while solids leave the model.</span>
 
@@ -2992,7 +2992,7 @@ re-treated while solids leave the model.</p>
 <span class="normal">230</span>
 <span class="normal">231</span>
 <span class="normal">232</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calculate_discharge</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear stormwater tank if possible, and call treat_current_input. </span>
+    <span class="sd">&quot;&quot;&quot;Clear stormwater tank if possible, and call treat_current_input. </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1">#Run WWTW model</span>
 
@@ -3041,7 +3041,7 @@ re-treated while solids leave the model.</p>
 <span class="normal">345</span>
 <span class="normal">346</span>
 <span class="normal">347</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">end_timestep_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;End timestep function to update state variables</span>
+    <span class="sd">&quot;&quot;&quot;End timestep function to update state variables</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">liquor_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_vqip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">liquor</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">previous_input</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy_vqip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_input</span><span class="p">)</span>
@@ -3078,7 +3078,7 @@ re-treated while solids leave the model.</p>
 <span class="normal">239</span>
 <span class="normal">240</span>
 <span class="normal">241</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">make_discharge</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Discharge treated effluent</span>
+    <span class="sd">&quot;&quot;&quot;Discharge treated effluent</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">push_distributed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">treated</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">treated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
@@ -3170,7 +3170,7 @@ timestep's treated throughput</p></td>
 <span class="normal">336</span>
 <span class="normal">337</span>
 <span class="normal">338</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_check_reuse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pull check available water. Simply returns the previous timestep&#39;s treated </span>
+    <span class="sd">&quot;&quot;&quot;Pull check available water. Simply returns the previous timestep&#39;s treated </span>
 <span class="sd">    throughput. This is of course inaccurate (which may lead to slightly longer </span>
 <span class="sd">    calulcations), but it is much more flexible. This hasn&#39;t been recently tested </span>
 <span class="sd">    so it might be that returning treated would be fine (and more accurate!)</span>
@@ -3270,7 +3270,7 @@ between calculate_discharge and make_discharge</p>
 <span class="normal">319</span>
 <span class="normal">320</span>
 <span class="normal">321</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_set_reuse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enables WWTW to receive pulls of the treated water (i.e., for wastewater </span>
+    <span class="sd">&quot;&quot;&quot;Enables WWTW to receive pulls of the treated water (i.e., for wastewater </span>
 <span class="sd">    reuse or satisfaction of environmental flows). Intended to be called in </span>
 <span class="sd">    between calculate_discharge and make_discharge</span>
 
@@ -3375,7 +3375,7 @@ the return value (only volume key is used). Defaults to None.</p></td>
 <span class="normal">262</span>
 <span class="normal">263</span>
 <span class="normal">264</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_check_sewer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check throughput and stormwater tank capacity</span>
+    <span class="sd">&quot;&quot;&quot;Check throughput and stormwater tank capacity</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        vqip (dict, optional): A VQIP that can be used to limit the volume in </span>
@@ -3496,7 +3496,7 @@ the return value (only volume key is used). Defaults to None.</p></td>
 <span class="normal">299</span>
 <span class="normal">300</span>
 <span class="normal">301</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_set_sewer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Receive water, first try to update current_input, and then stormwater tank</span>
+    <span class="sd">&quot;&quot;&quot;Receive water, first try to update current_input, and then stormwater tank</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        vqip (dict): A VQIP amount to be treated and then stored</span>
@@ -3590,12 +3590,11 @@ the return value (only volume key is used). Defaults to None.</p></td>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
+      <script src="../assets/javascripts/bundle.39f04ddb.min.js"></script>
       
-    
     
   </body>
 </html>

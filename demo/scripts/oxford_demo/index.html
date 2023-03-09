@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.5.2">
     
     
       
@@ -17,10 +17,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.975780f9.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.9f9400aa.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.2505c338.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.cbb835fc.min.css">
         
       
       
@@ -56,7 +56,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
   
     
     
@@ -1564,7 +1564,7 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="wsimod-model-demonstration-oxford-py">WSIMOD model demonstration - Oxford (.py)<a class="anchor-link" href="#wsimod-model-demonstration-oxford-py">&#182;</a></h1><p>Note - this script can also be opened in interactive Python if you wanted to
+<h1 id="WSIMOD-model-demonstration---Oxford-(.py)">WSIMOD model demonstration - Oxford (.py)<a class="anchor-link" href="#WSIMOD-model-demonstration---Oxford-(.py)">&#182;</a></h1><p>Note - this script can also be opened in interactive Python if you wanted to
 play around. On the GitHub it is in <a href="https://github.com/barneydobson/wsi/blob/main/docs/demo/scripts/oxford_demo.py">docs/demo/scripts</a></p>
 <ol>
 <li><p><a href="#we-will-cover-a-demo-wsimod-case-study">Introduction</a></p>
@@ -1607,12 +1607,12 @@ play around. On the GitHub it is in <a href="https://github.com/barneydobson/wsi
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="we-will-cover-a-demo-wsimod-case-study">We will cover a demo WSIMOD case study<a class="anchor-link" href="#we-will-cover-a-demo-wsimod-case-study">&#182;</a></h2><p>The glamorous town of Oxford will be our demo case study.
+<h2 id="We-will-cover-a-demo-WSIMOD-case-study">We will cover a demo WSIMOD case study<a class="anchor-link" href="#We-will-cover-a-demo-WSIMOD-case-study">&#182;</a></h2><p>The glamorous town of Oxford will be our demo case study.
 Below, we will create these nodes and arcs, orchestrate them into a model, and run simulations.</p>
-<p><img src="./../../images/oxford.svg" alt="alt text"></p>
+<p><img src="./../../images/oxford.svg" alt="alt text" /></p>
 <p>Although GIS is pretty, the schematic below is a more accurate representation of what will be created.
 WSIMOD treats everything as a node or an arc.</p>
-<p><img src="./../../images/schematic.svg" alt="alt text"></p>
+<p><img src="./../../images/schematic.svg" alt="alt text" /></p>
 
 </div>
 </div>
@@ -1624,7 +1624,7 @@ WSIMOD treats everything as a node or an arc.</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="imports-and-forcing-data">Imports and forcing data<a class="anchor-link" href="#imports-and-forcing-data">&#182;</a></h2>
+<h2 id="Imports-and-forcing-data">Imports and forcing data<a class="anchor-link" href="#Imports-and-forcing-data">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -1781,25 +1781,23 @@ print(input_data.sample(10))</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>              site       date     variable     value
-78940  oxford_land 2010-01-13  temperature  3.328571
-38349          ray 2010-07-09     nitrogen  0.009269
-10830       thames 2010-12-01      silicon  0.007597
-43258     evenlode 2012-01-01       sodium  0.022407
-58806     cherwell 2010-09-20    magnesium  0.008829
-61257          ray 2009-06-16    magnesium  0.006271
-22666       thames 2011-06-07     chloride  0.042150
-8640      evenlode 2012-11-22      silicon  0.007533
-53324     cherwell 2011-08-28      calcium  0.103643
-60273     evenlode 2010-10-01    magnesium  0.004414
+<pre>              site       date       variable          value
+12095     cherwell 2010-05-24       fluoride       0.000158
+39103          ray 2012-08-01       nitrogen       0.006221
+49599          ray 2009-06-06      potassium       0.008429
+76192  oxford_land 2010-06-26  precipitation       0.000000
+4370        thames 2009-03-05    temperature       7.766667
+75181       thames 2011-09-14           flow   69724.800000
+63333       thames 2011-02-26      magnesium       0.005043
+70917     cherwell 2011-12-27           flow  130464.000000
+77027  oxford_land 2012-10-08  precipitation       0.001300
+19681     evenlode 2011-03-26       chloride       0.022901
 </pre>
 </div>
 </div>
@@ -1860,9 +1858,7 @@ print(data_input_dict['cherwell'][('boron',pd.to_datetime('2010-11-20'))])</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -1935,9 +1931,7 @@ print(dates[0:10])</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -2021,9 +2015,7 @@ print(constants.POLLUTANTS)
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -2046,7 +2038,7 @@ print(constants.POLLUTANTS)
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="create-nodes">Create nodes<a class="anchor-link" href="#create-nodes">&#182;</a></h2>
+<h2 id="Create-nodes">Create nodes<a class="anchor-link" href="#Create-nodes">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -2256,9 +2248,7 @@ cherwell = Catchment(name = 'cherwell',
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -2281,7 +2271,7 @@ cherwell = Catchment(name = 'cherwell',
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="freshwater-treatment-works">Freshwater treatment works<a class="anchor-link" href="#freshwater-treatment-works">&#182;</a></h3><p>Each type of node uses different parameters (see <a href="./../../../../reference">API reference</a>). 
+<h3 id="Freshwater-treatment-works">Freshwater treatment works<a class="anchor-link" href="#Freshwater-treatment-works">&#182;</a></h3><p>Each type of node uses different parameters (see <a href="./../../../../reference">API reference</a>). 
 Below we create a <a href="./../../../reference-wtw/#wsimod.nodes.wtw.FWTW">freshwater treatment works (FWTW)</a></p>
 
 </div>
@@ -2376,9 +2366,7 @@ print(dir(oxford_fwtw))</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -2444,9 +2432,7 @@ print(oxford_fwtw.service_reservoir_tank.storage)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -2512,9 +2498,7 @@ print(oxford_fwtw.pull_check({'volume' : 10}))</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -2582,9 +2566,7 @@ print(oxford_fwtw.pull_check({'volume' : 10}))</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -2655,9 +2637,7 @@ print(oxford_fwtw.service_reservoir_tank.storage)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -2681,7 +2661,7 @@ print(oxford_fwtw.service_reservoir_tank.storage)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="land">Land<a class="anchor-link" href="#land">&#182;</a></h3><p>We will now create a <a href="./../../../reference-land/#wsimod.nodes.land.Land">land node</a>, 
+<h3 id="Land">Land<a class="anchor-link" href="#Land">&#182;</a></h3><p>We will now create a <a href="./../../../reference-land/#wsimod.nodes.land.Land">land node</a>, 
 it is a bit involved so you might want to skip ahead to <a href="#Residential-demand">demand</a>, 
 or check out the <a href="./../land_demo">land node tutorial</a></p>
 
@@ -2746,9 +2726,7 @@ print(land_inputs[('temperature',pd.to_datetime('2009-10-15'))])</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -3000,9 +2978,7 @@ print(oxford_land.percolation.storage)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -3075,9 +3051,7 @@ print('{0}-{1}'.format('urban',urban_surface.storage))</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -3201,9 +3175,7 @@ print('{0}-{1}'.format('urban',urban_surface.storage))</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -3230,7 +3202,7 @@ urban-{&#39;temperature&#39;: 0.13343969249141666, &#39;silicon&#39;: 0.06999999
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="residential-demand">Residential demand<a class="anchor-link" href="#residential-demand">&#182;</a></h3><p>The <a href="./../../../reference-other/#wsimod.nodes.demand.ResidentialDemand">residential demand</a>
+<h3 id="Residential-demand">Residential demand<a class="anchor-link" href="#Residential-demand">&#182;</a></h3><p>The <a href="./../../../reference-other/#wsimod.nodes.demand.ResidentialDemand">residential demand</a>
 node requires population, per capita demand and a pollutant_load dictionary that defines 
 how much (weight in kg) pollution is generated per person per day.</p>
 
@@ -3312,7 +3284,7 @@ how much (weight in kg) pollution is generated per person per day.</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="reservoir">Reservoir<a class="anchor-link" href="#reservoir">&#182;</a></h3><p>A <a href="./../../../reference-storage/#wsimod.nodes.storage.Reservoir">reservoir node</a> 
+<h3 id="Reservoir">Reservoir<a class="anchor-link" href="#Reservoir">&#182;</a></h3><p>A <a href="./../../../reference-storage/#wsimod.nodes.storage.Reservoir">reservoir node</a> 
 is used to make abstractions from rivers and supply FWTWs</p>
 
 </div>
@@ -3365,7 +3337,7 @@ is used to make abstractions from rivers and supply FWTWs</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="distribution">Distribution<a class="anchor-link" href="#distribution">&#182;</a></h3><p>We use a generic <a href="./../../../reference-nodes/#wsimod.nodes.nodes.Node">Node</a> as a junction to represent the distribution network between the FWTW and households</p>
+<h3 id="Distribution">Distribution<a class="anchor-link" href="#Distribution">&#182;</a></h3><p>We use a generic <a href="./../../../reference-nodes/#wsimod.nodes.nodes.Node">Node</a> as a junction to represent the distribution network between the FWTW and households</p>
 
 </div>
 </div>
@@ -3410,7 +3382,7 @@ distribution = Node(name = 'oxford_distribution')</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="wastewater-treatment-works">Wastewater treatment works<a class="anchor-link" href="#wastewater-treatment-works">&#182;</a></h3><p><a href="./../../../reference-wtw/#wsimod.nodes.wtw.WWTW">Wastewater treatment works (WWTW)</a> 
+<h3 id="Wastewater-treatment-works">Wastewater treatment works<a class="anchor-link" href="#Wastewater-treatment-works">&#182;</a></h3><p><a href="./../../../reference-wtw/#wsimod.nodes.wtw.WWTW">Wastewater treatment works (WWTW)</a> 
 are nodes that can store sewage water temporarily in storm tanks, and reduce the pollution 
 amounts in water before releasing them onwards to rivers.</p>
 
@@ -3463,7 +3435,7 @@ oxford_wwtw = WWTW(stormwater_storage_capacity = 2e4,
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="sewers">Sewers<a class="anchor-link" href="#sewers">&#182;</a></h3><p><a href="./../../../reference-sewer/#wsimod.nodes.sewer.Sewer">Sewer nodes</a> enable water to transition
+<h3 id="Sewers">Sewers<a class="anchor-link" href="#Sewers">&#182;</a></h3><p><a href="./../../../reference-sewer/#wsimod.nodes.sewer.Sewer">Sewer nodes</a> enable water to transition
 between households and WWTWs, and between impervious surfaces and rivers or WWTWs.
 They use a timearea diagram to represent travel time, which assigns a specified percentage
 of water to take a specified duration to pass through the sewer node.</p>
@@ -3522,7 +3494,7 @@ of water to take a specified duration to pass through the sewer node.</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="groundwater">Groundwater<a class="anchor-link" href="#groundwater">&#182;</a></h3><p><a href="./../../../reference-storage/#wsimod.nodes.storage.Groundwater">Groundwater nodes</a> 
+<h3 id="Groundwater">Groundwater<a class="anchor-link" href="#Groundwater">&#182;</a></h3><p><a href="./../../../reference-storage/#wsimod.nodes.storage.Groundwater">Groundwater nodes</a> 
 implement a simple residence time to determine baseflow</p>
 
 </div>
@@ -3576,7 +3548,7 @@ gw = Groundwater(capacity = 3.2e9,
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="create-a-nodelist">Create a nodelist<a class="anchor-link" href="#create-a-nodelist">&#182;</a></h3><p>To keep all the nodes in one place, we put them into a list</p>
+<h3 id="Create-a-nodelist">Create a nodelist<a class="anchor-link" href="#Create-a-nodelist">&#182;</a></h3><p>To keep all the nodes in one place, we put them into a list</p>
 
 </div>
 </div>
@@ -3656,15 +3628,13 @@ print(nodelist)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>[&lt;wsimod.nodes.waste.Waste object at 0x000001D17FEB7700&gt;, &lt;wsimod.nodes.catchment.Catchment object at 0x000001D1768A0D30&gt;, &lt;wsimod.nodes.catchment.Catchment object at 0x000001D17FB9F2B0&gt;, &lt;wsimod.nodes.catchment.Catchment object at 0x000001D1768A29B0&gt;, &lt;wsimod.nodes.catchment.Catchment object at 0x000001D1768A25F0&gt;, &lt;wsimod.nodes.demand.ResidentialDemand object at 0x000001D17FEB6AD0&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000001D1768A3CD0&gt;, &lt;wsimod.nodes.storage.Reservoir object at 0x000001D1768A1450&gt;, &lt;wsimod.nodes.wtw.FWTW object at 0x000001D1768A3580&gt;, &lt;wsimod.nodes.wtw.WWTW object at 0x000001D17FEB7340&gt;, &lt;wsimod.nodes.sewer.Sewer object at 0x000001D1768A02B0&gt;, &lt;wsimod.nodes.land.Land object at 0x000001D17FEB7400&gt;, &lt;wsimod.nodes.storage.Groundwater object at 0x000001D17FEB6D40&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000001D17FEB6530&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000001D17FEB73D0&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000001D17FEB76D0&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000001D17FEB6EC0&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000001D17FEB6E00&gt;]
+<pre>[&lt;wsimod.nodes.waste.Waste object at 0x000002170F9DAFB0&gt;, &lt;wsimod.nodes.catchment.Catchment object at 0x000002170F9D9930&gt;, &lt;wsimod.nodes.catchment.Catchment object at 0x000002170F9DAD40&gt;, &lt;wsimod.nodes.catchment.Catchment object at 0x000002170F9DB5E0&gt;, &lt;wsimod.nodes.catchment.Catchment object at 0x000002170F9DA7A0&gt;, &lt;wsimod.nodes.demand.ResidentialDemand object at 0x0000021705319EA0&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000002170531B4C0&gt;, &lt;wsimod.nodes.storage.Reservoir object at 0x000002170531BB20&gt;, &lt;wsimod.nodes.wtw.FWTW object at 0x000002170F9DB970&gt;, &lt;wsimod.nodes.wtw.WWTW object at 0x00000217053185E0&gt;, &lt;wsimod.nodes.sewer.Sewer object at 0x000002170531A710&gt;, &lt;wsimod.nodes.land.Land object at 0x000002170F9DB520&gt;, &lt;wsimod.nodes.storage.Groundwater object at 0x0000021705319330&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000002170F9D9EA0&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000002170F9DA350&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000002170F9DB490&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000002170F9DAE30&gt;, &lt;wsimod.nodes.nodes.Node object at 0x000002170F9DB190&gt;]
 </pre>
 </div>
 </div>
@@ -3681,7 +3651,7 @@ print(nodelist)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="arcs">Arcs<a class="anchor-link" href="#arcs">&#182;</a></h2><p><a href="./../../../reference-arc/#wsimod.arcs.arcs.Arc">Arcs</a> link nodes.
+<h2 id="Arcs">Arcs<a class="anchor-link" href="#Arcs">&#182;</a></h2><p><a href="./../../../reference-arc/#wsimod.arcs.arcs.Arc">Arcs</a> link nodes.
 An example arc is the link between a FWTW and the distribution node</p>
 
 </div>
@@ -3733,15 +3703,13 @@ print(fwtw_to_distribution)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>&lt;wsimod.arcs.arcs.Arc object at 0x000001D17FEB6CE0&gt;
+<pre>&lt;wsimod.arcs.arcs.Arc object at 0x000002170F9DBF70&gt;
 </pre>
 </div>
 </div>
@@ -3800,9 +3768,7 @@ print(fwtw_to_distribution)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -3869,15 +3835,13 @@ print(fwtw_to_distribution.in_port)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>&lt;wsimod.nodes.wtw.FWTW object at 0x000001D1768A3580&gt;
+<pre>&lt;wsimod.nodes.wtw.FWTW object at 0x000002170F9DB970&gt;
 </pre>
 </div>
 </div>
@@ -3926,15 +3890,13 @@ print(fwtw_to_distribution.out_port)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>&lt;wsimod.nodes.nodes.Node object at 0x000001D1768A3CD0&gt;
+<pre>&lt;wsimod.nodes.nodes.Node object at 0x000002170531B4C0&gt;
 </pre>
 </div>
 </div>
@@ -3995,15 +3957,13 @@ print(oxford_fwtw.out_arcs)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>{&#39;fwtw_to_distribution&#39;: &lt;wsimod.arcs.arcs.Arc object at 0x000001D17FEB6CE0&gt;}
+<pre>{&#39;fwtw_to_distribution&#39;: &lt;wsimod.arcs.arcs.Arc object at 0x000002170F9DBF70&gt;}
 </pre>
 </div>
 </div>
@@ -4052,15 +4012,13 @@ print(distribution.in_arcs)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>{&#39;fwtw_to_distribution&#39;: &lt;wsimod.arcs.arcs.Arc object at 0x000001D17FEB6CE0&gt;}
+<pre>{&#39;fwtw_to_distribution&#39;: &lt;wsimod.arcs.arcs.Arc object at 0x000002170F9DBF70&gt;}
 </pre>
 </div>
 </div>
@@ -4121,9 +4079,7 @@ print(fwtw_to_distribution.send_pull_check({'volume' : 20}))</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -4180,9 +4136,7 @@ print(reply)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -4249,9 +4203,7 @@ print(oxford_fwtw.service_reservoir_tank.storage)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -4320,9 +4272,7 @@ print(fwtw_to_distribution.flow_out)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -4346,7 +4296,7 @@ print(fwtw_to_distribution.flow_out)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="arc-parameters">Arc parameters<a class="anchor-link" href="#arc-parameters">&#182;</a></h2><p>Besides the in/out ports and names, arcs can have a parameter for their capacity, to limit the flow that may pass through it each timestep.
+<h2 id="Arc-parameters">Arc parameters<a class="anchor-link" href="#Arc-parameters">&#182;</a></h2><p>Besides the in/out ports and names, arcs can have a parameter for their capacity, to limit the flow that may pass through it each timestep.
 A typical example would be on river abstractions to a reservoir</p>
 
 </div>
@@ -4459,7 +4409,7 @@ sewer_overflow = Arc(in_port = combined_sewer,
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="create-arcs">Create arcs<a class="anchor-link" href="#create-arcs">&#182;</a></h2><p>Arcs are a bit less interesting than nodes because they generally don't capture complicated physical behaviours.
+<h2 id="Create-arcs">Create arcs<a class="anchor-link" href="#Create-arcs">&#182;</a></h2><p>Arcs are a bit less interesting than nodes because they generally don't capture complicated physical behaviours.
 So we just create all of them below.</p>
 
 </div>
@@ -4722,7 +4672,7 @@ gw_to_mixer = Arc(in_port = gw,
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="mapping">Mapping<a class="anchor-link" href="#mapping">&#182;</a></h2><p>Remember, WSIMOD is an integrated model.
+<h2 id="Mapping">Mapping<a class="anchor-link" href="#Mapping">&#182;</a></h2><p>Remember, WSIMOD is an integrated model.
 Because it covers so many different things, it is very easy to make mistakes.
 Thus it is always good practice to plot your data!</p>
 <p>Below we load the node location data and create arcs from the information in the arclist.</p>
@@ -4835,9 +4785,7 @@ nodes_gdf.plot(color='r',ax=ax, zorder = 10)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[46]:</div>
 
@@ -4849,9 +4797,7 @@ nodes_gdf.plot(color='r',ax=ax, zorder = 10)</div>
 </div>
 
 </div>
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -4880,9 +4826,9 @@ class="
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="orchestration">Orchestration<a class="anchor-link" href="#orchestration">&#182;</a></h2><p>Orchestration is making the simulation happen by calling functions in the nodes.
+<h2 id="Orchestration">Orchestration<a class="anchor-link" href="#Orchestration">&#182;</a></h2><p>Orchestration is making the simulation happen by calling functions in the nodes.
 These functions simulate physical behaviour within the node, and cause pulls/pushes to happen which in turn triggers physical behaviour in other nodes.</p>
-<h3 id="orchestrating-an-individual-timestep">Orchestrating an individual timestep<a class="anchor-link" href="#orchestrating-an-individual-timestep">&#182;</a></h3><p>We will start below by manually orchestrating a single timestep.</p>
+<h3 id="Orchestrating-an-individual-timestep">Orchestrating an individual timestep<a class="anchor-link" href="#Orchestrating-an-individual-timestep">&#182;</a></h3><p>We will start below by manually orchestrating a single timestep.</p>
 <p>We start by setting the date, so that every node knows what forcing data to read for this timestep.</p>
 
 </div>
@@ -4937,9 +4883,7 @@ print(oxford_fwtw.t)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -5008,9 +4952,7 @@ print(farmoor.tank.storage)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -5083,9 +5025,7 @@ print(farmoor.tank.storage)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -5153,15 +5093,13 @@ print(oxford_fwtw.in_arcs)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>{&#39;reservoir_to_fwtw&#39;: &lt;wsimod.arcs.arcs.Arc object at 0x000001D101990D00&gt;}
+<pre>{&#39;reservoir_to_fwtw&#39;: &lt;wsimod.arcs.arcs.Arc object at 0x000002171042D0F0&gt;}
 </pre>
 </div>
 </div>
@@ -5212,9 +5150,7 @@ print(reservoir_to_fwtw.flow_out)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -5282,9 +5218,7 @@ print(fwtw_to_distribution.flow_in)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -5353,9 +5287,7 @@ print(fwtw_to_distribution.flow_in)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -5420,9 +5352,7 @@ print(fwtw_to_distribution.flow_in)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -5574,7 +5504,7 @@ cherwell.route()</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="ending-a-timestep">Ending a timestep<a class="anchor-link" href="#ending-a-timestep">&#182;</a></h2><p>Because mistakes happen, it is essential to carry out mass balance testing.
+<h2 id="Ending-a-timestep">Ending a timestep<a class="anchor-link" href="#Ending-a-timestep">&#182;</a></h2><p>Because mistakes happen, it is essential to carry out mass balance testing.
 Each node has a mass balance function that can be called.
 We see a mass balance violation resulting from the demonstration with the FWTW earlier.</p>
 
@@ -5621,9 +5551,7 @@ for node in nodelist:
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -5701,7 +5629,7 @@ for arc in arclist:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="model-object">Model object<a class="anchor-link" href="#model-object">&#182;</a></h2><p>Of course it would be a massive pain to manually orchestrate every timestep.
+<h2 id="Model-object">Model object<a class="anchor-link" href="#Model-object">&#182;</a></h2><p>Of course it would be a massive pain to manually orchestrate every timestep.
 So instead we store node and arc information in a <a href="./../../../reference-model/#wsimod.orchestration.model.Model">model object</a>
 that will do the orchestration for us.</p>
 <p>Because we have already created the nodes/arcs above, we simply need to add the instantiated lists above.</p>
@@ -5802,15 +5730,13 @@ flows, _, _, _ = my_model.run()</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>100%|██████████████████████████████████████████████████████████████████████████| 1456/1456 [00:08&lt;00:00, 168.62it/s]
+<pre>100%|█████████████████████████████████████████████████████████████████████████████| 1456/1456 [00:08&lt;00:00, 166.70it/s]
 </pre>
 </div>
 </div>
@@ -5874,61 +5800,59 @@ print(flows.sample(10))</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>                          arc           flow       time  temperature  \
-247      fwtw_to_distribution   30000.000000 2009-03-14     0.261834   
-21321       cherwell_to_mixer  220492.800000 2011-12-13     5.314655   
-667      fwtw_to_distribution   30000.000000 2009-04-03     0.801082   
-12956             gw_to_mixer   13293.709002 2010-11-09    13.386081   
-22845              land_to_gw    8902.207167 2012-02-23     6.454873   
-28403  distribution_to_demand   30000.000000 2012-11-14    11.804755   
-4791     cherwell_to_cherwell   73872.000000 2009-10-17    12.414286   
-956    distribution_to_demand   30000.000000 2009-04-17     1.254366   
-28978            garden_to_gw       0.000000 2012-12-11     0.000000   
-12008       reservoir_to_fwtw   30934.213240 2010-09-25    11.406995   
+<pre>                          arc          flow       time  temperature  \
+11909         ray_to_cherwell   15465.60000 2010-09-21    13.700000   
+8835            fwtw_to_sewer     934.21324 2010-04-27     7.987312   
+7759   abstraction_to_farmoor   30934.21324 2010-03-07     6.626767   
+14887            garden_to_gw       0.00000 2011-02-09     0.000000   
+22755         demand_to_sewer   30000.00000 2012-02-19    10.340000   
+9294          demand_to_sewer   30000.00000 2010-05-19    16.627500   
+12955            garden_to_gw       0.00000 2010-11-09     0.000000   
+23499      evenlode_to_thames  122688.00000 2012-03-26    10.328571   
+20118      evenlode_to_thames   39139.20000 2011-10-17    10.714286   
+24025        thames_to_thames  717984.00000 2012-04-20    10.300000   
 
-           silicon   fluoride      chloride      nitrate      sulphate  \
-247       0.047418   0.001060      0.254865     0.078712      0.424326   
-21321  1740.773652  41.062464  22524.181056  1727.724222  21008.851200   
-667       0.100176   0.002887      0.722896     0.207271      1.182623   
-12956     0.113728   0.324937      0.097481     0.032494    113.727858   
-22845     0.119977   0.342792      0.102838     0.034279    119.977092   
-28403     1.956865   0.042311      9.831590     1.715540     14.938379   
-4791    817.530871   8.125920   5646.775680   348.968374   5629.996183   
-956       0.117597   0.004101      1.067228     0.288754      1.696494   
-28978     0.000000   0.000000      0.000000     0.000000      0.000000   
-12008   155.848387   3.373687    812.274922   147.329528   1232.149042   
+           silicon    fluoride      chloride      nitrate      sulphate  \
+11909   131.392644    1.391904   1234.928160    97.506593   1508.514624   
+8835    137.308095    2.910187    655.994166   136.323149   1013.537377   
+7759    171.876857    4.380562    731.159315   201.628004   1238.931680   
+14887     0.000000    0.000000      0.000000     0.000000      0.000000   
+22755   600.000000   12.000000   5400.000000  1800.000000   7500.000000   
+9294    600.000000   12.000000   5400.000000  1800.000000   7500.000000   
+12955     0.000000    0.000000      0.000000     0.000000      0.000000   
+23499   111.772273   14.897829   3451.563977   593.064534   6552.415543   
+20118   251.034356    3.802094   1475.883319   138.785760   2263.643589   
+24025  2291.558762  125.134354  30087.632366  3705.918060  42527.218011   
 
           nitrogen        sodium    potassium       calcium    magnesium  \
-247       0.084223      0.144932     0.028838      1.172124     0.047044   
-21321  2120.869440  16123.777920  3043.025280  22803.932160  1908.593280   
-667       0.216313      0.427791     0.082671      3.148706     0.132828   
-12956     6.498735      0.487405    11.372786    113.727858     9.748102   
-22845     6.855834      0.514188    11.997709    119.977092    10.283751   
-28403     1.857402      6.335158     1.320754     31.552950     1.459564   
-4791    376.747200   4821.730971   743.996571   8430.905829   747.162514   
-956       0.294482      0.645182     0.126946      4.441078     0.194284   
-28978     0.000000      0.000000     0.000000      0.000000     0.000000   
-12008   154.740755    513.069458   104.715785   2562.969352   121.451412   
+11909   103.774176    949.587840   225.797760   1609.968960    88.153920   
+8835    142.248189    411.340035    86.792129   2291.253571   105.441225   
+7759    207.083216    430.884481    87.656490   3336.239061   138.329174   
+14887     0.000000      0.000000     0.000000      0.000000     0.000000   
+22755  1500.000000   6000.000000   900.000000   4500.000000   900.000000   
+9294   1500.000000   6000.000000   900.000000   4500.000000   900.000000   
+12955     0.000000      0.000000     0.000000      0.000000     0.000000   
+23499   609.058286   2171.577600   417.139200  12235.498971   541.579886   
+20118   156.836366   1030.479223   215.265600   4076.627246   195.696000   
+24025  4018.659017  19313.769600  3569.406171  71562.490971  3733.516800   
 
            boron  
-247     0.000409  
-21321  21.058186  
-667     0.001074  
-12956   0.162468  
-22845   0.171396  
-28403   0.014663  
-4791    7.767113  
-956     0.001498  
-28978   0.000000  
-12008   1.247807  
+11909   2.087856  
+8835    1.055513  
+7759    1.192770  
+14887   0.000000  
+22755  15.000000  
+9294   15.000000  
+12955   0.000000  
+23499   6.428851  
+20118   2.517769  
+24025  35.211987  
 </pre>
 </div>
 </div>
@@ -5945,7 +5869,7 @@ print(flows.sample(10))</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="validation-plots">Validation plots<a class="anchor-link" href="#validation-plots">&#182;</a></h2><p>Of course we shouldn't trust a model without proof, and this is doubly true for an integrated model whose errors may easily propagate.</p>
+<h2 id="Validation-plots">Validation plots<a class="anchor-link" href="#Validation-plots">&#182;</a></h2><p>Of course we shouldn't trust a model without proof, and this is doubly true for an integrated model whose errors may easily propagate.</p>
 <p>Thankfully we have rich in-river water quality sampling in Oxford that we can use for validation</p>
 <p>We load and format this data for dates and pollutants that overlap with what we have simulated</p>
 
@@ -6153,9 +6077,7 @@ plt.legend()</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
+<div class="jp-OutputArea-child jp-OutputArea-executeResult">
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[65]:</div>
 
@@ -6163,13 +6085,11 @@ plt.legend()</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>&lt;matplotlib.legend.Legend at 0x1d10152bb50&gt;</pre>
+<pre>&lt;matplotlib.legend.Legend at 0x217112cf460&gt;</pre>
 </div>
 
 </div>
-
 <div class="jp-OutputArea-child">
-
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -6232,12 +6152,11 @@ class="
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.39f04ddb.min.js"></script>
       
-    
     
   </body>
 </html>
