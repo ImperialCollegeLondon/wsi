@@ -46,6 +46,8 @@ and consists of:
 
     4.2. [Customise an arc](./demo/scripts/customise_an_arc.py)
 
+    4.3. [Customise interactions](./demo/scripts/customise_interactions.py)
+
 5. [Component library](component-library.md)
 
 6. [API reference](reference.md)
