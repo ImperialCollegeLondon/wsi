@@ -9,7 +9,7 @@
 #
 # 3. [More realistic example](#more-realistic-example)
 #
-# 4. [What next](#what-next?)
+# 4. [What next](#what-next)
 #
 # %% [markdown]
 # ## Introduction
