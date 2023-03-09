@@ -155,7 +155,7 @@ class Arc(WSIObj):
         """
         volume = vqip['volume']
         #Apply pipe capacity
-        excess_in = self.get_excess(direction = 'pull', vqip = vqip)['volume']
+        excess_in = self.get_excess(direction = 'pull', vqip = vqip, tag = tag)['volume']
         not_pulled = max(volume - excess_in, 0)
         volume -= not_pulled
         
@@ -167,7 +167,7 @@ class Arc(WSIObj):
         vqip['volume'] = volume
         
         #Make pull
-        vqip = self.in_port.pull_set(vqip)
+        vqip = self.in_port.pull_set(vqip, tag)
         
         #Update mass balance
         self.flow_in += vqip['volume']
