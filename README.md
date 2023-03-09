@@ -1,7 +1,7 @@
 # Welcome to WSIMOD
 
 WSIMOD stands for the Water Systems Integrated Modelling framework.
-
+ 
 The terrestrial water cycle is a highly interconnected system where the 
 movement of water is affected by physical and human processes. Thus, 
 environmental models may become inaccurate if they do not provide a complete 
@@ -87,16 +87,34 @@ python setup.py develop easy_install "wsimod[demos]"
 
 ## How to cite WSIMOD
 
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.04996/status.svg)](https://doi.org/10.21105/joss.04996)
+
+If you would like to use our software, please cite it using the following:
+
+ > Dobson, B., Liu, L. and Mijic, A. (2023) 
+ ‘Water Systems Integrated Modelling framework, WSIMOD: A Python package for integrated modelling of water quality and quantity across the water cycle’, 
+ Journal of Open Source Software. 
+ The Open Journal,
+ 8(83),
+ p. 4996. 
+ doi: 10.21105/joss.04996.
+
+
+Find the bibtex citation below:
+
 ```
-@article{Dobson2023,
-  doi = {10.21105/joss.04996},
-  url = {https://doi.org/10.21105/joss.04996},
-  year  = {2023},
-  publisher = {The Open Journal},
-  author = {Dobson, Barnaby; Liu, Leyang; Mijic, Ana},
-  title = {Water Systems Integrated Modelling framework, WSIMOD: A Python package for integrated modelling of water quality and quantity across the water cycle},
-  journal = {The Journal of Open Source Software}
-}
+@article{Dobson2023, 
+        doi = {10.21105/joss.04996}, 
+        url = {https://doi.org/10.21105/joss.04996}, 
+        year = {2023}, 
+        publisher = {The Open Journal}, 
+        volume = {8}, 
+        number = {83}, 
+        pages = {4996}, 
+        author = {Barnaby Dobson and Leyang Liu and Ana Mijic}, 
+        title = {Water Systems Integrated Modelling framework, WSIMOD: A Python package for integrated modelling of water quality and quantity across the water cycle},
+        journal = {Journal of Open Source Software} 
+        }
 ```
 
 ## Acknowledgements
