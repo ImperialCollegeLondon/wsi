@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.5.2">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
     
     
       
@@ -17,10 +17,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.9f9400aa.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.975780f9.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.cbb835fc.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.2505c338.min.css">
         
       
       
@@ -56,7 +56,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
   
     
     
@@ -804,7 +804,7 @@ Converted to totals on 2022-05-03</p>
                         <span class="n">data_input_dict</span> <span class="o">=</span> <span class="p">{},</span>
                         <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1">#TODO why isn&#39;t this using a ResidenceTank?</span>
-        <span class="sd">&quot;&quot;&quot;A storage with a residence time for groundwater. Can also infiltrate to sewers.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A storage with a residence time for groundwater. Can also infiltrate to sewers.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            residence_time (float, optional): Residence time (see nodes.py/</span>
@@ -853,7 +853,7 @@ Converted to totals on 2022-05-03</p>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">distribute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Calculate outflow with residence time and send to Nodes or Rivers</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate outflow with residence time and send to Nodes or Rivers</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">avail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">get_avail</span><span class="p">()[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">residence_time</span>
         <span class="n">to_send</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">pull_storage</span><span class="p">({</span><span class="s1">&#39;volume&#39;</span> <span class="p">:</span> <span class="n">avail</span><span class="p">})</span>
@@ -864,7 +864,7 @@ Converted to totals on 2022-05-03</p>
 
 
     <span class="k">def</span> <span class="nf">infiltrate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Calculate amount of water available for infiltration and send to sewers</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate amount of water available for infiltration and send to sewers</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1">#Calculate infiltration</span>
         <span class="n">avail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">get_avail</span><span class="p">()[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span>
@@ -1063,7 +1063,7 @@ the node (though I don't think it is used). Defaults to {}.</p></td>
                     <span class="n">data_input_dict</span> <span class="o">=</span> <span class="p">{},</span>
                     <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="c1">#TODO why isn&#39;t this using a ResidenceTank?</span>
-    <span class="sd">&quot;&quot;&quot;A storage with a residence time for groundwater. Can also infiltrate to sewers.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A storage with a residence time for groundwater. Can also infiltrate to sewers.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        residence_time (float, optional): Residence time (see nodes.py/</span>
@@ -1141,7 +1141,7 @@ the node (though I don't think it is used). Defaults to {}.</p></td>
 <span class="normal">178</span>
 <span class="normal">179</span>
 <span class="normal">180</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">distribute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Calculate outflow with residence time and send to Nodes or Rivers</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate outflow with residence time and send to Nodes or Rivers</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">avail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">get_avail</span><span class="p">()[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">residence_time</span>
     <span class="n">to_send</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">pull_storage</span><span class="p">({</span><span class="s1">&#39;volume&#39;</span> <span class="p">:</span> <span class="n">avail</span><span class="p">})</span>
@@ -1187,7 +1187,7 @@ the node (though I don't think it is used). Defaults to {}.</p></td>
 <span class="normal">196</span>
 <span class="normal">197</span>
 <span class="normal">198</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">infiltrate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Calculate amount of water available for infiltration and send to sewers</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate amount of water available for infiltration and send to sewers</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1">#Calculate infiltration</span>
     <span class="n">avail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">get_avail</span><span class="p">()[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span>
@@ -1409,7 +1409,7 @@ the node (though I don't think it is used). Defaults to {}.</p></td>
                         <span class="n">timearea</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span> <span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
                         <span class="n">data_input_dict</span> <span class="o">=</span> <span class="p">{},</span>
                         <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Alternate formulation of Groundwater that uses a timearea property to </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Alternate formulation of Groundwater that uses a timearea property to </span>
 <span class="sd">        enable more nonlinear time behaviour of baseflow routing. Uses the QueueTank </span>
 <span class="sd">        or DecayQueueTank (see nodes.py/Tank subclassses)</span>
 
@@ -1473,7 +1473,7 @@ the node (though I don't think it is used). Defaults to {}.</p></td>
                                              <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">push_set_timearea</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Push setting that enables timearea behaviour, (see __init__ for </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Push setting that enables timearea behaviour, (see __init__ for </span>
 <span class="sd">        description).Used to receive flow that is assumed to occur widely </span>
 <span class="sd">        across some kind of catchment.</span>
 
@@ -1495,7 +1495,7 @@ the node (though I don't think it is used). Defaults to {}.</p></td>
         <span class="k">return</span> <span class="n">reply</span>
 
     <span class="k">def</span> <span class="nf">distribute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Update internal arc, push active_storage onwards, update tank</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update internal arc, push active_storage onwards, update tank</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">internal_arc</span><span class="o">.</span><span class="n">update_queue</span><span class="p">(</span><span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;push&#39;</span><span class="p">)</span>
 
@@ -1516,7 +1516,7 @@ the node (though I don't think it is used). Defaults to {}.</p></td>
         <span class="k">pass</span>
 
     <span class="k">def</span> <span class="nf">pull_check_active</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;A pull check that returns the active storage</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A pull check that returns the active storage</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            vqip (dict, optional): A VQIP that can be used to limit the volume in </span>
@@ -1533,7 +1533,7 @@ the node (though I don't think it is used). Defaults to {}.</p></td>
 
     <span class="k">def</span> <span class="nf">pull_set_active</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
         <span class="c1">#TODO - this is quite weird behaviour, and inconsistent with pull_check_active</span>
-        <span class="sd">&quot;&quot;&quot;Pull proportionately from both the active storage and the queue. Adjudging </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pull proportionately from both the active storage and the queue. Adjudging </span>
 <span class="sd">        groundwater abstractions to not be particularly sensitive to the within </span>
 <span class="sd">        catchment travel time.</span>
 
@@ -1743,7 +1743,7 @@ the node (though I don't think it is used). Defaults to {}.</p></td>
                     <span class="n">timearea</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span> <span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
                     <span class="n">data_input_dict</span> <span class="o">=</span> <span class="p">{},</span>
                     <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Alternate formulation of Groundwater that uses a timearea property to </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Alternate formulation of Groundwater that uses a timearea property to </span>
 <span class="sd">    enable more nonlinear time behaviour of baseflow routing. Uses the QueueTank </span>
 <span class="sd">    or DecayQueueTank (see nodes.py/Tank subclassses)</span>
 
@@ -1844,7 +1844,7 @@ the node (though I don't think it is used). Defaults to {}.</p></td>
 <span class="normal">306</span>
 <span class="normal">307</span>
 <span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">distribute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Update internal arc, push active_storage onwards, update tank</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update internal arc, push active_storage onwards, update tank</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">internal_arc</span><span class="o">.</span><span class="n">update_queue</span><span class="p">(</span><span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;push&#39;</span><span class="p">)</span>
 
@@ -1940,7 +1940,7 @@ the return value (only volume key is used). Defaults to None.</p></td>
 <span class="normal">325</span>
 <span class="normal">326</span>
 <span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_check_active</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A pull check that returns the active storage</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A pull check that returns the active storage</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        vqip (dict, optional): A VQIP that can be used to limit the volume in </span>
@@ -2062,7 +2062,7 @@ catchment travel time.</p>
 <span class="normal">368</span>
 <span class="normal">369</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_set_active</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
     <span class="c1">#TODO - this is quite weird behaviour, and inconsistent with pull_check_active</span>
-    <span class="sd">&quot;&quot;&quot;Pull proportionately from both the active storage and the queue. Adjudging </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pull proportionately from both the active storage and the queue. Adjudging </span>
 <span class="sd">    groundwater abstractions to not be particularly sensitive to the within </span>
 <span class="sd">    catchment travel time.</span>
 
@@ -2188,7 +2188,7 @@ across some kind of catchment.</p>
 <span class="normal">288</span>
 <span class="normal">289</span>
 <span class="normal">290</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_set_timearea</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Push setting that enables timearea behaviour, (see __init__ for </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Push setting that enables timearea behaviour, (see __init__ for </span>
 <span class="sd">    description).Used to receive flow that is assumed to occur widely </span>
 <span class="sd">    across some kind of catchment.</span>
 
@@ -2274,7 +2274,7 @@ across some kind of catchment.</p>
 <span class="normal">838</span>
 <span class="normal">839</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">Reservoir</span><span class="p">(</span><span class="n">Storage</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Storage node that makes abstractions by calling pull_distributed</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Storage node that makes abstractions by calling pull_distributed</span>
 
 <span class="sd">        Functions intended to call in orchestration:</span>
 <span class="sd">            make_abstractions (before any river routing)</span>
@@ -2297,7 +2297,7 @@ across some kind of catchment.</p>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">make_abstractions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Pulls water and updates tanks</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pulls water and updates tanks</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pull_distributed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">get_excess</span><span class="p">())</span>
         <span class="n">spill</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">push_storage</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
@@ -2382,7 +2382,7 @@ across some kind of catchment.</p>
 <span class="normal">828</span>
 <span class="normal">829</span>
 <span class="normal">830</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Storage node that makes abstractions by calling pull_distributed</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Storage node that makes abstractions by calling pull_distributed</span>
 
 <span class="sd">    Functions intended to call in orchestration:</span>
 <span class="sd">        make_abstractions (before any river routing)</span>
@@ -2433,7 +2433,7 @@ across some kind of catchment.</p>
 <span class="normal">837</span>
 <span class="normal">838</span>
 <span class="normal">839</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">make_abstractions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Pulls water and updates tanks</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pulls water and updates tanks</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">reply</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pull_distributed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">get_excess</span><span class="p">())</span>
     <span class="n">spill</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">push_storage</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
@@ -2903,7 +2903,7 @@ across some kind of catchment.</p>
                         <span class="n">damp</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
                         <span class="n">mrf</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
                         <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Node that contains extensive in-river biochemical processes</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Node that contains extensive in-river biochemical processes</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            depth (float, optional): River tank depth. Defaults to 2.</span>
@@ -3049,7 +3049,7 @@ across some kind of catchment.</p>
     <span class="c1">#     return self.extract_vqip(vqip, vqip_)</span>
 
     <span class="k">def</span> <span class="nf">pull_check_river</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Check amount of water that can be pulled from river tank and upstream</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check amount of water that can be pulled from river tank and upstream</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            vqip (dict, optional): Maximum water required (only &#39;volume&#39; is used) </span>
@@ -3078,7 +3078,7 @@ across some kind of catchment.</p>
         <span class="k">return</span> <span class="n">avail</span>
 
     <span class="k">def</span> <span class="nf">pull_set_river</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Pull from river tank and upstream, acknowledging MRF with pull_check</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pull from river tank and upstream, acknowledging MRF with pull_check</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            vqip (dict): A VQIP amount to pull (only volume key used)</span>
@@ -3102,7 +3102,7 @@ across some kind of catchment.</p>
 
 
     <span class="k">def</span> <span class="nf">push_set_river</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Push to river tank, currently forced.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Push to river tank, currently forced.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            vqip (dict): A VQIP amount to push</span>
@@ -3114,12 +3114,12 @@ across some kind of catchment.</p>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">update_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Recalculate depth</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Recalculate depth</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">current_depth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">area</span>
 
     <span class="k">def</span> <span class="nf">get_din_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get total dissolved inorganic nitrogen from tank storage</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get total dissolved inorganic nitrogen from tank storage</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            (float): total din</span>
@@ -3127,7 +3127,7 @@ across some kind of catchment.</p>
         <span class="k">return</span> <span class="nb">sum</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">din_components</span><span class="p">])</span> <span class="c1">#TODO + self.tank.storage[&#39;nitrite&#39;] but nitrite might not be modelled... need some ways to address this</span>
 
     <span class="k">def</span> <span class="nf">biochemical_processes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Runs all biochemical processes and updates pollutant amounts</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Runs all biochemical processes and updates pollutant amounts</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            in_ (dict): A VQIP amount that represents total gain in pollutant amounts</span>
@@ -3265,7 +3265,7 @@ across some kind of catchment.</p>
         <span class="k">return</span> <span class="n">in_</span><span class="p">,</span> <span class="n">out_</span>
 
     <span class="k">def</span> <span class="nf">get_riverrc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Get river outflow coefficient (i.e., how much water leaves the tank in this </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get river outflow coefficient (i.e., how much water leaves the tank in this </span>
 <span class="sd">        timestep)</span>
 
 <span class="sd">        Returns:</span>
@@ -3291,7 +3291,7 @@ across some kind of catchment.</p>
             <span class="bp">self</span><span class="o">.</span><span class="n">bio_out</span> <span class="o">=</span> <span class="n">out_</span>
 
     <span class="k">def</span> <span class="nf">distribute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Run biochemical processes, track mass balance, and distribute water</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run biochemical processes, track mass balance, and distribute water</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># self.calculate_discharge()</span>
         <span class="c1">#Get outflow</span>
@@ -3309,7 +3309,7 @@ across some kind of catchment.</p>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_depth</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">river_tank</span><span class="o">.</span><span class="n">storage</span>
 
     <span class="k">def</span> <span class="nf">end_timestep_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Update state variables</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update state variables</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">end_timestep</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bio_in</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
@@ -3603,7 +3603,7 @@ can limit pulls made to the river. Defaults to 0.</p></td>
                     <span class="n">damp</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
                     <span class="n">mrf</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
                     <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Node that contains extensive in-river biochemical processes</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Node that contains extensive in-river biochemical processes</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        depth (float, optional): River tank depth. Defaults to 2.</span>
@@ -3915,7 +3915,7 @@ can limit pulls made to the river. Defaults to 0.</p></td>
 <span class="normal">753</span>
 <span class="normal">754</span>
 <span class="normal">755</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">biochemical_processes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Runs all biochemical processes and updates pollutant amounts</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Runs all biochemical processes and updates pollutant amounts</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        in_ (dict): A VQIP amount that represents total gain in pollutant amounts</span>
@@ -4084,7 +4084,7 @@ can limit pulls made to the river. Defaults to 0.</p></td>
 <span class="normal">791</span>
 <span class="normal">792</span>
 <span class="normal">793</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">distribute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Run biochemical processes, track mass balance, and distribute water</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run biochemical processes, track mass balance, and distribute water</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># self.calculate_discharge()</span>
     <span class="c1">#Get outflow</span>
@@ -4122,7 +4122,7 @@ can limit pulls made to the river. Defaults to 0.</p></td>
 <span class="normal">804</span>
 <span class="normal">805</span>
 <span class="normal">806</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">end_timestep_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Update state variables</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update state variables</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">end_timestep</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">bio_in</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
@@ -4174,7 +4174,7 @@ can limit pulls made to the river. Defaults to 0.</p></td>
 <span class="normal">615</span>
 <span class="normal">616</span>
 <span class="normal">617</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_din_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get total dissolved inorganic nitrogen from tank storage</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get total dissolved inorganic nitrogen from tank storage</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        (float): total din</span>
@@ -4237,7 +4237,7 @@ timestep)</p>
 <span class="normal">770</span>
 <span class="normal">771</span>
 <span class="normal">772</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_riverrc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Get river outflow coefficient (i.e., how much water leaves the tank in this </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get river outflow coefficient (i.e., how much water leaves the tank in this </span>
 <span class="sd">    timestep)</span>
 
 <span class="sd">    Returns:</span>
@@ -4344,7 +4344,7 @@ timestep)</p>
 <span class="normal">566</span>
 <span class="normal">567</span>
 <span class="normal">568</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_check_river</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Check amount of water that can be pulled from river tank and upstream</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check amount of water that can be pulled from river tank and upstream</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        vqip (dict, optional): Maximum water required (only &#39;volume&#39; is used) </span>
@@ -4457,7 +4457,7 @@ timestep)</p>
 <span class="normal">589</span>
 <span class="normal">590</span>
 <span class="normal">591</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_set_river</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Pull from river tank and upstream, acknowledging MRF with pull_check</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Pull from river tank and upstream, acknowledging MRF with pull_check</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        vqip (dict): A VQIP amount to pull (only volume key used)</span>
@@ -4553,7 +4553,7 @@ timestep)</p>
 <span class="normal">602</span>
 <span class="normal">603</span>
 <span class="normal">604</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_set_river</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Push to river tank, currently forced.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Push to river tank, currently forced.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        vqip (dict): A VQIP amount to push</span>
@@ -4589,7 +4589,7 @@ timestep)</p>
 <span class="normal">607</span>
 <span class="normal">608</span>
 <span class="normal">609</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">update_depth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Recalculate depth</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Recalculate depth</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">current_depth</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">area</span>
 </code></pre></div></td></tr></table></div>
@@ -4755,7 +4755,7 @@ timestep)</p>
 <span class="normal">969</span>
 <span class="normal">970</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">RiverReservoir</span><span class="p">(</span><span class="n">Reservoir</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environmental_flow</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;A reservoir with a natural river inflow, includes an environmental </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A reservoir with a natural river inflow, includes an environmental </span>
 <span class="sd">        downstream flow to satisfy</span>
 
 <span class="sd">        Args:</span>
@@ -4807,7 +4807,7 @@ timestep)</p>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">=</span> <span class="s1">&#39;Reservoir&#39;</span>
 
     <span class="k">def</span> <span class="nf">push_set_river_reservoir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Receive water</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Receive water</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            vqip (dict): A VQIP amount to be received</span>
@@ -4834,7 +4834,7 @@ timestep)</p>
         <span class="k">return</span> <span class="n">reply</span>
 
     <span class="k">def</span> <span class="nf">push_check_river_reservoir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;A push check to receive water, assumes spill may occur and checks </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A push check to receive water, assumes spill may occur and checks </span>
 <span class="sd">        downstream capacity</span>
 
 <span class="sd">        Args:</span>
@@ -4861,7 +4861,7 @@ timestep)</p>
 
 
     <span class="k">def</span> <span class="nf">satisfy_environmental</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Satisfy environmental flow downstream</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Satisfy environmental flow downstream</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1">#Calculate how much environmental flow is yet to satisfy </span>
         <span class="c1"># #(some may have been already if pull-and-take abstractions have taken place)</span>
@@ -4878,7 +4878,7 @@ timestep)</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">total_environmental_satisfied</span> <span class="o">+=</span> <span class="n">environmental</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">end_timestep_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Udpate state varibles</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Udpate state varibles</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">end_timestep</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">total_environmental_satisfied</span> <span class="o">=</span> <span class="mi">0</span>
@@ -5026,7 +5026,7 @@ Defaults to 0.</p></td>
 <span class="normal">891</span>
 <span class="normal">892</span>
 <span class="normal">893</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">environmental_flow</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A reservoir with a natural river inflow, includes an environmental </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A reservoir with a natural river inflow, includes an environmental </span>
 <span class="sd">    downstream flow to satisfy</span>
 
 <span class="sd">    Args:</span>
@@ -5103,7 +5103,7 @@ Defaults to 0.</p></td>
 <span class="normal">968</span>
 <span class="normal">969</span>
 <span class="normal">970</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">end_timestep_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Udpate state varibles</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Udpate state varibles</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">end_timestep</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">total_environmental_satisfied</span> <span class="o">=</span> <span class="mi">0</span>
@@ -5198,7 +5198,7 @@ the return value (only volume key is used). Defaults to None.</p></td>
 <span class="normal">944</span>
 <span class="normal">945</span>
 <span class="normal">946</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_check_river_reservoir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A push check to receive water, assumes spill may occur and checks </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A push check to receive water, assumes spill may occur and checks </span>
 <span class="sd">    downstream capacity</span>
 
 <span class="sd">    Args:</span>
@@ -5312,7 +5312,7 @@ the return value (only volume key is used). Defaults to None.</p></td>
 <span class="normal">918</span>
 <span class="normal">919</span>
 <span class="normal">920</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_set_river_reservoir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Receive water</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Receive water</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        vqip (dict): A VQIP amount to be received</span>
@@ -5375,7 +5375,7 @@ the return value (only volume key is used). Defaults to None.</p></td>
 <span class="normal">962</span>
 <span class="normal">963</span>
 <span class="normal">964</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">satisfy_environmental</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Satisfy environmental flow downstream</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Satisfy environmental flow downstream</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1">#Calculate how much environmental flow is yet to satisfy </span>
     <span class="c1"># #(some may have been already if pull-and-take abstractions have taken place)</span>
@@ -5534,7 +5534,7 @@ the return value (only volume key is used). Defaults to None.</p></td>
                         <span class="n">initial_storage</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
                         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
                         <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;A Node wrapper for a Tank or DecayTank</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A Node wrapper for a Tank or DecayTank</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            name (str): node name</span>
@@ -5583,7 +5583,7 @@ the return value (only volume key is used). Defaults to None.</p></td>
         <span class="bp">self</span><span class="o">.</span><span class="n">mass_balance_ds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="k">lambda</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">ds</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">push_set_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;A node wrapper for the tank push_storage</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A node wrapper for the tank push_storage</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            vqip (dict): A VQIP amount to push to the tank</span>
@@ -5598,7 +5598,7 @@ the return value (only volume key is used). Defaults to None.</p></td>
         <span class="k">return</span> <span class="n">reply</span>
 
     <span class="k">def</span> <span class="nf">distribute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Optional function that discharges all tank storage with push_distributed</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Optional function that discharges all tank storage with push_distributed</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1">#Distribute any active storage</span>
@@ -5609,18 +5609,18 @@ the return value (only volume key is used). Defaults to None.</p></td>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Storage unable to push&#39;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_percent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Function that returns the volume in the storage tank</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Function that returns the volume in the storage tank</span>
 <span class="sd">        expressed as a percent of capacity</span>
 <span class="sd">        &quot;&quot;&quot;</span>        
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">capacity</span>
 
     <span class="k">def</span> <span class="nf">end_timestep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Update tank states</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update tank states</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">end_timestep</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Call tank reinit</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Call tank reinit</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># TODO Automate this better</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">reinit</span><span class="p">()</span>
@@ -5799,7 +5799,7 @@ the return value (only volume key is used). Defaults to None.</p></td>
                     <span class="n">initial_storage</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
                     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
                     <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A Node wrapper for a Tank or DecayTank</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A Node wrapper for a Tank or DecayTank</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        name (str): node name</span>
@@ -5878,7 +5878,7 @@ the return value (only volume key is used). Defaults to None.</p></td>
 <span class="normal">93</span>
 <span class="normal">94</span>
 <span class="normal">95</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">distribute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Optional function that discharges all tank storage with push_distributed</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Optional function that discharges all tank storage with push_distributed</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1">#Distribute any active storage</span>
@@ -5913,7 +5913,7 @@ the return value (only volume key is used). Defaults to None.</p></td>
 <span class="normal">104</span>
 <span class="normal">105</span>
 <span class="normal">106</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">end_timestep</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Update tank states</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Update tank states</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">end_timestep</span><span class="p">()</span>
 </code></pre></div></td></tr></table></div>
@@ -5944,7 +5944,7 @@ expressed as a percent of capacity</p>
 <span class="normal"> 99</span>
 <span class="normal">100</span>
 <span class="normal">101</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_percent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Function that returns the volume in the storage tank</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function that returns the volume in the storage tank</span>
 <span class="sd">    expressed as a percent of capacity</span>
 <span class="sd">    &quot;&quot;&quot;</span>        
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">capacity</span>
@@ -6026,7 +6026,7 @@ expressed as a percent of capacity</p>
 <span class="normal">82</span>
 <span class="normal">83</span>
 <span class="normal">84</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">push_set_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A node wrapper for the tank push_storage</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A node wrapper for the tank push_storage</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        vqip (dict): A VQIP amount to push to the tank</span>
@@ -6068,7 +6068,7 @@ expressed as a percent of capacity</p>
 <span class="normal">112</span>
 <span class="normal">113</span>
 <span class="normal">114</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Call tank reinit</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Call tank reinit</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># TODO Automate this better</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">tank</span><span class="o">.</span><span class="n">reinit</span><span class="p">()</span>
@@ -6133,11 +6133,12 @@ expressed as a percent of capacity</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.39f04ddb.min.js"></script>
+      <script src="../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
       
+    
     
   </body>
 </html>

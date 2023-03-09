@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.5.2">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
     
     
       
@@ -17,10 +17,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.9f9400aa.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.975780f9.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.cbb835fc.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.2505c338.min.css">
         
       
       
@@ -56,7 +56,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
   
     
     
@@ -1460,7 +1460,7 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="Customise-interactions-(.py)">Customise interactions (.py)<a class="anchor-link" href="#Customise-interactions-(.py)">&#182;</a></h1><p>Note - this script can also be opened in interactive Python if you wanted to
+<h1 id="customise-interactions-py">Customise interactions (.py)<a class="anchor-link" href="#customise-interactions-py">&#182;</a></h1><p>Note - this script can also be opened in interactive Python if you wanted to
 play around. On the GitHub it is in <a href="https://github.com/barneydobson/wsi/blob/main/docs/demo/scripts/customise_interactions.py">docs/demo/scripts</a></p>
 <ol>
 <li><p><a href="#introduction">Introduction</a></p>
@@ -1469,7 +1469,7 @@ play around. On the GitHub it is in <a href="https://github.com/barneydobson/wsi
 </li>
 <li><p><a href="#more-realistic-example">More realistic example</a></p>
 </li>
-<li><p><a href="#what-next?">What next</a></p>
+<li><p><a href="#what-next">What next</a></p>
 </li>
 </ol>
 
@@ -1483,7 +1483,7 @@ play around. On the GitHub it is in <a href="https://github.com/barneydobson/wsi
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">&#182;</a></h2><p>In this tutorial we will demonstrate how to customise interactions between
+<h2 id="introduction">Introduction<a class="anchor-link" href="#introduction">&#182;</a></h2><p>In this tutorial we will demonstrate how to customise interactions between
 nodes using the handler functionality. Custom handlers are to be used when
 you want for a node to respond differently to one type of node than another.
 An example of custom handlers can be found in the 
@@ -1538,16 +1538,18 @@ print(my_sewer.push_set_handler)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>{&#39;Demand&#39;: &lt;bound method Sewer.push_set_land of &lt;wsimod.nodes.sewer.Sewer object at 0x000002114BB68100&gt;&gt;,
- &#39;Land&#39;: &lt;bound method Sewer.push_set_land of &lt;wsimod.nodes.sewer.Sewer object at 0x000002114BB68100&gt;&gt;,
- &#39;Sewer&#39;: &lt;bound method Sewer.push_set_sewer of &lt;wsimod.nodes.sewer.Sewer object at 0x000002114BB68100&gt;&gt;,
- &#39;default&#39;: &lt;bound method Sewer.push_set_sewer of &lt;wsimod.nodes.sewer.Sewer object at 0x000002114BB68100&gt;&gt;}
+<pre>{&#39;Demand&#39;: &lt;bound method Sewer.push_set_land of &lt;wsimod.nodes.sewer.Sewer object at 0x00000145896CF0A0&gt;&gt;,
+ &#39;Land&#39;: &lt;bound method Sewer.push_set_land of &lt;wsimod.nodes.sewer.Sewer object at 0x00000145896CF0A0&gt;&gt;,
+ &#39;Sewer&#39;: &lt;bound method Sewer.push_set_sewer of &lt;wsimod.nodes.sewer.Sewer object at 0x00000145896CF0A0&gt;&gt;,
+ &#39;default&#39;: &lt;bound method Sewer.push_set_sewer of &lt;wsimod.nodes.sewer.Sewer object at 0x00000145896CF0A0&gt;&gt;}
 </pre>
 </div>
 </div>
@@ -1591,7 +1593,7 @@ tag is used.</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Illustration">Illustration<a class="anchor-link" href="#Illustration">&#182;</a></h2><p>We can illustrate the behaviour of handlers by creating a simple model.</p>
+<h2 id="illustration">Illustration<a class="anchor-link" href="#illustration">&#182;</a></h2><p>We can illustrate the behaviour of handlers by creating a simple model.</p>
 
 </div>
 </div>
@@ -1667,13 +1669,15 @@ print(my_dist.push_check_handler)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>{&#39;default&#39;: &lt;bound method Node.push_check_deny of &lt;wsimod.nodes.distribution.Distribution object at 0x000002114BBA3D30&gt;&gt;}
+<pre>{&#39;default&#39;: &lt;bound method Node.push_check_deny of &lt;wsimod.nodes.distribution.Distribution object at 0x0000014589660F70&gt;&gt;}
 </pre>
 </div>
 </div>
@@ -1740,7 +1744,9 @@ print(reply)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -1817,14 +1823,16 @@ print(my_dist.push_check_handler)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>{&#39;Node&#39;: &lt;function custom_handler_function at 0x000002114BB35A20&gt;,
- &#39;default&#39;: &lt;bound method Node.push_check_deny of &lt;wsimod.nodes.distribution.Distribution object at 0x000002114BBA3D30&gt;&gt;}
+<pre>{&#39;Node&#39;: &lt;function custom_handler_function at 0x00000145896A79A0&gt;,
+ &#39;default&#39;: &lt;bound method Node.push_check_deny of &lt;wsimod.nodes.distribution.Distribution object at 0x0000014589660F70&gt;&gt;}
 </pre>
 </div>
 </div>
@@ -1889,7 +1897,9 @@ print(reply)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -1963,7 +1973,9 @@ print(reply)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -2000,7 +2012,7 @@ Attempted push check to deny
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="More-realistic-example">More realistic example<a class="anchor-link" href="#More-realistic-example">&#182;</a></h2><p>A typical kind of behaviour we might be keen to introduce through handlers would be customising how the <code>Reservoir</code> object
+<h2 id="more-realistic-example">More realistic example<a class="anchor-link" href="#more-realistic-example">&#182;</a></h2><p>A typical kind of behaviour we might be keen to introduce through handlers would be customising how the <code>Reservoir</code> object
 responds to pulls. By default, any node can pull from a reservoir:</p>
 
 </div>
@@ -2051,13 +2063,15 @@ print(my_reservoir.pull_set_handler)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>{&#39;default&#39;: &lt;function Storage.__init__.&lt;locals&gt;.&lt;lambda&gt; at 0x000002114BBDA290&gt;}
+<pre>{&#39;default&#39;: &lt;function Storage.__init__.&lt;locals&gt;.&lt;lambda&gt; at 0x00000145897B43A0&gt;}
 </pre>
 </div>
 </div>
@@ -2133,7 +2147,9 @@ print('Remaining storage: {0}'.format(my_reservoir.tank.storage))</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -2177,7 +2193,7 @@ we may want to customise its handlers such that only the <code>FWTW</code> objec
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="1.-Create-a-test-model">1. Create a test model<a class="anchor-link" href="#1.-Create-a-test-model">&#182;</a></h3><p>We will create two nodes that pull water, a <a href="https://barneydobson.github.io/wsi/reference-wtw/#wsimod.nodes.wtw.FWTW"><code>FWTW</code></a> 
+<h3 id="1-create-a-test-model">1. Create a test model<a class="anchor-link" href="#1-create-a-test-model">&#182;</a></h3><p>We will create two nodes that pull water, a <a href="https://barneydobson.github.io/wsi/reference-wtw/#wsimod.nodes.wtw.FWTW"><code>FWTW</code></a> 
 and a <a href="https://barneydobson.github.io/wsi/reference-other/#wsimod.nodes.demand.Demand"><code>Demand</code></a>. And link them both to
 <code>my_reservoir</code>. Under the default behaviour of a <code>Reservoir</code>, it can be pulled from both of these node types, but we may decide
 that the water is not clean enough to go straight to <code>Demand</code>, and thus wish to customise the handler. (Of course we could more
@@ -2328,7 +2344,9 @@ print('New service reservoir storage: {0}'.format(my_fwtw.service_reservoir_tank
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -2419,7 +2437,9 @@ print('Water supplied to demand: {0}'.format(my_demand.total_received))</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -2460,7 +2480,7 @@ water from <code>my_reservoir</code>. Now we will update <code>my_reservoir</cod
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="2.-Update-reservoir-handlers">2. Update reservoir handlers<a class="anchor-link" href="#2.-Update-reservoir-handlers">&#182;</a></h3><p>This is a reasonably simple procedure, as we illustrated <a href="#illustration">above</a>.</p>
+<h3 id="2-update-reservoir-handlers">2. Update reservoir handlers<a class="anchor-link" href="#2-update-reservoir-handlers">&#182;</a></h3><p>This is a reasonably simple procedure, as we illustrated <a href="#illustration">above</a>.</p>
 
 </div>
 </div>
@@ -2530,23 +2550,25 @@ print('Overwritten set handler: {0}'.format(my_reservoir.pull_check_handler))</d
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
 <pre>(&#34;Original set handler: {&#39;default&#39;: &lt;function &#34;
- &#39;Storage.__init__.&lt;locals&gt;.&lt;lambda&gt; at 0x000002114BBDA290&gt;}&#39;)
+ &#39;Storage.__init__.&lt;locals&gt;.&lt;lambda&gt; at 0x00000145897B43A0&gt;}&#39;)
 (&#34;Original check handler: {&#39;default&#39;: &lt;bound method Tank.get_avail of &#34;
- &#39;&lt;wsimod.nodes.nodes.Tank object at 0x000002114BBA3910&gt;&gt;}&#39;)
+ &#39;&lt;wsimod.nodes.nodes.Tank object at 0x00000145897A9A20&gt;&gt;}&#39;)
 (&#34;Overwritten set handler: {&#39;default&#39;: &lt;bound method Node.pull_set_deny of &#34;
- &#34;&lt;wsimod.nodes.storage.Reservoir object at 0x000002114BBA3AC0&gt;&gt;, &#39;FWTW&#39;: &#34;
- &#39;&lt;function Storage.__init__.&lt;locals&gt;.&lt;lambda&gt; at 0x000002114BBDA290&gt;}&#39;)
+ &#34;&lt;wsimod.nodes.storage.Reservoir object at 0x00000145896CF700&gt;&gt;, &#39;FWTW&#39;: &#34;
+ &#39;&lt;function Storage.__init__.&lt;locals&gt;.&lt;lambda&gt; at 0x00000145897B43A0&gt;}&#39;)
 (&#34;Overwritten set handler: {&#39;default&#39;: &lt;bound method Node.pull_check_deny of &#34;
- &#34;&lt;wsimod.nodes.storage.Reservoir object at 0x000002114BBA3AC0&gt;&gt;, &#39;FWTW&#39;: &#34;
+ &#34;&lt;wsimod.nodes.storage.Reservoir object at 0x00000145896CF700&gt;&gt;, &#39;FWTW&#39;: &#34;
  &#39;&lt;bound method Tank.get_avail of &lt;wsimod.nodes.nodes.Tank object at &#39;
- &#39;0x000002114BBA3910&gt;&gt;}&#39;)
+ &#39;0x00000145897A9A20&gt;&gt;}&#39;)
 </pre>
 </div>
 </div>
@@ -2632,7 +2654,9 @@ print('Water supplied to demand: {0}'.format(my_demand.total_received))</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -2732,7 +2756,9 @@ print('New service reservoir storage: {0}'.format(my_fwtw.service_reservoir_tank
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -2775,7 +2801,7 @@ Attempted pull set from deny
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="3.-Update-my_fwtw-to-pull-with-'FWTW'-tag">3. Update <code>my_fwtw</code> to pull with <code>'FWTW'</code> tag<a class="anchor-link" href="#3.-Update-my_fwtw-to-pull-with-'FWTW'-tag">&#182;</a></h3><p>Now we need to ensure that <code>my_fwtw</code> includes the <code>'FWTW'</code> tag when it pulls from the reservoir.
+<h3 id="3-update-my_fwtw-to-pull-with-fwtw-tag">3. Update <code>my_fwtw</code> to pull with <code>'FWTW'</code> tag<a class="anchor-link" href="#3-update-my_fwtw-to-pull-with-fwtw-tag">&#182;</a></h3><p>Now we need to ensure that <code>my_fwtw</code> includes the <code>'FWTW'</code> tag when it pulls from the reservoir.
 By inspecting the documentation, we see that <code>FWTW</code> pulls water in the 
 <a href="https://barneydobson.github.io/wsi/reference-wtw/#wsimod.nodes.wtw.FWTW.treat_water"><code>treat_water</code></a> 
 function using the 
@@ -2903,7 +2929,9 @@ print('New service reservoir storage: {0}'.format(my_fwtw.service_reservoir_tank
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -2945,7 +2973,7 @@ nowhere for sludge to go
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="What-next?">What next?<a class="anchor-link" href="#What-next?">&#182;</a></h2><p>Surely you are an expert at WSIMOD by now! Why not check our 
+<h2 id="what-next">What next?<a class="anchor-link" href="#what-next">&#182;</a></h2><p>Surely you are an expert at WSIMOD by now! Why not check our 
 <a href="https://github.com/barneydobson/wsi/blob/main/docs/CONTRIBUTING.md">contribution guidelines</a>!</p>
 
 </div>
@@ -2992,11 +3020,12 @@ nowhere for sludge to go
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.39f04ddb.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
       
+    
     
   </body>
 </html>

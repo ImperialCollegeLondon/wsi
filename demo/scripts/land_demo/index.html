@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.5.2">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
     
     
       
@@ -17,10 +17,10 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.9f9400aa.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.975780f9.min.css">
       
         
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.cbb835fc.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.2505c338.min.css">
         
       
       
@@ -56,7 +56,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
   
     
     
@@ -1460,7 +1460,7 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="Land-nodes---hydrology-and-agriculture-(.py)">Land nodes - hydrology and agriculture (.py)<a class="anchor-link" href="#Land-nodes---hydrology-and-agriculture-(.py)">&#182;</a></h1><p>Note - this script can also be opened in interactive Python if you wanted to
+<h1 id="land-nodes-hydrology-and-agriculture-py">Land nodes - hydrology and agriculture (.py)<a class="anchor-link" href="#land-nodes-hydrology-and-agriculture-py">&#182;</a></h1><p>Note - this script can also be opened in interactive Python if you wanted to
 play around. On the GitHub it is in <a href="https://github.com/barneydobson/wsi/blob/main/docs/demo/scripts/land_demo.py">docs/demo/scripts</a></p>
 <ol>
 <li><p><a href="#introduction">Introduction</a></p>
@@ -1488,7 +1488,7 @@ play around. On the GitHub it is in <a href="https://github.com/barneydobson/wsi
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Introduction">Introduction<a class="anchor-link" href="#Introduction">&#182;</a></h2><p>A land node is the object that interfaces with other WSIMOD nodes.
+<h2 id="introduction">Introduction<a class="anchor-link" href="#introduction">&#182;</a></h2><p>A land node is the object that interfaces with other WSIMOD nodes.
 Each land node can have one or more surfaces.
 Each surface can be parameterised differently or follow different equations,
 similar to the hyrological response unit concept in hydrological models.</p>
@@ -1506,7 +1506,7 @@ all work.</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Imports-and-forcing-data">Imports and forcing data<a class="anchor-link" href="#Imports-and-forcing-data">&#182;</a></h2>
+<h2 id="imports-and-forcing-data">Imports and forcing data<a class="anchor-link" href="#imports-and-forcing-data">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -1657,23 +1657,25 @@ print(input_data.sample(10))</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>           site       date     variable          value
-58695  cherwell 2010-06-01    magnesium       0.007857
-24219  cherwell 2011-09-12      nitrate       0.004013
-33470       ray 2013-02-08     sulphate       0.041297
-70961  cherwell 2012-02-09         flow  189216.000000
-67990       ray 2011-12-12        boron       0.000120
-7660   evenlode 2010-03-18      silicon       0.003384
-1242   cherwell 2012-07-27  temperature      17.200000
-21407       ray 2011-12-21     chloride       0.095410
-9484        ray 2011-03-21      silicon       0.002975
-62759    thames 2009-08-01    magnesium       0.005037
+<pre>           site       date   variable         value
+36765  evenlode 2010-03-03   nitrogen      0.006180
+63199    thames 2010-10-15  magnesium      0.005000
+32867       ray 2011-06-16   sulphate      0.102803
+68671    thames 2009-10-28      boron      0.000069
+70371  cherwell 2010-06-29       flow  80092.800000
+50462       ray 2011-10-17  potassium      0.020200
+55777       ray 2010-05-26    calcium      0.114700
+50749       ray 2012-07-30  potassium      0.006600
+51362    thames 2010-04-09  potassium      0.002486
+26383       ray 2009-08-25    nitrate      0.008503
 </pre>
 </div>
 </div>
@@ -1745,7 +1747,9 @@ print(land_inputs[('temperature',example_date)])</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -1817,7 +1821,9 @@ print(constants.POLLUTANTS)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -1840,7 +1846,7 @@ print(constants.POLLUTANTS)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Basic-surface">Basic surface<a class="anchor-link" href="#Basic-surface">&#182;</a></h2>
+<h2 id="basic-surface">Basic surface<a class="anchor-link" href="#basic-surface">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -1955,13 +1961,15 @@ land = Land(name = 'my_land',
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>&lt;wsimod.nodes.land.Surface object at 0x00000202D02078E0&gt;
+<pre>&lt;wsimod.nodes.land.Surface object at 0x0000025307F93AF0&gt;
 </pre>
 </div>
 </div>
@@ -2020,13 +2028,15 @@ land = Land(name = 'my_land',
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>&lt;wsimod.nodes.land.Surface object at 0x00000202D02078E0&gt;
+<pre>&lt;wsimod.nodes.land.Surface object at 0x0000025307F93AF0&gt;
 </pre>
 </div>
 </div>
@@ -2087,7 +2097,9 @@ print(land.get_surface('my_surface').pollutant_load)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -2153,7 +2165,9 @@ print(land.get_surface('my_surface').pollutant_load)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -2266,7 +2280,9 @@ land.run()</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -2378,7 +2394,9 @@ print(land.get_surface('my_surface').storage)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -2444,7 +2462,9 @@ despite there being rainfall!</p>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -2519,13 +2539,15 @@ print(land.get_surface('my_surface').outflows)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>[&lt;bound method Surface.simple_deposition of &lt;wsimod.nodes.land.Surface object at 0x00000202D02078E0&gt;&gt;]
+<pre>[&lt;bound method Surface.simple_deposition of &lt;wsimod.nodes.land.Surface object at 0x0000025307F93AF0&gt;&gt;]
 []
 []
 </pre>
@@ -2557,7 +2579,7 @@ hydrological processes!</p>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Pervious-surface">Pervious surface<a class="anchor-link" href="#Pervious-surface">&#182;</a></h2>
+<h2 id="pervious-surface">Pervious surface<a class="anchor-link" href="#pervious-surface">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -2691,15 +2713,17 @@ print(land.get_surface('my_surface').outflows)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>[&lt;bound method Surface.simple_deposition of &lt;wsimod.nodes.land.PerviousSurface object at 0x00000202D0207700&gt;&gt;, &lt;bound method PerviousSurface.ihacres of &lt;wsimod.nodes.land.PerviousSurface object at 0x00000202D0207700&gt;&gt;]
-[&lt;bound method PerviousSurface.calculate_soil_temperature of &lt;wsimod.nodes.land.PerviousSurface object at 0x00000202D0207700&gt;&gt;]
-[&lt;bound method PerviousSurface.route of &lt;wsimod.nodes.land.PerviousSurface object at 0x00000202D0207700&gt;&gt;]
+<pre>[&lt;bound method Surface.simple_deposition of &lt;wsimod.nodes.land.PerviousSurface object at 0x0000025307F92E30&gt;&gt;, &lt;bound method PerviousSurface.ihacres of &lt;wsimod.nodes.land.PerviousSurface object at 0x0000025307F92E30&gt;&gt;]
+[&lt;bound method PerviousSurface.calculate_soil_temperature of &lt;wsimod.nodes.land.PerviousSurface object at 0x0000025307F92E30&gt;&gt;]
+[&lt;bound method PerviousSurface.route of &lt;wsimod.nodes.land.PerviousSurface object at 0x0000025307F92E30&gt;&gt;]
 </pre>
 </div>
 </div>
@@ -2765,7 +2789,9 @@ print(land.get_surface('my_surface').storage)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -2836,7 +2862,9 @@ print(land.surface_runoff.storage)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -2951,7 +2979,9 @@ specified amount (the field capacity) for flows to be generated.</p>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -3017,7 +3047,9 @@ specified amount (the field capacity) for flows to be generated.</p>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -3087,7 +3119,9 @@ print(land.surface_runoff.storage)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -3167,7 +3201,9 @@ print(land.surface_runoff.storage)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -3192,7 +3228,7 @@ print(land.surface_runoff.storage)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Connecting-land-nodes-in-a-model">Connecting land nodes in a model<a class="anchor-link" href="#Connecting-land-nodes-in-a-model">&#182;</a></h2><p>As mentioned, the land node expects to be able to discharge to <a href="./../../../reference-storage/#wsimod.nodes.storage.Groundwater">groundwater</a>,
+<h2 id="connecting-land-nodes-in-a-model">Connecting land nodes in a model<a class="anchor-link" href="#connecting-land-nodes-in-a-model">&#182;</a></h2><p>As mentioned, the land node expects to be able to discharge to <a href="./../../../reference-storage/#wsimod.nodes.storage.Groundwater">groundwater</a>,
 and rivers (where a river could be the 
 <a href="./../../../reference-storage/#wsimod.nodes.storage.River">River node</a> 
 or just a generic <a href="./../../../reference-nodes/#wsimod.nodes.nodes.Node">Node</a>).
@@ -3354,7 +3390,9 @@ print(land.surface_runoff.storage)</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -3379,7 +3417,7 @@ print(land.surface_runoff.storage)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Model-object">Model object<a class="anchor-link" href="#Model-object">&#182;</a></h3><p>We can put these nodes and arcs into the <a href="./../../../reference-model/#wsimod.orchestration.model.Model">Model object</a> 
+<h3 id="model-object">Model object<a class="anchor-link" href="#model-object">&#182;</a></h3><p>We can put these nodes and arcs into the <a href="./../../../reference-model/#wsimod.orchestration.model.Model">Model object</a> 
 to have a functioning hydrological model.</p>
 <p>We start by creating a model object.</p>
 
@@ -3603,13 +3641,15 @@ to empty to give a clean start for the model.</p>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>100%|████████████████████████████████████████████████████████████████████████████| 1456/1456 [00:01&lt;00:00, 1323.80it/s]
+<pre>100%|████████████████████████████████████████████████████████████████████████████| 1456/1456 [00:00&lt;00:00, 1825.28it/s]
 </pre>
 </div>
 </div>
@@ -3676,7 +3716,9 @@ flows.groupby('arc').get_group('outflow').set_index('time').phosphate.plot(ax=ax
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+
+<div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[33]:</div>
 
@@ -3688,7 +3730,9 @@ flows.groupby('arc').get_group('outflow').set_index('time').phosphate.plot(ax=ax
 </div>
 
 </div>
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -3717,7 +3761,7 @@ class="
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Growing-surface">Growing surface<a class="anchor-link" href="#Growing-surface">&#182;</a></h2><p>Hydrology is nice, but anyone using WSIMOD probably isn't interested in 
+<h2 id="growing-surface">Growing surface<a class="anchor-link" href="#growing-surface">&#182;</a></h2><p>Hydrology is nice, but anyone using WSIMOD probably isn't interested in 
 hydrology only! The GrowingSurface adds a lot of sophisticated behaviour for
 agriculture and water quality.</p>
 <p>Our GrowingSurface needs a bit more data than other surfaces, for fertiliser,
@@ -3783,7 +3827,9 @@ print(surface_input_data[('nhx-manure',example_date.to_period('M'))])</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -3985,13 +4031,15 @@ But has also added a range of other functions related to deposition.</p>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>[&lt;bound method GrowingSurface.calc_crop_cover of &lt;wsimod.nodes.land.GrowingSurface object at 0x00000202D23B3E20&gt;&gt;, &lt;bound method Surface.atmospheric_deposition of &lt;wsimod.nodes.land.GrowingSurface object at 0x00000202D23B3E20&gt;&gt;, &lt;bound method Surface.precipitation_deposition of &lt;wsimod.nodes.land.GrowingSurface object at 0x00000202D23B3E20&gt;&gt;, &lt;bound method PerviousSurface.ihacres of &lt;wsimod.nodes.land.GrowingSurface object at 0x00000202D23B3E20&gt;&gt;, &lt;bound method GrowingSurface.fertiliser of &lt;wsimod.nodes.land.GrowingSurface object at 0x00000202D23B3E20&gt;&gt;, &lt;bound method GrowingSurface.manure of &lt;wsimod.nodes.land.GrowingSurface object at 0x00000202D23B3E20&gt;&gt;]
+<pre>[&lt;bound method GrowingSurface.calc_crop_cover of &lt;wsimod.nodes.land.GrowingSurface object at 0x0000025309D6D4E0&gt;&gt;, &lt;bound method Surface.atmospheric_deposition of &lt;wsimod.nodes.land.GrowingSurface object at 0x0000025309D6D4E0&gt;&gt;, &lt;bound method Surface.precipitation_deposition of &lt;wsimod.nodes.land.GrowingSurface object at 0x0000025309D6D4E0&gt;&gt;, &lt;bound method PerviousSurface.ihacres of &lt;wsimod.nodes.land.GrowingSurface object at 0x0000025309D6D4E0&gt;&gt;, &lt;bound method GrowingSurface.fertiliser of &lt;wsimod.nodes.land.GrowingSurface object at 0x0000025309D6D4E0&gt;&gt;, &lt;bound method GrowingSurface.manure of &lt;wsimod.nodes.land.GrowingSurface object at 0x0000025309D6D4E0&gt;&gt;]
 </pre>
 </div>
 </div>
@@ -4050,13 +4098,15 @@ But has also added a range of other functions related to deposition.</p>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>[&lt;bound method PerviousSurface.calculate_soil_temperature of &lt;wsimod.nodes.land.GrowingSurface object at 0x00000202D23B3E20&gt;&gt;, &lt;bound method GrowingSurface.calc_temperature_dependence_factor of &lt;wsimod.nodes.land.GrowingSurface object at 0x00000202D23B3E20&gt;&gt;, &lt;bound method GrowingSurface.calc_soil_moisture_dependence_factor of &lt;wsimod.nodes.land.GrowingSurface object at 0x00000202D23B3E20&gt;&gt;, &lt;bound method GrowingSurface.soil_pool_transformation of &lt;wsimod.nodes.land.GrowingSurface object at 0x00000202D23B3E20&gt;&gt;, &lt;bound method GrowingSurface.calc_crop_uptake of &lt;wsimod.nodes.land.GrowingSurface object at 0x00000202D23B3E20&gt;&gt;, &lt;bound method GrowingSurface.erosion of &lt;wsimod.nodes.land.GrowingSurface object at 0x00000202D23B3E20&gt;&gt;, &lt;bound method GrowingSurface.denitrification of &lt;wsimod.nodes.land.GrowingSurface object at 0x00000202D23B3E20&gt;&gt;, &lt;bound method GrowingSurface.adsorption of &lt;wsimod.nodes.land.GrowingSurface object at 0x00000202D23B3E20&gt;&gt;]
+<pre>[&lt;bound method PerviousSurface.calculate_soil_temperature of &lt;wsimod.nodes.land.GrowingSurface object at 0x0000025309D6D4E0&gt;&gt;, &lt;bound method GrowingSurface.calc_temperature_dependence_factor of &lt;wsimod.nodes.land.GrowingSurface object at 0x0000025309D6D4E0&gt;&gt;, &lt;bound method GrowingSurface.calc_soil_moisture_dependence_factor of &lt;wsimod.nodes.land.GrowingSurface object at 0x0000025309D6D4E0&gt;&gt;, &lt;bound method GrowingSurface.soil_pool_transformation of &lt;wsimod.nodes.land.GrowingSurface object at 0x0000025309D6D4E0&gt;&gt;, &lt;bound method GrowingSurface.calc_crop_uptake of &lt;wsimod.nodes.land.GrowingSurface object at 0x0000025309D6D4E0&gt;&gt;, &lt;bound method GrowingSurface.erosion of &lt;wsimod.nodes.land.GrowingSurface object at 0x0000025309D6D4E0&gt;&gt;, &lt;bound method GrowingSurface.denitrification of &lt;wsimod.nodes.land.GrowingSurface object at 0x0000025309D6D4E0&gt;&gt;, &lt;bound method GrowingSurface.adsorption of &lt;wsimod.nodes.land.GrowingSurface object at 0x0000025309D6D4E0&gt;&gt;]
 </pre>
 </div>
 </div>
@@ -4149,13 +4199,15 @@ results = my_model.run()</div>
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>100%|█████████████████████████████████████████████████████████████████████████████| 1456/1456 [00:02&lt;00:00, 692.47it/s]
+<pre>100%|█████████████████████████████████████████████████████████████████████████████| 1456/1456 [00:01&lt;00:00, 867.41it/s]
 </pre>
 </div>
 </div>
@@ -4223,7 +4275,9 @@ flows.groupby('arc').get_group('outflow').set_index('time').phosphate.plot(ax=ax
 
 
 <div class="jp-OutputArea jp-Cell-outputArea">
-<div class="jp-OutputArea-child jp-OutputArea-executeResult">
+
+<div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[40]:</div>
 
@@ -4235,7 +4289,9 @@ flows.groupby('arc').get_group('outflow').set_index('time').phosphate.plot(ax=ax
 </div>
 
 </div>
+
 <div class="jp-OutputArea-child">
+
     
     <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 
@@ -4315,11 +4371,12 @@ GrowingSurface, and are not solely dependent on the hydrology.</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "search": "../../../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.39f04ddb.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
       
+    
     
   </body>
 </html>

@@ -9,7 +9,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.5.2">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-8.5.10">
     
     
       
@@ -17,10 +17,10 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.9f9400aa.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.975780f9.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.cbb835fc.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.2505c338.min.css">
         
       
       
@@ -56,7 +56,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="None" data-md-color-accent="None">
   
     
     
@@ -435,111 +435,111 @@ components, their assumptions and required input data on this page.</p>
 <table>
 <thead>
 <tr>
-<th style="text-align: left;">Component</th>
-<th style="text-align: left;">Assumptions</th>
-<th style="text-align: left;">Data</th>
+<th align="left">Component</th>
+<th align="left">Assumptions</th>
+<th align="left">Data</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><a href="./../reference-other/#wsimod.nodes.catchment.Catchment"><code>Catchment</code></a></td>
-<td style="text-align: left;">- Flows from <code>Catchment</code> nodes are simply read from data, thus assumed to be unresponsive to wider water cycle changes.</td>
-<td style="text-align: left;">- Flow data in the <code>data_input_dict</code> at the model timestep. <em>Units</em>: cubic metres/timestep<br> - Values for each variable defined in <code>constants.POLLUTANTS</code> also stored in <code>data_input_dict</code> at the model timestep. <em>Units</em>: kg/m3/timestep (additive pollutants)</td>
+<td align="left"><a href="./../reference-other/#wsimod.nodes.catchment.Catchment"><code>Catchment</code></a></td>
+<td align="left">- Flows from <code>Catchment</code> nodes are simply read from data, thus assumed to be unresponsive to wider water cycle changes.</td>
+<td align="left">- Flow data in the <code>data_input_dict</code> at the model timestep. <em>Units</em>: cubic metres/timestep<br> - Values for each variable defined in <code>constants.POLLUTANTS</code> also stored in <code>data_input_dict</code> at the model timestep. <em>Units</em>: kg/m3/timestep (additive pollutants)</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="./../reference-other/#wsimod.nodes.distribution.Distribution"><code>Distribution</code></a></td>
-<td style="text-align: left;">- No distribution processes yet represented, this class is just for conveyance.</td>
-<td style="text-align: left;">- None</td>
+<td align="left"><a href="./../reference-other/#wsimod.nodes.distribution.Distribution"><code>Distribution</code></a></td>
+<td align="left">- No distribution processes yet represented, this class is just for conveyance.</td>
+<td align="left">- None</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="./../reference-wtw/#wsimod.nodes.wtw.FWTW"><code>FWTW</code></a></td>
-<td style="text-align: left;">- See <code>wtw.py/WTW</code> for treatment.<br> - Stores treated water in a service reservoir tank, with a single tank per <code>FWTW</code> node.<br> - Aims to satisfy a throughput that would top up the service reservoirs until full.<br> - Currently, will not allow a deficit, thus introducing water from 'other measures' if pulls cannot fulfil demand. Behaviour under a deficit should be determined and validated before introducing.</td>
-<td style="text-align: left;">- See <code>wtw.py/WTW</code> for treatment.<br> - Service reservoir tank <code>capacity</code>, <code>area</code>, and <code>datum</code>. <em>Units</em>: cubic metres, squared metres, metres</td>
+<td align="left"><a href="./../reference-wtw/#wsimod.nodes.wtw.FWTW"><code>FWTW</code></a></td>
+<td align="left">- See <code>wtw.py/WTW</code> for treatment.<br> - Stores treated water in a service reservoir tank, with a single tank per <code>FWTW</code> node.<br> - Aims to satisfy a throughput that would top up the service reservoirs until full.<br> - Currently, will not allow a deficit, thus introducing water from 'other measures' if pulls cannot fulfil demand. Behaviour under a deficit should be determined and validated before introducing.</td>
+<td align="left">- See <code>wtw.py/WTW</code> for treatment.<br> - Service reservoir tank <code>capacity</code>, <code>area</code>, and <code>datum</code>. <em>Units</em>: cubic metres, squared metres, metres</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="./../reference-storage/#wsimod.nodes.storage.Groundwater"><code>Groundwater</code></a></td>
-<td style="text-align: left;">- Conceptualises groundwater as a tank.<br> - Baseflow is generated following a residence-time method.<br> - Baseflow is sent to <code>storage.py/River</code>, <code>nodes.py/Node</code> or <code>waste.py/Waste</code> nodes.<br> - Infiltration to <code>sewer.py/Sewer</code> nodes occurs when the storage in the tank is greater than a specified threshold, at a rate proportional to the sqrt of volume above the threshold. (Note, this behaviour is <strong>not validated</strong> and a high uncertainty process in general)<br> - If <code>decays</code> are provided to model water quality transformations, see <code>core.py/DecayObj</code>.</td>
-<td style="text-align: left;">- Groundwater tank <code>capacity</code>, <code>area</code>, and <code>datum</code>. <em>Units</em>: cubic metres, squared metres, metres<br> - Infiltration behaviour determined by an <code>infiltration_threshold</code> and <code>infiltration_pct</code>. <em>Units</em>: proportion of capacity<br> - Optional dictionary of decays with pollutants as keys and decay parameters (a constant and a temperature sensitivity exponent) as values. <em>Units</em>: -</td>
+<td align="left"><a href="./../reference-storage/#wsimod.nodes.storage.Groundwater"><code>Groundwater</code></a></td>
+<td align="left">- Conceptualises groundwater as a tank.<br> - Baseflow is generated following a residence-time method.<br> - Baseflow is sent to <code>storage.py/River</code>, <code>nodes.py/Node</code> or <code>waste.py/Waste</code> nodes.<br> - Infiltration to <code>sewer.py/Sewer</code> nodes occurs when the storage in the tank is greater than a specified threshold, at a rate proportional to the sqrt of volume above the threshold. (Note, this behaviour is <strong>not validated</strong> and a high uncertainty process in general)<br> - If <code>decays</code> are provided to model water quality transformations, see <code>core.py/DecayObj</code>.</td>
+<td align="left">- Groundwater tank <code>capacity</code>, <code>area</code>, and <code>datum</code>. <em>Units</em>: cubic metres, squared metres, metres<br> - Infiltration behaviour determined by an <code>infiltration_threshold</code> and <code>infiltration_pct</code>. <em>Units</em>: proportion of capacity<br> - Optional dictionary of decays with pollutants as keys and decay parameters (a constant and a temperature sensitivity exponent) as values. <em>Units</em>: -</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="./../reference-land/#wsimod.nodes.land.GrowingSurface"><code>GrowingSurface</code></a></td>
-<td style="text-align: left;">- In the soil water module, crop stages and crop coefficients control the evapotranspiration.<br> - Fertiliser and manure application are the major source of soil nutrients, which are added into soil nutrient pools, including dissovled inorganic, dissolved organic, fast and humus for both nitrogen and phosphorus.<br> - Nutrient transformation processes in soil are simulated, including fluxes between the soil nutrient pools, denitrification for nitrogen, adsorption/desorption for phosphorus. These processes are affected by temperature and soil moisture.<br> - Crop uptake of nutrients are simulated based on crop stages, which is different for spring-sown and autumn-sown crops.<br> - Soil erosion from the growing surface is simulated as one of the major sources of suspended solids in rivers, which is mainly affected by rainfall energy and crop/ground cover. Phosphorus will also be eroded along with the soil particles, in both adsorbed inorganic and humus form.</td>
-<td style="text-align: left;">- <code>data_input_dict</code> can contain a variety of pollutant deposition data. <code>srp-fertiliser</code> describes phosphate. <code>noy-fertiliser</code> describes nitrogen as nitrates. <code>nhx-fertiliser</code> describes nitrogen as ammonia. <code>srp/noy/ nhx-manure</code> can also be used to specify manure application. <em>Units</em>: kg/m2/timestep (data is read at a monthly timestep)<br> - Rooting depth. <em>Units</em>: m<br> - Evapotranspiration depletion factor. <em>Units</em>:<br> - Sowing day, harvest day and crop calendars. <em>Units</em>: day number in Julian calendar<br> - Crop factor. <em>Units</em>:<br> - Initial storage for solid pollutants. <em>Units</em>: kg</td>
+<td align="left"><a href="./../reference-land/#wsimod.nodes.land.GrowingSurface"><code>GrowingSurface</code></a></td>
+<td align="left">- In the soil water module, crop stages and crop coefficients control the evapotranspiration.<br> - Fertiliser and manure application are the major source of soil nutrients, which are added into soil nutrient pools, including dissovled inorganic, dissolved organic, fast and humus for both nitrogen and phosphorus.<br> - Nutrient transformation processes in soil are simulated, including fluxes between the soil nutrient pools, denitrification for nitrogen, adsorption/desorption for phosphorus. These processes are affected by temperature and soil moisture.<br> - Crop uptake of nutrients are simulated based on crop stages, which is different for spring-sown and autumn-sown crops.<br> - Soil erosion from the growing surface is simulated as one of the major sources of suspended solids in rivers, which is mainly affected by rainfall energy and crop/ground cover. Phosphorus will also be eroded along with the soil particles, in both adsorbed inorganic and humus form.</td>
+<td align="left">- <code>data_input_dict</code> can contain a variety of pollutant deposition data. <code>srp-fertiliser</code> describes phosphate. <code>noy-fertiliser</code> describes nitrogen as nitrates. <code>nhx-fertiliser</code> describes nitrogen as ammonia. <code>srp/noy/ nhx-manure</code> can also be used to specify manure application. <em>Units</em>: kg/m2/timestep (data is read at a monthly timestep)<br> - Rooting depth. <em>Units</em>: m<br> - Evapotranspiration depletion factor. <em>Units</em>:<br> - Sowing day, harvest day and crop calendars. <em>Units</em>: day number in Julian calendar<br> - Crop factor. <em>Units</em>:<br> - Initial storage for solid pollutants. <em>Units</em>: kg</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="./../reference-land/#wsimod.nodes.land.Land"><code>Land</code></a></td>
-<td style="text-align: left;">- Percolation, surface runoff, and subsurface runoff, can be described with a residence-time method.<br> - Flows to percolation, surface runoff, and subsurface runoff are generated by different hydrological response units (subclasses of <code>land.py/Surface</code>), but aggregated for a given land node.<br> - Flows to percolation are distributed to <code>storage.py/Groundwater</code> nodes while surface/subsurface runoff to <code>nodes.py/Node</code> or <code>storage.py/River</code> nodes.<br> - Input data associated with the land node (precipitation, temperature, evapotranspiartion) are the same for every surface.<br> - Water received from <code>sewer.py/Sewer</code> objects is sent to the first <code>land.py/ImperviousSurface</code> in the surfaces list.</td>
-<td style="text-align: left;">- Precipitation and evapotranspiration are in the <code>data_input_dict</code> at the model timestep. <em>Units</em>: metres/timestep<br> - Temperature in the <code>data_input_dict</code> at the model timestep. <em>Units</em>: C<br> - Residence time of surface, subsurface and percolation flows. <em>Units</em>: number of timesteps</td>
+<td align="left"><a href="./../reference-land/#wsimod.nodes.land.Land"><code>Land</code></a></td>
+<td align="left">- Percolation, surface runoff, and subsurface runoff, can be described with a residence-time method.<br> - Flows to percolation, surface runoff, and subsurface runoff are generated by different hydrological response units (subclasses of <code>land.py/Surface</code>), but aggregated for a given land node.<br> - Flows to percolation are distributed to <code>storage.py/Groundwater</code> nodes while surface/subsurface runoff to <code>nodes.py/Node</code> or <code>storage.py/River</code> nodes.<br> - Input data associated with the land node (precipitation, temperature, evapotranspiartion) are the same for every surface.<br> - Water received from <code>sewer.py/Sewer</code> objects is sent to the first <code>land.py/ImperviousSurface</code> in the surfaces list.</td>
+<td align="left">- Precipitation and evapotranspiration are in the <code>data_input_dict</code> at the model timestep. <em>Units</em>: metres/timestep<br> - Temperature in the <code>data_input_dict</code> at the model timestep. <em>Units</em>: C<br> - Residence time of surface, subsurface and percolation flows. <em>Units</em>: number of timesteps</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="./../reference-nodes/#wsimod.nodes.nodes.Node"><code>Node</code></a></td>
-<td style="text-align: left;">- No physical processes represented, can be used as a junction.</td>
-<td style="text-align: left;">- All nodes require a <code>name</code></td>
+<td align="left"><a href="./../reference-nodes/#wsimod.nodes.nodes.Node"><code>Node</code></a></td>
+<td align="left">- No physical processes represented, can be used as a junction.</td>
+<td align="left">- All nodes require a <code>name</code></td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="./../reference-land/#wsimod.nodes.nutrient_pool.NutrientPool"><code>NutrientPool</code></a></td>
-<td style="text-align: left;">- Four nutrient pools are conceptualised for both nitrogen and phosphorus in soil, which includes humus pool, fast pool, dissolved inorganic pool, and dissolved organic pool. Humus and fast pool represent immobile pool of organic nutrients in the soil with slow and fast turnover, respectively. Dissolved inorganic and organic pool represent nutrients in dissolved phase in soil water (for phosphorus, dissolved organic pool might contain particulate phase). Given that phoshphorus can be adsorbed and attached to soil particles, an adsorbed inorganic pool is created specifically for phosphorus.<br> - The major sources of nutrients to soil are conceptualised as<br> - atmospheric deposition:<br> - dry deposition:<br> - for nitrogen, inorganic fraction of dry deposition is added to the dissovled inorganic pool, while the rest is added to the fast pool;<br> - for phosphorus, all is added to adsorbed inorganic pool.<br> - wet deposition: all is added to the dissolved inorganic pool.<br> - fertilisers: all added to the dissolved inorganic pool.<br> - manure: the inorganic fraction is added to the dissovled inorganic pool, with the rest added to the fast pool.<br> - residue: the part with fast turnover is added to the fast pool, with the rest added to the humus pool.<br> - Nutrient fluxes between these pools are simulated to represent the biochemical processes that can transform the nutrients between different forms. These processes include<br> - degradation of humus pool to fast pool<br> - dissolution of humus pool to dissovled organic pool<br> - mineralisation of fast pool to dissolved inorganic pool<br> - dissolution of fast pool to dissolved organic pool<br> - immobilisation of dissolved inroganic pool to fast pool The rate of these processes are affected by the soil temperature and moisture conditions.<br> - When soil erosion happens, a portion of both the adsorbed inorganic pool and humus pool for phosphorus will be eroded as well.</td>
-<td style="text-align: left;">- fraction_dry_n_to_dissolved_inorganic, fraction_manure_to_dissolved_inorganic, fraction_residue_to_fast. <em>Units</em>: -, all should in [0-1]<br> - degrhpar, dishpar, minfpar, disfpar, immobdpar. <em>Units</em>: -, all should in [0-1]</td>
+<td align="left"><a href="./../reference-land/#wsimod.nodes.nutrient_pool.NutrientPool"><code>NutrientPool</code></a></td>
+<td align="left">- Four nutrient pools are conceptualised for both nitrogen and phosphorus in soil, which includes humus pool, fast pool, dissolved inorganic pool, and dissolved organic pool. Humus and fast pool represent immobile pool of organic nutrients in the soil with slow and fast turnover, respectively. Dissolved inorganic and organic pool represent nutrients in dissolved phase in soil water (for phosphorus, dissolved organic pool might contain particulate phase). Given that phoshphorus can be adsorbed and attached to soil particles, an adsorbed inorganic pool is created specifically for phosphorus.<br> - The major sources of nutrients to soil are conceptualised as<br> - atmospheric deposition:<br> - dry deposition:<br> - for nitrogen, inorganic fraction of dry deposition is added to the dissovled inorganic pool, while the rest is added to the fast pool;<br> - for phosphorus, all is added to adsorbed inorganic pool.<br> - wet deposition: all is added to the dissolved inorganic pool.<br> - fertilisers: all added to the dissolved inorganic pool.<br> - manure: the inorganic fraction is added to the dissovled inorganic pool, with the rest added to the fast pool.<br> - residue: the part with fast turnover is added to the fast pool, with the rest added to the humus pool.<br> - Nutrient fluxes between these pools are simulated to represent the biochemical processes that can transform the nutrients between different forms. These processes include<br> - degradation of humus pool to fast pool<br> - dissolution of humus pool to dissovled organic pool<br> - mineralisation of fast pool to dissolved inorganic pool<br> - dissolution of fast pool to dissolved organic pool<br> - immobilisation of dissolved inroganic pool to fast pool The rate of these processes are affected by the soil temperature and moisture conditions.<br> - When soil erosion happens, a portion of both the adsorbed inorganic pool and humus pool for phosphorus will be eroded as well.</td>
+<td align="left">- fraction_dry_n_to_dissolved_inorganic, fraction_manure_to_dissolved_inorganic, fraction_residue_to_fast. <em>Units</em>: -, all should in [0-1]<br> - degrhpar, dishpar, minfpar, disfpar, immobdpar. <em>Units</em>: -, all should in [0-1]</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="./../reference-land/#wsimod.nodes.land.PerviousSurface"><code>PerviousSurface</code></a></td>
-<td style="text-align: left;">- In IHACRES, the maximum infiltration per time step is controlled by an infiltration capacity, beyond which the precipitation will flow directly as surface runoff.<br> - Evapotranspiration and effective precipitation are calculated based on soil moisture content.<br> - Effective precipitation is then divided into percolation, surface runoff, and subsurface runoff by multiplying the corresponding coefficient.<br> - Percolation, surface runoff, and subsurface runoff are sent into the corresponding residence tanks for rounting to downstream.<br> - The mass of pollutants in soil water tank proportionately leaves the soil water tank into the routing residence tanks. Evapotranspiration can only bring out water, with pollutants left in the soil tank.</td>
-<td style="text-align: left;">- Field capacity and wilting point. <em>Units</em>: -, both should in [0-1], with field capacity &gt; wilting point<br> - Infiltration capacity. <em>Units</em>: m/day<br> - Surface, percolation coefficient. <em>Units</em>: -, both should in [0-1]<br> - et0 coefficient. <em>Units</em>:<br> - ihacres_p. <em>Units</em>: -</td>
+<td align="left"><a href="./../reference-land/#wsimod.nodes.land.PerviousSurface"><code>PerviousSurface</code></a></td>
+<td align="left">- In IHACRES, the maximum infiltration per time step is controlled by an infiltration capacity, beyond which the precipitation will flow directly as surface runoff.<br> - Evapotranspiration and effective precipitation are calculated based on soil moisture content.<br> - Effective precipitation is then divided into percolation, surface runoff, and subsurface runoff by multiplying the corresponding coefficient.<br> - Percolation, surface runoff, and subsurface runoff are sent into the corresponding residence tanks for rounting to downstream.<br> - The mass of pollutants in soil water tank proportionately leaves the soil water tank into the routing residence tanks. Evapotranspiration can only bring out water, with pollutants left in the soil tank.</td>
+<td align="left">- Field capacity and wilting point. <em>Units</em>: -, both should in [0-1], with field capacity &gt; wilting point<br> - Infiltration capacity. <em>Units</em>: m/day<br> - Surface, percolation coefficient. <em>Units</em>: -, both should in [0-1]<br> - et0 coefficient. <em>Units</em>:<br> - ihacres_p. <em>Units</em>: -</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="./../reference-storage/#wsimod.nodes.storage.QueueGroundwater"><code>QueueGroundwater</code></a></td>
-<td style="text-align: left;">- Conceptualises groundwater as a tank.<br> - Baseflow is generated following a timearea method.<br> - Baseflow is sent to <code>storage.py/River</code>, <code>nodes.py/Node</code> or <code>waste.py/Waste</code> nodes.<br> - No infiltration to sewers is modelled.<br> - If <code>decays</code> are provided to model water quality transformations, see <code>core.py/DecayObj</code>.</td>
-<td style="text-align: left;">- Groundwater tank <code>capacity</code>, <code>area</code>, and <code>datum</code>. <em>Units</em>: cubic metres, squared metres, metres<br> - <code>timearea</code> is a dictionary containing the timearea diagram. <em>Units</em>: duration of flow (in timesteps) and proportion of flow<br> - Optional dictionary of decays with pollutants as keys and decay parameters (a constant and a temperature sensitivity exponent) as values. <em>Units</em>: -</td>
+<td align="left"><a href="./../reference-storage/#wsimod.nodes.storage.QueueGroundwater"><code>QueueGroundwater</code></a></td>
+<td align="left">- Conceptualises groundwater as a tank.<br> - Baseflow is generated following a timearea method.<br> - Baseflow is sent to <code>storage.py/River</code>, <code>nodes.py/Node</code> or <code>waste.py/Waste</code> nodes.<br> - No infiltration to sewers is modelled.<br> - If <code>decays</code> are provided to model water quality transformations, see <code>core.py/DecayObj</code>.</td>
+<td align="left">- Groundwater tank <code>capacity</code>, <code>area</code>, and <code>datum</code>. <em>Units</em>: cubic metres, squared metres, metres<br> - <code>timearea</code> is a dictionary containing the timearea diagram. <em>Units</em>: duration of flow (in timesteps) and proportion of flow<br> - Optional dictionary of decays with pollutants as keys and decay parameters (a constant and a temperature sensitivity exponent) as values. <em>Units</em>: -</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="./../reference-storage/#wsimod.nodes.storage.Reservoir"><code>Reservoir</code></a></td>
-<td style="text-align: left;">- Conceptualised as a <code>Tank</code>.<br> - Recharged only via pumped abstractions.<br> - Evaporation/precipitation onto surface area currently ignored.<br> - If <code>decays</code> are provided to model water quality transformations, see <code>core.py/DecayObj</code>.</td>
-<td style="text-align: left;">- Tank <code>capacity</code>, <code>area</code>, and <code>datum</code>. <em>Units</em>: cubic metres, squared metres, metres<br> - Optional dictionary of decays with pollutants as keys and decay parameters (a constant and a temperature sensitivity exponent) as values. <em>Units</em>: -</td>
+<td align="left"><a href="./../reference-storage/#wsimod.nodes.storage.Reservoir"><code>Reservoir</code></a></td>
+<td align="left">- Conceptualised as a <code>Tank</code>.<br> - Recharged only via pumped abstractions.<br> - Evaporation/precipitation onto surface area currently ignored.<br> - If <code>decays</code> are provided to model water quality transformations, see <code>core.py/DecayObj</code>.</td>
+<td align="left">- Tank <code>capacity</code>, <code>area</code>, and <code>datum</code>. <em>Units</em>: cubic metres, squared metres, metres<br> - Optional dictionary of decays with pollutants as keys and decay parameters (a constant and a temperature sensitivity exponent) as values. <em>Units</em>: -</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="./../reference-other/#wsimod.nodes.demand.ResidentialDemand"><code>ResidentialDemand</code></a></td>
-<td style="text-align: left;">- Per capita calculations to generate demand based on population.<br> - Pollutant concentration of generated demand uses a fixed mass per person per timestep.<br> - Temperature of generated wastewater is based partially on air temperature and partially on a constant.<br> - Can interact with <code>land.py/GardenSurface</code> to simulate garden water use.</td>
-<td style="text-align: left;">- <code>population</code>. <em>Units</em>: n<br> - <code>per_capita</code>. <em>Units</em>: m3/timestep<br> - <code>data_input_dict</code> should contain air temperature at model timestep. <em>Units</em>: C</td>
+<td align="left"><a href="./../reference-other/#wsimod.nodes.demand.ResidentialDemand"><code>ResidentialDemand</code></a></td>
+<td align="left">- Per capita calculations to generate demand based on population.<br> - Pollutant concentration of generated demand uses a fixed mass per person per timestep.<br> - Temperature of generated wastewater is based partially on air temperature and partially on a constant.<br> - Can interact with <code>land.py/GardenSurface</code> to simulate garden water use.</td>
+<td align="left">- <code>population</code>. <em>Units</em>: n<br> - <code>per_capita</code>. <em>Units</em>: m3/timestep<br> - <code>data_input_dict</code> should contain air temperature at model timestep. <em>Units</em>: C</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="./../reference-storage/#wsimod.nodes.storage.RiverReservoir"><code>RiverReservoir</code></a></td>
-<td style="text-align: left;">- Conceptualised as a <code>Tank</code>.<br> - Recharged via pumped abstractions and receives water from inflowing arcs.<br> - Reservoir aims to satisfy a static <code>environmental_flow</code>.<br> - If tank capacity is exceeded, reservoir spills downstream towards <code>nodes.py/Node</code>, <code>storage.py/River</code> or <code>waste.py/Waste</code> nodes. Spill counts towards <code>environmental_flow</code>.<br> - Evaporation/precipitation onto surface area currently ignored.<br> - Currently, if a reservoir satisfies a pull from a downstream node, it does <strong>not</strong> count towards <code>environmental_flow</code>.<br> - If <code>decays</code> are provided to model water quality transformations, see <code>core.py/DecayObj</code>.</td>
-<td style="text-align: left;">- Tank <code>capacity</code>, <code>area</code>, and <code>datum</code>. <em>Units</em>: cubic metres, squared metres, metres<br> - <code>environmental_flow</code> <em>Units</em>: cubic metres/timestep<br> - Optional dictionary of decays with pollutants as keys and decay parameters (a constant and a temperature sensitivity exponent) as values. <em>Units</em>: -</td>
+<td align="left"><a href="./../reference-storage/#wsimod.nodes.storage.RiverReservoir"><code>RiverReservoir</code></a></td>
+<td align="left">- Conceptualised as a <code>Tank</code>.<br> - Recharged via pumped abstractions and receives water from inflowing arcs.<br> - Reservoir aims to satisfy a static <code>environmental_flow</code>.<br> - If tank capacity is exceeded, reservoir spills downstream towards <code>nodes.py/Node</code>, <code>storage.py/River</code> or <code>waste.py/Waste</code> nodes. Spill counts towards <code>environmental_flow</code>.<br> - Evaporation/precipitation onto surface area currently ignored.<br> - Currently, if a reservoir satisfies a pull from a downstream node, it does <strong>not</strong> count towards <code>environmental_flow</code>.<br> - If <code>decays</code> are provided to model water quality transformations, see <code>core.py/DecayObj</code>.</td>
+<td align="left">- Tank <code>capacity</code>, <code>area</code>, and <code>datum</code>. <em>Units</em>: cubic metres, squared metres, metres<br> - <code>environmental_flow</code> <em>Units</em>: cubic metres/timestep<br> - Optional dictionary of decays with pollutants as keys and decay parameters (a constant and a temperature sensitivity exponent) as values. <em>Units</em>: -</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="./../reference-storage/#wsimod.nodes.storage.River"><code>River</code></a></td>
-<td style="text-align: left;">- River is conceptualised as a water tank that receives flows from various sources (e.g., runoffs from urban and rural land, baseflow from groundwater), interacts with water infrastructure (e.g., abstraction for irrigation and domestic supply, sewage and treated effluent discharge), and discharges flows downstream. It has length and width as shape parameters, average velocity to indicate flow speed and capacity to indicate the maximum storage limit.<br> - Flows from different sources into rivers will fully mix. River tank is assumed to have delay and attenuation effects when generate outflows. These effects are simulated based on the average velocity.<br> - In-river biochemical processes are simulated as sources/sinks of nutrients in the river tank, including<br> - denitrification (for nitrogen)<br> - phytoplankton absorption/release (for nitrogen and phosphorus)<br> - macrophyte uptake (for nitrogen and phosphorus) These processes are affected by river temperature.</td>
-<td style="text-align: left;">- depth, length, width <em>Units</em>: m<br> - velocity <em>Units</em>: m/day<br> - damping coefficient <em>Units</em>:<br> - minimum required flow <em>Units</em>: m3/day</td>
+<td align="left"><a href="./../reference-storage/#wsimod.nodes.storage.River"><code>River</code></a></td>
+<td align="left">- River is conceptualised as a water tank that receives flows from various sources (e.g., runoffs from urban and rural land, baseflow from groundwater), interacts with water infrastructure (e.g., abstraction for irrigation and domestic supply, sewage and treated effluent discharge), and discharges flows downstream. It has length and width as shape parameters, average velocity to indicate flow speed and capacity to indicate the maximum storage limit.<br> - Flows from different sources into rivers will fully mix. River tank is assumed to have delay and attenuation effects when generate outflows. These effects are simulated based on the average velocity.<br> - In-river biochemical processes are simulated as sources/sinks of nutrients in the river tank, including<br> - denitrification (for nitrogen)<br> - phytoplankton absorption/release (for nitrogen and phosphorus)<br> - macrophyte uptake (for nitrogen and phosphorus) These processes are affected by river temperature.</td>
+<td align="left">- depth, length, width <em>Units</em>: m<br> - velocity <em>Units</em>: m/day<br> - damping coefficient <em>Units</em>:<br> - minimum required flow <em>Units</em>: m3/day</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="./../reference-sewer/#wsimod.nodes.sewer.Sewer"><code>Sewer</code></a></td>
-<td style="text-align: left;">- Sewer networks can be represented in an aggregated manner, where the behaviour of collections of manholes/pipes can be captured in a single component.<br> - Travel time of water received from either <code>land.py/Land</code> objects or <code>demand.py/Demand</code> objects is assumed to be received as a non-point source and thus can be represented with the time-area method.<br> - Travel time of water from an upstream <code>Sewer</code> object has a fixed travel time through the node.<br> - The flow capacity of sewer network can be represented as with a <code>Tank</code>.<br> - The <code>Sewer</code> object is not currently biochemically active.</td>
-<td style="text-align: left;">- <code>pipe_timearea</code> is a dictionary containing the timearea diagram. <em>Units</em>: duration of flow (in timesteps) and proportion of flow<br> - <code>pipe_time</code> describes the travel time of water received from upstream <code>Sewer</code> objects. <em>Units</em>: number of timesteps<br> - <code>capacity</code>, <code>chamber_area</code>, <code>chamber_datum</code> describe the dimensions of the <code>Tank</code> that controls flow. <em>Units</em>: cubic metres, squared metres, metres</td>
+<td align="left"><a href="./../reference-sewer/#wsimod.nodes.sewer.Sewer"><code>Sewer</code></a></td>
+<td align="left">- Sewer networks can be represented in an aggregated manner, where the behaviour of collections of manholes/pipes can be captured in a single component.<br> - Travel time of water received from either <code>land.py/Land</code> objects or <code>demand.py/Demand</code> objects is assumed to be received as a non-point source and thus can be represented with the time-area method.<br> - Travel time of water from an upstream <code>Sewer</code> object has a fixed travel time through the node.<br> - The flow capacity of sewer network can be represented as with a <code>Tank</code>.<br> - The <code>Sewer</code> object is not currently biochemically active.</td>
+<td align="left">- <code>pipe_timearea</code> is a dictionary containing the timearea diagram. <em>Units</em>: duration of flow (in timesteps) and proportion of flow<br> - <code>pipe_time</code> describes the travel time of water received from upstream <code>Sewer</code> objects. <em>Units</em>: number of timesteps<br> - <code>capacity</code>, <code>chamber_area</code>, <code>chamber_datum</code> describe the dimensions of the <code>Tank</code> that controls flow. <em>Units</em>: cubic metres, squared metres, metres</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="./../reference-land/#wsimod.nodes.land.Surface"><code>Surface</code></a></td>
-<td style="text-align: left;">- Generic <code>Surface</code> that reads data and can apply simple forms of pollution deposition.<br> - Formulated as a <code>Tank</code> object.<br> - Ammonia-&gt;Nitrite-&gt;Nitrate decay takes place if parameters describing this process are provided in <code>decays</code> (see <code>core.py/DecayObj</code> for transformation details).</td>
-<td style="text-align: left;">- <code>data_input_dict</code> can contain a variety of pollutant deposition data. <code>srp-dry</code> describes phosphate. <code>noy-dry</code> describes nitrogen as nitrates. <code>nhx-dry</code> describes nitrogen as ammonia. <code>srp/noy/ nhx-wet</code> can also be used to specify wet deposition. <em>Units</em>: kg/m2/timestep (data is read at a monthly timestep)</td>
+<td align="left"><a href="./../reference-land/#wsimod.nodes.land.Surface"><code>Surface</code></a></td>
+<td align="left">- Generic <code>Surface</code> that reads data and can apply simple forms of pollution deposition.<br> - Formulated as a <code>Tank</code> object.<br> - Ammonia-&gt;Nitrite-&gt;Nitrate decay takes place if parameters describing this process are provided in <code>decays</code> (see <code>core.py/DecayObj</code> for transformation details).</td>
+<td align="left">- <code>data_input_dict</code> can contain a variety of pollutant deposition data. <code>srp-dry</code> describes phosphate. <code>noy-dry</code> describes nitrogen as nitrates. <code>nhx-dry</code> describes nitrogen as ammonia. <code>srp/noy/ nhx-wet</code> can also be used to specify wet deposition. <em>Units</em>: kg/m2/timestep (data is read at a monthly timestep)</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="./../reference-other/#wsimod.nodes.distribution.UnlimitedDistribution"><code>UnlimitedDistribution</code></a></td>
-<td style="text-align: left;">- Water demand is always satisfied.</td>
-<td style="text-align: left;">- None</td>
+<td align="left"><a href="./../reference-other/#wsimod.nodes.distribution.UnlimitedDistribution"><code>UnlimitedDistribution</code></a></td>
+<td align="left">- Water demand is always satisfied.</td>
+<td align="left">- None</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="./../reference-wtw/#wsimod.nodes.wtw.WTW"><code>WTW</code></a></td>
-<td style="text-align: left;">- Throughput can be modelled entirely with a set capacity.<br> - Pollutant reduction for the entire treatment process can be modelled primarily with a single (temperature sensitive) transformation for each pollutant.<br> - Liquor and solids are tracked and calculated with proportional multiplier parameters.</td>
-<td style="text-align: left;">- <code>treatment_throughput_capacity</code> <em>Units</em>: cubic metres/timestep<br> - <code>process_parameters</code> contains the constant (non temperature sensitive) and exponent (temperature sensitive) transformations applied to treated water for each pollutant. <em>Units</em>:<br> - <code>liquor_multiplier</code> and <code>percent_solids</code> describe the proportion of throughput that goes to liquor/solids.</td>
+<td align="left"><a href="./../reference-wtw/#wsimod.nodes.wtw.WTW"><code>WTW</code></a></td>
+<td align="left">- Throughput can be modelled entirely with a set capacity.<br> - Pollutant reduction for the entire treatment process can be modelled primarily with a single (temperature sensitive) transformation for each pollutant.<br> - Liquor and solids are tracked and calculated with proportional multiplier parameters.</td>
+<td align="left">- <code>treatment_throughput_capacity</code> <em>Units</em>: cubic metres/timestep<br> - <code>process_parameters</code> contains the constant (non temperature sensitive) and exponent (temperature sensitive) transformations applied to treated water for each pollutant. <em>Units</em>:<br> - <code>liquor_multiplier</code> and <code>percent_solids</code> describe the proportion of throughput that goes to liquor/solids.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="./../reference-wtw/#wsimod.nodes.wtw.WWTW"><code>WWTW</code></a></td>
-<td style="text-align: left;">- See <code>wtw.py/WTW</code> for treatment.<br> - When <code>treatment_throughput_capacity</code> is exceeded, water is first sent to a stormwater storage tank before denying pushes. Leftover water in this tank aims to be treated in subsequent timesteps.<br> - Can be pulled from to simulate active wastewater effluent use.</td>
-<td style="text-align: left;">- See <code>wtw.py/WTW</code> for treatment.<br> - Stormwater tank <code>capacity</code>, <code>area</code>, and <code>datum</code>. <em>Units</em>: cubic metres, squared metres, metres</td>
+<td align="left"><a href="./../reference-wtw/#wsimod.nodes.wtw.WWTW"><code>WWTW</code></a></td>
+<td align="left">- See <code>wtw.py/WTW</code> for treatment.<br> - When <code>treatment_throughput_capacity</code> is exceeded, water is first sent to a stormwater storage tank before denying pushes. Leftover water in this tank aims to be treated in subsequent timesteps.<br> - Can be pulled from to simulate active wastewater effluent use.</td>
+<td align="left">- See <code>wtw.py/WTW</code> for treatment.<br> - Stormwater tank <code>capacity</code>, <code>area</code>, and <code>datum</code>. <em>Units</em>: cubic metres, squared metres, metres</td>
 </tr>
 <tr>
-<td style="text-align: left;"><a href="./../reference-other/#wsimod.nodes.waste.Waste"><code>Waste</code></a></td>
-<td style="text-align: left;">- Water 'disappears' (leaves the model) from these nodes.</td>
-<td style="text-align: left;">- None</td>
+<td align="left"><a href="./../reference-other/#wsimod.nodes.waste.Waste"><code>Waste</code></a></td>
+<td align="left">- Water 'disappears' (leaves the model) from these nodes.</td>
+<td align="left">- None</td>
 </tr>
 </tbody>
 </table>
@@ -616,11 +616,12 @@ components, their assumptions and required input data on this page.</p>
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.16e2a7d4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.39f04ddb.min.js"></script>
+      <script src="../assets/javascripts/bundle.5a2dcb6a.min.js"></script>
       
+    
     
   </body>
 </html>
