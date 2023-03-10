@@ -1609,10 +1609,10 @@ play around. On the GitHub it is in <a href="https://github.com/barneydobson/wsi
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <h2 id="we-will-cover-a-demo-wsimod-case-study">We will cover a demo WSIMOD case study<a class="anchor-link" href="#we-will-cover-a-demo-wsimod-case-study">&#182;</a></h2><p>The glamorous town of Oxford will be our demo case study.
 Below, we will create these nodes and arcs, orchestrate them into a model, and run simulations.</p>
-<p><img src="oxford.svg" alt="alt text"></p>
+<p><img src="./../../images/oxford.svg" alt="alt text"></p>
 <p>Although GIS is pretty, the schematic below is a more accurate representation of what will be created.
 WSIMOD treats everything as a node or an arc.</p>
-<p><img src="schematic.svg" alt="alt text"></p>
+<p><img src="./../../images/schematic.svg" alt="alt text"></p>
 
 </div>
 </div>
@@ -4014,7 +4014,7 @@ print(fwtw_to_distribution)</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>&lt;wsimod.arcs.arcs.Arc object at 0x000001DB9CF9CCD0&gt;
+<pre>&lt;wsimod.arcs.arcs.Arc object at 0x0000014A79F2B550&gt;
 </pre>
 </div>
 </div>
@@ -4150,7 +4150,7 @@ print(fwtw_to_distribution.in_port)</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>&lt;wsimod.nodes.wtw.FWTW object at 0x000001DB9CE60370&gt;
+<pre>&lt;wsimod.nodes.wtw.FWTW object at 0x0000014A79E60CA0&gt;
 </pre>
 </div>
 </div>
@@ -4207,7 +4207,7 @@ print(fwtw_to_distribution.out_port)</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>&lt;wsimod.nodes.nodes.Node object at 0x000001DB9CF26D10&gt;
+<pre>&lt;wsimod.nodes.nodes.Node object at 0x0000014A79F2B100&gt;
 </pre>
 </div>
 </div>
@@ -4276,7 +4276,7 @@ print(oxford_fwtw.out_arcs)</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>{&#39;fwtw_to_distribution&#39;: &lt;wsimod.arcs.arcs.Arc object at 0x000001DB9CF9CCD0&gt;}
+<pre>{&#39;fwtw_to_distribution&#39;: &lt;wsimod.arcs.arcs.Arc object at 0x0000014A79F2B550&gt;}
 </pre>
 </div>
 </div>
@@ -4333,7 +4333,7 @@ print(distribution.in_arcs)</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>{&#39;fwtw_to_distribution&#39;: &lt;wsimod.arcs.arcs.Arc object at 0x000001DB9CF9CCD0&gt;}
+<pre>{&#39;fwtw_to_distribution&#39;: &lt;wsimod.arcs.arcs.Arc object at 0x0000014A79F2B550&gt;}
 </pre>
 </div>
 </div>
@@ -6901,7 +6901,6 @@ Cell <span class="ansi-green-intense-fg ansi-bold">In[64], line 1</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mixer_val_df</span><span class="p">[</span><span class="n">pol</span><span class="p">],</span><span class="n">ls</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;spot sample&#39;</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">pol</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">f</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 </pre></div>
 <div id="cell-65" class="clipboard-copy-txt">
 plot_arc = 'mixer_to_waste'
@@ -6910,8 +6909,7 @@ for pol, ax in zip(val_pollutants, axs):
     ax.plot(flows_plot.loc[flows_plot.arc == plot_arc, [pol,'time']].set_index('time'),color='b', label = 'simulation')
     ax.plot(mixer_val_df[pol],ls='',marker='o',color='r', label = 'spot sample')
     ax.set_ylabel(pol)
-plt.legend()
-f.tight_layout()</div>
+plt.legend()</div>
     
         </div>
     </div>
@@ -6948,38 +6946,6 @@ Cell <span class="ansi-green-intense-fg ansi-bold">In[65], line 2</span>
 
 </div>
 
-</div>
-
-</div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div><div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
-        
-        
-        <div class="CodeMirror cm-s-jupyter">
-        <div class="zeroclipboard-container">
-            <clipboard-copy for="cell-66">
-            <div>
-                <span class="notice" hidden>Copied!</span>
-                <svg aria-hidden="true" width="20" height="20" viewBox="0 0 16 16" version="1.1"  data-view-component="true" class="clipboard-copy-icon">
-                    <path fill="currentColor" fill-rule="evenodd" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path>
-                    <path fill="currentColor" fill-rule="evenodd" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
-                </svg>
-                </div>
-            </clipboard-copy>
-        </div>
-            <div class="highlight-ipynb hl-python"><pre><span></span>
-</pre></div>
-<div id="cell-66" class="clipboard-copy-txt"></div>
-    
-        </div>
-    </div>
-
-</div>
 </div>
 
 </div>
