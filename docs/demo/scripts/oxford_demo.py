@@ -51,12 +51,12 @@
 # The glamorous town of Oxford will be our demo case study.
 # Below, we will create these nodes and arcs, orchestrate them into a model, and run simulations.
 #
-# ![alt text](./../../images/oxford.svg)
+# ![alt text](./../images/oxford.svg)
 #
 # Although GIS is pretty, the schematic below is a more accurate representation of what will be created.
 # WSIMOD treats everything as a node or an arc.
 #
-# ![alt text](./../../images/schematic.svg)
+# ![alt text](./../images/schematic.svg)
 #
 
 # %% [markdown]
