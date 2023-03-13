@@ -1546,10 +1546,10 @@ print(my_sewer.push_set_handler)</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>{&#39;Demand&#39;: &lt;bound method Sewer.push_set_land of &lt;wsimod.nodes.sewer.Sewer object at 0x000001CD242C0CA0&gt;&gt;,
- &#39;Land&#39;: &lt;bound method Sewer.push_set_land of &lt;wsimod.nodes.sewer.Sewer object at 0x000001CD242C0CA0&gt;&gt;,
- &#39;Sewer&#39;: &lt;bound method Sewer.push_set_sewer of &lt;wsimod.nodes.sewer.Sewer object at 0x000001CD242C0CA0&gt;&gt;,
- &#39;default&#39;: &lt;bound method Sewer.push_set_sewer of &lt;wsimod.nodes.sewer.Sewer object at 0x000001CD242C0CA0&gt;&gt;}
+<pre>{&#39;Demand&#39;: &lt;bound method Sewer.push_set_land of &lt;wsimod.nodes.sewer.Sewer object at 0x0000020E9BCBE950&gt;&gt;,
+ &#39;Land&#39;: &lt;bound method Sewer.push_set_land of &lt;wsimod.nodes.sewer.Sewer object at 0x0000020E9BCBE950&gt;&gt;,
+ &#39;Sewer&#39;: &lt;bound method Sewer.push_set_sewer of &lt;wsimod.nodes.sewer.Sewer object at 0x0000020E9BCBE950&gt;&gt;,
+ &#39;default&#39;: &lt;bound method Sewer.push_set_sewer of &lt;wsimod.nodes.sewer.Sewer object at 0x0000020E9BCBE950&gt;&gt;}
 </pre>
 </div>
 </div>
@@ -1574,9 +1574,9 @@ different tags. Tags can take any value, but by convention they specify a
 WSIMOD node type, or a tuple containing a node type and a specific type of 
 interaction (e.g., <code>('Demand','Garden')</code> in the 
 <a href="https://barneydobson.github.io/wsi/reference-land/#wsimod.nodes.land.Land">land node</a>).
-All nodes must have a <code>push_set_handler</code>, <code>push_check_handler</code>, <code>pull_set_handler</code>,
-<code>pull_check_handler</code>, and at least one <code>default</code> tag entry in each of these
-dictionaries (see the <a href="https://barneydobson.github.io/wsi/reference-nodes/#wsimod.nodes.nodes.Node">Node</a> 
+All nodes must have the dictionaries: <code>push_set_handler</code>, <code>push_check_handler</code>, 
+<code>pull_set_handler</code>, <code>pull_check_handler</code>, and at least one <code>default</code> key in each 
+(see the <a href="https://barneydobson.github.io/wsi/reference-nodes/#wsimod.nodes.nodes.Node">Node</a> 
 class for defaults). If you do not want to define behaviour for a certain kind of interaction, 
 e.g., maybe you can never pull from this type of node, then you can use, e.g.,
 the <code>pull_set_deny</code> and <code>pull_check_deny</code> functions for the <code>'default'</code> tag.</p>
@@ -1677,7 +1677,7 @@ print(my_dist.push_check_handler)</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>{&#39;default&#39;: &lt;bound method Node.push_check_deny of &lt;wsimod.nodes.distribution.Distribution object at 0x000001CD242C2710&gt;&gt;}
+<pre>{&#39;default&#39;: &lt;bound method Node.push_check_deny of &lt;wsimod.nodes.distribution.Distribution object at 0x0000020E9BD67DC0&gt;&gt;}
 </pre>
 </div>
 </div>
@@ -1697,6 +1697,8 @@ print(my_dist.push_check_handler)</div>
 <p>We have created a <code>Node</code> that is connected to a <code>Distribution</code>, and we can see by inspecting its <code>push_check_handler</code>
 that the <code>Distribution</code> object has a denial behaviour for push checks (i.e., it says it cannot be pushed to). We can 
 verify this by sending a <code>push_check</code>.</p>
+<p>Remember that a <code>push_check</code> requires sending a VQIP (a dictionary with a key for 'volume' and each pollutant 
+simulated).</p>
 
 </div>
 </div>
@@ -1831,8 +1833,8 @@ print(my_dist.push_check_handler)</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>{&#39;Node&#39;: &lt;function custom_handler_function at 0x000001CD244143A0&gt;,
- &#39;default&#39;: &lt;bound method Node.push_check_deny of &lt;wsimod.nodes.distribution.Distribution object at 0x000001CD242C2710&gt;&gt;}
+<pre>{&#39;Node&#39;: &lt;function custom_handler_function at 0x0000020E9BD07910&gt;,
+ &#39;default&#39;: &lt;bound method Node.push_check_deny of &lt;wsimod.nodes.distribution.Distribution object at 0x0000020E9BD67DC0&gt;&gt;}
 </pre>
 </div>
 </div>
@@ -2071,7 +2073,7 @@ print(my_reservoir.pull_set_handler)</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>{&#39;default&#39;: &lt;function Storage.__init__.&lt;locals&gt;.&lt;lambda&gt; at 0x000001CD243063B0&gt;}
+<pre>{&#39;default&#39;: &lt;function Storage.__init__.&lt;locals&gt;.&lt;lambda&gt; at 0x0000020E9BE14670&gt;}
 </pre>
 </div>
 </div>
@@ -2559,16 +2561,16 @@ print('Overwritten set handler: {0}'.format(my_reservoir.pull_check_handler))</d
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
 <pre>(&#34;Original set handler: {&#39;default&#39;: &lt;function &#34;
- &#39;Storage.__init__.&lt;locals&gt;.&lt;lambda&gt; at 0x000001CD243063B0&gt;}&#39;)
+ &#39;Storage.__init__.&lt;locals&gt;.&lt;lambda&gt; at 0x0000020E9BE14670&gt;}&#39;)
 (&#34;Original check handler: {&#39;default&#39;: &lt;bound method Tank.get_avail of &#34;
- &#39;&lt;wsimod.nodes.nodes.Tank object at 0x000001CD2440A9E0&gt;&gt;}&#39;)
+ &#39;&lt;wsimod.nodes.nodes.Tank object at 0x0000020E9BE099F0&gt;&gt;}&#39;)
 (&#34;Overwritten set handler: {&#39;default&#39;: &lt;bound method Node.pull_set_deny of &#34;
- &#34;&lt;wsimod.nodes.storage.Reservoir object at 0x000001CD2440A110&gt;&gt;, &#39;FWTW&#39;: &#34;
- &#39;&lt;function Storage.__init__.&lt;locals&gt;.&lt;lambda&gt; at 0x000001CD243063B0&gt;}&#39;)
+ &#34;&lt;wsimod.nodes.storage.Reservoir object at 0x0000020E9BCBDA50&gt;&gt;, &#39;FWTW&#39;: &#34;
+ &#39;&lt;function Storage.__init__.&lt;locals&gt;.&lt;lambda&gt; at 0x0000020E9BE14670&gt;}&#39;)
 (&#34;Overwritten set handler: {&#39;default&#39;: &lt;bound method Node.pull_check_deny of &#34;
- &#34;&lt;wsimod.nodes.storage.Reservoir object at 0x000001CD2440A110&gt;&gt;, &#39;FWTW&#39;: &#34;
+ &#34;&lt;wsimod.nodes.storage.Reservoir object at 0x0000020E9BCBDA50&gt;&gt;, &#39;FWTW&#39;: &#34;
  &#39;&lt;bound method Tank.get_avail of &lt;wsimod.nodes.nodes.Tank object at &#39;
- &#39;0x000001CD2440A9E0&gt;&gt;}&#39;)
+ &#39;0x0000020E9BE099F0&gt;&gt;}&#39;)
 </pre>
 </div>
 </div>
@@ -2589,6 +2591,10 @@ print('Overwritten set handler: {0}'.format(my_reservoir.pull_check_handler))</d
 new behaviour and overwriting functions you should always check that the new memory addresses of
 the functions seem correct!</p>
 <p>Let's verify this behaviour by ensuring that <code>my_demand</code> cannot pull from the reservoir</p>
+<p>But first we must call the <code>end_timestep</code> function for the <code>my_demand</code> object. You can find more
+information in the <a href="https://barneydobson.github.io/wsi/reference-other/#wsimod.nodes.demand.Demand">API</a>,
+though in short, the previous call of <code>create_demand</code> had already satisfied the water demand for
+that timestep - thus, if we called it again, it would not request any more water.</p>
 
 </div>
 </div>
@@ -2689,6 +2695,10 @@ Demand not able to push
 <p>Fantastic - now we see that <code>my_demand</code> is not able to pull from <code>my_reservoir</code>, triggering a bunch of warning
 messages that occur when trying to pull from a node with denial behaviour.</p>
 <p>However, we also find that now <code>my_fwtw</code> cannot pull from <code>my_reservoir</code>!</p>
+<p>As with <code>my_demand</code>, <code>my_fwtw</code> can only treat a fixed amount of water each timestep (the 
+<code>treatment_throughput_capacity</code> parameter), additionally, it will only aim to treat enough 
+water to satisfy its service reservoirs. Thus, we must empty the service reservoirs and end the
+timestep for <code>my_fwtw</code>.</p>
 
 </div>
 </div>
