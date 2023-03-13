@@ -36,9 +36,9 @@ print(my_sewer.push_set_handler)
 # WSIMOD node type, or a tuple containing a node type and a specific type of 
 # interaction (e.g., `('Demand','Garden')` in the 
 # [land node](https://barneydobson.github.io/wsi/reference-land/#wsimod.nodes.land.Land)).
-# All nodes must have a `push_set_handler`, `push_check_handler`, `pull_set_handler`,
-# `pull_check_handler`, and at least one `default` tag entry in each of these
-# dictionaries (see the [Node](https://barneydobson.github.io/wsi/reference-nodes/#wsimod.nodes.nodes.Node) 
+# All nodes must have the dictionaries: `push_set_handler`, `push_check_handler`, 
+# `pull_set_handler`, `pull_check_handler`, and at least one `default` key in each 
+# (see the [Node](https://barneydobson.github.io/wsi/reference-nodes/#wsimod.nodes.nodes.Node) 
 # class for defaults). If you do not want to define behaviour for a certain kind of interaction, 
 # e.g., maybe you can never pull from this type of node, then you can use, e.g.,
 # the `pull_set_deny` and `pull_check_deny` functions for the `'default'` tag.
@@ -73,7 +73,9 @@ print(my_dist.push_check_handler)
 # We have created a `Node` that is connected to a `Distribution`, and we can see by inspecting its `push_check_handler`
 # that the `Distribution` object has a denial behaviour for push checks (i.e., it says it cannot be pushed to). We can 
 # verify this by sending a `push_check`.
-
+# 
+# Remember that a `push_check` requires sending a VQIP (a dictionary with a key for 'volume' and each pollutant 
+# simulated).
 # %%
 reply = my_arc.send_push_check({'volume' : 10, 
                                 'phosphate' : 1, 
@@ -250,7 +252,11 @@ print('Overwritten set handler: {0}'.format(my_reservoir.pull_check_handler))
 # the functions seem correct!
 #
 # Let's verify this behaviour by ensuring that `my_demand` cannot pull from the reservoir
-
+# 
+# But first we must call the `end_timestep` function for the `my_demand` object. You can find more
+# information in the [API](https://barneydobson.github.io/wsi/reference-other/#wsimod.nodes.demand.Demand),
+# though in short, the previous call of `create_demand` had already satisfied the water demand for
+# that timestep - thus, if we called it again, it would not request any more water.
 # %%
 # End timestep for demand so that it will request more water
 my_demand.end_timestep()
@@ -271,7 +277,11 @@ print('Water supplied to demand: {0}'.format(my_demand.total_received))
 # messages that occur when trying to pull from a node with denial behaviour.
 #
 # However, we also find that now `my_fwtw` cannot pull from `my_reservoir`!
-
+#
+# As with `my_demand`, `my_fwtw` can only treat a fixed amount of water each timestep (the 
+# `treatment_throughput_capacity` parameter), additionally, it will only aim to treat enough 
+# water to satisfy its service reservoirs. Thus, we must empty the service reservoirs and end the
+# timestep for `my_fwtw`.
 # %%
 # Empty FWTW service reservoirs and end timestep
 my_fwtw.service_reservoir_tank.storage['volume'] = 0
