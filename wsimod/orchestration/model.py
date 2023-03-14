@@ -803,19 +803,19 @@ def csv2yaml(address, config_name = 'config_csv.yml', csv_folder_name = 'csv'):
                 for row in reader:
                     formatted_row = {}
                     for key, value in row.items():
-                        
-                        if ('[' in value) & (']' in value):
-                            #Convert lists
-                            value = value.strip('[]') # Remove the brackets
-                            value = value.replace("'",'') # Remove the string bits
-                            value = value.split(', ') # Split by comma
-                            value = [check_and_convert_string(x) for x in value]
-                        else:
-                            #Convert ints, floats and strings
-                            value = check_and_convert_string(value)
-                        
-                        #Convert key and store converted values
-                        formatted_row[key] = value
+                        if value:
+                            if ('[' in value) & (']' in value):
+                                #Convert lists
+                                value = value.strip('[]') # Remove the brackets
+                                value = value.replace("'",'') # Remove the string bits
+                                value = value.split(', ') # Split by comma
+                                value = [check_and_convert_string(x) for x in value]
+                            else:
+                                #Convert ints, floats and strings
+                                value = check_and_convert_string(value)
+                            
+                            #Convert key and store converted values
+                            formatted_row[key] = value
                     if 'Sim_params' not in fid:
                         label = formatted_row['label']
                         del formatted_row['label']
