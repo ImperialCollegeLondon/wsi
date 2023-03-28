@@ -36,6 +36,9 @@ class to_datetime():
     def __str__(self):
         return self._date.strftime("%Y-%m-%d")
     
+    def __repr__(self):
+        return self._date.strftime("%Y-%m-%d")
+    
     @property
     def dayofyear(self):
         return self._date.timetuple().tm_yday
@@ -624,11 +627,6 @@ class Model(WSIObj):
                               'storage' : node.tank.storage['volume'],
                               'time' : date})
             if record_all:
-                for node in self.nodes_type['Groundwater'].values():
-                    tanks.append({'node' : node.name,
-                                  'storage' : node.tank.storage['volume'],
-                                  'time' : date})
-    
                 for node in self.nodes.values():
                     for prop_ in dir(node):
                         prop = node.__getattribute__(prop_)

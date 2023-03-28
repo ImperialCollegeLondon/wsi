@@ -1,4 +1,15 @@
 # %% [markdown]
+# :warning: Warning: this code does not represent best practice for
+# customisation. Instead we recommend use of decorators to overwrite
+# behaviour. Users can see examples of decorators in the
+# [customise_interactions](https://barneydobson.github.io/wsi/demo/scripts/customise_interactions/)
+# and [customise_riverreservoir](https://barneydobson.github.io/wsi/demo/scripts/customise_riverreservoir/)
+# guides. This guide may still be useful for WSIMOD code examples, and it 
+# will still work in many cases.
+#
+# There is currently a GitHub (issue)[https://github.com/barneydobson/wsi/issues/11] 
+# to revise this guide.
+#
 # # Customise an arc (.py)
 # Note - this script can also be opened in interactive Python if you wanted to
 # play around. On the GitHub it is in [docs/demo/scripts](https://github.com/barneydobson/wsi/blob/main/docs/demo/scripts/customise_an_arc.py)
