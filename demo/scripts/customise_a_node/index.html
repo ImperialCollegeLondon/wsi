@@ -1440,6 +1440,15 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p><em>Warning</em>: this code is not currently best practice for
+customisation. Instead we recommend use of decorators to overwrite
+behaviour. Users can see examples of decorators in the
+<a href="https://barneydobson.github.io/wsi/demo/scripts/customise_interactions/">customise_interactions</a>
+and <a href="https://barneydobson.github.io/wsi/demo/scripts/customise_riverreservoir/">customise_riverreservoir</a>
+guides. This guide may still be useful for WSIMOD code examples, and it 
+will still work in many cases.</p>
+<p>There is currently a GitHub <a href="https://github.com/barneydobson/wsi/issues/11">issue</a>
+to revise this guide.</p>
 <h1 id="customise-a-node-py">Customise a node (.py)<a class="anchor-link" href="#customise-a-node-py">&#182;</a></h1><p>Note - this script can also be opened in interactive Python if you wanted to
 play around. On the GitHub it is in <a href="https://github.com/barneydobson/wsi/blob/main/docs/demo/scripts/customise_a_node.py">docs/demo/scripts</a></p>
 <ol>
@@ -1558,16 +1567,16 @@ from wsimod.demo.create_oxford import create_oxford_model</div>
             <div class="highlight-ipynb hl-python"><pre><span></span><span class="c1">#Use this path if compiling documentation</span>
 <span class="n">data_folder</span><span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">),</span>
                                <span class="s2">&quot;docs&quot;</span><span class="p">,</span><span class="s2">&quot;demo&quot;</span><span class="p">,</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
-<span class="c1"># Use this path otherwise</span>
-<span class="c1"># data_folder = os.path.join(os.path.split(os.path.abspath(&#39;&#39;))[0],&quot;data&quot;) </span>
+<span class="c1">#Use this path otherwise</span>
+<span class="c1">#data_folder = os.path.join(os.path.split(os.path.abspath(&#39;&#39;))[0],&quot;data&quot;) </span>
 
 <span class="n">baseline_model</span> <span class="o">=</span> <span class="n">create_oxford_model</span><span class="p">(</span><span class="n">data_folder</span><span class="p">)</span>
 </pre></div>
 <div id="cell-2" class="clipboard-copy-txt">#Use this path if compiling documentation
 data_folder= os.path.join(os.path.abspath(''),
                                "docs","demo","data")
-# Use this path otherwise
-# data_folder = os.path.join(os.path.split(os.path.abspath(''))[0],"data") 
+#Use this path otherwise
+#data_folder = os.path.join(os.path.split(os.path.abspath(''))[0],"data") 
 
 baseline_model = create_oxford_model(data_folder)</div>
     
@@ -1639,7 +1648,7 @@ baseline_tanks = pd.DataFrame(baseline_tanks)</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>100%|█████████████████████████████████████████████████████████████████████████████| 1456/1456 [00:07&lt;00:00, 195.00it/s]
+<pre>100%|██████████████████████████████████████████████████████████████████████████████| 1456/1456 [00:15&lt;00:00, 94.17it/s]
 </pre>
 </div>
 </div>
@@ -2276,7 +2285,7 @@ tanks_mrf = pd.DataFrame(tanks_mrf)</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>100%|█████████████████████████████████████████████████████████████████████████████| 1456/1456 [00:07&lt;00:00, 198.05it/s]
+<pre>100%|█████████████████████████████████████████████████████████████████████████████| 1456/1456 [00:10&lt;00:00, 134.67it/s]
 </pre>
 </div>
 </div>

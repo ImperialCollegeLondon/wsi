@@ -1665,17 +1665,17 @@ print(input_data.sample(10))</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>           site       date  variable          value
-72833       ray 2009-04-05      flow   51926.400000
-14029  evenlode 2011-09-14  fluoride       0.000121
-9220        ray 2010-06-30   silicon       0.004439
-31093  evenlode 2010-08-02  sulphate       0.049607
-69320    thames 2011-08-08     boron       0.000055
-71822  evenlode 2010-06-24      flow   99360.000000
-9640        ray 2011-08-24   silicon       0.008948
-71940  evenlode 2010-10-20      flow  104544.000000
-67582       ray 2010-10-30     boron       0.000132
-35445  cherwell 2010-07-17  nitrogen       0.005420
+<pre>           site       date     variable          value
+52310    thames 2012-11-12    potassium       0.003100
+27276       ray 2012-02-04      nitrate       0.009933
+55902       ray 2010-09-28      calcium       0.099700
+72122  evenlode 2011-04-20         flow  144288.000000
+61996       ray 2011-06-25    magnesium       0.006700
+36519  evenlode 2009-06-30     nitrogen       0.004557
+10749    thames 2010-09-11      silicon       0.007177
+20734       ray 2010-02-16     chloride       0.045780
+51958    thames 2011-11-26    potassium       0.007829
+2382   evenlode 2011-09-15  temperature      14.500000
 </pre>
 </div>
 </div>
@@ -1969,7 +1969,7 @@ land = Land(name = 'my_land',
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>&lt;wsimod.nodes.land.Surface object at 0x000002284E1934F0&gt;
+<pre>&lt;wsimod.nodes.land.Surface object at 0x000001C11D263430&gt;
 </pre>
 </div>
 </div>
@@ -2036,7 +2036,7 @@ land = Land(name = 'my_land',
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>&lt;wsimod.nodes.land.Surface object at 0x000002284E1934F0&gt;
+<pre>&lt;wsimod.nodes.land.Surface object at 0x000001C11D263430&gt;
 </pre>
 </div>
 </div>
@@ -2547,7 +2547,7 @@ print(land.get_surface('my_surface').outflows)</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>[&lt;bound method Surface.simple_deposition of &lt;wsimod.nodes.land.Surface object at 0x000002284E1934F0&gt;&gt;]
+<pre>[&lt;bound method Surface.simple_deposition of &lt;wsimod.nodes.land.Surface object at 0x000001C11D263430&gt;&gt;]
 []
 []
 </pre>
@@ -2721,9 +2721,9 @@ print(land.get_surface('my_surface').outflows)</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>[&lt;bound method Surface.simple_deposition of &lt;wsimod.nodes.land.PerviousSurface object at 0x000002284E193490&gt;&gt;, &lt;bound method PerviousSurface.ihacres of &lt;wsimod.nodes.land.PerviousSurface object at 0x000002284E193490&gt;&gt;]
-[&lt;bound method PerviousSurface.calculate_soil_temperature of &lt;wsimod.nodes.land.PerviousSurface object at 0x000002284E193490&gt;&gt;]
-[&lt;bound method PerviousSurface.route of &lt;wsimod.nodes.land.PerviousSurface object at 0x000002284E193490&gt;&gt;]
+<pre>[&lt;bound method Surface.simple_deposition of &lt;wsimod.nodes.land.PerviousSurface object at 0x000001C11D263F70&gt;&gt;, &lt;bound method PerviousSurface.ihacres of &lt;wsimod.nodes.land.PerviousSurface object at 0x000001C11D263F70&gt;&gt;]
+[&lt;bound method PerviousSurface.calculate_soil_temperature of &lt;wsimod.nodes.land.PerviousSurface object at 0x000001C11D263F70&gt;&gt;]
+[&lt;bound method PerviousSurface.route of &lt;wsimod.nodes.land.PerviousSurface object at 0x000001C11D263F70&gt;&gt;]
 </pre>
 </div>
 </div>
@@ -3649,7 +3649,7 @@ to empty to give a clean start for the model.</p>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>100%|████████████████████████████████████████████████████████████████████████████| 1456/1456 [00:01&lt;00:00, 1213.70it/s]
+<pre>100%|████████████████████████████████████████████████████████████████████████████| 1456/1456 [00:00&lt;00:00, 1724.74it/s]
 </pre>
 </div>
 </div>
@@ -4039,7 +4039,7 @@ But has also added a range of other functions related to deposition.</p>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>[&lt;bound method GrowingSurface.calc_crop_cover of &lt;wsimod.nodes.land.GrowingSurface object at 0x000002284E1BE920&gt;&gt;, &lt;bound method Surface.atmospheric_deposition of &lt;wsimod.nodes.land.GrowingSurface object at 0x000002284E1BE920&gt;&gt;, &lt;bound method Surface.precipitation_deposition of &lt;wsimod.nodes.land.GrowingSurface object at 0x000002284E1BE920&gt;&gt;, &lt;bound method PerviousSurface.ihacres of &lt;wsimod.nodes.land.GrowingSurface object at 0x000002284E1BE920&gt;&gt;, &lt;bound method GrowingSurface.fertiliser of &lt;wsimod.nodes.land.GrowingSurface object at 0x000002284E1BE920&gt;&gt;, &lt;bound method GrowingSurface.manure of &lt;wsimod.nodes.land.GrowingSurface object at 0x000002284E1BE920&gt;&gt;]
+<pre>[&lt;bound method GrowingSurface.calc_crop_cover of &lt;wsimod.nodes.land.GrowingSurface object at 0x000001C11FE0B5B0&gt;&gt;, &lt;bound method Surface.atmospheric_deposition of &lt;wsimod.nodes.land.GrowingSurface object at 0x000001C11FE0B5B0&gt;&gt;, &lt;bound method Surface.precipitation_deposition of &lt;wsimod.nodes.land.GrowingSurface object at 0x000001C11FE0B5B0&gt;&gt;, &lt;bound method PerviousSurface.ihacres of &lt;wsimod.nodes.land.GrowingSurface object at 0x000001C11FE0B5B0&gt;&gt;, &lt;bound method GrowingSurface.fertiliser of &lt;wsimod.nodes.land.GrowingSurface object at 0x000001C11FE0B5B0&gt;&gt;, &lt;bound method GrowingSurface.manure of &lt;wsimod.nodes.land.GrowingSurface object at 0x000001C11FE0B5B0&gt;&gt;]
 </pre>
 </div>
 </div>
@@ -4106,7 +4106,7 @@ But has also added a range of other functions related to deposition.</p>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
-<pre>[&lt;bound method PerviousSurface.calculate_soil_temperature of &lt;wsimod.nodes.land.GrowingSurface object at 0x000002284E1BE920&gt;&gt;, &lt;bound method GrowingSurface.calc_temperature_dependence_factor of &lt;wsimod.nodes.land.GrowingSurface object at 0x000002284E1BE920&gt;&gt;, &lt;bound method GrowingSurface.calc_soil_moisture_dependence_factor of &lt;wsimod.nodes.land.GrowingSurface object at 0x000002284E1BE920&gt;&gt;, &lt;bound method GrowingSurface.soil_pool_transformation of &lt;wsimod.nodes.land.GrowingSurface object at 0x000002284E1BE920&gt;&gt;, &lt;bound method GrowingSurface.calc_crop_uptake of &lt;wsimod.nodes.land.GrowingSurface object at 0x000002284E1BE920&gt;&gt;, &lt;bound method GrowingSurface.erosion of &lt;wsimod.nodes.land.GrowingSurface object at 0x000002284E1BE920&gt;&gt;, &lt;bound method GrowingSurface.denitrification of &lt;wsimod.nodes.land.GrowingSurface object at 0x000002284E1BE920&gt;&gt;, &lt;bound method GrowingSurface.adsorption of &lt;wsimod.nodes.land.GrowingSurface object at 0x000002284E1BE920&gt;&gt;]
+<pre>[&lt;bound method PerviousSurface.calculate_soil_temperature of &lt;wsimod.nodes.land.GrowingSurface object at 0x000001C11FE0B5B0&gt;&gt;, &lt;bound method GrowingSurface.calc_temperature_dependence_factor of &lt;wsimod.nodes.land.GrowingSurface object at 0x000001C11FE0B5B0&gt;&gt;, &lt;bound method GrowingSurface.calc_soil_moisture_dependence_factor of &lt;wsimod.nodes.land.GrowingSurface object at 0x000001C11FE0B5B0&gt;&gt;, &lt;bound method GrowingSurface.soil_pool_transformation of &lt;wsimod.nodes.land.GrowingSurface object at 0x000001C11FE0B5B0&gt;&gt;, &lt;bound method GrowingSurface.calc_crop_uptake of &lt;wsimod.nodes.land.GrowingSurface object at 0x000001C11FE0B5B0&gt;&gt;, &lt;bound method GrowingSurface.erosion of &lt;wsimod.nodes.land.GrowingSurface object at 0x000001C11FE0B5B0&gt;&gt;, &lt;bound method GrowingSurface.denitrification of &lt;wsimod.nodes.land.GrowingSurface object at 0x000001C11FE0B5B0&gt;&gt;, &lt;bound method GrowingSurface.adsorption of &lt;wsimod.nodes.land.GrowingSurface object at 0x000001C11FE0B5B0&gt;&gt;]
 </pre>
 </div>
 </div>
@@ -4207,7 +4207,7 @@ results = my_model.run()</div>
 
 
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="application/vnd.jupyter.stderr">
-<pre>100%|█████████████████████████████████████████████████████████████████████████████| 1456/1456 [00:02&lt;00:00, 631.64it/s]
+<pre>100%|█████████████████████████████████████████████████████████████████████████████| 1456/1456 [00:01&lt;00:00, 922.14it/s]
 </pre>
 </div>
 </div>
