@@ -1010,6 +1010,7 @@ class GrowingSurface(PerviousSurface):
         self.inflows.insert(0, self.calc_crop_cover)
         if 'nitrate' in constants.POLLUTANTS:
             #Populate function lists 
+            self.inflows.append(self.effective_precipitation_flushing)
             self.inflows.append(self.fertiliser)
             self.inflows.append(self.manure)
             # self.inflows.append(self.residue)
@@ -1178,6 +1179,37 @@ class GrowingSurface(PerviousSurface):
                 vqip['org-phosphorus'] *= (in_['P'] / deposition['P'])
             
         return vqip
+    
+    def effective_precipitation_flushing(self):
+        """ Remove the nutrients brought out by effective precipitation,
+        which is surface runoff, subsurface runoff, and percolation, from the nutrients pool.
+
+        Returns
+            (tuple): A tuple containing a VQIP amount for model inputs and outputs 
+                    for mass balance checking. 
+
+        """
+        # inorganic
+        out = self.nutrient_pool.get_empty_nutrient()
+        out['N'] = self.subsurface_flow['ammonia'] + self.subsurface_flow['nitrite'] + self.subsurface_flow['nitrate'] + \
+                   self.percolation['ammonia'] + self.percolation['nitrite'] + self.percolation['nitrate'] + \
+                   self.infiltration_excess['ammonia'] + self.infiltration_excess['nitrite'] + self.infiltration_excess['nitrate'] #TODO what happens if infiltration excess (the real part) has pollutants?
+        out['P'] = self.subsurface_flow['phosphate'] + \
+                   self.percolation['phosphate'] + \
+                   self.infiltration_excess['phosphate']
+        out_ = self.nutrient_pool.dissolved_inorganic_pool.extract(out)
+        
+        #organic
+        out = self.nutrient_pool.get_empty_nutrient()
+        out['N'] = self.subsurface_flow['org-nitrogen'] + \
+                   self.percolation['org-nitrogen'] + \
+                   self.infiltration_excess['org-nitrogen']
+        out['P'] = self.subsurface_flow['org-phosphorus'] + \
+                   self.percolation['org-phosphorus'] + \
+                   self.infiltration_excess['org-phosphorus']
+        out_ = self.nutrient_pool.dissolved_organic_pool.extract(out)
+        
+        return (self.empty_vqip(), self.empty_vqip())
     
     def fertiliser(self):
         """Read, scale and allocate fertiliser, updating the tank
