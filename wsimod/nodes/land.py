@@ -960,8 +960,8 @@ class GrowingSurface(PerviousSurface):
         self.sreroexp = 1.2 # [-] surface runoff erosion exponent
         self.cohesion = 1 # [kPa]
         self.slope = 5 # [-] every 100
-        self.srfilt = 0.95 # [-] ratio of eroded sediment left in surface runoff after filtration
-        self.macrofilt = 0.1 # [-] ratio of eroded sediment left in subsurface flow after filtration
+        self.srfilt = 0.7 # [-] ratio of eroded sediment left in surface runoff after filtration
+        self.macrofilt = 0.01 # [-] ratio of eroded sediment left in subsurface flow after filtration
         
         #Denitrification parameters
         self.limpar = 0.7 # [-] above which denitrification begins
