@@ -592,6 +592,7 @@ class ImperviousSurface(Surface):
 class PerviousSurface(Surface):
     def __init__(self,
                         depth = 0.75,
+                        total_porosity = 0.4,
                         field_capacity = 0.3,
                         wilting_point = 0.12,
                         infiltration_capacity = 0.5,
@@ -604,6 +605,9 @@ class PerviousSurface(Surface):
 
         Args:
             depth (float, optional): Soil tank (i.e., root) depth. Defaults to 0.75.
+            total_porosity (float, optional): The total porosity IHACRES parameter
+                (i.e., defines the total porouse volume of the soil - the maximum volume 
+                of soil pores can contain when saturated). Defaults to 0.4.
             field_capacity (float, optional): The field capacity IHACRES parameter
                 (i.e., when water content in the soil tank is above this value - flows 
                 of any kind can be generated). Defaults to 0.3.
@@ -672,7 +676,7 @@ class PerviousSurface(Surface):
         self.soil_temp_deep = 10 #deep soil temperature
         
         #IHACRES is a deficit not a tank, so doesn't really have a capacity in this way... and if it did.. I don't know if it would be the root depth
-        super().__init__(depth=depth,**kwargs)
+        super().__init__(depth=depth * total_porosity,**kwargs)
         
         #Calculate subsurface coefficient
         self.subsurface_coefficient = 1 - self.percolation_coefficient 
