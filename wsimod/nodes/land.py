@@ -1433,13 +1433,17 @@ class GrowingSurface(PerviousSurface):
                 temp_func = 1
             
             #Calculate uptake
-            uptake_par = (self.uptake1 - self.uptake2) * exp(-self.uptake3 * days_after_sow) * temp_func
+            uptake_par = (self.uptake1 - self.uptake2) * exp(-self.uptake3 * days_after_sow)
             if (uptake_par + self.uptake2) > 0 :
                 N_common_uptake = self.uptake1 * self.uptake2 * self.uptake3 * uptake_par / ((self.uptake2 + uptake_par) ** 2)
-            N_common_uptake *= constants.G_M2_TO_KG_M2
+            N_common_uptake *= temp_func * constants.G_M2_TO_KG_M2 * self.area # [kg]
             P_common_uptake = N_common_uptake * self.uptake_PNratio
-            uptake = {'P' : P_common_uptake,
-                      'N' : N_common_uptake}
+            # calculate maximum available uptake
+            N_maximum_available_uptake = max(0, self.storage['volume'] - self.wilting_point * self.area) / self.storage['volume'] * self.nutrient_pool.dissolved_inorganic_pool.storage['N']
+            P_maximum_available_uptake = max(0, self.storage['volume'] - self.wilting_point * self.area) / self.storage['volume'] * self.nutrient_pool.dissolved_inorganic_pool.storage['P']            
+            
+            uptake = {'P' : min(P_common_uptake, P_maximum_available_uptake),
+                      'N' : min(N_common_uptake, N_maximum_available_uptake)}
             crop_uptake = self.nutrient_pool.dissolved_inorganic_pool.extract(uptake)
             out_ = self.empty_vqip()
             
