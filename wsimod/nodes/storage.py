@@ -445,7 +445,7 @@ class River(Storage):
         self.mrf = mrf
         area = length * width # [m2]
         
-        capacity = depth * area
+        capacity = constants.UNBOUNDED_CAPACITY #TODO might be depth * area if flood indunation is going to be simulated
         
         #Required in cases where 'area' conflicts with length*width
         kwargs['area'] = area
