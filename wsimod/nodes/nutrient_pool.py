@@ -333,8 +333,8 @@ class NutrientPool:
         increase_in_dissolved_organic = self.sum_nutrients(increase_in_dissolved_organic, amount)
         
         #Immobilisation
-        amount = self.temp_soil_process(self.immobdpar, self.dissolved_organic_pool, self.fast_pool)
-        increase_in_dissolved_organic = self.subtract_nutrients(increase_in_dissolved_organic, amount)
+        amount = self.temp_soil_process(self.immobdpar, self.dissolved_inorganic_pool, self.fast_pool)
+        increase_in_dissolved_inorganic = self.subtract_nutrients(increase_in_dissolved_inorganic, amount) #TODO will a negative value affect the consequent processes in growing surface?
         
         return increase_in_dissolved_inorganic, increase_in_dissolved_organic
 
