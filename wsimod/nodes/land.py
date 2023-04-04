@@ -1439,8 +1439,8 @@ class GrowingSurface(PerviousSurface):
             N_common_uptake *= temp_func * constants.G_M2_TO_KG_M2 * self.area # [kg]
             P_common_uptake = N_common_uptake * self.uptake_PNratio
             # calculate maximum available uptake
-            N_maximum_available_uptake = max(0, self.storage['volume'] - self.wilting_point * self.area) / self.storage['volume'] * self.nutrient_pool.dissolved_inorganic_pool.storage['N']
-            P_maximum_available_uptake = max(0, self.storage['volume'] - self.wilting_point * self.area) / self.storage['volume'] * self.nutrient_pool.dissolved_inorganic_pool.storage['P']            
+            N_maximum_available_uptake = max(0, self.storage['volume'] - self.wilting_point_m * self.area) / self.storage['volume'] * self.nutrient_pool.dissolved_inorganic_pool.storage['N']
+            P_maximum_available_uptake = max(0, self.storage['volume'] - self.wilting_point_m * self.area) / self.storage['volume'] * self.nutrient_pool.dissolved_inorganic_pool.storage['P']            
             
             uptake = {'P' : min(P_common_uptake, P_maximum_available_uptake),
                       'N' : min(N_common_uptake, N_maximum_available_uptake)}
