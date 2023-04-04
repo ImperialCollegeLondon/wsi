@@ -972,7 +972,7 @@ class GrowingSurface(PerviousSurface):
         #Adsorption parameters
         self.adosorption_nr_limit = 0.00001
         self.adsorption_nr_maxiter = 20
-        self.kfr = 153.7 # [1/kg] freundlich adsorption isoterm
+        self.kfr = 153.7 # [litter/kg] freundlich adsorption isoterm
         self.nfr = 1/2.6 # [-] freundlich exponential coefficient
         self.kadsdes = 0.03 # [1/day] adsorption/desorption coefficient
         
@@ -1633,7 +1633,7 @@ class GrowingSurface(PerviousSurface):
         #Calculate coefficient and concentration of adsorbed phosphorus
         soil_moisture_content = self.get_smc() * constants.M_TO_MM # [mm] (not sure why HYPE has this in mm but whatever)
         conc_sol = self.nutrient_pool.adsorbed_inorganic_pool.storage['P'] * constants.KG_TO_MG / (self.bulk_density * self.rooting_depth * self.area)# [mg P/kg soil]
-        coeff = self.kfr * self.bulk_density * self.rooting_depth * constants.M_TO_MM # [mm]
+        coeff = self.kfr * self.bulk_density * self.rooting_depth # [mm]
         
         # calculate equilibrium concentration
         if conc_sol <= 0 :
