@@ -466,6 +466,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#wsimod.nodes.land.GrowingSurface.effective_precipitation_flushing" class="md-nav__link">
+    effective_precipitation_flushing()
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#wsimod.nodes.land.GrowingSurface.erosion" class="md-nav__link">
     erosion()
   </a>
@@ -1018,47 +1025,7 @@
 
         <details class="quote">
           <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1757</span>
-<span class="normal">1758</span>
-<span class="normal">1759</span>
-<span class="normal">1760</span>
-<span class="normal">1761</span>
-<span class="normal">1762</span>
-<span class="normal">1763</span>
-<span class="normal">1764</span>
-<span class="normal">1765</span>
-<span class="normal">1766</span>
-<span class="normal">1767</span>
-<span class="normal">1768</span>
-<span class="normal">1769</span>
-<span class="normal">1770</span>
-<span class="normal">1771</span>
-<span class="normal">1772</span>
-<span class="normal">1773</span>
-<span class="normal">1774</span>
-<span class="normal">1775</span>
-<span class="normal">1776</span>
-<span class="normal">1777</span>
-<span class="normal">1778</span>
-<span class="normal">1779</span>
-<span class="normal">1780</span>
-<span class="normal">1781</span>
-<span class="normal">1782</span>
-<span class="normal">1783</span>
-<span class="normal">1784</span>
-<span class="normal">1785</span>
-<span class="normal">1786</span>
-<span class="normal">1787</span>
-<span class="normal">1788</span>
-<span class="normal">1789</span>
-<span class="normal">1790</span>
-<span class="normal">1791</span>
-<span class="normal">1792</span>
-<span class="normal">1793</span>
-<span class="normal">1794</span>
-<span class="normal">1795</span>
-<span class="normal">1796</span>
-<span class="normal">1797</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1797</span>
 <span class="normal">1798</span>
 <span class="normal">1799</span>
 <span class="normal">1800</span>
@@ -1066,7 +1033,47 @@
 <span class="normal">1802</span>
 <span class="normal">1803</span>
 <span class="normal">1804</span>
-<span class="normal">1805</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">GardenSurface</span><span class="p">(</span><span class="n">GrowingSurface</span><span class="p">):</span>
+<span class="normal">1805</span>
+<span class="normal">1806</span>
+<span class="normal">1807</span>
+<span class="normal">1808</span>
+<span class="normal">1809</span>
+<span class="normal">1810</span>
+<span class="normal">1811</span>
+<span class="normal">1812</span>
+<span class="normal">1813</span>
+<span class="normal">1814</span>
+<span class="normal">1815</span>
+<span class="normal">1816</span>
+<span class="normal">1817</span>
+<span class="normal">1818</span>
+<span class="normal">1819</span>
+<span class="normal">1820</span>
+<span class="normal">1821</span>
+<span class="normal">1822</span>
+<span class="normal">1823</span>
+<span class="normal">1824</span>
+<span class="normal">1825</span>
+<span class="normal">1826</span>
+<span class="normal">1827</span>
+<span class="normal">1828</span>
+<span class="normal">1829</span>
+<span class="normal">1830</span>
+<span class="normal">1831</span>
+<span class="normal">1832</span>
+<span class="normal">1833</span>
+<span class="normal">1834</span>
+<span class="normal">1835</span>
+<span class="normal">1836</span>
+<span class="normal">1837</span>
+<span class="normal">1838</span>
+<span class="normal">1839</span>
+<span class="normal">1840</span>
+<span class="normal">1841</span>
+<span class="normal">1842</span>
+<span class="normal">1843</span>
+<span class="normal">1844</span>
+<span class="normal">1845</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">GardenSurface</span><span class="p">(</span><span class="n">GrowingSurface</span><span class="p">):</span>
     <span class="c1">#TODO - probably a simplier version of this is useful, building just on pervioussurface</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A specific surface for gardens that treats the garden as a grass crop, but </span>
@@ -1149,13 +1156,13 @@ a query from an attached Demand node.</p>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1759</span>
-<span class="normal">1760</span>
-<span class="normal">1761</span>
-<span class="normal">1762</span>
-<span class="normal">1763</span>
-<span class="normal">1764</span>
-<span class="normal">1765</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1799</span>
+<span class="normal">1800</span>
+<span class="normal">1801</span>
+<span class="normal">1802</span>
+<span class="normal">1803</span>
+<span class="normal">1804</span>
+<span class="normal">1805</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A specific surface for gardens that treats the garden as a grass crop, but </span>
 <span class="sd">    that can calculate/receive irrigation through functions that are assigned by </span>
 <span class="sd">    the parent land node&#39;s handlers, which in turn are expected to be triggered by </span>
@@ -1231,32 +1238,32 @@ is used)</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1767</span>
-<span class="normal">1768</span>
-<span class="normal">1769</span>
-<span class="normal">1770</span>
-<span class="normal">1771</span>
-<span class="normal">1772</span>
-<span class="normal">1773</span>
-<span class="normal">1774</span>
-<span class="normal">1775</span>
-<span class="normal">1776</span>
-<span class="normal">1777</span>
-<span class="normal">1778</span>
-<span class="normal">1779</span>
-<span class="normal">1780</span>
-<span class="normal">1781</span>
-<span class="normal">1782</span>
-<span class="normal">1783</span>
-<span class="normal">1784</span>
-<span class="normal">1785</span>
-<span class="normal">1786</span>
-<span class="normal">1787</span>
-<span class="normal">1788</span>
-<span class="normal">1789</span>
-<span class="normal">1790</span>
-<span class="normal">1791</span>
-<span class="normal">1792</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calculate_irrigation_demand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ignore_vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1807</span>
+<span class="normal">1808</span>
+<span class="normal">1809</span>
+<span class="normal">1810</span>
+<span class="normal">1811</span>
+<span class="normal">1812</span>
+<span class="normal">1813</span>
+<span class="normal">1814</span>
+<span class="normal">1815</span>
+<span class="normal">1816</span>
+<span class="normal">1817</span>
+<span class="normal">1818</span>
+<span class="normal">1819</span>
+<span class="normal">1820</span>
+<span class="normal">1821</span>
+<span class="normal">1822</span>
+<span class="normal">1823</span>
+<span class="normal">1824</span>
+<span class="normal">1825</span>
+<span class="normal">1826</span>
+<span class="normal">1827</span>
+<span class="normal">1828</span>
+<span class="normal">1829</span>
+<span class="normal">1830</span>
+<span class="normal">1831</span>
+<span class="normal">1832</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calculate_irrigation_demand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ignore_vqip</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A check function (assigned by parent to push check from demand nodes) that </span>
 <span class="sd">    calculations irrigation demand (i.e., difference between evaporation and </span>
 <span class="sd">    preciptiation)</span>
@@ -1347,18 +1354,18 @@ be empty)</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1794</span>
-<span class="normal">1795</span>
-<span class="normal">1796</span>
-<span class="normal">1797</span>
-<span class="normal">1798</span>
-<span class="normal">1799</span>
-<span class="normal">1800</span>
-<span class="normal">1801</span>
-<span class="normal">1802</span>
-<span class="normal">1803</span>
-<span class="normal">1804</span>
-<span class="normal">1805</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">receive_irrigation_demand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1834</span>
+<span class="normal">1835</span>
+<span class="normal">1836</span>
+<span class="normal">1837</span>
+<span class="normal">1838</span>
+<span class="normal">1839</span>
+<span class="normal">1840</span>
+<span class="normal">1841</span>
+<span class="normal">1842</span>
+<span class="normal">1843</span>
+<span class="normal">1844</span>
+<span class="normal">1845</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">receive_irrigation_demand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A set function (assigned by parent to push set from demand nodes) that assigns irrigation water supply to the surface tank</span>
 
 <span class="sd">    Args:</span>
@@ -1403,11 +1410,7 @@ be empty)</p></td>
 
         <details class="quote">
           <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 835</span>
-<span class="normal"> 836</span>
-<span class="normal"> 837</span>
-<span class="normal"> 838</span>
-<span class="normal"> 839</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 839</span>
 <span class="normal"> 840</span>
 <span class="normal"> 841</span>
 <span class="normal"> 842</span>
@@ -2274,7 +2277,47 @@ be empty)</p></td>
 <span class="normal">1703</span>
 <span class="normal">1704</span>
 <span class="normal">1705</span>
-<span class="normal">1706</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">GrowingSurface</span><span class="p">(</span><span class="n">PerviousSurface</span><span class="p">):</span>
+<span class="normal">1706</span>
+<span class="normal">1707</span>
+<span class="normal">1708</span>
+<span class="normal">1709</span>
+<span class="normal">1710</span>
+<span class="normal">1711</span>
+<span class="normal">1712</span>
+<span class="normal">1713</span>
+<span class="normal">1714</span>
+<span class="normal">1715</span>
+<span class="normal">1716</span>
+<span class="normal">1717</span>
+<span class="normal">1718</span>
+<span class="normal">1719</span>
+<span class="normal">1720</span>
+<span class="normal">1721</span>
+<span class="normal">1722</span>
+<span class="normal">1723</span>
+<span class="normal">1724</span>
+<span class="normal">1725</span>
+<span class="normal">1726</span>
+<span class="normal">1727</span>
+<span class="normal">1728</span>
+<span class="normal">1729</span>
+<span class="normal">1730</span>
+<span class="normal">1731</span>
+<span class="normal">1732</span>
+<span class="normal">1733</span>
+<span class="normal">1734</span>
+<span class="normal">1735</span>
+<span class="normal">1736</span>
+<span class="normal">1737</span>
+<span class="normal">1738</span>
+<span class="normal">1739</span>
+<span class="normal">1740</span>
+<span class="normal">1741</span>
+<span class="normal">1742</span>
+<span class="normal">1743</span>
+<span class="normal">1744</span>
+<span class="normal">1745</span>
+<span class="normal">1746</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">GrowingSurface</span><span class="p">(</span><span class="n">PerviousSurface</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                        <span class="n">rooting_depth</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
                         <span class="n">ET_depletion_factor</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -2398,8 +2441,8 @@ be empty)</p></td>
         <span class="bp">self</span><span class="o">.</span><span class="n">sreroexp</span> <span class="o">=</span> <span class="mf">1.2</span> <span class="c1"># [-] surface runoff erosion exponent</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cohesion</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># [kPa]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">slope</span> <span class="o">=</span> <span class="mi">5</span> <span class="c1"># [-] every 100</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">srfilt</span> <span class="o">=</span> <span class="mf">0.95</span> <span class="c1"># [-] ratio of eroded sediment left in surface runoff after filtration</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">macrofilt</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="c1"># [-] ratio of eroded sediment left in subsurface flow after filtration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">srfilt</span> <span class="o">=</span> <span class="mf">0.7</span> <span class="c1"># [-] ratio of eroded sediment left in surface runoff after filtration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">macrofilt</span> <span class="o">=</span> <span class="mf">0.01</span> <span class="c1"># [-] ratio of eroded sediment left in subsurface flow after filtration</span>
 
         <span class="c1">#Denitrification parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">limpar</span> <span class="o">=</span> <span class="mf">0.7</span> <span class="c1"># [-] above which denitrification begins</span>
@@ -2410,7 +2453,7 @@ be empty)</p></td>
         <span class="c1">#Adsorption parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">adosorption_nr_limit</span> <span class="o">=</span> <span class="mf">0.00001</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">adsorption_nr_maxiter</span> <span class="o">=</span> <span class="mi">20</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">kfr</span> <span class="o">=</span> <span class="mf">153.7</span> <span class="c1"># [1/kg] freundlich adsorption isoterm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kfr</span> <span class="o">=</span> <span class="mf">153.7</span> <span class="c1"># [litter/kg] freundlich adsorption isoterm</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nfr</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mf">2.6</span> <span class="c1"># [-] freundlich exponential coefficient</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kadsdes</span> <span class="o">=</span> <span class="mf">0.03</span> <span class="c1"># [1/day] adsorption/desorption coefficient</span>
 
@@ -2423,8 +2466,8 @@ be empty)</p></td>
         <span class="bp">self</span><span class="o">.</span><span class="n">ground_cover_stages</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">ground_cover_max</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">crop_cover_stages</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">crop_cover_max</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="c1">#This is just based on googling when is autumn...</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sowing_day</span> <span class="o">&gt;</span> <span class="mi">265</span><span class="p">:</span>
+        <span class="c1">#Use day number of 181 to indicate autumn-sown (from HYPE)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sowing_day</span> <span class="o">&gt;</span> <span class="mi">181</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">autumn_sow</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">autumn_sow</span> <span class="o">=</span> <span class="kc">False</span>
@@ -2448,6 +2491,7 @@ be empty)</p></td>
         <span class="bp">self</span><span class="o">.</span><span class="n">inflows</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_crop_cover</span><span class="p">)</span>
         <span class="k">if</span> <span class="s1">&#39;nitrate&#39;</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">POLLUTANTS</span><span class="p">:</span>
             <span class="c1">#Populate function lists </span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">inflows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">effective_precipitation_flushing</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">inflows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fertiliser</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">inflows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">manure</span><span class="p">)</span>
             <span class="c1"># self.inflows.append(self.residue)</span>
@@ -2616,6 +2660,37 @@ be empty)</p></td>
                 <span class="n">vqip</span><span class="p">[</span><span class="s1">&#39;org-phosphorus&#39;</span><span class="p">]</span> <span class="o">*=</span> <span class="p">(</span><span class="n">in_</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">deposition</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="n">vqip</span>
+
+    <span class="k">def</span> <span class="nf">effective_precipitation_flushing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Remove the nutrients brought out by effective precipitation,</span>
+<span class="sd">        which is surface runoff, subsurface runoff, and percolation, from the nutrients pool.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">            (tuple): A tuple containing a VQIP amount for model inputs and outputs </span>
+<span class="sd">                    for mass balance checking. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># inorganic</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nutrient_pool</span><span class="o">.</span><span class="n">get_empty_nutrient</span><span class="p">()</span>
+        <span class="n">out</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subsurface_flow</span><span class="p">[</span><span class="s1">&#39;ammonia&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">subsurface_flow</span><span class="p">[</span><span class="s1">&#39;nitrite&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">subsurface_flow</span><span class="p">[</span><span class="s1">&#39;nitrate&#39;</span><span class="p">]</span> <span class="o">+</span> \
+                   <span class="bp">self</span><span class="o">.</span><span class="n">percolation</span><span class="p">[</span><span class="s1">&#39;ammonia&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">percolation</span><span class="p">[</span><span class="s1">&#39;nitrite&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">percolation</span><span class="p">[</span><span class="s1">&#39;nitrate&#39;</span><span class="p">]</span> <span class="o">+</span> \
+                   <span class="bp">self</span><span class="o">.</span><span class="n">infiltration_excess</span><span class="p">[</span><span class="s1">&#39;ammonia&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">infiltration_excess</span><span class="p">[</span><span class="s1">&#39;nitrite&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">infiltration_excess</span><span class="p">[</span><span class="s1">&#39;nitrate&#39;</span><span class="p">]</span> <span class="c1">#TODO what happens if infiltration excess (the real part) has pollutants?</span>
+        <span class="n">out</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subsurface_flow</span><span class="p">[</span><span class="s1">&#39;phosphate&#39;</span><span class="p">]</span> <span class="o">+</span> \
+                   <span class="bp">self</span><span class="o">.</span><span class="n">percolation</span><span class="p">[</span><span class="s1">&#39;phosphate&#39;</span><span class="p">]</span> <span class="o">+</span> \
+                   <span class="bp">self</span><span class="o">.</span><span class="n">infiltration_excess</span><span class="p">[</span><span class="s1">&#39;phosphate&#39;</span><span class="p">]</span>
+        <span class="n">out_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nutrient_pool</span><span class="o">.</span><span class="n">dissolved_inorganic_pool</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+
+        <span class="c1">#organic</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nutrient_pool</span><span class="o">.</span><span class="n">get_empty_nutrient</span><span class="p">()</span>
+        <span class="n">out</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subsurface_flow</span><span class="p">[</span><span class="s1">&#39;org-nitrogen&#39;</span><span class="p">]</span> <span class="o">+</span> \
+                   <span class="bp">self</span><span class="o">.</span><span class="n">percolation</span><span class="p">[</span><span class="s1">&#39;org-nitrogen&#39;</span><span class="p">]</span> <span class="o">+</span> \
+                   <span class="bp">self</span><span class="o">.</span><span class="n">infiltration_excess</span><span class="p">[</span><span class="s1">&#39;org-nitrogen&#39;</span><span class="p">]</span>
+        <span class="n">out</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subsurface_flow</span><span class="p">[</span><span class="s1">&#39;org-phosphorus&#39;</span><span class="p">]</span> <span class="o">+</span> \
+                   <span class="bp">self</span><span class="o">.</span><span class="n">percolation</span><span class="p">[</span><span class="s1">&#39;org-phosphorus&#39;</span><span class="p">]</span> <span class="o">+</span> \
+                   <span class="bp">self</span><span class="o">.</span><span class="n">infiltration_excess</span><span class="p">[</span><span class="s1">&#39;org-phosphorus&#39;</span><span class="p">]</span>
+        <span class="n">out_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nutrient_pool</span><span class="o">.</span><span class="n">dissolved_organic_pool</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">fertiliser</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Read, scale and allocate fertiliser, updating the tank</span>
@@ -2839,13 +2914,17 @@ be empty)</p></td>
                 <span class="n">temp_func</span> <span class="o">=</span> <span class="mi">1</span>
 
             <span class="c1">#Calculate uptake</span>
-            <span class="n">uptake_par</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uptake1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">uptake2</span><span class="p">)</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">uptake3</span> <span class="o">*</span> <span class="n">days_after_sow</span><span class="p">)</span> <span class="o">*</span> <span class="n">temp_func</span>
+            <span class="n">uptake_par</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uptake1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">uptake2</span><span class="p">)</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">uptake3</span> <span class="o">*</span> <span class="n">days_after_sow</span><span class="p">)</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">uptake_par</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">uptake2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">:</span>
                 <span class="n">N_common_uptake</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uptake1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">uptake2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">uptake3</span> <span class="o">*</span> <span class="n">uptake_par</span> <span class="o">/</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">uptake2</span> <span class="o">+</span> <span class="n">uptake_par</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-            <span class="n">N_common_uptake</span> <span class="o">*=</span> <span class="n">constants</span><span class="o">.</span><span class="n">G_M2_TO_KG_M2</span>
+            <span class="n">N_common_uptake</span> <span class="o">*=</span> <span class="n">temp_func</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">G_M2_TO_KG_M2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">area</span> <span class="c1"># [kg]</span>
             <span class="n">P_common_uptake</span> <span class="o">=</span> <span class="n">N_common_uptake</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">uptake_PNratio</span>
-            <span class="n">uptake</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;P&#39;</span> <span class="p">:</span> <span class="n">P_common_uptake</span><span class="p">,</span>
-                      <span class="s1">&#39;N&#39;</span> <span class="p">:</span> <span class="n">N_common_uptake</span><span class="p">}</span>
+            <span class="c1"># calculate maximum available uptake</span>
+            <span class="n">N_maximum_available_uptake</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">wilting_point_m</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nutrient_pool</span><span class="o">.</span><span class="n">dissolved_inorganic_pool</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span>
+            <span class="n">P_maximum_available_uptake</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">wilting_point_m</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nutrient_pool</span><span class="o">.</span><span class="n">dissolved_inorganic_pool</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span>            
+
+            <span class="n">uptake</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;P&#39;</span> <span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">P_common_uptake</span><span class="p">,</span> <span class="n">P_maximum_available_uptake</span><span class="p">),</span>
+                      <span class="s1">&#39;N&#39;</span> <span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">N_common_uptake</span><span class="p">,</span> <span class="n">N_maximum_available_uptake</span><span class="p">)}</span>
             <span class="n">crop_uptake</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nutrient_pool</span><span class="o">.</span><span class="n">dissolved_inorganic_pool</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">uptake</span><span class="p">)</span>
             <span class="n">out_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
 
@@ -3035,7 +3114,7 @@ be empty)</p></td>
         <span class="c1">#Calculate coefficient and concentration of adsorbed phosphorus</span>
         <span class="n">soil_moisture_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_smc</span><span class="p">()</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">M_TO_MM</span> <span class="c1"># [mm] (not sure why HYPE has this in mm but whatever)</span>
         <span class="n">conc_sol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nutrient_pool</span><span class="o">.</span><span class="n">adsorbed_inorganic_pool</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">KG_TO_MG</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bulk_density</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rooting_depth</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="p">)</span><span class="c1"># [mg P/kg soil]</span>
-        <span class="n">coeff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kfr</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">bulk_density</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rooting_depth</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">M_TO_MM</span> <span class="c1"># [mm]</span>
+        <span class="n">coeff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kfr</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">bulk_density</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rooting_depth</span> <span class="c1"># [mm]</span>
 
         <span class="c1"># calculate equilibrium concentration</span>
         <span class="k">if</span> <span class="n">conc_sol</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="p">:</span>
@@ -3334,11 +3413,7 @@ in the soil nutrient pools (fast and adsorbed inorganic pools)</p></td>
 </details>
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 836</span>
-<span class="normal"> 837</span>
-<span class="normal"> 838</span>
-<span class="normal"> 839</span>
-<span class="normal"> 840</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 840</span>
 <span class="normal"> 841</span>
 <span class="normal"> 842</span>
 <span class="normal"> 843</span>
@@ -3532,7 +3607,12 @@ in the soil nutrient pools (fast and adsorbed inorganic pools)</p></td>
 <span class="normal">1031</span>
 <span class="normal">1032</span>
 <span class="normal">1033</span>
-<span class="normal">1034</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<span class="normal">1034</span>
+<span class="normal">1035</span>
+<span class="normal">1036</span>
+<span class="normal">1037</span>
+<span class="normal">1038</span>
+<span class="normal">1039</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                    <span class="n">rooting_depth</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
                     <span class="n">ET_depletion_factor</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
                     <span class="n">crop_factor_stages</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> 
@@ -3655,8 +3735,8 @@ in the soil nutrient pools (fast and adsorbed inorganic pools)</p></td>
     <span class="bp">self</span><span class="o">.</span><span class="n">sreroexp</span> <span class="o">=</span> <span class="mf">1.2</span> <span class="c1"># [-] surface runoff erosion exponent</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">cohesion</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># [kPa]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">slope</span> <span class="o">=</span> <span class="mi">5</span> <span class="c1"># [-] every 100</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">srfilt</span> <span class="o">=</span> <span class="mf">0.95</span> <span class="c1"># [-] ratio of eroded sediment left in surface runoff after filtration</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">macrofilt</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="c1"># [-] ratio of eroded sediment left in subsurface flow after filtration</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">srfilt</span> <span class="o">=</span> <span class="mf">0.7</span> <span class="c1"># [-] ratio of eroded sediment left in surface runoff after filtration</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">macrofilt</span> <span class="o">=</span> <span class="mf">0.01</span> <span class="c1"># [-] ratio of eroded sediment left in subsurface flow after filtration</span>
 
     <span class="c1">#Denitrification parameters</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">limpar</span> <span class="o">=</span> <span class="mf">0.7</span> <span class="c1"># [-] above which denitrification begins</span>
@@ -3667,7 +3747,7 @@ in the soil nutrient pools (fast and adsorbed inorganic pools)</p></td>
     <span class="c1">#Adsorption parameters</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">adosorption_nr_limit</span> <span class="o">=</span> <span class="mf">0.00001</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">adsorption_nr_maxiter</span> <span class="o">=</span> <span class="mi">20</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">kfr</span> <span class="o">=</span> <span class="mf">153.7</span> <span class="c1"># [1/kg] freundlich adsorption isoterm</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">kfr</span> <span class="o">=</span> <span class="mf">153.7</span> <span class="c1"># [litter/kg] freundlich adsorption isoterm</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">nfr</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="mf">2.6</span> <span class="c1"># [-] freundlich exponential coefficient</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">kadsdes</span> <span class="o">=</span> <span class="mf">0.03</span> <span class="c1"># [1/day] adsorption/desorption coefficient</span>
 
@@ -3680,8 +3760,8 @@ in the soil nutrient pools (fast and adsorbed inorganic pools)</p></td>
     <span class="bp">self</span><span class="o">.</span><span class="n">ground_cover_stages</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">ground_cover_max</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">crop_cover_stages</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">crop_cover_max</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="c1">#This is just based on googling when is autumn...</span>
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sowing_day</span> <span class="o">&gt;</span> <span class="mi">265</span><span class="p">:</span>
+    <span class="c1">#Use day number of 181 to indicate autumn-sown (from HYPE)</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sowing_day</span> <span class="o">&gt;</span> <span class="mi">181</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">autumn_sow</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">autumn_sow</span> <span class="o">=</span> <span class="kc">False</span>
@@ -3705,6 +3785,7 @@ in the soil nutrient pools (fast and adsorbed inorganic pools)</p></td>
     <span class="bp">self</span><span class="o">.</span><span class="n">inflows</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_crop_cover</span><span class="p">)</span>
     <span class="k">if</span> <span class="s1">&#39;nitrate&#39;</span> <span class="ow">in</span> <span class="n">constants</span><span class="o">.</span><span class="n">POLLUTANTS</span><span class="p">:</span>
         <span class="c1">#Populate function lists </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inflows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">effective_precipitation_flushing</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inflows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fertiliser</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">inflows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">manure</span><span class="p">)</span>
         <span class="c1"># self.inflows.append(self.residue)</span>
@@ -3825,12 +3906,7 @@ for nutrient pool transformations</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1146</span>
-<span class="normal">1147</span>
-<span class="normal">1148</span>
-<span class="normal">1149</span>
-<span class="normal">1150</span>
-<span class="normal">1151</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1151</span>
 <span class="normal">1152</span>
 <span class="normal">1153</span>
 <span class="normal">1154</span>
@@ -3855,7 +3931,12 @@ for nutrient pool transformations</p></td>
 <span class="normal">1173</span>
 <span class="normal">1174</span>
 <span class="normal">1175</span>
-<span class="normal">1176</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">adjust_vqip_to_liquid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">deposition</span><span class="p">,</span> <span class="n">in_</span><span class="p">):</span>
+<span class="normal">1176</span>
+<span class="normal">1177</span>
+<span class="normal">1178</span>
+<span class="normal">1179</span>
+<span class="normal">1180</span>
+<span class="normal">1181</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">adjust_vqip_to_liquid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">,</span> <span class="n">deposition</span><span class="p">,</span> <span class="n">in_</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to interoperate between surface tank and nutrient pool. Most </span>
 <span class="sd">    depositions are given in terms of ammonia/nitrate/phosphate - they are then </span>
 <span class="sd">    aggregated to total N or P to enter the nutrient pools. Depending on the </span>
@@ -3928,47 +4009,7 @@ for mass balance checking.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1571</span>
-<span class="normal">1572</span>
-<span class="normal">1573</span>
-<span class="normal">1574</span>
-<span class="normal">1575</span>
-<span class="normal">1576</span>
-<span class="normal">1577</span>
-<span class="normal">1578</span>
-<span class="normal">1579</span>
-<span class="normal">1580</span>
-<span class="normal">1581</span>
-<span class="normal">1582</span>
-<span class="normal">1583</span>
-<span class="normal">1584</span>
-<span class="normal">1585</span>
-<span class="normal">1586</span>
-<span class="normal">1587</span>
-<span class="normal">1588</span>
-<span class="normal">1589</span>
-<span class="normal">1590</span>
-<span class="normal">1591</span>
-<span class="normal">1592</span>
-<span class="normal">1593</span>
-<span class="normal">1594</span>
-<span class="normal">1595</span>
-<span class="normal">1596</span>
-<span class="normal">1597</span>
-<span class="normal">1598</span>
-<span class="normal">1599</span>
-<span class="normal">1600</span>
-<span class="normal">1601</span>
-<span class="normal">1602</span>
-<span class="normal">1603</span>
-<span class="normal">1604</span>
-<span class="normal">1605</span>
-<span class="normal">1606</span>
-<span class="normal">1607</span>
-<span class="normal">1608</span>
-<span class="normal">1609</span>
-<span class="normal">1610</span>
-<span class="normal">1611</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1611</span>
 <span class="normal">1612</span>
 <span class="normal">1613</span>
 <span class="normal">1614</span>
@@ -4016,7 +4057,47 @@ for mass balance checking.</p></td>
 <span class="normal">1656</span>
 <span class="normal">1657</span>
 <span class="normal">1658</span>
-<span class="normal">1659</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">adsorption</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">1659</span>
+<span class="normal">1660</span>
+<span class="normal">1661</span>
+<span class="normal">1662</span>
+<span class="normal">1663</span>
+<span class="normal">1664</span>
+<span class="normal">1665</span>
+<span class="normal">1666</span>
+<span class="normal">1667</span>
+<span class="normal">1668</span>
+<span class="normal">1669</span>
+<span class="normal">1670</span>
+<span class="normal">1671</span>
+<span class="normal">1672</span>
+<span class="normal">1673</span>
+<span class="normal">1674</span>
+<span class="normal">1675</span>
+<span class="normal">1676</span>
+<span class="normal">1677</span>
+<span class="normal">1678</span>
+<span class="normal">1679</span>
+<span class="normal">1680</span>
+<span class="normal">1681</span>
+<span class="normal">1682</span>
+<span class="normal">1683</span>
+<span class="normal">1684</span>
+<span class="normal">1685</span>
+<span class="normal">1686</span>
+<span class="normal">1687</span>
+<span class="normal">1688</span>
+<span class="normal">1689</span>
+<span class="normal">1690</span>
+<span class="normal">1691</span>
+<span class="normal">1692</span>
+<span class="normal">1693</span>
+<span class="normal">1694</span>
+<span class="normal">1695</span>
+<span class="normal">1696</span>
+<span class="normal">1697</span>
+<span class="normal">1698</span>
+<span class="normal">1699</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">adsorption</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Outflow function that calculates phosphorus adsorption/desorptions and </span>
 <span class="sd">    updates soil tank and nutrient pools</span>
 
@@ -4041,7 +4122,7 @@ for mass balance checking.</p></td>
     <span class="c1">#Calculate coefficient and concentration of adsorbed phosphorus</span>
     <span class="n">soil_moisture_content</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_smc</span><span class="p">()</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">M_TO_MM</span> <span class="c1"># [mm] (not sure why HYPE has this in mm but whatever)</span>
     <span class="n">conc_sol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nutrient_pool</span><span class="o">.</span><span class="n">adsorbed_inorganic_pool</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">KG_TO_MG</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bulk_density</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rooting_depth</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="p">)</span><span class="c1"># [mg P/kg soil]</span>
-    <span class="n">coeff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kfr</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">bulk_density</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rooting_depth</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">M_TO_MM</span> <span class="c1"># [mm]</span>
+    <span class="n">coeff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kfr</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">bulk_density</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">rooting_depth</span> <span class="c1"># [mm]</span>
 
     <span class="c1"># calculate equilibrium concentration</span>
     <span class="k">if</span> <span class="n">conc_sol</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="p">:</span>
@@ -4148,12 +4229,7 @@ for mass balance checking.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1095</span>
-<span class="normal">1096</span>
-<span class="normal">1097</span>
-<span class="normal">1098</span>
-<span class="normal">1099</span>
-<span class="normal">1100</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1100</span>
 <span class="normal">1101</span>
 <span class="normal">1102</span>
 <span class="normal">1103</span>
@@ -4196,7 +4272,12 @@ for mass balance checking.</p></td>
 <span class="normal">1140</span>
 <span class="normal">1141</span>
 <span class="normal">1142</span>
-<span class="normal">1143</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calc_crop_cover</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">1143</span>
+<span class="normal">1144</span>
+<span class="normal">1145</span>
+<span class="normal">1146</span>
+<span class="normal">1147</span>
+<span class="normal">1148</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calc_crop_cover</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Process function that calculates how much crop cover there is, assigns </span>
 <span class="sd">    whether crops are sown/harvested, and calculates et0_coefficient based on </span>
 <span class="sd">    growth stage of crops.</span>
@@ -4287,43 +4368,7 @@ for mass balance checking.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1374</span>
-<span class="normal">1375</span>
-<span class="normal">1376</span>
-<span class="normal">1377</span>
-<span class="normal">1378</span>
-<span class="normal">1379</span>
-<span class="normal">1380</span>
-<span class="normal">1381</span>
-<span class="normal">1382</span>
-<span class="normal">1383</span>
-<span class="normal">1384</span>
-<span class="normal">1385</span>
-<span class="normal">1386</span>
-<span class="normal">1387</span>
-<span class="normal">1388</span>
-<span class="normal">1389</span>
-<span class="normal">1390</span>
-<span class="normal">1391</span>
-<span class="normal">1392</span>
-<span class="normal">1393</span>
-<span class="normal">1394</span>
-<span class="normal">1395</span>
-<span class="normal">1396</span>
-<span class="normal">1397</span>
-<span class="normal">1398</span>
-<span class="normal">1399</span>
-<span class="normal">1400</span>
-<span class="normal">1401</span>
-<span class="normal">1402</span>
-<span class="normal">1403</span>
-<span class="normal">1404</span>
-<span class="normal">1405</span>
-<span class="normal">1406</span>
-<span class="normal">1407</span>
-<span class="normal">1408</span>
-<span class="normal">1409</span>
-<span class="normal">1410</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1410</span>
 <span class="normal">1411</span>
 <span class="normal">1412</span>
 <span class="normal">1413</span>
@@ -4333,7 +4378,47 @@ for mass balance checking.</p></td>
 <span class="normal">1417</span>
 <span class="normal">1418</span>
 <span class="normal">1419</span>
-<span class="normal">1420</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calc_crop_uptake</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">1420</span>
+<span class="normal">1421</span>
+<span class="normal">1422</span>
+<span class="normal">1423</span>
+<span class="normal">1424</span>
+<span class="normal">1425</span>
+<span class="normal">1426</span>
+<span class="normal">1427</span>
+<span class="normal">1428</span>
+<span class="normal">1429</span>
+<span class="normal">1430</span>
+<span class="normal">1431</span>
+<span class="normal">1432</span>
+<span class="normal">1433</span>
+<span class="normal">1434</span>
+<span class="normal">1435</span>
+<span class="normal">1436</span>
+<span class="normal">1437</span>
+<span class="normal">1438</span>
+<span class="normal">1439</span>
+<span class="normal">1440</span>
+<span class="normal">1441</span>
+<span class="normal">1442</span>
+<span class="normal">1443</span>
+<span class="normal">1444</span>
+<span class="normal">1445</span>
+<span class="normal">1446</span>
+<span class="normal">1447</span>
+<span class="normal">1448</span>
+<span class="normal">1449</span>
+<span class="normal">1450</span>
+<span class="normal">1451</span>
+<span class="normal">1452</span>
+<span class="normal">1453</span>
+<span class="normal">1454</span>
+<span class="normal">1455</span>
+<span class="normal">1456</span>
+<span class="normal">1457</span>
+<span class="normal">1458</span>
+<span class="normal">1459</span>
+<span class="normal">1460</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calc_crop_uptake</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Process function that calculates how much nutrient crops uptake and updates </span>
 <span class="sd">    nutrient pool and surface tank</span>
 
@@ -4359,13 +4444,17 @@ for mass balance checking.</p></td>
             <span class="n">temp_func</span> <span class="o">=</span> <span class="mi">1</span>
 
         <span class="c1">#Calculate uptake</span>
-        <span class="n">uptake_par</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uptake1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">uptake2</span><span class="p">)</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">uptake3</span> <span class="o">*</span> <span class="n">days_after_sow</span><span class="p">)</span> <span class="o">*</span> <span class="n">temp_func</span>
+        <span class="n">uptake_par</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uptake1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">uptake2</span><span class="p">)</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">uptake3</span> <span class="o">*</span> <span class="n">days_after_sow</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">uptake_par</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">uptake2</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">:</span>
             <span class="n">N_common_uptake</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uptake1</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">uptake2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">uptake3</span> <span class="o">*</span> <span class="n">uptake_par</span> <span class="o">/</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">uptake2</span> <span class="o">+</span> <span class="n">uptake_par</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="n">N_common_uptake</span> <span class="o">*=</span> <span class="n">constants</span><span class="o">.</span><span class="n">G_M2_TO_KG_M2</span>
+        <span class="n">N_common_uptake</span> <span class="o">*=</span> <span class="n">temp_func</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">G_M2_TO_KG_M2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">area</span> <span class="c1"># [kg]</span>
         <span class="n">P_common_uptake</span> <span class="o">=</span> <span class="n">N_common_uptake</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">uptake_PNratio</span>
-        <span class="n">uptake</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;P&#39;</span> <span class="p">:</span> <span class="n">P_common_uptake</span><span class="p">,</span>
-                  <span class="s1">&#39;N&#39;</span> <span class="p">:</span> <span class="n">N_common_uptake</span><span class="p">}</span>
+        <span class="c1"># calculate maximum available uptake</span>
+        <span class="n">N_maximum_available_uptake</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">wilting_point_m</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nutrient_pool</span><span class="o">.</span><span class="n">dissolved_inorganic_pool</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span>
+        <span class="n">P_maximum_available_uptake</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">wilting_point_m</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">area</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">nutrient_pool</span><span class="o">.</span><span class="n">dissolved_inorganic_pool</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span>            
+
+        <span class="n">uptake</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;P&#39;</span> <span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">P_common_uptake</span><span class="p">,</span> <span class="n">P_maximum_available_uptake</span><span class="p">),</span>
+                  <span class="s1">&#39;N&#39;</span> <span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">N_common_uptake</span><span class="p">,</span> <span class="n">N_maximum_available_uptake</span><span class="p">)}</span>
         <span class="n">crop_uptake</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nutrient_pool</span><span class="o">.</span><span class="n">dissolved_inorganic_pool</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">uptake</span><span class="p">)</span>
         <span class="n">out_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">()</span>
 
@@ -4422,28 +4511,28 @@ for mass balance checking.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1351</span>
-<span class="normal">1352</span>
-<span class="normal">1353</span>
-<span class="normal">1354</span>
-<span class="normal">1355</span>
-<span class="normal">1356</span>
-<span class="normal">1357</span>
-<span class="normal">1358</span>
-<span class="normal">1359</span>
-<span class="normal">1360</span>
-<span class="normal">1361</span>
-<span class="normal">1362</span>
-<span class="normal">1363</span>
-<span class="normal">1364</span>
-<span class="normal">1365</span>
-<span class="normal">1366</span>
-<span class="normal">1367</span>
-<span class="normal">1368</span>
-<span class="normal">1369</span>
-<span class="normal">1370</span>
-<span class="normal">1371</span>
-<span class="normal">1372</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calc_soil_moisture_dependence_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>        
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1387</span>
+<span class="normal">1388</span>
+<span class="normal">1389</span>
+<span class="normal">1390</span>
+<span class="normal">1391</span>
+<span class="normal">1392</span>
+<span class="normal">1393</span>
+<span class="normal">1394</span>
+<span class="normal">1395</span>
+<span class="normal">1396</span>
+<span class="normal">1397</span>
+<span class="normal">1398</span>
+<span class="normal">1399</span>
+<span class="normal">1400</span>
+<span class="normal">1401</span>
+<span class="normal">1402</span>
+<span class="normal">1403</span>
+<span class="normal">1404</span>
+<span class="normal">1405</span>
+<span class="normal">1406</span>
+<span class="normal">1407</span>
+<span class="normal">1408</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calc_soil_moisture_dependence_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>        
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Process function that calculates the soil moisture dependence factor for </span>
 <span class="sd">    the nutrient pool (which impacts soil pool transformations)</span>
 
@@ -4507,23 +4596,23 @@ for mass balance checking.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1333</span>
-<span class="normal">1334</span>
-<span class="normal">1335</span>
-<span class="normal">1336</span>
-<span class="normal">1337</span>
-<span class="normal">1338</span>
-<span class="normal">1339</span>
-<span class="normal">1340</span>
-<span class="normal">1341</span>
-<span class="normal">1342</span>
-<span class="normal">1343</span>
-<span class="normal">1344</span>
-<span class="normal">1345</span>
-<span class="normal">1346</span>
-<span class="normal">1347</span>
-<span class="normal">1348</span>
-<span class="normal">1349</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calc_temperature_dependence_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1369</span>
+<span class="normal">1370</span>
+<span class="normal">1371</span>
+<span class="normal">1372</span>
+<span class="normal">1373</span>
+<span class="normal">1374</span>
+<span class="normal">1375</span>
+<span class="normal">1376</span>
+<span class="normal">1377</span>
+<span class="normal">1378</span>
+<span class="normal">1379</span>
+<span class="normal">1380</span>
+<span class="normal">1381</span>
+<span class="normal">1382</span>
+<span class="normal">1383</span>
+<span class="normal">1384</span>
+<span class="normal">1385</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calc_temperature_dependence_factor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Process function that calculates the temperature dependence factor for the </span>
 <span class="sd">    nutrient pool (which impacts soil pool transformations)</span>
 
@@ -4581,50 +4670,50 @@ for mass balance checking.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1526</span>
-<span class="normal">1527</span>
-<span class="normal">1528</span>
-<span class="normal">1529</span>
-<span class="normal">1530</span>
-<span class="normal">1531</span>
-<span class="normal">1532</span>
-<span class="normal">1533</span>
-<span class="normal">1534</span>
-<span class="normal">1535</span>
-<span class="normal">1536</span>
-<span class="normal">1537</span>
-<span class="normal">1538</span>
-<span class="normal">1539</span>
-<span class="normal">1540</span>
-<span class="normal">1541</span>
-<span class="normal">1542</span>
-<span class="normal">1543</span>
-<span class="normal">1544</span>
-<span class="normal">1545</span>
-<span class="normal">1546</span>
-<span class="normal">1547</span>
-<span class="normal">1548</span>
-<span class="normal">1549</span>
-<span class="normal">1550</span>
-<span class="normal">1551</span>
-<span class="normal">1552</span>
-<span class="normal">1553</span>
-<span class="normal">1554</span>
-<span class="normal">1555</span>
-<span class="normal">1556</span>
-<span class="normal">1557</span>
-<span class="normal">1558</span>
-<span class="normal">1559</span>
-<span class="normal">1560</span>
-<span class="normal">1561</span>
-<span class="normal">1562</span>
-<span class="normal">1563</span>
-<span class="normal">1564</span>
-<span class="normal">1565</span>
-<span class="normal">1566</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1566</span>
 <span class="normal">1567</span>
 <span class="normal">1568</span>
-<span class="normal">1569</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">denitrification</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">1569</span>
+<span class="normal">1570</span>
+<span class="normal">1571</span>
+<span class="normal">1572</span>
+<span class="normal">1573</span>
+<span class="normal">1574</span>
+<span class="normal">1575</span>
+<span class="normal">1576</span>
+<span class="normal">1577</span>
+<span class="normal">1578</span>
+<span class="normal">1579</span>
+<span class="normal">1580</span>
+<span class="normal">1581</span>
+<span class="normal">1582</span>
+<span class="normal">1583</span>
+<span class="normal">1584</span>
+<span class="normal">1585</span>
+<span class="normal">1586</span>
+<span class="normal">1587</span>
+<span class="normal">1588</span>
+<span class="normal">1589</span>
+<span class="normal">1590</span>
+<span class="normal">1591</span>
+<span class="normal">1592</span>
+<span class="normal">1593</span>
+<span class="normal">1594</span>
+<span class="normal">1595</span>
+<span class="normal">1596</span>
+<span class="normal">1597</span>
+<span class="normal">1598</span>
+<span class="normal">1599</span>
+<span class="normal">1600</span>
+<span class="normal">1601</span>
+<span class="normal">1602</span>
+<span class="normal">1603</span>
+<span class="normal">1604</span>
+<span class="normal">1605</span>
+<span class="normal">1606</span>
+<span class="normal">1607</span>
+<span class="normal">1608</span>
+<span class="normal">1609</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">denitrification</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Outflow function that performs denitirication processes, updating nutrient pool and soil tank</span>
 
 <span class="sd">    Returns:</span>
@@ -4733,29 +4822,29 @@ for mass balance checking)</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1661</span>
-<span class="normal">1662</span>
-<span class="normal">1663</span>
-<span class="normal">1664</span>
-<span class="normal">1665</span>
-<span class="normal">1666</span>
-<span class="normal">1667</span>
-<span class="normal">1668</span>
-<span class="normal">1669</span>
-<span class="normal">1670</span>
-<span class="normal">1671</span>
-<span class="normal">1672</span>
-<span class="normal">1673</span>
-<span class="normal">1674</span>
-<span class="normal">1675</span>
-<span class="normal">1676</span>
-<span class="normal">1677</span>
-<span class="normal">1678</span>
-<span class="normal">1679</span>
-<span class="normal">1680</span>
-<span class="normal">1681</span>
-<span class="normal">1682</span>
-<span class="normal">1683</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">dry_deposition_to_tank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1701</span>
+<span class="normal">1702</span>
+<span class="normal">1703</span>
+<span class="normal">1704</span>
+<span class="normal">1705</span>
+<span class="normal">1706</span>
+<span class="normal">1707</span>
+<span class="normal">1708</span>
+<span class="normal">1709</span>
+<span class="normal">1710</span>
+<span class="normal">1711</span>
+<span class="normal">1712</span>
+<span class="normal">1713</span>
+<span class="normal">1714</span>
+<span class="normal">1715</span>
+<span class="normal">1716</span>
+<span class="normal">1717</span>
+<span class="normal">1718</span>
+<span class="normal">1719</span>
+<span class="normal">1720</span>
+<span class="normal">1721</span>
+<span class="normal">1722</span>
+<span class="normal">1723</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">dry_deposition_to_tank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Allocate dry deposition to surface tank, updating nutrient pool accordingly.</span>
 
 <span class="sd">    Args:</span>
@@ -4778,6 +4867,91 @@ for mass balance checking)</p></td>
     <span class="c1">#Update tank</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">push_storage</span><span class="p">(</span><span class="n">vqip</span><span class="p">,</span> <span class="n">force</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">vqip</span>
+</code></pre></div></td></tr></table></div>
+      </details>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="wsimod.nodes.land.GrowingSurface.effective_precipitation_flushing" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">effective_precipitation_flushing</span><span class="p">()</span></code>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>Remove the nutrients brought out by effective precipitation,
+which is surface runoff, subsurface runoff, and percolation, from the nutrients pool.</p>
+<p>Returns
+    (tuple): A tuple containing a VQIP amount for model inputs and outputs 
+            for mass balance checking.</p>
+
+      <details class="quote">
+        <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1183</span>
+<span class="normal">1184</span>
+<span class="normal">1185</span>
+<span class="normal">1186</span>
+<span class="normal">1187</span>
+<span class="normal">1188</span>
+<span class="normal">1189</span>
+<span class="normal">1190</span>
+<span class="normal">1191</span>
+<span class="normal">1192</span>
+<span class="normal">1193</span>
+<span class="normal">1194</span>
+<span class="normal">1195</span>
+<span class="normal">1196</span>
+<span class="normal">1197</span>
+<span class="normal">1198</span>
+<span class="normal">1199</span>
+<span class="normal">1200</span>
+<span class="normal">1201</span>
+<span class="normal">1202</span>
+<span class="normal">1203</span>
+<span class="normal">1204</span>
+<span class="normal">1205</span>
+<span class="normal">1206</span>
+<span class="normal">1207</span>
+<span class="normal">1208</span>
+<span class="normal">1209</span>
+<span class="normal">1210</span>
+<span class="normal">1211</span>
+<span class="normal">1212</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">effective_precipitation_flushing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Remove the nutrients brought out by effective precipitation,</span>
+<span class="sd">    which is surface runoff, subsurface runoff, and percolation, from the nutrients pool.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">        (tuple): A tuple containing a VQIP amount for model inputs and outputs </span>
+<span class="sd">                for mass balance checking. </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># inorganic</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nutrient_pool</span><span class="o">.</span><span class="n">get_empty_nutrient</span><span class="p">()</span>
+    <span class="n">out</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subsurface_flow</span><span class="p">[</span><span class="s1">&#39;ammonia&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">subsurface_flow</span><span class="p">[</span><span class="s1">&#39;nitrite&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">subsurface_flow</span><span class="p">[</span><span class="s1">&#39;nitrate&#39;</span><span class="p">]</span> <span class="o">+</span> \
+               <span class="bp">self</span><span class="o">.</span><span class="n">percolation</span><span class="p">[</span><span class="s1">&#39;ammonia&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">percolation</span><span class="p">[</span><span class="s1">&#39;nitrite&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">percolation</span><span class="p">[</span><span class="s1">&#39;nitrate&#39;</span><span class="p">]</span> <span class="o">+</span> \
+               <span class="bp">self</span><span class="o">.</span><span class="n">infiltration_excess</span><span class="p">[</span><span class="s1">&#39;ammonia&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">infiltration_excess</span><span class="p">[</span><span class="s1">&#39;nitrite&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">infiltration_excess</span><span class="p">[</span><span class="s1">&#39;nitrate&#39;</span><span class="p">]</span> <span class="c1">#TODO what happens if infiltration excess (the real part) has pollutants?</span>
+    <span class="n">out</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subsurface_flow</span><span class="p">[</span><span class="s1">&#39;phosphate&#39;</span><span class="p">]</span> <span class="o">+</span> \
+               <span class="bp">self</span><span class="o">.</span><span class="n">percolation</span><span class="p">[</span><span class="s1">&#39;phosphate&#39;</span><span class="p">]</span> <span class="o">+</span> \
+               <span class="bp">self</span><span class="o">.</span><span class="n">infiltration_excess</span><span class="p">[</span><span class="s1">&#39;phosphate&#39;</span><span class="p">]</span>
+    <span class="n">out_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nutrient_pool</span><span class="o">.</span><span class="n">dissolved_inorganic_pool</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+
+    <span class="c1">#organic</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nutrient_pool</span><span class="o">.</span><span class="n">get_empty_nutrient</span><span class="p">()</span>
+    <span class="n">out</span><span class="p">[</span><span class="s1">&#39;N&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subsurface_flow</span><span class="p">[</span><span class="s1">&#39;org-nitrogen&#39;</span><span class="p">]</span> <span class="o">+</span> \
+               <span class="bp">self</span><span class="o">.</span><span class="n">percolation</span><span class="p">[</span><span class="s1">&#39;org-nitrogen&#39;</span><span class="p">]</span> <span class="o">+</span> \
+               <span class="bp">self</span><span class="o">.</span><span class="n">infiltration_excess</span><span class="p">[</span><span class="s1">&#39;org-nitrogen&#39;</span><span class="p">]</span>
+    <span class="n">out</span><span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subsurface_flow</span><span class="p">[</span><span class="s1">&#39;org-phosphorus&#39;</span><span class="p">]</span> <span class="o">+</span> \
+               <span class="bp">self</span><span class="o">.</span><span class="n">percolation</span><span class="p">[</span><span class="s1">&#39;org-phosphorus&#39;</span><span class="p">]</span> <span class="o">+</span> \
+               <span class="bp">self</span><span class="o">.</span><span class="n">infiltration_excess</span><span class="p">[</span><span class="s1">&#39;org-phosphorus&#39;</span><span class="p">]</span>
+    <span class="n">out_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nutrient_pool</span><span class="o">.</span><span class="n">dissolved_organic_pool</span><span class="o">.</span><span class="n">extract</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">empty_vqip</span><span class="p">())</span>
 </code></pre></div></td></tr></table></div>
       </details>
   </div>
@@ -4819,47 +4993,7 @@ for mass balance checking.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1422</span>
-<span class="normal">1423</span>
-<span class="normal">1424</span>
-<span class="normal">1425</span>
-<span class="normal">1426</span>
-<span class="normal">1427</span>
-<span class="normal">1428</span>
-<span class="normal">1429</span>
-<span class="normal">1430</span>
-<span class="normal">1431</span>
-<span class="normal">1432</span>
-<span class="normal">1433</span>
-<span class="normal">1434</span>
-<span class="normal">1435</span>
-<span class="normal">1436</span>
-<span class="normal">1437</span>
-<span class="normal">1438</span>
-<span class="normal">1439</span>
-<span class="normal">1440</span>
-<span class="normal">1441</span>
-<span class="normal">1442</span>
-<span class="normal">1443</span>
-<span class="normal">1444</span>
-<span class="normal">1445</span>
-<span class="normal">1446</span>
-<span class="normal">1447</span>
-<span class="normal">1448</span>
-<span class="normal">1449</span>
-<span class="normal">1450</span>
-<span class="normal">1451</span>
-<span class="normal">1452</span>
-<span class="normal">1453</span>
-<span class="normal">1454</span>
-<span class="normal">1455</span>
-<span class="normal">1456</span>
-<span class="normal">1457</span>
-<span class="normal">1458</span>
-<span class="normal">1459</span>
-<span class="normal">1460</span>
-<span class="normal">1461</span>
-<span class="normal">1462</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1462</span>
 <span class="normal">1463</span>
 <span class="normal">1464</span>
 <span class="normal">1465</span>
@@ -4921,7 +5055,47 @@ for mass balance checking.</p></td>
 <span class="normal">1521</span>
 <span class="normal">1522</span>
 <span class="normal">1523</span>
-<span class="normal">1524</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">erosion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">1524</span>
+<span class="normal">1525</span>
+<span class="normal">1526</span>
+<span class="normal">1527</span>
+<span class="normal">1528</span>
+<span class="normal">1529</span>
+<span class="normal">1530</span>
+<span class="normal">1531</span>
+<span class="normal">1532</span>
+<span class="normal">1533</span>
+<span class="normal">1534</span>
+<span class="normal">1535</span>
+<span class="normal">1536</span>
+<span class="normal">1537</span>
+<span class="normal">1538</span>
+<span class="normal">1539</span>
+<span class="normal">1540</span>
+<span class="normal">1541</span>
+<span class="normal">1542</span>
+<span class="normal">1543</span>
+<span class="normal">1544</span>
+<span class="normal">1545</span>
+<span class="normal">1546</span>
+<span class="normal">1547</span>
+<span class="normal">1548</span>
+<span class="normal">1549</span>
+<span class="normal">1550</span>
+<span class="normal">1551</span>
+<span class="normal">1552</span>
+<span class="normal">1553</span>
+<span class="normal">1554</span>
+<span class="normal">1555</span>
+<span class="normal">1556</span>
+<span class="normal">1557</span>
+<span class="normal">1558</span>
+<span class="normal">1559</span>
+<span class="normal">1560</span>
+<span class="normal">1561</span>
+<span class="normal">1562</span>
+<span class="normal">1563</span>
+<span class="normal">1564</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">erosion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Outflow function that erodes adsorbed/humus phosphorus and sediment and sends onwards to percolation/surface runoff/subsurface runoff</span>
 
 <span class="sd">    Returns:</span>
@@ -5065,38 +5239,38 @@ for mass balance checking.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1178</span>
-<span class="normal">1179</span>
-<span class="normal">1180</span>
-<span class="normal">1181</span>
-<span class="normal">1182</span>
-<span class="normal">1183</span>
-<span class="normal">1184</span>
-<span class="normal">1185</span>
-<span class="normal">1186</span>
-<span class="normal">1187</span>
-<span class="normal">1188</span>
-<span class="normal">1189</span>
-<span class="normal">1190</span>
-<span class="normal">1191</span>
-<span class="normal">1192</span>
-<span class="normal">1193</span>
-<span class="normal">1194</span>
-<span class="normal">1195</span>
-<span class="normal">1196</span>
-<span class="normal">1197</span>
-<span class="normal">1198</span>
-<span class="normal">1199</span>
-<span class="normal">1200</span>
-<span class="normal">1201</span>
-<span class="normal">1202</span>
-<span class="normal">1203</span>
-<span class="normal">1204</span>
-<span class="normal">1205</span>
-<span class="normal">1206</span>
-<span class="normal">1207</span>
-<span class="normal">1208</span>
-<span class="normal">1209</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fertiliser</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1214</span>
+<span class="normal">1215</span>
+<span class="normal">1216</span>
+<span class="normal">1217</span>
+<span class="normal">1218</span>
+<span class="normal">1219</span>
+<span class="normal">1220</span>
+<span class="normal">1221</span>
+<span class="normal">1222</span>
+<span class="normal">1223</span>
+<span class="normal">1224</span>
+<span class="normal">1225</span>
+<span class="normal">1226</span>
+<span class="normal">1227</span>
+<span class="normal">1228</span>
+<span class="normal">1229</span>
+<span class="normal">1230</span>
+<span class="normal">1231</span>
+<span class="normal">1232</span>
+<span class="normal">1233</span>
+<span class="normal">1234</span>
+<span class="normal">1235</span>
+<span class="normal">1236</span>
+<span class="normal">1237</span>
+<span class="normal">1238</span>
+<span class="normal">1239</span>
+<span class="normal">1240</span>
+<span class="normal">1241</span>
+<span class="normal">1242</span>
+<span class="normal">1243</span>
+<span class="normal">1244</span>
+<span class="normal">1245</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">fertiliser</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read, scale and allocate fertiliser, updating the tank</span>
 
 <span class="sd">    Returns:</span>
@@ -5169,36 +5343,36 @@ for mass balance checking.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1211</span>
-<span class="normal">1212</span>
-<span class="normal">1213</span>
-<span class="normal">1214</span>
-<span class="normal">1215</span>
-<span class="normal">1216</span>
-<span class="normal">1217</span>
-<span class="normal">1218</span>
-<span class="normal">1219</span>
-<span class="normal">1220</span>
-<span class="normal">1221</span>
-<span class="normal">1222</span>
-<span class="normal">1223</span>
-<span class="normal">1224</span>
-<span class="normal">1225</span>
-<span class="normal">1226</span>
-<span class="normal">1227</span>
-<span class="normal">1228</span>
-<span class="normal">1229</span>
-<span class="normal">1230</span>
-<span class="normal">1231</span>
-<span class="normal">1232</span>
-<span class="normal">1233</span>
-<span class="normal">1234</span>
-<span class="normal">1235</span>
-<span class="normal">1236</span>
-<span class="normal">1237</span>
-<span class="normal">1238</span>
-<span class="normal">1239</span>
-<span class="normal">1240</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">manure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1247</span>
+<span class="normal">1248</span>
+<span class="normal">1249</span>
+<span class="normal">1250</span>
+<span class="normal">1251</span>
+<span class="normal">1252</span>
+<span class="normal">1253</span>
+<span class="normal">1254</span>
+<span class="normal">1255</span>
+<span class="normal">1256</span>
+<span class="normal">1257</span>
+<span class="normal">1258</span>
+<span class="normal">1259</span>
+<span class="normal">1260</span>
+<span class="normal">1261</span>
+<span class="normal">1262</span>
+<span class="normal">1263</span>
+<span class="normal">1264</span>
+<span class="normal">1265</span>
+<span class="normal">1266</span>
+<span class="normal">1267</span>
+<span class="normal">1268</span>
+<span class="normal">1269</span>
+<span class="normal">1270</span>
+<span class="normal">1271</span>
+<span class="normal">1272</span>
+<span class="normal">1273</span>
+<span class="normal">1274</span>
+<span class="normal">1275</span>
+<span class="normal">1276</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">manure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read, scale and allocate manure, updating the tank</span>
 
 <span class="sd">    Returns:</span>
@@ -5295,12 +5469,7 @@ nutrient pools, if they are simulated. Other pollutants are removed in proportio
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1037</span>
-<span class="normal">1038</span>
-<span class="normal">1039</span>
-<span class="normal">1040</span>
-<span class="normal">1041</span>
-<span class="normal">1042</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1042</span>
 <span class="normal">1043</span>
 <span class="normal">1044</span>
 <span class="normal">1045</span>
@@ -5331,7 +5500,12 @@ nutrient pools, if they are simulated. Other pollutants are removed in proportio
 <span class="normal">1070</span>
 <span class="normal">1071</span>
 <span class="normal">1072</span>
-<span class="normal">1073</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
+<span class="normal">1073</span>
+<span class="normal">1074</span>
+<span class="normal">1075</span>
+<span class="normal">1076</span>
+<span class="normal">1077</span>
+<span class="normal">1078</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">pull_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Pull water from the surface, updating the surface storage VQIP. Nutrient </span>
 <span class="sd">    pool pollutants (nitrate/nitrite/ammonia/phosphate/org-phosphorus/</span>
 <span class="sd">    org-nitrogen) are removed in proportion to their amounts in the dissolved </span>
@@ -5452,12 +5626,7 @@ nutrient pools, if they are simulated. Other pollutants are removed in proportio
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1075</span>
-<span class="normal">1076</span>
-<span class="normal">1077</span>
-<span class="normal">1078</span>
-<span class="normal">1079</span>
-<span class="normal">1080</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1080</span>
 <span class="normal">1081</span>
 <span class="normal">1082</span>
 <span class="normal">1083</span>
@@ -5470,7 +5639,12 @@ nutrient pools, if they are simulated. Other pollutants are removed in proportio
 <span class="normal">1090</span>
 <span class="normal">1091</span>
 <span class="normal">1092</span>
-<span class="normal">1093</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">quick_interp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">xp</span><span class="p">,</span> <span class="n">yp</span><span class="p">):</span>
+<span class="normal">1093</span>
+<span class="normal">1094</span>
+<span class="normal">1095</span>
+<span class="normal">1096</span>
+<span class="normal">1097</span>
+<span class="normal">1098</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">quick_interp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">xp</span><span class="p">,</span> <span class="n">yp</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A simple version of np.interp to intepolate crop information on the fly</span>
 
 <span class="sd">    Args:</span>
@@ -5531,36 +5705,36 @@ for mass balance checking.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1242</span>
-<span class="normal">1243</span>
-<span class="normal">1244</span>
-<span class="normal">1245</span>
-<span class="normal">1246</span>
-<span class="normal">1247</span>
-<span class="normal">1248</span>
-<span class="normal">1249</span>
-<span class="normal">1250</span>
-<span class="normal">1251</span>
-<span class="normal">1252</span>
-<span class="normal">1253</span>
-<span class="normal">1254</span>
-<span class="normal">1255</span>
-<span class="normal">1256</span>
-<span class="normal">1257</span>
-<span class="normal">1258</span>
-<span class="normal">1259</span>
-<span class="normal">1260</span>
-<span class="normal">1261</span>
-<span class="normal">1262</span>
-<span class="normal">1263</span>
-<span class="normal">1264</span>
-<span class="normal">1265</span>
-<span class="normal">1266</span>
-<span class="normal">1267</span>
-<span class="normal">1268</span>
-<span class="normal">1269</span>
-<span class="normal">1270</span>
-<span class="normal">1271</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">residue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1278</span>
+<span class="normal">1279</span>
+<span class="normal">1280</span>
+<span class="normal">1281</span>
+<span class="normal">1282</span>
+<span class="normal">1283</span>
+<span class="normal">1284</span>
+<span class="normal">1285</span>
+<span class="normal">1286</span>
+<span class="normal">1287</span>
+<span class="normal">1288</span>
+<span class="normal">1289</span>
+<span class="normal">1290</span>
+<span class="normal">1291</span>
+<span class="normal">1292</span>
+<span class="normal">1293</span>
+<span class="normal">1294</span>
+<span class="normal">1295</span>
+<span class="normal">1296</span>
+<span class="normal">1297</span>
+<span class="normal">1298</span>
+<span class="normal">1299</span>
+<span class="normal">1300</span>
+<span class="normal">1301</span>
+<span class="normal">1302</span>
+<span class="normal">1303</span>
+<span class="normal">1304</span>
+<span class="normal">1305</span>
+<span class="normal">1306</span>
+<span class="normal">1307</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">residue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read, scale and allocate residue, updating the tank (NOT CURRENTLY USED </span>
 <span class="sd">    BECAUSE NO DATA SOURCES FOR RESIDUE CAN BE IDENTIFIED)</span>
 
@@ -5632,43 +5806,7 @@ for mass balance checking.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1273</span>
-<span class="normal">1274</span>
-<span class="normal">1275</span>
-<span class="normal">1276</span>
-<span class="normal">1277</span>
-<span class="normal">1278</span>
-<span class="normal">1279</span>
-<span class="normal">1280</span>
-<span class="normal">1281</span>
-<span class="normal">1282</span>
-<span class="normal">1283</span>
-<span class="normal">1284</span>
-<span class="normal">1285</span>
-<span class="normal">1286</span>
-<span class="normal">1287</span>
-<span class="normal">1288</span>
-<span class="normal">1289</span>
-<span class="normal">1290</span>
-<span class="normal">1291</span>
-<span class="normal">1292</span>
-<span class="normal">1293</span>
-<span class="normal">1294</span>
-<span class="normal">1295</span>
-<span class="normal">1296</span>
-<span class="normal">1297</span>
-<span class="normal">1298</span>
-<span class="normal">1299</span>
-<span class="normal">1300</span>
-<span class="normal">1301</span>
-<span class="normal">1302</span>
-<span class="normal">1303</span>
-<span class="normal">1304</span>
-<span class="normal">1305</span>
-<span class="normal">1306</span>
-<span class="normal">1307</span>
-<span class="normal">1308</span>
-<span class="normal">1309</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1309</span>
 <span class="normal">1310</span>
 <span class="normal">1311</span>
 <span class="normal">1312</span>
@@ -5690,7 +5828,43 @@ for mass balance checking.</p></td>
 <span class="normal">1328</span>
 <span class="normal">1329</span>
 <span class="normal">1330</span>
-<span class="normal">1331</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">soil_pool_transformation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">1331</span>
+<span class="normal">1332</span>
+<span class="normal">1333</span>
+<span class="normal">1334</span>
+<span class="normal">1335</span>
+<span class="normal">1336</span>
+<span class="normal">1337</span>
+<span class="normal">1338</span>
+<span class="normal">1339</span>
+<span class="normal">1340</span>
+<span class="normal">1341</span>
+<span class="normal">1342</span>
+<span class="normal">1343</span>
+<span class="normal">1344</span>
+<span class="normal">1345</span>
+<span class="normal">1346</span>
+<span class="normal">1347</span>
+<span class="normal">1348</span>
+<span class="normal">1349</span>
+<span class="normal">1350</span>
+<span class="normal">1351</span>
+<span class="normal">1352</span>
+<span class="normal">1353</span>
+<span class="normal">1354</span>
+<span class="normal">1355</span>
+<span class="normal">1356</span>
+<span class="normal">1357</span>
+<span class="normal">1358</span>
+<span class="normal">1359</span>
+<span class="normal">1360</span>
+<span class="normal">1361</span>
+<span class="normal">1362</span>
+<span class="normal">1363</span>
+<span class="normal">1364</span>
+<span class="normal">1365</span>
+<span class="normal">1366</span>
+<span class="normal">1367</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">soil_pool_transformation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A process function that run transformation functions in the nutrient pool </span>
 <span class="sd">    and updates the pollutant concentrations in the surface tank</span>
 
@@ -5814,28 +5988,28 @@ for mass balance checking)</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1685</span>
-<span class="normal">1686</span>
-<span class="normal">1687</span>
-<span class="normal">1688</span>
-<span class="normal">1689</span>
-<span class="normal">1690</span>
-<span class="normal">1691</span>
-<span class="normal">1692</span>
-<span class="normal">1693</span>
-<span class="normal">1694</span>
-<span class="normal">1695</span>
-<span class="normal">1696</span>
-<span class="normal">1697</span>
-<span class="normal">1698</span>
-<span class="normal">1699</span>
-<span class="normal">1700</span>
-<span class="normal">1701</span>
-<span class="normal">1702</span>
-<span class="normal">1703</span>
-<span class="normal">1704</span>
-<span class="normal">1705</span>
-<span class="normal">1706</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">wet_deposition_to_tank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1725</span>
+<span class="normal">1726</span>
+<span class="normal">1727</span>
+<span class="normal">1728</span>
+<span class="normal">1729</span>
+<span class="normal">1730</span>
+<span class="normal">1731</span>
+<span class="normal">1732</span>
+<span class="normal">1733</span>
+<span class="normal">1734</span>
+<span class="normal">1735</span>
+<span class="normal">1736</span>
+<span class="normal">1737</span>
+<span class="normal">1738</span>
+<span class="normal">1739</span>
+<span class="normal">1740</span>
+<span class="normal">1741</span>
+<span class="normal">1742</span>
+<span class="normal">1743</span>
+<span class="normal">1744</span>
+<span class="normal">1745</span>
+<span class="normal">1746</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">wet_deposition_to_tank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vqip</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Allocate wet deposition to surface tank, updating nutrient pool accordingly.</span>
 
 <span class="sd">    Args:</span>
@@ -6537,53 +6711,53 @@ for mass balance checking.</p></td>
 
         <details class="quote">
           <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1708</span>
-<span class="normal">1709</span>
-<span class="normal">1710</span>
-<span class="normal">1711</span>
-<span class="normal">1712</span>
-<span class="normal">1713</span>
-<span class="normal">1714</span>
-<span class="normal">1715</span>
-<span class="normal">1716</span>
-<span class="normal">1717</span>
-<span class="normal">1718</span>
-<span class="normal">1719</span>
-<span class="normal">1720</span>
-<span class="normal">1721</span>
-<span class="normal">1722</span>
-<span class="normal">1723</span>
-<span class="normal">1724</span>
-<span class="normal">1725</span>
-<span class="normal">1726</span>
-<span class="normal">1727</span>
-<span class="normal">1728</span>
-<span class="normal">1729</span>
-<span class="normal">1730</span>
-<span class="normal">1731</span>
-<span class="normal">1732</span>
-<span class="normal">1733</span>
-<span class="normal">1734</span>
-<span class="normal">1735</span>
-<span class="normal">1736</span>
-<span class="normal">1737</span>
-<span class="normal">1738</span>
-<span class="normal">1739</span>
-<span class="normal">1740</span>
-<span class="normal">1741</span>
-<span class="normal">1742</span>
-<span class="normal">1743</span>
-<span class="normal">1744</span>
-<span class="normal">1745</span>
-<span class="normal">1746</span>
-<span class="normal">1747</span>
-<span class="normal">1748</span>
+          <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1748</span>
 <span class="normal">1749</span>
 <span class="normal">1750</span>
 <span class="normal">1751</span>
 <span class="normal">1752</span>
 <span class="normal">1753</span>
-<span class="normal">1754</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">IrrigationSurface</span><span class="p">(</span><span class="n">GrowingSurface</span><span class="p">):</span>
+<span class="normal">1754</span>
+<span class="normal">1755</span>
+<span class="normal">1756</span>
+<span class="normal">1757</span>
+<span class="normal">1758</span>
+<span class="normal">1759</span>
+<span class="normal">1760</span>
+<span class="normal">1761</span>
+<span class="normal">1762</span>
+<span class="normal">1763</span>
+<span class="normal">1764</span>
+<span class="normal">1765</span>
+<span class="normal">1766</span>
+<span class="normal">1767</span>
+<span class="normal">1768</span>
+<span class="normal">1769</span>
+<span class="normal">1770</span>
+<span class="normal">1771</span>
+<span class="normal">1772</span>
+<span class="normal">1773</span>
+<span class="normal">1774</span>
+<span class="normal">1775</span>
+<span class="normal">1776</span>
+<span class="normal">1777</span>
+<span class="normal">1778</span>
+<span class="normal">1779</span>
+<span class="normal">1780</span>
+<span class="normal">1781</span>
+<span class="normal">1782</span>
+<span class="normal">1783</span>
+<span class="normal">1784</span>
+<span class="normal">1785</span>
+<span class="normal">1786</span>
+<span class="normal">1787</span>
+<span class="normal">1788</span>
+<span class="normal">1789</span>
+<span class="normal">1790</span>
+<span class="normal">1791</span>
+<span class="normal">1792</span>
+<span class="normal">1793</span>
+<span class="normal">1794</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">IrrigationSurface</span><span class="p">(</span><span class="n">GrowingSurface</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">irrigation_coefficient</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A subclass of GrowingSurface that can calculate water demand for the crops </span>
 <span class="sd">        that is not met by precipitation and use the parent node to acquire water. </span>
@@ -6689,20 +6863,20 @@ proportion of demand met. Defaults to 0.1.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1709</span>
-<span class="normal">1710</span>
-<span class="normal">1711</span>
-<span class="normal">1712</span>
-<span class="normal">1713</span>
-<span class="normal">1714</span>
-<span class="normal">1715</span>
-<span class="normal">1716</span>
-<span class="normal">1717</span>
-<span class="normal">1718</span>
-<span class="normal">1719</span>
-<span class="normal">1720</span>
-<span class="normal">1721</span>
-<span class="normal">1722</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">irrigation_coefficient</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1749</span>
+<span class="normal">1750</span>
+<span class="normal">1751</span>
+<span class="normal">1752</span>
+<span class="normal">1753</span>
+<span class="normal">1754</span>
+<span class="normal">1755</span>
+<span class="normal">1756</span>
+<span class="normal">1757</span>
+<span class="normal">1758</span>
+<span class="normal">1759</span>
+<span class="normal">1760</span>
+<span class="normal">1761</span>
+<span class="normal">1762</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">irrigation_coefficient</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A subclass of GrowingSurface that can calculate water demand for the crops </span>
 <span class="sd">    that is not met by precipitation and use the parent node to acquire water. </span>
 <span class="sd">    When the surface is created by the parent node, the irrigate function below is </span>
@@ -6739,37 +6913,37 @@ updating surface tank and nutrient pools</p>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1724</span>
-<span class="normal">1725</span>
-<span class="normal">1726</span>
-<span class="normal">1727</span>
-<span class="normal">1728</span>
-<span class="normal">1729</span>
-<span class="normal">1730</span>
-<span class="normal">1731</span>
-<span class="normal">1732</span>
-<span class="normal">1733</span>
-<span class="normal">1734</span>
-<span class="normal">1735</span>
-<span class="normal">1736</span>
-<span class="normal">1737</span>
-<span class="normal">1738</span>
-<span class="normal">1739</span>
-<span class="normal">1740</span>
-<span class="normal">1741</span>
-<span class="normal">1742</span>
-<span class="normal">1743</span>
-<span class="normal">1744</span>
-<span class="normal">1745</span>
-<span class="normal">1746</span>
-<span class="normal">1747</span>
-<span class="normal">1748</span>
-<span class="normal">1749</span>
-<span class="normal">1750</span>
-<span class="normal">1751</span>
-<span class="normal">1752</span>
-<span class="normal">1753</span>
-<span class="normal">1754</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">irrigate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1764</span>
+<span class="normal">1765</span>
+<span class="normal">1766</span>
+<span class="normal">1767</span>
+<span class="normal">1768</span>
+<span class="normal">1769</span>
+<span class="normal">1770</span>
+<span class="normal">1771</span>
+<span class="normal">1772</span>
+<span class="normal">1773</span>
+<span class="normal">1774</span>
+<span class="normal">1775</span>
+<span class="normal">1776</span>
+<span class="normal">1777</span>
+<span class="normal">1778</span>
+<span class="normal">1779</span>
+<span class="normal">1780</span>
+<span class="normal">1781</span>
+<span class="normal">1782</span>
+<span class="normal">1783</span>
+<span class="normal">1784</span>
+<span class="normal">1785</span>
+<span class="normal">1786</span>
+<span class="normal">1787</span>
+<span class="normal">1788</span>
+<span class="normal">1789</span>
+<span class="normal">1790</span>
+<span class="normal">1791</span>
+<span class="normal">1792</span>
+<span class="normal">1793</span>
+<span class="normal">1794</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">irrigate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate water demand for crops and call parent node to acquire water, </span>
 <span class="sd">    updating surface tank and nutrient pools</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -8337,9 +8511,14 @@ percolation tanks, discharge to rivers/groundwater</p>
 <span class="normal">830</span>
 <span class="normal">831</span>
 <span class="normal">832</span>
-<span class="normal">833</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PerviousSurface</span><span class="p">(</span><span class="n">Surface</span><span class="p">):</span>
+<span class="normal">833</span>
+<span class="normal">834</span>
+<span class="normal">835</span>
+<span class="normal">836</span>
+<span class="normal">837</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span> <span class="nc">PerviousSurface</span><span class="p">(</span><span class="n">Surface</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                         <span class="n">depth</span> <span class="o">=</span> <span class="mf">0.75</span><span class="p">,</span>
+                        <span class="n">total_porosity</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">,</span>
                         <span class="n">field_capacity</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span>
                         <span class="n">wilting_point</span> <span class="o">=</span> <span class="mf">0.12</span><span class="p">,</span>
                         <span class="n">infiltration_capacity</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
@@ -8352,6 +8531,9 @@ percolation tanks, discharge to rivers/groundwater</p>
 
 <span class="sd">        Args:</span>
 <span class="sd">            depth (float, optional): Soil tank (i.e., root) depth. Defaults to 0.75.</span>
+<span class="sd">            total_porosity (float, optional): The total porosity IHACRES parameter</span>
+<span class="sd">                (i.e., defines the total porouse volume of the soil - the maximum volume </span>
+<span class="sd">                of soil pores can contain when saturated). Defaults to 0.4.</span>
 <span class="sd">            field_capacity (float, optional): The field capacity IHACRES parameter</span>
 <span class="sd">                (i.e., when water content in the soil tank is above this value - flows </span>
 <span class="sd">                of any kind can be generated). Defaults to 0.3.</span>
@@ -8420,7 +8602,7 @@ percolation tanks, discharge to rivers/groundwater</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">soil_temp_deep</span> <span class="o">=</span> <span class="mi">10</span> <span class="c1">#deep soil temperature</span>
 
         <span class="c1">#IHACRES is a deficit not a tank, so doesn&#39;t really have a capacity in this way... and if it did.. I don&#39;t know if it would be the root depth</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">depth</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">depth</span> <span class="o">*</span> <span class="n">total_porosity</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="c1">#Calculate subsurface coefficient</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">subsurface_coefficient</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">percolation_coefficient</span> 
@@ -8599,7 +8781,7 @@ percolation tanks, discharge to rivers/groundwater</p>
 
 
 <h3 id="wsimod.nodes.land.PerviousSurface.__init__" class="doc doc-heading">
-<code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">field_capacity</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">wilting_point</span><span class="o">=</span><span class="mf">0.12</span><span class="p">,</span> <span class="n">infiltration_capacity</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">surface_coefficient</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">percolation_coefficient</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">et0_coefficient</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ihacres_p</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+<code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">total_porosity</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">field_capacity</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">wilting_point</span><span class="o">=</span><span class="mf">0.12</span><span class="p">,</span> <span class="n">infiltration_capacity</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">surface_coefficient</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">percolation_coefficient</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">et0_coefficient</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ihacres_p</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
 
 </h3>
 
@@ -8627,6 +8809,18 @@ percolation tanks, discharge to rivers/groundwater</p>
           <td><p>Soil tank (i.e., root) depth. Defaults to 0.75.</p></td>
           <td>
                 <code>0.75</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>total_porosity</code></td>
+          <td>
+                <code>float</code>
+          </td>
+          <td><p>The total porosity IHACRES parameter
+(i.e., defines the total porouse volume of the soil - the maximum volume 
+of soil pores can contain when saturated). Defaults to 0.4.</p></td>
+          <td>
+                <code>0.4</code>
           </td>
         </tr>
         <tr>
@@ -8855,8 +9049,13 @@ ephemeral stream this parameter probably can stay high. Defaults to 10.</p></td>
 <span class="normal">695</span>
 <span class="normal">696</span>
 <span class="normal">697</span>
-<span class="normal">698</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<span class="normal">698</span>
+<span class="normal">699</span>
+<span class="normal">700</span>
+<span class="normal">701</span>
+<span class="normal">702</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                     <span class="n">depth</span> <span class="o">=</span> <span class="mf">0.75</span><span class="p">,</span>
+                    <span class="n">total_porosity</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">,</span>
                     <span class="n">field_capacity</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span>
                     <span class="n">wilting_point</span> <span class="o">=</span> <span class="mf">0.12</span><span class="p">,</span>
                     <span class="n">infiltration_capacity</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
@@ -8869,6 +9068,9 @@ ephemeral stream this parameter probably can stay high. Defaults to 10.</p></td>
 
 <span class="sd">    Args:</span>
 <span class="sd">        depth (float, optional): Soil tank (i.e., root) depth. Defaults to 0.75.</span>
+<span class="sd">        total_porosity (float, optional): The total porosity IHACRES parameter</span>
+<span class="sd">            (i.e., defines the total porouse volume of the soil - the maximum volume </span>
+<span class="sd">            of soil pores can contain when saturated). Defaults to 0.4.</span>
 <span class="sd">        field_capacity (float, optional): The field capacity IHACRES parameter</span>
 <span class="sd">            (i.e., when water content in the soil tank is above this value - flows </span>
 <span class="sd">            of any kind can be generated). Defaults to 0.3.</span>
@@ -8937,7 +9139,7 @@ ephemeral stream this parameter probably can stay high. Defaults to 10.</p></td>
     <span class="bp">self</span><span class="o">.</span><span class="n">soil_temp_deep</span> <span class="o">=</span> <span class="mi">10</span> <span class="c1">#deep soil temperature</span>
 
     <span class="c1">#IHACRES is a deficit not a tank, so doesn&#39;t really have a capacity in this way... and if it did.. I don&#39;t know if it would be the root depth</span>
-    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">depth</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="n">depth</span> <span class="o">*</span> <span class="n">total_porosity</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="c1">#Calculate subsurface coefficient</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">subsurface_coefficient</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">percolation_coefficient</span> 
@@ -9004,11 +9206,7 @@ for mass balance checking.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">819</span>
-<span class="normal">820</span>
-<span class="normal">821</span>
-<span class="normal">822</span>
-<span class="normal">823</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">823</span>
 <span class="normal">824</span>
 <span class="normal">825</span>
 <span class="normal">826</span>
@@ -9018,7 +9216,11 @@ for mass balance checking.</p></td>
 <span class="normal">830</span>
 <span class="normal">831</span>
 <span class="normal">832</span>
-<span class="normal">833</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calculate_soil_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">833</span>
+<span class="normal">834</span>
+<span class="normal">835</span>
+<span class="normal">836</span>
+<span class="normal">837</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">calculate_soil_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Process function that calculates soil temperature based on a weighted </span>
 <span class="sd">    average. This equation is from Lindstrom, Bishop &amp; Lofvenius (2002), </span>
 <span class="sd">    hydrological processes - but it is not clear what the parameters should be.</span>
@@ -9073,13 +9275,13 @@ for mass balance checking.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">700</span>
-<span class="normal">701</span>
-<span class="normal">702</span>
-<span class="normal">703</span>
-<span class="normal">704</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">704</span>
 <span class="normal">705</span>
-<span class="normal">706</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">706</span>
+<span class="normal">707</span>
+<span class="normal">708</span>
+<span class="normal">709</span>
+<span class="normal">710</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_cmd</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate moisture deficit (i.e., the tank excess converted to depth)</span>
 
 <span class="sd">    Returns:</span>
@@ -9126,14 +9328,14 @@ for mass balance checking.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">708</span>
-<span class="normal">709</span>
-<span class="normal">710</span>
-<span class="normal">711</span>
-<span class="normal">712</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">712</span>
 <span class="normal">713</span>
 <span class="normal">714</span>
-<span class="normal">715</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_smc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">715</span>
+<span class="normal">716</span>
+<span class="normal">717</span>
+<span class="normal">718</span>
+<span class="normal">719</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">get_smc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate moisture content (i.e., the tank volume converted to depth)</span>
 
 <span class="sd">    Returns:</span>
@@ -9184,11 +9386,7 @@ for mass balance checking.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">722</span>
-<span class="normal">723</span>
-<span class="normal">724</span>
-<span class="normal">725</span>
-<span class="normal">726</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">726</span>
 <span class="normal">727</span>
 <span class="normal">728</span>
 <span class="normal">729</span>
@@ -9264,7 +9462,11 @@ for mass balance checking.</p></td>
 <span class="normal">799</span>
 <span class="normal">800</span>
 <span class="normal">801</span>
-<span class="normal">802</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ihacres</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">802</span>
+<span class="normal">803</span>
+<span class="normal">804</span>
+<span class="normal">805</span>
+<span class="normal">806</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">ihacres</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Inflow function that runs the IHACRES model equations, updates tanks, and </span>
 <span class="sd">    store flows in state variables (which are later sent to the parent land node in </span>
 <span class="sd">    the route function)</span>
@@ -9386,11 +9588,7 @@ for mass balance checking.</p></td>
 
       <details class="quote">
         <summary>Source code in <code>wsimod\nodes\land.py</code></summary>
-        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">804</span>
-<span class="normal">805</span>
-<span class="normal">806</span>
-<span class="normal">807</span>
-<span class="normal">808</span>
+        <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">808</span>
 <span class="normal">809</span>
 <span class="normal">810</span>
 <span class="normal">811</span>
@@ -9398,7 +9596,11 @@ for mass balance checking.</p></td>
 <span class="normal">813</span>
 <span class="normal">814</span>
 <span class="normal">815</span>
-<span class="normal">816</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">route</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">816</span>
+<span class="normal">817</span>
+<span class="normal">818</span>
+<span class="normal">819</span>
+<span class="normal">820</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">route</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;An outflow function that sends percolation, subsurface runoff and surface runoff to their respective tanks in the parent land node.</span>
 
 <span class="sd">    Returns:</span>
@@ -11708,8 +11910,8 @@ for mass balance checking)</p></td>
         <span class="n">increase_in_dissolved_organic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum_nutrients</span><span class="p">(</span><span class="n">increase_in_dissolved_organic</span><span class="p">,</span> <span class="n">amount</span><span class="p">)</span>
 
         <span class="c1">#Immobilisation</span>
-        <span class="n">amount</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp_soil_process</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">immobdpar</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dissolved_organic_pool</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_pool</span><span class="p">)</span>
-        <span class="n">increase_in_dissolved_organic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subtract_nutrients</span><span class="p">(</span><span class="n">increase_in_dissolved_organic</span><span class="p">,</span> <span class="n">amount</span><span class="p">)</span>
+        <span class="n">amount</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp_soil_process</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">immobdpar</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dissolved_inorganic_pool</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_pool</span><span class="p">)</span>
+        <span class="n">increase_in_dissolved_inorganic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subtract_nutrients</span><span class="p">(</span><span class="n">increase_in_dissolved_inorganic</span><span class="p">,</span> <span class="n">amount</span><span class="p">)</span> <span class="c1">#TODO will a negative value affect the consequent processes in growing surface?</span>
 
         <span class="k">return</span> <span class="n">increase_in_dissolved_inorganic</span><span class="p">,</span> <span class="n">increase_in_dissolved_organic</span>
 
@@ -13654,8 +13856,8 @@ transformations (negative value indicates a decrease)</p></td>
     <span class="n">increase_in_dissolved_organic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum_nutrients</span><span class="p">(</span><span class="n">increase_in_dissolved_organic</span><span class="p">,</span> <span class="n">amount</span><span class="p">)</span>
 
     <span class="c1">#Immobilisation</span>
-    <span class="n">amount</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp_soil_process</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">immobdpar</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dissolved_organic_pool</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_pool</span><span class="p">)</span>
-    <span class="n">increase_in_dissolved_organic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subtract_nutrients</span><span class="p">(</span><span class="n">increase_in_dissolved_organic</span><span class="p">,</span> <span class="n">amount</span><span class="p">)</span>
+    <span class="n">amount</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp_soil_process</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">immobdpar</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dissolved_inorganic_pool</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_pool</span><span class="p">)</span>
+    <span class="n">increase_in_dissolved_inorganic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subtract_nutrients</span><span class="p">(</span><span class="n">increase_in_dissolved_inorganic</span><span class="p">,</span> <span class="n">amount</span><span class="p">)</span> <span class="c1">#TODO will a negative value affect the consequent processes in growing surface?</span>
 
     <span class="k">return</span> <span class="n">increase_in_dissolved_inorganic</span><span class="p">,</span> <span class="n">increase_in_dissolved_organic</span>
 </code></pre></div></td></tr></table></div>
