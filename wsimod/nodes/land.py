@@ -985,8 +985,8 @@ class GrowingSurface(PerviousSurface):
         self.ground_cover_stages = [0,0,self.ground_cover_max,0,0]
         self.crop_cover_stages = [0,0,self.crop_cover_max,0,0]
         
-        #This is just based on googling when is autumn...
-        if self.sowing_day > 265:
+        #Use day number of 181 to indicate autumn-sown (from HYPE)
+        if self.sowing_day > 181:
             self.autumn_sow = True
         else:
             self.autumn_sow = False
