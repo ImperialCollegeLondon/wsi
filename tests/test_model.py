@@ -99,7 +99,7 @@ class MyTestClass(TestCase):
         self.assertEqual('my_land', my_model.arcs['my_arc'].in_port.name)
         self.assertEqual('my_node', my_model.arcs['my_arc'].out_port.name)
 
-        self.assertEqual(0.5 * 100, my_model.arcs['my_arc'].in_port.get_surface('rural').capacity)
+        self.assertEqual(0.4 * 0.5 * 100, my_model.arcs['my_arc'].in_port.get_surface('rural').capacity)
     
     def test_add_ins_nodes(self):
         sewer = Sewer(**{
@@ -170,7 +170,7 @@ class MyTestClass(TestCase):
         self.assertEqual('my_land', my_model.arcs['my_arc'].in_port.name)
         self.assertEqual('my_node', my_model.arcs['my_arc'].out_port.name)
 
-        self.assertEqual(0.5 * 100, my_model.arcs['my_arc'].in_port.get_surface('rural').capacity)
+        self.assertEqual(0.4 * 0.5 * 100, my_model.arcs['my_arc'].in_port.get_surface('rural').capacity)
 
     def test_run(self):
 
