@@ -1,7 +1,7 @@
-# Welcome to WSIMOD
+# Welcome to WSIMOD <img style="float: right;" src="./docs/images/wsimod_logo_png.png">
 
-WSIMOD stands for the Water Systems Integrated Modelling framework.
- 
+WSIMOD stands for the Water Systems Integrated Modelling framework. 
+
 The terrestrial water cycle is a highly interconnected system where the 
 movement of water is affected by physical and human processes. Thus, 
 environmental models may become inaccurate if they do not provide a complete 
