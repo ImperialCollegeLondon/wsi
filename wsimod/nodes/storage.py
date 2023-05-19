@@ -715,7 +715,7 @@ class River(Storage):
         reply = self.push_distributed(outflow, of_type = ['River','Node','Waste'])
         _ = self.tank.push_storage(reply, force = True)
         if reply['volume'] > constants.FLOAT_ACCURACY:
-            print('river cant push')
+            print('river ', self.name, ' cant push')
             
     def pull_check_fp(self, vqip = None):
         #TODO Pull checking for riparian buffer, needs updating
