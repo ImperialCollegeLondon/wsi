@@ -4,7 +4,7 @@ Created on Fri May 20 08:58:58 2022
 
 @author: Barney
 """
-from wsimod.nodes.nodes import Node, Tank, DecayTank, QueueTank, ResidenceTank
+from wsimod.nodes.nodes import Node, Tank, DecayTank, QueueTank, ResidenceTank, ResidenceTank_catchwat
 from wsimod.nodes.nutrient_pool import NutrientPool
 from wsimod.core import constants
 from math import exp, log, log10, sin
@@ -102,11 +102,11 @@ class Land(Node):
         #Create subsurface runoff, surface runoff and percolation tanks
         #Can also do as timearea if this seems dodge (that is how it is done in IHACRES)
         #TODO should these be decayresidencetanks?
-        self.subsurface_runoff = ResidenceTank(residence_time = self.subsurface_residence_time, 
-                                               capacity = constants.UNBOUNDED_CAPACITY)
+        self.subsurface_runoff = ResidenceTank_catchwat(residence_time = self.subsurface_residence_time, 
+                                                        capacity = constants.UNBOUNDED_CAPACITY)
         self.percolation = ResidenceTank(residence_time = self.percolation_residence_time,
-                                         capacity = constants.UNBOUNDED_CAPACITY)
-        self.surface_runoff = ResidenceTank(residence_time = self.surface_residence_time,
+                                                  capacity = constants.UNBOUNDED_CAPACITY)
+        self.surface_runoff = ResidenceTank_catchwat(residence_time = self.surface_residence_time,
                                             capacity = constants.UNBOUNDED_CAPACITY)
         
         #Store surfaces
@@ -760,7 +760,7 @@ class PerviousSurface(Surface):
         # get current moisture and potential deficit after ET
         current_soil_moisture_content = self.get_smc()
         current_moisture_deficit_depth = self.field_capacity - current_soil_moisture_content
-        if current_moisture_deficit_depth < 0:
+        if current_moisture_deficit_depth < -constants.FLOAT_ACCURACY:
             print('Error: cmd = ', current_moisture_deficit_depth, ' < 0 before soil water balance at this timestep') #TODO not consider irrigation
         potential_moisture_deficit = current_moisture_deficit_depth + evaporation_depth - infiltrated_precipitation
         
@@ -872,12 +872,12 @@ class PerviousSurface(Surface):
 
 class GrowingSurface(PerviousSurface):
     def __init__(self,
-                       rooting_depth = 1,
-                        ET_depletion_factor = 1,
+                       rooting_depth_stages = [1],
+                        ET_depletion_factor_stages = [1],
                         crop_factor_stages = [1,1], 
                         crop_factor_stage_dates = [0, 365], 
-                        sowing_day = 1,
-                        harvest_day = 365,
+                        cover_stages = [1,1],
+                        harvest_sow_stages = ['s','h'],
                         initial_soil_storage = None,
                        **kwargs
                         ):
@@ -908,9 +908,9 @@ class GrowingSurface(PerviousSurface):
         org-phosphorus/org-nitrogen/ammonia are also included, but they should be if nitrate is included and otherwise the code will crash with a key error.
 
         Args:
-            rooting_depth (float, optional): Depth of the soil tank (i.e., how deep do 
+            rooting_depth (list of float, optional): Depth of the soil tank (i.e., how deep do 
                 crop roots go). Defaults to 1.
-            ET_depletion_factor (float, optional): Average fraction of soil that can be 
+            ET_depletion_factor (list of float, optional): Average fraction of soil that can be 
                 depleted from the root zone before moisture stress (reduction in ET) 
                 occurs. Defaults to 1.
             crop_factor_stages (list, optional): Crop factor is a multiplier on et0, 
@@ -923,17 +923,19 @@ class GrowingSurface(PerviousSurface):
                 [1,1].
             crop_factor_stage_dates (list, optional): Dates associated with 
                 crop_factor_stages. Defaults to [0, 365].
-            sowing_day (int, optional): day of year that crops are sown. Defaults to 1.
-            harvest_day (int, optional): day of year that crops are harvest. Defaults 
+            sowing_day (list of int, optional): day of year that crops are sown. Defaults to 1.
+            harvest_day (list of int, optional): day of year that crops are harvest. Defaults 
                 to 365.
             initial_soil_storage (dict or float, optional): Initial mass of solid pollutants
                 in the soil nutrient pools (fast and adsorbed inorganic pools)
         """
         
         #Crop factors (set when creating object)
-        self.ET_depletion_factor = ET_depletion_factor #To do with water availability, p from FAOSTAT
-        self.rooting_depth = rooting_depth #maximum depth that plants can absorb, Zr from FAOSTAT
-        depth = rooting_depth
+        self.ET_depletion_factor = None #To do with water availability, p from FAOSTAT
+        self.ET_depletion_factor_stages = ET_depletion_factor_stages
+        self.rooting_depth = None #maximum depth that plants can absorb, Zr from FAOSTAT
+        self.rooting_depth_stages = rooting_depth_stages
+        depth = max(rooting_depth_stages)
 
         #Crop parameters
         self.crop_cover_max = 0.9 # [-] 0~1
@@ -941,8 +943,11 @@ class GrowingSurface(PerviousSurface):
         #TODO... really I should just have this as an annual profile parameter and do away with interpolation etc.
         self.crop_factor_stages = crop_factor_stages
         self.crop_factor_stage_dates = crop_factor_stage_dates
-        self.sowing_day = sowing_day
-        self.harvest_day = harvest_day
+        self.crop_cover_stages = [i * self.crop_cover_max for i in cover_stages]
+        self.ground_cover_stages = [i * self.ground_cover_max for i in cover_stages]
+        self.harvest_sow_stages = harvest_sow_stages
+        self.sowing_day = None
+        self.autumn_sow = None
         
         #Soil moisture dependence parameters
         self.satact = 0.6 # [-] for calculating soil_moisture_dependence_factor
@@ -961,7 +966,7 @@ class GrowingSurface(PerviousSurface):
         self.sreroexp = 1.2 # [-] surface runoff erosion exponent
         self.cohesion = 1 # [kPa]
         self.slope = 5 # [-] every 100
-        self.srfilt = 0.7 # [-] ratio of eroded sediment left in surface runoff after filtration
+        self.srfilt = 0.1 # [-] ratio of eroded sediment left in surface runoff after filtration
         self.macrofilt = 0.01 # [-] ratio of eroded sediment left in subsurface flow after filtration
         
         #Denitrification parameters
@@ -980,17 +985,6 @@ class GrowingSurface(PerviousSurface):
         #Other soil parameters
         self.bulk_density = 1300 # [kg/m3]        
         super().__init__(depth = depth,**kwargs)
-                
-        #Infer basic sow/harvest calendar        
-        self.harvest_sow_calendar = [0, self.sowing_day, self.harvest_day, self.harvest_day + 1, 365]
-        self.ground_cover_stages = [0,0,self.ground_cover_max,0,0]
-        self.crop_cover_stages = [0,0,self.crop_cover_max,0,0]
-        
-        #Judge autumn-sown crops
-        if self.sowing_day > 181:
-            self.autumn_sow = True
-        else:
-            self.autumn_sow = False
         
         #State variables
         self.days_after_sow = None
@@ -1003,7 +997,6 @@ class GrowingSurface(PerviousSurface):
         self.total_available_water = (self.field_capacity - self.wilting_point)
         if self.total_available_water < 0:
             print('warning: TAW < 0...')
-        self.readily_available_water = self.total_available_water * self.ET_depletion_factor
         
         #Initiliase nutrient pools
         self.nutrient_pool = NutrientPool()
@@ -1115,30 +1108,36 @@ class GrowingSurface(PerviousSurface):
             #Hacky way to handle leap years
             if doy > 59:
                 doy -= 1
-            
-        if self.days_after_sow is None:
-            if self.parent.t.dayofyear == self.sowing_day:
-                #sow
-                self.days_after_sow = 0
-        else:
-            if self.parent.t.dayofyear == self.harvest_day:
-                #harvest
+        
+        # get sowing day
+        if self.parent.t.dayofyear in self.crop_factor_stage_dates:
+            harvest_sow_stages = self.harvest_sow_stages[self.crop_factor_stage_dates.index(self.parent.t.dayofyear)]
+            if harvest_sow_stages == 'f':
+                self.sowing_day = None
                 self.days_after_sow = None
-                self.crop_factor = self.crop_factor_stages[0]
-                self.crop_cover = 0
-                self.ground_cover = 0
-            else:
-                #increment days since sow
-                self.days_after_sow += 1
+            elif harvest_sow_stages == 's':
+                self.sowing_day = self.parent.t.dayofyear
+                self.days_after_sow = 0
+                #Judge autumn-sown crops
+                if self.sowing_day > 181:
+                    self.autumn_sow = True
+                else:
+                    self.autumn_sow = False
+        
+        if self.days_after_sow != None:
+            #crop growing
+            self.days_after_sow += 1
+        self.crop_cover = self.quick_interp(doy, self.crop_factor_stage_dates, self.crop_cover_stages)
+        self.ground_cover = self.quick_interp(doy, self.crop_factor_stage_dates, self.ground_cover_stages)
         
         #Calculate relevant parameters
         self.crop_factor = self.quick_interp(doy, self.crop_factor_stage_dates, self.crop_factor_stages)
-        if self.days_after_sow:
-            #Move outside of this if, if you want nonzero crop/ground cover outside of season
-            self.crop_cover = self.quick_interp(doy, self.harvest_sow_calendar, self.crop_cover_stages)
-            self.ground_cover = self.quick_interp(doy, self.harvest_sow_calendar, self.ground_cover_stages)
+            
+        self.ET_depletion_factor = self.quick_interp(doy, self.crop_factor_stage_dates, self.ET_depletion_factor_stages)
+        self.rooting_depth = self.quick_interp(doy, self.crop_factor_stage_dates, self.rooting_depth_stages)
         
         root_zone_depletion = max(self.field_capacity - self.get_smc(),0)
+        self.readily_available_water = self.total_available_water * self.ET_depletion_factor
         if root_zone_depletion < self.readily_available_water :
             crop_water_stress_coefficient = 1
         else:
@@ -1200,9 +1199,7 @@ class GrowingSurface(PerviousSurface):
                    self.percolation['phosphate'] + \
                    self.infiltration_excess['phosphate']
         out_ = self.nutrient_pool.dissolved_inorganic_pool.extract(out)
-        if not self.compare_vqip(out, out_):
-            print('nutrient pool not tracking soil tank')
-        
+
         #organic
         out = self.nutrient_pool.get_empty_nutrient()
         out['N'] = self.subsurface_flow['org-nitrogen'] + \
@@ -1212,8 +1209,6 @@ class GrowingSurface(PerviousSurface):
                    self.percolation['org-phosphorus'] + \
                    self.infiltration_excess['org-phosphorus']
         out_ = self.nutrient_pool.dissolved_organic_pool.extract(out)
-        if not self.compare_vqip(out, out_):
-            print('nutrient pool not tracking soil tank')
         
         return (self.empty_vqip(), self.empty_vqip())
         
@@ -1767,7 +1762,7 @@ class IrrigationSurface(GrowingSurface):
         self.irrigation_coefficient = irrigation_coefficient #proportion area irrigated * proportion of demand met
         
         super().__init__(**kwargs)
-               
+        
     def irrigate(self):
         """Calculate water demand for crops and call parent node to acquire water, 
         updating surface tank and nutrient pools
