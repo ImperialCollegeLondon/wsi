@@ -1,0 +1,26 @@
+{
+    "description": "Release following the JOSS review process", 
+    "license": {
+        "id": "bsd-3-clause",
+        "title": "BSD 3-Clause License",
+        "url": "https://opensource.org/licenses/BSD-3-Clause"
+    }, 
+    "title": "Water Systems Integrated Modelling framework, WSIMOD: A Python package for integrated modelling of water quality and quantity across the water cycle", 
+    "version": "0.3_joss_reviewed", 
+    "upload_type": "software", 
+    "publication_date": "2023-02-21", 
+    "creators": [
+        {
+            "name": "Dobson, Barnaby",
+            "orcid": "0000-0002-0149-4124"
+        },
+        {
+            "name": "Liu, Leyang",
+            "orcid": "0000-0001-7556-1134"
+        },
+        {
+            "name": "Mijic, Ana",
+            "orcid": "0000-0001-7096-9405"
+        }
+    ]
+}
