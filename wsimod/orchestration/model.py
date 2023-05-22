@@ -331,6 +331,10 @@ class Model(WSIObj):
             for node in self.nodes_type['Reservoir'].values():
                 node.make_abstractions()
             
+            #Apply irrigation
+            for node in self.nodes_type['Land'].values():
+                node.apply_irrigation()
+            
             #Catchment routing
             for node in self.nodes_type['Catchment'].values():
                 node.route()
