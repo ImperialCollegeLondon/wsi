@@ -667,6 +667,7 @@ class PerviousSurface(Surface):
         self.percolation_coefficient = percolation_coefficient
         self.et0_coefficient = et0_coefficient
         self.ihacres_p = ihacres_p       
+        self.total_porosity = total_porosity
         
         #Parameters to determine how to calculate the temperature of outflowing water
         #TODO what should these params be?
