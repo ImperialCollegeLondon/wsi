@@ -20,6 +20,7 @@ import gzip
 import yaml
 from math import log10
 from datetime import datetime
+import dill as pickle
 
 class to_datetime():
     #TODO document and make better
@@ -270,7 +271,47 @@ class Model(WSIObj):
         check_and_coerce_dict(data)
         
         write_yaml(address, config_name, data)
+    
+    def load_pickle(self, fid):
+        """Load model object to a pickle file, including the model states
+        
+        Args:
+            fid (str): File address to load the pickled model from
+
+        Returns:
+            model (obj): loaded model
             
+        Example:
+            >>> # Load and run your model
+            >>> my_model.load(model_dir,config_name = 'config.yml')
+            >>> _ = my_model.run()
+            >>>
+            >>> # Save it including its different states
+            >>> my_model.save_pickle('model_at_end_of_run.pkl')
+            >>>
+            >>> # Load it at another time to resume the model from the end
+            >>> # of the previous run
+            >>> new_model = Model()
+            >>> new_model = new_model.load_pickle('model_at_end_of_run.pkl')
+            
+        """
+        file = open(fid,'rb')
+        return pickle.load(file)
+    
+    def save_pickle(self, fid):
+        """Save model object to a pickle file, including saving the model states
+
+        Args:
+            fid (str): File address to save the pickled model to
+
+        Returns:
+            message (str): Exit message of pickle dump
+        """
+        
+        file = open(fid, 'wb')
+        pickle.dump(self, file)
+        return file.close()      
+    
     def add_nodes(self, nodelist):
         """Add nodes to the model object from a list of dicts, where
         each dict contains all of the parameters for a node. Intended

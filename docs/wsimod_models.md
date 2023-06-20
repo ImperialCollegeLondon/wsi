@@ -214,5 +214,6 @@ we opted to only save the properties of a node/arc required to initialise
 that object. This means that state variables, user-added properties, or 
 method overriding are not preserved when the model is saved. Thus, when the
 model is loaded, its objects are initialised as if new. However, if a user 
-wishes to achieve this functionality it is reasonably easy to do so with the 
-[dill package](https://pypi.org/project/dill/).
+wishes to achieve this then the `Model/save_pickle` and `Model/load_pickle`
+functions can help to achieve it, though these create binary files that are not
+user readable.
