@@ -957,7 +957,7 @@ class RiverReservoir(Reservoir):
         #Send downstream
         reply = self.push_distributed(environmental)
         _ = self.tank.push_storage(reply, force = True)
-        if reply['volume'] > 0:
+        if reply['volume'] > constants.FLOAT_ACCURACY:
             print('warning: environmental not able to push')
             
         #Update satisfaction
