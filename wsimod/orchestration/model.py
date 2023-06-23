@@ -497,7 +497,8 @@ class Model(WSIObj):
             record_arcs = None,
             record_tanks = None,
             verbose = True,
-            record_all = True):
+            record_all = True,
+            objectives = []):
         """Run the model object with the default orchestration
 
         Args:
@@ -513,16 +514,31 @@ class Model(WSIObj):
                 Defaults to True.
             record_all (bool, optional): Specifies to store all results.
                 Defaults to True.
+            objectives (list, optional): A list of dicts with objectives to 
+                calculate (see examples). Defaults to [].
 
         Returns:
             flows: simulated flows in a list of dicts
             tanks: simulated tanks storages in a list of dicts
-            node_mb: mass balance differences in a list of dicts (not currently used)
+            objective_results: list of values based on objectives list
             surfaces: simulated surface storages of land nodes in a list of dicts
+        
+        Examples:
+            # Run a model without storing any results but calculating objectives
+            import statistics as stats
+            objectives = [{'element_type' : 'flows',
+                           'name' : 'my_river',
+                           'function' : @ (x) stats.mean([y['phosphate'] for y in x])
+                           },
+                          {'element_type' : 'tanks',
+                           'name' : 'my_reservoir',
+                           'function' : @ (x) sum([y['storage'] < 10000 for y in x])
+                           }]
+            my_model.run(record_all = False, objectives = objectives)
         """
         
         if record_arcs is None:
-            record_arcs = self.arcs.keys()
+            record_arcs = list(self.arcs.keys())
             
         if record_tanks is None:
             record_tanks = []
@@ -539,6 +555,14 @@ class Model(WSIObj):
             stdout = blockPrint() 
         if dates is None:
             dates = self.dates
+        
+        for objective in objectives:
+            if objective['element_type'] == 'tanks':
+                record_tanks.append(objective['name'])
+            elif objective['element_type'] == 'flows':
+                record_arcs.append(objective['name'])
+            else:
+                print('element_type not recorded')
         
         flows = []
         tanks = []
@@ -714,9 +738,16 @@ class Model(WSIObj):
             
             for arc in self.arcs.values():
                 arc.end_timestep()
+        objective_results = []
+        for objective in objectives:
+            if objective['element_type'] == 'tanks':
+                val = objective['function']([x for x in tanks if x['node'] == objective['name']])
+            elif objective['element_type'] == 'flows':
+                val = objective['function']([x for x in flows if x['arc'] == objective['name']])
+            objective_results.append(val)
         if not verbose:
             enablePrint(stdout)
-        return flows, tanks, node_mb, surfaces
+        return flows, tanks, objective_results, surfaces
     
     def reinit(self):
         """Reinitialise by ending all node/arc timesteps and calling reinit
