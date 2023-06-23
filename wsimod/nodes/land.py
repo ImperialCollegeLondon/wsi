@@ -782,7 +782,7 @@ class PerviousSurface(Surface):
             percolation = self.empty_vqip()
             
             if abs(evap + infiltrated_precipitation * self.area - evaporation - infiltration_excess) > constants.FLOAT_ACCURACY:
-                print('inaccurate evaporation calculation')
+                print('inaccurate evaporation calculation of {0}'.format(abs(evap + infiltrated_precipitation * self.area - evaporation - infiltration_excess)))
         
         #TODO saturation excess (think it should just be 'pull_ponded'  presumably in net effective precipitation? )
         
