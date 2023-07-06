@@ -814,6 +814,43 @@ class PullArc(Arc):
             (dict): An empty VQIP amount of water indicating no water can be pushed
         """
         return self.empty_vqip()
+class PushArc(Arc):
+    def __init__(self, **kwargs):
+        """Subclass of Arc where pushes return no availability to pull. This creates
+        an Arc where only push requests/checks can be sent, similar to a CSO.
+        """
+        super().__init__(**kwargs)
+        self.send_pull_request = self.send_pull_deny
+        self.send_pull_check = self.send_pull_check_deny
+    def send_pull_deny(self, vqip, tag = 'default', force = False):
+        """Function used to deny any pull requests.
+
+        Args:
+            vqip (dict): A dict VQIP of water to pull
+            tag (str, optional):  optional message to direct the out_port's query_handler which 
+                function to call. Defaults to 'default'.
+            force (bool, optional): Argument used to cause function to ignore tank 
+                capacity of out_port, possibly resulting in pooling. Should not be used unless 
+                out_port is a tank object. Defaults to False.
+
+        Returns:
+            (dict): A VQIP amount of water that was successfully pulled
+        """
+        return self.empty_vqip()
+
+    def send_pull_check_deny(self, vqip = None, tag = 'default'):
+        """Function used to deny any pull checks.
+
+        Args:
+            vqip (dict): A dict VQIP of water to pull that can be specified. Defaults to None, 
+                which returns maximum capacity to pull.
+            tag (str, optional):  optional message to direct the out_port's query_handler which 
+                function to call. Defaults to 'default'.
+
+        Returns:
+            (dict): An empty VQIP amount of water indicating no water can be pulled
+        """
+        return self.empty_vqip()
 
 class SewerArc(Arc):
     pass
