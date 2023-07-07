@@ -121,11 +121,14 @@ class Model(WSIObj):
             init_args.extend(args)
         return init_args
     
-    def load(self, address, config_name = 'config.yml'):
+    def load(self, address, config_name = 'config.yml', overrides = {}):
         
         with open(os.path.join(address, config_name), "r") as file:
             data = yaml.safe_load(file)
         
+        for key, item in overrides.items():
+            data[key] = item
+            
         constants.POLLUTANTS =data['pollutants']
         constants.ADDITIVE_POLLUTANTS =data['additive_pollutants']
         constants.NON_ADDITIVE_POLLUTANTS =data['non_additive_pollutants']
