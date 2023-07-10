@@ -7,10 +7,79 @@ Created on Sun Aug 14 16:27:14 2022
 
 from wsimod.nodes.nodes import Node
 from wsimod.core import constants 
-class Distribution(Node):
-    def __init__(self,**kwargs):
-        """A Node that cannot be pushed to. Intended to pass calls to FWTW - though this currently relies on the user to connect it properly
 
+def decorate_leakage_set(self, f):
+    """Decorator to extend the functionality of `f` by introducing leakage. 
+    This is achieved by adjusting the volume of the request (vqip) to include
+    anticipated leakage, calling the original function `f`, and then 
+    distributing the leaked amount to groundwater.
+
+    Args:
+        self (instance of Distribution class): The Distribution object to be 
+            extended
+        f (function): The function to be extended. Expected to be the 
+            Distribution object's pull_set function.
+
+    Returns:
+        pull_set (function): The decorated function which includes the 
+            original functionality of `f` and additional leakage operations.
+    """
+    def pull_set(vqip, **kwargs):
+        vqip['volume'] /= (1 - self.leakage)
+        
+        reply = f(vqip, **kwargs)
+        
+        amount_leaked = self.v_change_vqip(reply, 
+                                           reply['volume'] * self.leakage)
+        
+        reply = self.extract_vqip(reply, amount_leaked)
+        
+        unsuccessful_leakage = self.push_distributed(amount_leaked, of_type = 'Groundwater')
+        if unsuccessful_leakage['volume'] > constants.FLOAT_ACCURACY:
+            print('warning, distribution leakage not going to GW in {0} at {1}'.format(self.name, self.t))
+            reply = self.sum_vqip(reply, unsuccessful_leakage)
+        
+        return reply
+    return pull_set
+    
+def decorate_leakage_check(self, f):
+    """Decorator to extend the functionality of `f` by introducing leakage. 
+    This is achieved by adjusting the volume of the request (vqip) to include
+    anticipated leakage and then calling the original function `f`.
+
+    Args:
+        self (instance of Distribution class): The Distribution object to be 
+            extended
+        f (function): The function to be extended. Expected to be the 
+            Distribution object's pull_set function.
+
+    Returns:
+        pull_check (function): The decorated function which includes the 
+            original functionality of `f` and additional leakage operations.
+    """
+    def pull_check(vqip, **kwargs):
+        if vqip is not None:
+            vqip['volume'] /= (1 - self.leakage)
+        reply = f(vqip, **kwargs)
+        amount_leaked = self.v_change_vqip(reply, 
+                                           reply['volume'] * self.leakage)
+        
+        reply = self.extract_vqip(reply, amount_leaked)
+        return reply
+    return pull_check
+
+class Distribution(Node):
+    def __init__(self, leakage = 0, **kwargs):
+        """A Node that cannot be pushed to. Intended to pass calls to FWTW - 
+        though this currently relies on the user to connect it properly
+        
+        Args:
+            leakage (float, optional): 1 > float >= 0 to express how much 
+                water should be leaked to any attached groundwater nodes. This
+                number represents the proportion of total flow through the node
+                that should be leaked. 
+                Defaults to 0.
+            
         Functions intended to call in orchestration:
             None
         
@@ -21,11 +90,18 @@ class Distribution(Node):
         Input data and parameter requirements:
             - None
         """
+        self.leakage = leakage
         super().__init__(**kwargs)
         #Update handlers        
         self.push_set_handler['default'] = self.push_set_deny
         self.push_check_handler['default'] = self.push_check_deny
-
+        
+        if leakage > 0:
+            self.pull_set_handler['default'] = decorate_leakage_set(self, 
+                                                                    self.pull_set_handler['default'])
+            self.pull_check_handler['default'] = decorate_leakage_check(self, 
+                                                                        self.pull_check_handler['default'])
+                    
 class UnlimitedDistribution(Distribution):
     def __init__(self,**kwargs):
         """A distribution node that provides unlimited water while tracking pass 

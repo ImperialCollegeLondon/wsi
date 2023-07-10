@@ -12,9 +12,9 @@ from unittest import TestCase
 
 from wsimod.core import constants
 from wsimod.nodes.waste import Waste
-from wsimod.nodes.distribution import UnlimitedDistribution
+from wsimod.nodes.distribution import UnlimitedDistribution, Distribution
 from wsimod.nodes.nodes import Node
-from wsimod.nodes.land import Land
+from wsimod.nodes.storage import Groundwater
 from wsimod.arcs.arcs import Arc
     
 
@@ -42,6 +42,26 @@ class MyTestClass(TestCase):
         
         d1['volume'] = 2000
         self.assertDictAlmostEqual(d1, distribution.supplied)
+    
+    def test_leakage(self):
+        distribution = Distribution(leakage = 0.2,
+                                    name = 'd1')
+        
+        udistribution = UnlimitedDistribution(name='u1')
+        
+        GW = Groundwater(name='g1',capacity = 10)
+        
+        arc1 = Arc(name = 'a1', 
+                   in_port = udistribution, 
+                   out_port = distribution)
+        
+        arc2 = Arc(name = 'a2', 
+                   in_port = distribution,
+                   out_port = GW)
+        
+        reply = distribution.pull_check({'volume' : 5})
+        v1 = 5 + 5 * 0.2
+        self.assertEqual(v1, reply['volume'])
         
 if __name__ == "__main__":
     unittest.main()
