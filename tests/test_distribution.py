@@ -60,8 +60,13 @@ class MyTestClass(TestCase):
                    out_port = GW)
         
         reply = distribution.pull_check({'volume' : 5})
-        v1 = 5 + 5 * 0.2
+        v1 = 5
         self.assertEqual(v1, reply['volume'])
+        
+        reply = distribution.pull_set({'volume' : 5})
+        v2 = v1 / (1 - 0.2)
+        self.assertEqual(v2, arc1.vqip_in['volume'])
+        self.assertEqual(v2 * 0.2, arc2.vqip_in['volume'])
         
 if __name__ == "__main__":
     unittest.main()
