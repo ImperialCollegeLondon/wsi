@@ -72,8 +72,12 @@ class Demand(Node):
             total_requested += dem['volume']
             
         self.total_received = self.pull_distributed({'volume' : total_requested})
-        #TODO Currently just assume all water is received and then pushed onwards
         
+        #TODO Currently just assume all water is received and then pushed onwards
+        if (total_requested - self.total_received['volume']) > constants.FLOAT_ACCURACY:
+            print('demand deficit of {2} at {0} on {1}'.format(self.name, self.t, total_requested - self.total_received['volume']))
+            
+            
         directions = {'garden' : {'tag' : ('Demand',
                                            'Garden'),
                                   'of_type' : 'Land'},
