@@ -440,7 +440,8 @@ class FWTW(WTW):
         #Calculate deficit (assume is equal to difference between previous treated 
         # throughput and current throughput)
         #TODO think about this a bit more
-        deficit = max(self.previous_pulled['volume'] - throughput['volume'], 0)
+        deficit = max(target_throughput - throughput['volume'], 0)
+        # deficit = max(self.previous_pulled['volume'] - throughput['volume'], 0)
         deficit = self.v_change_vqip(self.previous_pulled, deficit)
         
         #Introduce deficit
@@ -450,8 +451,7 @@ class FWTW(WTW):
         self.total_deficit = self.sum_vqip(self.total_deficit, deficit)
         
         if self.total_deficit['volume'] > constants.FLOAT_ACCURACY:
-            # print('deficit')
-            pass
+            print('Service reservoirs not filled at {0} on {1}'.format(self.name, self.t))
         
         #Run treatment processes
         self.treat_current_input()
