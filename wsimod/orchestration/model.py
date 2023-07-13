@@ -499,6 +499,7 @@ class Model(WSIObj):
             settings = None,
             record_arcs = None,
             record_tanks = None,
+            record_surfaces = None,
             verbose = True,
             record_all = True,
             objectives = []):
@@ -513,6 +514,8 @@ class Model(WSIObj):
                 Defaults to None.
             record_tanks (list, optional): List of nodes with water stores to 
                 store results for. Defaults to None.
+            record_surfaces (list, optional): List of tuples of 
+                (land node, surface) to store results for. Defaults to None.
             verbose (bool, optional): Prints updates on simulation if true. 
                 Defaults to True.
             record_all (bool, optional): Specifies to store all results.
@@ -531,20 +534,24 @@ class Model(WSIObj):
             import statistics as stats
             objectives = [{'element_type' : 'flows',
                            'name' : 'my_river',
-                           'function' : @ (x) stats.mean([y['phosphate'] for y in x])
+                           'function' : @ (x, _) stats.mean([y['phosphate'] for y in x])
                            },
                           {'element_type' : 'tanks',
                            'name' : 'my_reservoir',
-                           'function' : @ (x) sum([y['storage'] < 10000 for y in x])
+                           'function' : @ (x, model) sum([y['storage'] < (model.nodes['my_reservoir'].tank.capacity / 2) for y in x])
                            }]
-            my_model.run(record_all = False, objectives = objectives)
+            _, _, results, _ = my_model.run(record_all = False, objectives = objectives)
         """
         
         if record_arcs is None:
-            record_arcs = list(self.arcs.keys())
-            
+            record_arcs = []
+            if record_all:
+                record_arcs = list(self.arcs.keys())
         if record_tanks is None:
             record_tanks = []
+
+        if record_surfaces is None:
+            record_surfaces = []
         
         if settings is None:
             settings = self.default_settings()
@@ -564,6 +571,9 @@ class Model(WSIObj):
                 record_tanks.append(objective['name'])
             elif objective['element_type'] == 'flows':
                 record_arcs.append(objective['name'])
+            elif objective['element_type'] == 'surfaces':
+                record_surfaces.append((objective['name'], 
+                                        objective['surface']))
             else:
                 print('element_type not recorded')
         
@@ -576,7 +586,7 @@ class Model(WSIObj):
             for node in self.nodelist:
                 node.t = date
                 node.monthyear = date.to_period('M')
-            
+
             #Run FWTW
             for node in self.nodes_type['FWTW'].values():
                 node.treat_water()
@@ -694,6 +704,38 @@ class Model(WSIObj):
                 tanks.append({'node' : node.name,
                               'storage' : node.tank.storage['volume'],
                               'time' : date})
+                
+            for node, surface in record_surfaces:
+                node = self.nodes[node]
+                name = node.name
+                surface = node.get_surface(surface)
+                if not isinstance(surface,ImperviousSurface):
+                    surfaces.append({'node' : name,
+                                      'surface' : surface.surface,
+                                      'percolation' : surface.percolation['volume'],
+                                      'subsurface_r' : surface.subsurface_flow['volume'],
+                                      'surface_r' : surface.infiltration_excess['volume'],
+                                      'storage' : surface.storage['volume'],
+                                      'evaporation' : surface.evaporation['volume'],
+                                      'precipitation' : surface.precipitation['volume'],
+                                      'tank_recharge' : surface.tank_recharge,
+                                      'capacity' : surface.capacity,
+                                      'time' : date,
+                                      'et0_coef' : surface.et0_coefficient,
+                                      # 'crop_factor' : surface.crop_factor
+                                      })
+                    for pol in constants.POLLUTANTS:
+                        surfaces[-1][pol] = surface.storage[pol]
+                else:
+                    surfaces.append({'node' : name,
+                                      'surface' : surface.surface,
+                                      'storage' : surface.storage['volume'],
+                                      'evaporation' : surface.evaporation['volume'],
+                                      'precipitation' : surface.precipitation['volume'],
+                                      'capacity' : surface.capacity,
+                                      'time' : date})
+                    for pol in constants.POLLUTANTS:
+                        surfaces[-1][pol] = surface.storage[pol]
             if record_all:
                 for node in self.nodes.values():
                     for prop_ in dir(node):
@@ -744,9 +786,11 @@ class Model(WSIObj):
         objective_results = []
         for objective in objectives:
             if objective['element_type'] == 'tanks':
-                val = objective['function']([x for x in tanks if x['node'] == objective['name']])
+                val = objective['function']([x for x in tanks if x['node'] == objective['name']], self)
             elif objective['element_type'] == 'flows':
-                val = objective['function']([x for x in flows if x['arc'] == objective['name']])
+                val = objective['function']([x for x in flows if x['arc'] == objective['name']], self)
+            elif objective['element_type'] == 'surfaces':
+                val = objective['function']([x for x in surfaces if (x['node'] == objective['name']) & (x['surface'] == objective['surface'])], self)
             objective_results.append(val)
         if not verbose:
             enablePrint(stdout)
