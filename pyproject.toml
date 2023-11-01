@@ -8,11 +8,11 @@ exclude = ["htmlcov"] # Exclude the coverage report file from setuptools package
 [project]
 name = "WSIMOD"
 description = "WSIMOD is for simulating water quality and quantity"
-readme = {file = "README.md"}
+readme = "README.md"
 version = "0.2.0"
 license = {file = "LICENSE"}
 authors = [
-    { name = "Imperial College London RSE Team", email = "ict-rse-team@imperial.ac.uk" }
+    { name = "Imperial College London RSE Team", email = "ict-rse-team@imperial.ac.uk" },
     { name = "Barnaby Dobson", email = "b.dobson@imperial.ac.uk" }
 ]
 requires-python = ">=3.9"
