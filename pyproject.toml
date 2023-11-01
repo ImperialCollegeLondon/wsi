@@ -1,0 +1,49 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+exclude = ["htmlcov"] # Exclude the coverage report file from setuptools package finder
+
+[project]
+name = "WSIMOD"
+description = "WSIMOD is for simulating water quality and quantity"
+readme = {file = "README.md"}
+version = "0.2.0"
+license = {file = "LICENSE"}
+authors = [
+    { name = "Imperial College London RSE Team", email = "ict-rse-team@imperial.ac.uk" }
+    { name = "Barnaby Dobson", email = "b.dobson@imperial.ac.uk" }
+]
+requires-python = ">=3.9"
+dependencies = [
+    "PyYAML",
+    "tqdm"
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest"
+]
+
+demos = [
+    "pandas",
+    "geopandas",
+    "matplotlib",
+    "shapely"
+]
+
+doc = [
+    "mkdocs",
+    "mkdocstrings[python]",
+    "mkdocs-material",
+    "mkdocs-autorefs",
+    "mkdocs-bibtex",
+    "mkdocs-coverage",
+    "mkdocs-jupyter",
+    "mkdocs-material-extensions",
+    "pypandoc"
+]
+
+[tool.pytest.ini_options]
+addopts = "-v -p no:warnings"
