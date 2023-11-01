@@ -38,6 +38,8 @@ decorator==5.1.1
     # via ipython
 defusedxml==0.7.1
     # via nbconvert
+dill==0.3.7
+    # via WSIMOD (pyproject.toml)
 executing==2.0.1
     # via stack-data
 fastjsonschema==2.18.1

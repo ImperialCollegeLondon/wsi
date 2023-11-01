@@ -27,6 +27,8 @@ contourpy==1.1.1
     # via matplotlib
 cycler==0.12.1
     # via matplotlib
+dill==0.3.7
+    # via WSIMOD (pyproject.toml)
 fiona==1.9.5
     # via geopandas
 fonttools==4.43.1

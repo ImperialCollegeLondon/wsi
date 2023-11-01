@@ -8,6 +8,8 @@ colorama==0.4.6
     # via
     #   pytest
     #   tqdm
+dill==0.3.7
+    # via WSIMOD (pyproject.toml)
 iniconfig==2.0.0
     # via pytest
 packaging==23.2
