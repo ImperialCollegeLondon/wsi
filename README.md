@@ -18,7 +18,7 @@ that we have experienced in industry collaboration. The WSIMOD Python package
 provides tutorials and examples to help modellers create nodes, connect them 
 with arcs, and create simulations.
 
-You can access our documentation below or at [https://barneydobson.github.io/wsi](https://barneydobson.github.io/wsi).
+You can access our documentation below or at [https://imperialcollegelondon.github.io/wsi](https://barneydobson.github.io/wsi).
 
 *Requires*: Python 3 (tested on versions >=3.7), [tqdm](https://tqdm.github.io/), [PyYAML](https://pyyaml.org/)
 
