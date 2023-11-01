@@ -20,7 +20,7 @@ with arcs, and create simulations.
 
 You can access our documentation below or at [https://imperialcollegelondon.github.io/wsi](https://barneydobson.github.io/wsi).
 
-*Requires*: Python 3 (tested on versions >=3.7), [tqdm](https://tqdm.github.io/), [PyYAML](https://pyyaml.org/)
+*Requires*: Python 3 (tested on versions >=3.7), [tqdm](https://tqdm.github.io/), [PyYAML](https://pyyaml.org/), [dill](https://dill.readthedocs.io/en/latest/)
 
 *Optional requirements to run demos*: [Pandas](https://pandas.pydata.org/), [GeoPandas](https://geopandas.org/en/stable/), [Matplotlib](https://matplotlib.org/), [Shapely](https://shapely.readthedocs.io/en/stable/manual.html)
 
@@ -52,37 +52,27 @@ and consists of:
 8. [Coverage](https://barneydobson.github.io/wsi/coverage/)
 
 ## Installation
-Create and activate new conda environment
-```
-conda create --name wsimod python=3.10
-conda activate wsimod
-```
-
-Install a GUI if you like
-```
-conda install spyder -c conda-forge
-```
 
 Install WSIMOD directly from GitHub
 ```
-pip install https://github.com/barneydobson/wsi/archive/refs/heads/main.zip
+pip install https://github.com/ImperialCollegeLondon/wsi/archive/refs/heads/main.zip
 ```
 
 Use `[demos]` to include the demos and tutorials.
 ```
-pip install https://github.com/barneydobson/wsi/archive/refs/heads/main.zip
+pip install https://github.com/ImperialCollegeLondon/wsi/archive/refs/heads/main.zip
 pip install wsimod[demos]
 ```
 
-If you want to make changes WSIMOD you can download/clone this folder, navigate to it, and run:
+If you want to make changes to WSIMOD you can download/clone this folder, navigate to it, and run:
 ```
-python setup.py develop
+pip install -e .[dev]
 ```
 
 or (with demos)
 
 ```
-python setup.py develop easy_install "wsimod[demos]"
+pip install -e .[dev,demos]
 ```
 
 ## How to cite WSIMOD
