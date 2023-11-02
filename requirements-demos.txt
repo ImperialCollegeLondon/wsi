@@ -28,17 +28,17 @@ contourpy==1.1.1
 cycler==0.12.1
     # via matplotlib
 dill==0.3.7
-    # via WSIMOD (pyproject.toml)
+    # via wsimod (pyproject.toml)
 fiona==1.9.5
     # via geopandas
 fonttools==4.43.1
     # via matplotlib
 geopandas==0.14.0
-    # via WSIMOD (pyproject.toml)
+    # via wsimod (pyproject.toml)
 kiwisolver==1.4.5
     # via matplotlib
 matplotlib==3.8.1
-    # via WSIMOD (pyproject.toml)
+    # via wsimod (pyproject.toml)
 numpy==1.26.1
     # via
     #   contourpy
@@ -49,10 +49,10 @@ packaging==23.2
     # via
     #   geopandas
     #   matplotlib
-pandas==2.1.2
+pandas==1.5.2
     # via
-    #   WSIMOD (pyproject.toml)
     #   geopandas
+    #   wsimod (pyproject.toml)
 pillow==10.1.0
     # via matplotlib
 pyparsing==3.1.1
@@ -66,19 +66,17 @@ python-dateutil==2.8.2
 pytz==2023.3.post1
     # via pandas
 pyyaml==6.0.1
-    # via WSIMOD (pyproject.toml)
+    # via wsimod (pyproject.toml)
 shapely==2.0.2
     # via
-    #   WSIMOD (pyproject.toml)
     #   geopandas
+    #   wsimod (pyproject.toml)
 six==1.16.0
     # via
     #   fiona
     #   python-dateutil
 tqdm==4.66.1
-    # via WSIMOD (pyproject.toml)
-tzdata==2023.3
-    # via pandas
+    # via wsimod (pyproject.toml)
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools

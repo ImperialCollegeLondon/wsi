@@ -7,8 +7,8 @@
 colorama==0.4.6
     # via tqdm
 dill==0.3.7
-    # via WSIMOD (pyproject.toml)
+    # via wsimod (pyproject.toml)
 pyyaml==6.0.1
-    # via WSIMOD (pyproject.toml)
+    # via wsimod (pyproject.toml)
 tqdm==4.66.1
-    # via WSIMOD (pyproject.toml)
+    # via wsimod (pyproject.toml)
