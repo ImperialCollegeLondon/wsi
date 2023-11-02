@@ -13,6 +13,6 @@ jobs:
       with:
         python-version: 3.10.9
     - name: Install and build
-      run: pip install .
+      run: pip install -r requirements-dev.txt
     - name: Run tests
       run: pytest
