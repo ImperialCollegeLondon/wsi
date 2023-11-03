@@ -66,41 +66,47 @@
 # Import packages
 # %%
 
-from wsimod.nodes.wtw import WWTW, FWTW
-from wsimod.nodes.waste import Waste
-from wsimod.nodes.storage import Groundwater, Reservoir
+import os
+
+import pandas as pd
+
+from wsimod.arcs.arcs import Arc
+from wsimod.core import constants
 from wsimod.nodes.catchment import Catchment
 from wsimod.nodes.demand import ResidentialDemand
 from wsimod.nodes.land import Land
-from wsimod.nodes.sewer import Sewer
 from wsimod.nodes.nodes import Node
+from wsimod.nodes.sewer import Sewer
+from wsimod.nodes.storage import Groundwater, Reservoir
+from wsimod.nodes.waste import Waste
+from wsimod.nodes.wtw import FWTW, WWTW
 from wsimod.orchestration.model import Model
-from wsimod.arcs.arcs import Arc
-from wsimod.core import constants
-import pandas as pd
-import os
-os.environ['USE_PYGEOS'] = '0'
+
+os.environ["USE_PYGEOS"] = "0"
 import geopandas as gpd
-from shapely.geometry import LineString
 from matplotlib import pyplot as plt
+from shapely.geometry import LineString
 
 # %% [markdown]
 # Load input data
 # %%
 
-#Use this path if compiling documentation
-data_folder= os.path.join(os.path.abspath(''),
-                               "docs","demo","data")
-#Use this path otherwise
-data_folder = os.path.join(os.path.split(os.path.abspath(''))[0],"data") 
+# Use this path if compiling documentation
+data_folder = os.path.join(os.path.abspath(""), "docs", "demo", "data")
+# Use this path otherwise
+data_folder = os.path.join(os.path.split(os.path.abspath(""))[0], "data")
 
 input_fid = os.path.join(data_folder, "processed", "timeseries_data.csv")
 input_data = pd.read_csv(input_fid)
-input_data.loc[input_data.variable == 'flow', 'value'] *= constants.M3_S_TO_M3_DT
-input_data.loc[input_data.variable == 'precipitation', 'value'] *= constants.MM_TO_M
+input_data.loc[input_data.variable == "flow", "value"] *= constants.M3_S_TO_M3_DT
+input_data.loc[input_data.variable == "precipitation", "value"] *= constants.MM_TO_M
 input_data.date = pd.to_datetime(input_data.date)
-data_input_dict = input_data.set_index(['variable','date']).value.to_dict()
-data_input_dict = input_data.groupby('site').apply(lambda x: x.set_index(['variable','date']).value.to_dict()).to_dict()
+data_input_dict = input_data.set_index(["variable", "date"]).value.to_dict()
+data_input_dict = (
+    input_data.groupby("site")
+    .apply(lambda x: x.set_index(["variable", "date"]).value.to_dict())
+    .to_dict()
+)
 print(input_data.sample(10))
 
 # %% [markdown]
@@ -108,7 +114,7 @@ print(input_data.sample(10))
 # %%
 
 
-print(data_input_dict['cherwell'][('boron',pd.to_datetime('2010-11-20'))])
+print(data_input_dict["cherwell"][("boron", pd.to_datetime("2010-11-20"))])
 
 # %% [markdown]
 # We select dates that are available in the input data
@@ -127,14 +133,15 @@ print(dates[0:10])
 
 
 constants.POLLUTANTS = input_data.variable.unique().tolist()
-constants.POLLUTANTS.remove('flow')
-constants.POLLUTANTS.remove('precipitation')
-constants.POLLUTANTS.remove('et0')
-constants.NON_ADDITIVE_POLLUTANTS = ['temperature']
-constants.ADDITIVE_POLLUTANTS = list(set(constants.POLLUTANTS).difference(constants.NON_ADDITIVE_POLLUTANTS))
-constants.FLOAT_ACCURACY = 1E-11
+constants.POLLUTANTS.remove("flow")
+constants.POLLUTANTS.remove("precipitation")
+constants.POLLUTANTS.remove("et0")
+constants.NON_ADDITIVE_POLLUTANTS = ["temperature"]
+constants.ADDITIVE_POLLUTANTS = list(
+    set(constants.POLLUTANTS).difference(constants.NON_ADDITIVE_POLLUTANTS)
+)
+constants.FLOAT_ACCURACY = 1e-11
 print(constants.POLLUTANTS)
-
 
 
 # %% [markdown]
@@ -144,30 +151,26 @@ print(constants.POLLUTANTS)
 # For [waste nodes](./../../../reference-other/#wsimod.nodes.waste.Waste),
 # no parameters are needed, they are just the model outlet
 # %%
-thames_above_abingdon = Waste(name = 'thames_above_abingdon')
+thames_above_abingdon = Waste(name="thames_above_abingdon")
 
 # %% [markdown]
-# For junctions and abstraction locations, we can simply use the default 
+# For junctions and abstraction locations, we can simply use the default
 # [nodes](./../../../reference-nodes/#wsimod.nodes.nodes.Node)
 # %%
-farmoor_abstraction = Node(name = 'farmoor_abstraction')
-evenlode_thames = Node(name = 'evenlode_thames')
-cherwell_ray = Node(name = 'cherwell_ray')
-cherwell_thames = Node(name = 'cherwell_thames')
-thames_mixer = Node(name = 'thames_mixer')
+farmoor_abstraction = Node(name="farmoor_abstraction")
+evenlode_thames = Node(name="evenlode_thames")
+cherwell_ray = Node(name="cherwell_ray")
+cherwell_thames = Node(name="cherwell_thames")
+thames_mixer = Node(name="thames_mixer")
 
 # %% [markdown]
-# For [catchment nodes](./../../../reference-other/#wsimod.nodes.catchment.Catchment), 
+# For [catchment nodes](./../../../reference-other/#wsimod.nodes.catchment.Catchment),
 # we only need to specify the input data (as a dictionary format).
 # %%
-evenlode = Catchment(name = 'evenlode',
-                     data_input_dict = data_input_dict['evenlode'])
-thames = Catchment(name = 'thames',
-                   data_input_dict = data_input_dict['thames'])
-ray = Catchment(name = 'ray',
-                data_input_dict = data_input_dict['ray'])
-cherwell = Catchment(name = 'cherwell',
-                     data_input_dict = data_input_dict['cherwell'])
+evenlode = Catchment(name="evenlode", data_input_dict=data_input_dict["evenlode"])
+thames = Catchment(name="thames", data_input_dict=data_input_dict["thames"])
+ray = Catchment(name="ray", data_input_dict=data_input_dict["ray"])
+cherwell = Catchment(name="cherwell", data_input_dict=data_input_dict["cherwell"])
 
 
 # %% [markdown]
@@ -177,15 +180,17 @@ print(dir(evenlode))
 
 # %% [markdown]
 # ### Freshwater treatment works
-# Each type of node uses different parameters (see [API reference](./../../../../reference)). 
+# Each type of node uses different parameters (see [API reference](./../../../../reference)).
 # Below we create a [freshwater treatment works (FWTW)](./../../../reference-wtw/#wsimod.nodes.wtw.FWTW)
 
 # %%
 
-oxford_fwtw = FWTW(service_reservoir_storage_capacity = 1e5,
-                  service_reservoir_storage_area = 2e4,
-                  treatment_throughput_capacity = 4.5e4,
-                  name = 'oxford_fwtw')
+oxford_fwtw = FWTW(
+    service_reservoir_storage_capacity=1e5,
+    service_reservoir_storage_area=2e4,
+    treatment_throughput_capacity=4.5e4,
+    name="oxford_fwtw",
+)
 
 # %% [markdown]
 # Each node type has different types of functionality available
@@ -205,15 +210,15 @@ print(oxford_fwtw.service_reservoir_tank.storage)
 
 # %%
 
-print(oxford_fwtw.pull_check({'volume' : 10}))
+print(oxford_fwtw.pull_check({"volume": 10}))
 
 # %% [markdown]
 # If we add in some water, we see the pull check responds that water is available.
 
 # %%
 
-oxford_fwtw.service_reservoir_tank.storage['volume'] += 25
-print(oxford_fwtw.pull_check({'volume' : 10}))
+oxford_fwtw.service_reservoir_tank.storage["volume"] += 25
+print(oxford_fwtw.pull_check({"volume": 10}))
 
 # %% [markdown]
 # When we set a pull request, we see that we successfully receive the water and the tank is updated.
@@ -221,63 +226,68 @@ print(oxford_fwtw.pull_check({'volume' : 10}))
 # %%
 
 
-reply = oxford_fwtw.pull_set({'volume' : 10})
+reply = oxford_fwtw.pull_set({"volume": 10})
 print(reply)
 print(oxford_fwtw.service_reservoir_tank.storage)
 
 # %% [markdown]
 # ### Land
-# We will now create a [land node](./../../../reference-land/#wsimod.nodes.land.Land), 
-# it is a bit involved so you might want to skip ahead to [demand](#Residential-demand), 
+# We will now create a [land node](./../../../reference-land/#wsimod.nodes.land.Land),
+# it is a bit involved so you might want to skip ahead to [demand](#Residential-demand),
 # or check out the [land node tutorial](./../land_demo)
 # %% [markdown]
 # Data inputs are a single dictionary
 
 # %%
 
-land_inputs = data_input_dict['oxford_land']
+land_inputs = data_input_dict["oxford_land"]
 
-print(land_inputs[('precipitation',pd.to_datetime('2010-11-20'))])
-print(land_inputs[('et0',pd.to_datetime('2010-11-20'))])
-print(land_inputs[('temperature',pd.to_datetime('2009-10-15'))])
+print(land_inputs[("precipitation", pd.to_datetime("2010-11-20"))])
+print(land_inputs[("et0", pd.to_datetime("2010-11-20"))])
+print(land_inputs[("temperature", pd.to_datetime("2009-10-15"))])
 
 # %% [markdown]
 # Assign some default pollutant deposition values (kg/m2/d)
 # %%
-pollutant_deposition = {'boron' : 100e-10,
-                              'calcium' : 70e-7,
-                              'chloride' : 60e-10,
-                              'fluoride' : 0.2e-7,
-                              'magnesium' : 6e-7,
-                              'nitrate' : 2e-9,
-                              'nitrogen' : 4e-7,
-                              'potassium' : 7e-7,
-                              'silicon' : 7e-9,
-                              'sodium' : 30e-9,
-                              'sulphate' : 70e-7}
+pollutant_deposition = {
+    "boron": 100e-10,
+    "calcium": 70e-7,
+    "chloride": 60e-10,
+    "fluoride": 0.2e-7,
+    "magnesium": 6e-7,
+    "nitrate": 2e-9,
+    "nitrogen": 4e-7,
+    "potassium": 7e-7,
+    "silicon": 7e-9,
+    "sodium": 30e-9,
+    "sulphate": 70e-7,
+}
 # %% [markdown]
 # Create two surfaces as a list of dicts
 # %%
-surface = [{'type_' : 'PerviousSurface',
-          'area' : 2e7,
-          'pollutant_load' : pollutant_deposition,
-           'surface' : 'rural',
-           'field_capacity' : 0.3,
-           'depth' : 0.5,
-           'initial_storage' : 2e7 * 0.4 * 0.5},
-           {'type_' : 'ImperviousSurface',
-           'area' : 1e7,
-           'pollutant_load' : pollutant_deposition,
-            'surface' : 'urban',
-            'initial_storage' : 5e6}]
+surface = [
+    {
+        "type_": "PerviousSurface",
+        "area": 2e7,
+        "pollutant_load": pollutant_deposition,
+        "surface": "rural",
+        "field_capacity": 0.3,
+        "depth": 0.5,
+        "initial_storage": 2e7 * 0.4 * 0.5,
+    },
+    {
+        "type_": "ImperviousSurface",
+        "area": 1e7,
+        "pollutant_load": pollutant_deposition,
+        "surface": "urban",
+        "initial_storage": 5e6,
+    },
+]
 
 # %% [markdown]
 # Create the land node from these surfaces and the input data
 # %%
-oxford_land = Land(surfaces = surface,
-                   name = 'oxford_land',
-                   data_input_dict = land_inputs
-                   )
+oxford_land = Land(surfaces=surface, name="oxford_land", data_input_dict=land_inputs)
 
 # %% [markdown]
 # We can see the land node has various tanks that have been initialised empty
@@ -291,16 +301,16 @@ print(oxford_land.percolation.storage)
 # We can see the surfaces have also been initialised, although they are not empty because we provided 'initial_storage' parameters.
 
 # %%
-rural_surface = oxford_land.get_surface('rural')
-urban_surface = oxford_land.get_surface('urban')
-print('{0}-{1}'.format('rural',rural_surface.storage))
-print('{0}-{1}'.format('urban',urban_surface.storage))
+rural_surface = oxford_land.get_surface("rural")
+urban_surface = oxford_land.get_surface("urban")
+print("{0}-{1}".format("rural", rural_surface.storage))
+print("{0}-{1}".format("urban", urban_surface.storage))
 
 # %% [markdown]
 # We can run a timestep of the land node with the 'run' command
 
 # %%
-oxford_land.t = pd.to_datetime('2012-12-22')
+oxford_land.t = pd.to_datetime("2012-12-22")
 
 oxford_land.run()
 
@@ -312,48 +322,48 @@ print(oxford_land.surface_runoff.storage)
 print(oxford_land.subsurface_runoff.storage)
 print(oxford_land.percolation.storage)
 
-print('{0}-{1}'.format('rural',rural_surface.storage))
-print('{0}-{1}'.format('urban',urban_surface.storage))
+print("{0}-{1}".format("rural", rural_surface.storage))
+print("{0}-{1}".format("urban", urban_surface.storage))
 
 # %% [markdown]
 # ### Residential demand
 # The [residential demand](./../../../reference-other/#wsimod.nodes.demand.ResidentialDemand)
-# node requires population, per capita demand and a pollutant_load dictionary that defines 
+# node requires population, per capita demand and a pollutant_load dictionary that defines
 # how much (weight in kg) pollution is generated per person per day.
 
 # %%
-oxford = ResidentialDemand(name = 'oxford',
-                           population = 2e5,
-                           per_capita = 0.15,
-                           pollutant_load =  
-                           {'boron' : 500 * constants.UG_L_TO_KG_M3 * 0.15,
-                             'calcium' : 150 * constants.MG_L_TO_KG_M3 * 0.15,
-                             'chloride' : 180 * constants.MG_L_TO_KG_M3 * 0.15,
-                             'fluoride' : 0.4 * constants.MG_L_TO_KG_M3 * 0.15,
-                             'magnesium' : 30 * constants.MG_L_TO_KG_M3 * 0.15,
-                             'nitrate' : 60 * constants.MG_L_TO_KG_M3 * 0.15,
-                             'nitrogen' : 50 * constants.MG_L_TO_KG_M3 * 0.15,
-                             'potassium' : 30 * constants.MG_L_TO_KG_M3 * 0.15,
-                             'silicon' : 20 * constants.MG_L_TO_KG_M3 * 0.15,
-                             'sodium' : 200 * constants.MG_L_TO_KG_M3 * 0.15,
-                             'sulphate' : 250 * constants.MG_L_TO_KG_M3 * 0.15,
-                             'temperature' : 14},
-                           data_input_dict = land_inputs
-                          )
-#pollutant_load calculated based on expected effluent at WWTW
+oxford = ResidentialDemand(
+    name="oxford",
+    population=2e5,
+    per_capita=0.15,
+    pollutant_load={
+        "boron": 500 * constants.UG_L_TO_KG_M3 * 0.15,
+        "calcium": 150 * constants.MG_L_TO_KG_M3 * 0.15,
+        "chloride": 180 * constants.MG_L_TO_KG_M3 * 0.15,
+        "fluoride": 0.4 * constants.MG_L_TO_KG_M3 * 0.15,
+        "magnesium": 30 * constants.MG_L_TO_KG_M3 * 0.15,
+        "nitrate": 60 * constants.MG_L_TO_KG_M3 * 0.15,
+        "nitrogen": 50 * constants.MG_L_TO_KG_M3 * 0.15,
+        "potassium": 30 * constants.MG_L_TO_KG_M3 * 0.15,
+        "silicon": 20 * constants.MG_L_TO_KG_M3 * 0.15,
+        "sodium": 200 * constants.MG_L_TO_KG_M3 * 0.15,
+        "sulphate": 250 * constants.MG_L_TO_KG_M3 * 0.15,
+        "temperature": 14,
+    },
+    data_input_dict=land_inputs,
+)
+# pollutant_load calculated based on expected effluent at WWTW
 
 
 # %% [markdown]
 # ### Reservoir
-# A [reservoir node](./../../../reference-storage/#wsimod.nodes.storage.Reservoir) 
+# A [reservoir node](./../../../reference-storage/#wsimod.nodes.storage.Reservoir)
 # is used to make abstractions from rivers and supply FWTWs
 
 # %%
-farmoor = Reservoir(name = 'farmoor',
-                    capacity = 1e7,
-                    initial_storage = 1e7,
-                    area = 1.5e6,
-                    datum = 62)
+farmoor = Reservoir(
+    name="farmoor", capacity=1e7, initial_storage=1e7, area=1.5e6, datum=62
+)
 
 # %% [markdown]
 # ### Distribution
@@ -361,20 +371,22 @@ farmoor = Reservoir(name = 'farmoor',
 
 # %%
 
-distribution = Node(name = 'oxford_distribution')
+distribution = Node(name="oxford_distribution")
 
 # %% [markdown]
 # ### Wastewater treatment works
-# [Wastewater treatment works (WWTW)](./../../../reference-wtw/#wsimod.nodes.wtw.WWTW) 
-# are nodes that can store sewage water temporarily in storm tanks, and reduce the pollution 
+# [Wastewater treatment works (WWTW)](./../../../reference-wtw/#wsimod.nodes.wtw.WWTW)
+# are nodes that can store sewage water temporarily in storm tanks, and reduce the pollution
 # amounts in water before releasing them onwards to rivers.
 
 # %%
 
-oxford_wwtw = WWTW(stormwater_storage_capacity = 2e4,
-                  stormwater_storage_area = 2e4,
-                  treatment_throughput_capacity = 5e4,
-                  name = 'oxford_wwtw')
+oxford_wwtw = WWTW(
+    stormwater_storage_capacity=2e4,
+    stormwater_storage_area=2e4,
+    treatment_throughput_capacity=5e4,
+    name="oxford_wwtw",
+)
 
 # %% [markdown]
 # ### Sewers
@@ -383,50 +395,44 @@ oxford_wwtw = WWTW(stormwater_storage_capacity = 2e4,
 # They use a timearea diagram to represent travel time, which assigns a specified percentage
 # of water to take a specified duration to pass through the sewer node.
 # %%
-combined_sewer = Sewer(capacity = 4e6,
-                       pipe_timearea = {0 : 0.8,
-                                        1 : 0.15,
-                                        2 : 0.05
-                                        },
-                       name = 'combined_sewer'
-                       )
+combined_sewer = Sewer(
+    capacity=4e6, pipe_timearea={0: 0.8, 1: 0.15, 2: 0.05}, name="combined_sewer"
+)
 
 # %% [markdown]
 # ### Groundwater
-# [Groundwater nodes](./../../../reference-storage/#wsimod.nodes.storage.Groundwater) 
+# [Groundwater nodes](./../../../reference-storage/#wsimod.nodes.storage.Groundwater)
 # implement a simple residence time to determine baseflow
 
 # %%
 
-gw = Groundwater(capacity = 3.2e9,
-                 area = 3.2e8,
-                 name = 'gw',
-                 residence_time = 20
-                 )
+gw = Groundwater(capacity=3.2e9, area=3.2e8, name="gw", residence_time=20)
 
 
 # %% [markdown]
 # ### Create a nodelist
 # To keep all the nodes in one place, we put them into a list
 # %%
-nodelist = [thames_above_abingdon,
-            evenlode,
-            thames,
-            ray,
-            cherwell,
-            oxford,
-            distribution,
-            farmoor,
-            oxford_fwtw,
-            oxford_wwtw,
-            combined_sewer,
-            oxford_land,
-            gw,
-            farmoor_abstraction,
-            evenlode_thames,
-            cherwell_ray,
-            cherwell_thames,
-            thames_mixer]
+nodelist = [
+    thames_above_abingdon,
+    evenlode,
+    thames,
+    ray,
+    cherwell,
+    oxford,
+    distribution,
+    farmoor,
+    oxford_fwtw,
+    oxford_wwtw,
+    combined_sewer,
+    oxford_land,
+    gw,
+    farmoor_abstraction,
+    evenlode_thames,
+    cherwell_ray,
+    cherwell_thames,
+    thames_mixer,
+]
 
 print(nodelist)
 
@@ -436,10 +442,10 @@ print(nodelist)
 # An example arc is the link between a FWTW and the distribution node
 # %%
 
-#Standard simple arcs
-fwtw_to_distribution = Arc(in_port = oxford_fwtw,
-                           out_port = distribution,
-                           name = 'fwtw_to_distribution')
+# Standard simple arcs
+fwtw_to_distribution = Arc(
+    in_port=oxford_fwtw, out_port=distribution, name="fwtw_to_distribution"
+)
 print(fwtw_to_distribution)
 
 # %% [markdown]
@@ -478,13 +484,13 @@ print(distribution.in_arcs)
 # %%
 
 
-print(fwtw_to_distribution.send_pull_check({'volume' : 20}))
+print(fwtw_to_distribution.send_pull_check({"volume": 20}))
 
 
 # %%
 
 
-reply = fwtw_to_distribution.send_pull_request({'volume' : 20})
+reply = fwtw_to_distribution.send_pull_request({"volume": 20})
 print(reply)
 
 # %% [markdown]
@@ -507,10 +513,12 @@ print(fwtw_to_distribution.flow_out)
 # Besides the in/out ports and names, arcs can have a parameter for their capacity, to limit the flow that may pass through it each timestep.
 # A typical example would be on river abstractions to a reservoir
 # %%
-abstraction_to_farmoor = Arc(in_port = farmoor_abstraction,
-                    out_port = farmoor,
-                    name = 'abstraction_to_farmoor',
-                    capacity = 5e4)
+abstraction_to_farmoor = Arc(
+    in_port=farmoor_abstraction,
+    out_port=farmoor,
+    name="abstraction_to_farmoor",
+    capacity=5e4,
+)
 
 # %% [markdown]
 # A bit more sophisticated is the 'preference' parameter.
@@ -519,14 +527,15 @@ abstraction_to_farmoor = Arc(in_port = farmoor_abstraction,
 # Of course we would always to prefer to send water to the plant, so we give it a very high preference.
 # Discharging into the river should only be done if there is no capacity left at the WWTW, so we give the arc a very low preference.
 # %%
-sewer_to_wwtw = Arc(in_port = combined_sewer,
-                    out_port = oxford_wwtw,
-                    preference = 1e10,
-                    name = 'sewer_to_wwtw')
-sewer_overflow = Arc(in_port = combined_sewer,
-                     out_port = thames_mixer,
-                     preference = 1e-10,
-                     name = 'sewer_overflow')
+sewer_to_wwtw = Arc(
+    in_port=combined_sewer, out_port=oxford_wwtw, preference=1e10, name="sewer_to_wwtw"
+)
+sewer_overflow = Arc(
+    in_port=combined_sewer,
+    out_port=thames_mixer,
+    preference=1e-10,
+    name="sewer_overflow",
+)
 
 
 # %% [markdown]
@@ -536,99 +545,83 @@ sewer_overflow = Arc(in_port = combined_sewer,
 # %%
 
 
-evenlode_to_thames = Arc(in_port = evenlode,
-                    out_port = evenlode_thames,
-                    name = 'evenlode_to_thames')
+evenlode_to_thames = Arc(
+    in_port=evenlode, out_port=evenlode_thames, name="evenlode_to_thames"
+)
 
-thames_to_thames = Arc(in_port = thames,
-                    out_port = evenlode_thames,
-                    name = 'thames_to_thames')
+thames_to_thames = Arc(
+    in_port=thames, out_port=evenlode_thames, name="thames_to_thames"
+)
 
-ray_to_cherwell = Arc(in_port = ray,
-                    out_port = cherwell_ray,
-                    name = 'ray_to_cherwell')
+ray_to_cherwell = Arc(in_port=ray, out_port=cherwell_ray, name="ray_to_cherwell")
 
-cherwell_to_cherwell = Arc(in_port = cherwell,
-                    out_port = cherwell_ray,
-                    name = 'cherwell_to_cherwell')
+cherwell_to_cherwell = Arc(
+    in_port=cherwell, out_port=cherwell_ray, name="cherwell_to_cherwell"
+)
 
-thames_to_farmoor = Arc(in_port = evenlode_thames,
-                    out_port = farmoor_abstraction,
-                    name = 'thames_to_farmoor')
+thames_to_farmoor = Arc(
+    in_port=evenlode_thames, out_port=farmoor_abstraction, name="thames_to_farmoor"
+)
 
-farmoor_to_mixer = Arc(in_port = farmoor_abstraction,
-                    out_port = thames_mixer,
-                    name = 'farmoor_to_mixer')
+farmoor_to_mixer = Arc(
+    in_port=farmoor_abstraction, out_port=thames_mixer, name="farmoor_to_mixer"
+)
 
-cherwell_to_mixer = Arc(in_port = cherwell_ray,
-                    out_port = thames_mixer,
-                    name = 'cherwell_to_mixer')
+cherwell_to_mixer = Arc(
+    in_port=cherwell_ray, out_port=thames_mixer, name="cherwell_to_mixer"
+)
 
-wwtw_to_mixer = Arc(in_port = oxford_wwtw,
-                    out_port = thames_mixer,
-                    name = 'wwtw_to_mixer')
+wwtw_to_mixer = Arc(in_port=oxford_wwtw, out_port=thames_mixer, name="wwtw_to_mixer")
 
-mixer_to_waste = Arc(in_port = thames_mixer,
-                    out_port = thames_above_abingdon,
-                    name = 'mixer_to_waste')
+mixer_to_waste = Arc(
+    in_port=thames_mixer, out_port=thames_above_abingdon, name="mixer_to_waste"
+)
 
-distribution_to_demand = Arc(in_port = distribution,
-                             out_port = oxford,
-                             name = 'distribution_to_demand')
+distribution_to_demand = Arc(
+    in_port=distribution, out_port=oxford, name="distribution_to_demand"
+)
 
-reservoir_to_fwtw = Arc(in_port = farmoor,
-                           out_port = oxford_fwtw,
-                           name = 'reservoir_to_fwtw')
+reservoir_to_fwtw = Arc(in_port=farmoor, out_port=oxford_fwtw, name="reservoir_to_fwtw")
 
-fwtw_to_sewer = Arc(in_port = oxford_fwtw,
-                    out_port = combined_sewer,
-                    name = 'fwtw_to_sewer')
+fwtw_to_sewer = Arc(in_port=oxford_fwtw, out_port=combined_sewer, name="fwtw_to_sewer")
 
-demand_to_sewer = Arc(in_port = oxford,
-                    out_port = combined_sewer,
-                    name = 'demand_to_sewer')
+demand_to_sewer = Arc(in_port=oxford, out_port=combined_sewer, name="demand_to_sewer")
 
-land_to_sewer = Arc(in_port = oxford_land,
-                    out_port = combined_sewer,
-                    name = 'land_to_sewer')
+land_to_sewer = Arc(in_port=oxford_land, out_port=combined_sewer, name="land_to_sewer")
 
-land_to_gw = Arc(in_port = oxford_land,
-                    out_port = gw,
-                    name = 'land_to_gw')
+land_to_gw = Arc(in_port=oxford_land, out_port=gw, name="land_to_gw")
 
-garden_to_gw = Arc(in_port = oxford,
-                    out_port = gw,
-                    name = 'garden_to_gw')
+garden_to_gw = Arc(in_port=oxford, out_port=gw, name="garden_to_gw")
 
-gw_to_mixer = Arc(in_port = gw,
-                    out_port = thames_mixer,
-                    name = 'gw_to_mixer')
+gw_to_mixer = Arc(in_port=gw, out_port=thames_mixer, name="gw_to_mixer")
 
 # %% [markdown]
 # Again, we keep all the arcs in a tidy list together.
 
 # %%
-arclist = [evenlode_to_thames,
-            thames_to_thames,
-            ray_to_cherwell,
-            cherwell_to_cherwell,
-            thames_to_farmoor,
-            farmoor_to_mixer,
-            cherwell_to_mixer,
-            wwtw_to_mixer,
-            sewer_overflow,
-            mixer_to_waste,
-            abstraction_to_farmoor,
-            distribution_to_demand,
-            demand_to_sewer,
-            land_to_sewer,
-            sewer_to_wwtw,
-            fwtw_to_sewer,
-            fwtw_to_distribution,
-            reservoir_to_fwtw,
-            land_to_gw,
-            garden_to_gw,
-            gw_to_mixer]
+arclist = [
+    evenlode_to_thames,
+    thames_to_thames,
+    ray_to_cherwell,
+    cherwell_to_cherwell,
+    thames_to_farmoor,
+    farmoor_to_mixer,
+    cherwell_to_mixer,
+    wwtw_to_mixer,
+    sewer_overflow,
+    mixer_to_waste,
+    abstraction_to_farmoor,
+    distribution_to_demand,
+    demand_to_sewer,
+    land_to_sewer,
+    sewer_to_wwtw,
+    fwtw_to_sewer,
+    fwtw_to_distribution,
+    reservoir_to_fwtw,
+    land_to_gw,
+    garden_to_gw,
+    gw_to_mixer,
+]
 
 
 # %% [markdown]
@@ -641,22 +634,30 @@ arclist = [evenlode_to_thames,
 # %%
 
 location_fn = os.path.join(data_folder, "raw", "points_locations.geojson")
-nodes_gdf = gpd.read_file(location_fn).set_index('name')
+nodes_gdf = gpd.read_file(location_fn).set_index("name")
 arcs_gdf = []
 
 for arc in arclist:
-    arcs_gdf.append({'name' :  arc.name,
-                     'geometry' : LineString([nodes_gdf.loc[arc.in_port.name,'geometry'],
-                                              nodes_gdf.loc[arc.out_port.name,'geometry']])})
+    arcs_gdf.append(
+        {
+            "name": arc.name,
+            "geometry": LineString(
+                [
+                    nodes_gdf.loc[arc.in_port.name, "geometry"],
+                    nodes_gdf.loc[arc.out_port.name, "geometry"],
+                ]
+            ),
+        }
+    )
 
-arcs_gdf = gpd.GeoDataFrame(arcs_gdf, crs = nodes_gdf.crs)
+arcs_gdf = gpd.GeoDataFrame(arcs_gdf, crs=nodes_gdf.crs)
 # %% [markdown]
 # Because we converted the information as GeoDataFrames, we can simply plot them below
 # %%
 
 f, ax = plt.subplots()
 arcs_gdf.plot(ax=ax)
-nodes_gdf.plot(color='r',ax=ax, zorder = 10)
+nodes_gdf.plot(color="r", ax=ax, zorder=10)
 
 # %% [markdown]
 # ## Orchestration
@@ -671,7 +672,7 @@ nodes_gdf.plot(color='r',ax=ax, zorder = 10)
 
 # %%
 date = dates[0]
-    
+
 for node in nodelist:
     node.t = date
 
@@ -741,22 +742,22 @@ oxford_land.run()
 # Below we call the functions for other nodes
 # %%
 
-#Discharge GW
+# Discharge GW
 gw.distribute()
 
-#Discharge sewers (pushed to other sewers or WWTW)   
+# Discharge sewers (pushed to other sewers or WWTW)
 combined_sewer.make_discharge()
 
-#Run WWTW model
+# Run WWTW model
 oxford_wwtw.calculate_discharge()
 
-#Make abstractions
+# Make abstractions
 farmoor.make_abstractions()
 
-#Discharge WW
+# Discharge WW
 oxford_wwtw.make_discharge()
 
-#Route catchments
+# Route catchments
 evenlode.route()
 thames.route()
 ray.route()
@@ -818,7 +819,7 @@ print(flows.sample(10))
 
 # %% [markdown]
 # ## Validation plots
-# Of course we shouldn't trust a model without proof, and this is doubly true for an integrated model whose errors may easily propagate. 
+# Of course we shouldn't trust a model without proof, and this is doubly true for an integrated model whose errors may easily propagate.
 #
 # Thankfully we have rich in-river water quality sampling in Oxford that we can use for validation
 #
@@ -829,31 +830,35 @@ mixer_val_df = pd.read_csv(os.path.join(data_folder, "raw", "mixer_wims_val.csv"
 mixer_val_df.date = pd.to_datetime(mixer_val_df.date)
 mixer_val_df = mixer_val_df.loc[mixer_val_df.date.isin(dates)]
 val_pollutants = mixer_val_df.variable.unique()
-mixer_val_df = mixer_val_df.pivot(index = 'date', columns = 'variable', values = 'value')
+mixer_val_df = mixer_val_df.pivot(index="date", columns="variable", values="value")
 
 # %% [markdown]
 # We get rid of the first day of flows because our tanks were initialised empty and will not be informative
 
 # %%
-flows = flows.loc[flows.time!=dates[0]]
+flows = flows.loc[flows.time != dates[0]]
 
 # %% [markdown]
 # We convert our flows, which are simulated in kg/d into a concentration value (kg/m3/d).
 # %%
 flows_plot = flows.copy()
 
-#Convert to KG/M3
+# Convert to KG/M3
 for pol in set(val_pollutants):
-    if pol != 'temperature':
+    if pol != "temperature":
         flows_plot[pol] /= flows_plot.flow
 # %% [markdown]
 # We pick the model outlet as a validation location and make a pretty plot - fantastic!
 # %%
 
-plot_arc = 'mixer_to_waste'
+plot_arc = "mixer_to_waste"
 f, axs = plt.subplots(val_pollutants.size, 1)
 for pol, ax in zip(val_pollutants, axs):
-    ax.plot(flows_plot.loc[flows_plot.arc == plot_arc, [pol,'time']].set_index('time'),color='b', label = 'simulation')
-    ax.plot(mixer_val_df[pol],ls='',marker='o',color='r', label = 'spot sample')
+    ax.plot(
+        flows_plot.loc[flows_plot.arc == plot_arc, [pol, "time"]].set_index("time"),
+        color="b",
+        label="simulation",
+    )
+    ax.plot(mixer_val_df[pol], ls="", marker="o", color="r", label="spot sample")
     ax.set_ylabel(pol)
 plt.legend()
