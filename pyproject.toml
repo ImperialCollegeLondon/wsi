@@ -24,7 +24,12 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "pytest"
+    "pytest",
+    "pre-commit",
+    "black",
+    "ruff",
+    "pip-tools",
+    "pytest-cov",
 ]
 
 demos = [
@@ -48,4 +53,14 @@ doc = [
 ]
 
 [tool.pytest.ini_options]
-addopts = "-v -p no:warnings"
+addopts = "-v -p no:warnings --cov=wsimod --cov-report=html"
+
+[tool.ruff]
+select = ["E", "F", "I"] # pycodestyle, Pyflakes, isort. Ignoring pydocstyle (D), for now
+exclude = ["docs", "tests"]  # Let's ignore tests and docs folders, for now
+
+[tool.ruff.per-file-ignores]
+"wsimod/*" = ["E501"]  # 176 lines (all comments) are too long (>88). Ignoring, for now
+
+[tool.ruff.pydocstyle]
+convention = "google"

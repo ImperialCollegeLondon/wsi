@@ -1,21 +1,21 @@
 # Welcome to WSIMOD <img style="float: right;" src="./docs/images/wsimod_logo_png.png">
 
-WSIMOD stands for the Water Systems Integrated Modelling framework. 
+WSIMOD stands for the Water Systems Integrated Modelling framework.
 
-The terrestrial water cycle is a highly interconnected system where the 
-movement of water is affected by physical and human processes. Thus, 
-environmental models may become inaccurate if they do not provide a complete 
-picture of the water cycle, missing out on unexpected opportunities and 
-omitting impacts that arise from complex interactions. WSIMOD is a modelling 
-framework to integrate these different processes. It provides a message passing 
-interface to enable different subsystem models to communicate water flux and 
-water quality information between each other, and self-contained 
-representations of the key parts of the water cycle (rivers, reservoirs, urban 
+The terrestrial water cycle is a highly interconnected system where the
+movement of water is affected by physical and human processes. Thus,
+environmental models may become inaccurate if they do not provide a complete
+picture of the water cycle, missing out on unexpected opportunities and
+omitting impacts that arise from complex interactions. WSIMOD is a modelling
+framework to integrate these different processes. It provides a message passing
+interface to enable different subsystem models to communicate water flux and
+water quality information between each other, and self-contained
+representations of the key parts of the water cycle (rivers, reservoirs, urban
 and rural hydrological catchments, treatment plants, and pipe networks).
-We created WSIMOD to enable a user greater flexibility in setting up their 
-water cycle models, motivated by the abundance of non-textbook water systems 
-that we have experienced in industry collaboration. The WSIMOD Python package 
-provides tutorials and examples to help modellers create nodes, connect them 
+We created WSIMOD to enable a user greater flexibility in setting up their
+water cycle models, motivated by the abundance of non-textbook water systems
+that we have experienced in industry collaboration. The WSIMOD Python package
+provides tutorials and examples to help modellers create nodes, connect them
 with arcs, and create simulations.
 
 You can access our documentation below or at [https://imperialcollegelondon.github.io/wsi](https://barneydobson.github.io/wsi).
@@ -54,24 +54,27 @@ and consists of:
 ## Installation
 
 Install WSIMOD directly from GitHub
-```
+
+```bash
 pip install https://github.com/ImperialCollegeLondon/wsi/archive/refs/heads/main.zip
 ```
 
 Use `[demos]` to include the demos and tutorials.
-```
+
+```bash
 pip install https://github.com/ImperialCollegeLondon/wsi/archive/refs/heads/main.zip
 pip install wsimod[demos]
 ```
 
 If you want to make changes to WSIMOD you can download/clone this folder, navigate to it, and run:
-```
+
+```bash
 pip install -e .[dev]
 ```
 
 or (with demos)
 
-```
+```bash
 pip install -e .[dev,demos]
 ```
 
@@ -81,49 +84,48 @@ pip install -e .[dev,demos]
 
 If you would like to use our software, please cite it using the following:
 
- > Dobson, B., Liu, L. and Mijic, A. (2023) 
- ‘Water Systems Integrated Modelling framework, WSIMOD: A Python package for integrated modelling of water quality and quantity across the water cycle’, 
- Journal of Open Source Software. 
+ > Dobson, B., Liu, L. and Mijic, A. (2023)
+ ‘Water Systems Integrated Modelling framework, WSIMOD: A Python package for integrated modelling of water quality and quantity across the water cycle’,
+ Journal of Open Source Software.
  The Open Journal,
  8(83),
- p. 4996. 
+ p. 4996.
  doi: 10.21105/joss.04996.
-
 
 Find the bibtex citation below:
 
-```
-@article{Dobson2023, 
-        doi = {10.21105/joss.04996}, 
-        url = {https://doi.org/10.21105/joss.04996}, 
-        year = {2023}, 
-        publisher = {The Open Journal}, 
-        volume = {8}, 
-        number = {83}, 
-        pages = {4996}, 
-        author = {Barnaby Dobson and Leyang Liu and Ana Mijic}, 
+```bibtex
+@article{Dobson2023,
+        doi = {10.21105/joss.04996},
+        url = {https://doi.org/10.21105/joss.04996},
+        year = {2023},
+        publisher = {The Open Journal},
+        volume = {8},
+        number = {83},
+        pages = {4996},
+        author = {Barnaby Dobson and Leyang Liu and Ana Mijic},
         title = {Water Systems Integrated Modelling framework, WSIMOD: A Python package for integrated modelling of water quality and quantity across the water cycle},
-        journal = {Journal of Open Source Software} 
+        journal = {Journal of Open Source Software}
         }
 ```
 
 ## Acknowledgements
 
-WSIMOD was developed by [Barnaby Dobson](https://github.com/barneydobson) and [Leyang Liu](https://github.com/liuly12). 
+WSIMOD was developed by [Barnaby Dobson](https://github.com/barneydobson) and [Leyang Liu](https://github.com/liuly12).
 Theoretical support was provided by Ana Mijic.
-Testing the WSIMOD over a variety of applications has been performed by 
+Testing the WSIMOD over a variety of applications has been performed by
 Fangjun Peng, Vladimir Krivstov and Samer Muhandes.
-Software development support was provided by Imperial College's Research 
+Software development support was provided by Imperial College's Research
 Software Engineering service, in particular from Diego Alonso and Dan Davies.
 
 We are incredibly grateful for the detailed software reviews provided by [Taher Chegini](https://github.com/cheginit) and [Joshua Larsen](https://github.com/jlarsen-usgs) and editing by [Chris Vernon](https://github.com/crvernon). Their suggestions have significantly improved WSIMOD.
 
-The design of WSIMOD was significantly influenced by 
-[CityDrain3](https://github.com/gregorburger/CityDrain3), 
-[OpenMI](https://www.ogc.org/standards/openmi), 
-[Belete, Voinov and Laniak, (2017)](https://doi.org/10.1016/j.envsoft.2016.10.013), 
+The design of WSIMOD was significantly influenced by
+[CityDrain3](https://github.com/gregorburger/CityDrain3),
+[OpenMI](https://www.ogc.org/standards/openmi),
+[Belete, Voinov and Laniak, (2017)](https://doi.org/10.1016/j.envsoft.2016.10.013),
 and [smif](https://github.com/tomalrussell/smif).
 
-We acknowledge funding from the CAMELLIA project (Community Water Management 
-for a Liveable London), funded by the Natural Environment Research Council 
+We acknowledge funding from the CAMELLIA project (Community Water Management
+for a Liveable London), funded by the Natural Environment Research Council
 (NERC) under grant NE/S003495/1.
