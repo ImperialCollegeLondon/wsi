@@ -123,7 +123,7 @@ print(data_input_dict["cherwell"][("boron", pd.to_datetime("2010-11-20"))])
 
 
 dates = input_data.date.unique()
-dates.sort()
+dates = dates[dates.argsort()]
 dates = [pd.Timestamp(x) for x in dates]
 print(dates[0:10])
 # %% [markdown]

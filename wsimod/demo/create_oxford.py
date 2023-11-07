@@ -168,7 +168,7 @@ def create_oxford_model(data_folder):
         .to_dict()
     )
     dates = input_data.date.unique()
-    dates.sort()
+    dates = dates[dates.argsort()]
     dates = [pd.Timestamp(x) for x in dates]
     constants.POLLUTANTS = input_data.variable.unique().tolist()
     constants.POLLUTANTS.remove("flow")
