@@ -33,7 +33,7 @@ dev = [
 ]
 
 demos = [
-    "pandas==1.5.2",
+    "pandas",
     "geopandas",
     "matplotlib",
     "shapely"

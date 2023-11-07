@@ -42,9 +42,9 @@ colorama==0.4.6
     #   mkdocs
     #   mkdocs-material
     #   tqdm
-comm==0.1.4
+comm==0.2.0
     # via ipykernel
-contourpy==1.1.1
+contourpy==1.2.0
     # via matplotlib
 cycler==0.12.1
     # via matplotlib
@@ -64,7 +64,7 @@ fastjsonschema==2.18.1
     # via nbformat
 fiona==1.9.5
     # via geopandas
-fonttools==4.43.1
+fonttools==4.44.0
     # via matplotlib
 geopandas==0.14.0
     # via wsimod
@@ -90,7 +90,7 @@ jsonschema==4.19.2
     # via nbformat
 jsonschema-specifications==2023.7.1
     # via jsonschema
-jupyter-client==8.5.0
+jupyter-client==8.6.0
     # via
     #   ipykernel
     #   nbclient
@@ -159,7 +159,7 @@ mkdocs-coverage==1.0.0
     # via wsimod (pyproject.toml)
 mkdocs-jupyter==0.24.6
     # via wsimod (pyproject.toml)
-mkdocs-material==9.4.7
+mkdocs-material==9.4.8
     # via
     #   mkdocs-jupyter
     #   wsimod (pyproject.toml)
@@ -175,7 +175,7 @@ mkdocstrings-python==1.7.3
     # via mkdocstrings
 nbclient==0.8.0
     # via nbconvert
-nbconvert==7.10.0
+nbconvert==7.11.0
     # via mkdocs-jupyter
 nbformat==5.9.2
     # via
@@ -199,7 +199,7 @@ packaging==23.2
     #   nbconvert
 paginate==0.5.6
     # via mkdocs-material
-pandas==1.5.2
+pandas==2.1.2
     # via
     #   geopandas
     #   wsimod
@@ -276,7 +276,7 @@ requests==2.31.0
     # via
     #   mkdocs-bibtex
     #   mkdocs-material
-rpds-py==0.10.6
+rpds-py==0.12.0
     # via
     #   jsonschema
     #   referencing
@@ -319,6 +319,8 @@ traitlets==5.13.0
     #   nbclient
     #   nbconvert
     #   nbformat
+tzdata==2023.3
+    # via pandas
 urllib3==2.0.7
     # via requests
 validators==0.22.0
