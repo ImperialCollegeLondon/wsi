@@ -22,6 +22,9 @@ dependencies = [
     "dill"
 ]
 
+[project.scripts]
+wsimod = "wsimod.__main__:run"
+
 [project.optional-dependencies]
 dev = [
     "pytest",
