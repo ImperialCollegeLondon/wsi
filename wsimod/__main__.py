@@ -2,6 +2,8 @@
 from argparse import ArgumentParser
 from pathlib import Path
 
+from wsimod.validation import validate_io_args
+
 
 def create_parser() -> ArgumentParser:
     """Create the CLI argument parser."""
@@ -25,13 +27,6 @@ def create_parser() -> ArgumentParser:
         help="Base directory for all output files. If present, overwrites value in the"
         " settings file.",
     )
-    parser.add_argument(
-        "--force-output",
-        "-f",
-        type=bool,
-        help="Overwrite contents of output directory, if it exists. Default to False.",
-        default=False,
-    )
 
     return parser
 
@@ -39,4 +34,4 @@ def create_parser() -> ArgumentParser:
 def run() -> None:
     """Main entry point of the application."""
     args = vars(create_parser().parse_args())
-    print(f"Running WSIMOD with these arguments: {args}")
+    print(validate_io_args(**args))
