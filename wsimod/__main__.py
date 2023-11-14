@@ -6,7 +6,7 @@ from typing import Any, cast
 import pandas as pd
 
 from wsimod.orchestration.model import Model
-from wsimod.validation import validate_io_args
+from wsimod.validation import load_data_into_settings, validate_io_args
 
 
 def create_parser() -> ArgumentParser:
@@ -57,4 +57,6 @@ def run_model(settings: dict[str, Any]) -> None:
 def run() -> None:
     """Main entry point of the application."""
     args = vars(create_parser().parse_args())
-    print(validate_io_args(**args))
+    settings = validate_io_args(**args)
+    loaded_settings = load_data_into_settings(settings, settings["inputs"])
+    run_model(loaded_settings)
