@@ -1,7 +1,9 @@
+import ast
 import os
 from pathlib import Path
 from typing import Any, Optional
 
+import pandas as pd
 from tomllib import load
 
 
@@ -89,3 +91,65 @@ def _validate_output_dir(output_dir: Optional[Path]) -> Path:
 
     os.makedirs(output_dir, exist_ok=True)
     return output_dir.absolute()
+
+
+def load_data_into_settings(
+    settings: dict[str, Any], inputs: Optional[Path]
+) -> dict[str, Any]:
+    input_dir: Path = inputs if inputs else settings["inputs"]
+    loaded_settings: dict[str, Any] = {}
+
+    for k, v in settings.items():
+        if isinstance(v, dict):
+            loaded_settings[k] = load_data_into_settings(v, input_dir)
+        elif isinstance(v, str) and v.startswith("file:"):
+            loaded_settings[k] = load_data(v.strip("file:"), inputs)
+        else:
+            loaded_settings[k] = v
+
+    return loaded_settings
+
+
+def load_data(instruction: str, inputs: Path) -> pd.DataFrame:
+    """Parses a string with information on how to load data, and then loads it.
+
+    The instruction string must follow the format:
+
+        FILENAME[:comma_separated_reading_options]
+
+    Where the reading options must be valid input arguments to `pandas.read_csv`. For
+    example, if instruction is simply `"data_file.csv"`, the reading command will be
+    `pd.read_csv("data_file.csv")`. However if the instruction string is
+    `"data_file.csv:sep=' ',index_col='datetime'"`, it will result in
+    `pd.read_csv("data_file.csv", sep=' ', index_col='datetime')` being called.
+
+    Args:
+        instruction (str): A string detailing how to load the data.
+        inputs (Path): Base directory of inputs.
+
+    Returns:
+        pd.DataFrame: Loaded dataframe following the instructions.
+    """
+    filename, _, options = instruction.partition(":")
+    options_: dict[str, Any] = process_options(options)
+    return pd.read_csv(inputs / Path(filename), **options_)
+
+
+def process_options(options: str) -> dict[str, Any]:
+    """Formats the options string as keyword arguments.
+
+    >>> process_options("sep=' ',index_col='datetime'")
+    {'sep': ' ', 'index_col': 'datetime'}
+
+    Args:
+        options (str): The strings with the arguments to process.
+
+    Returns:
+        dict[str, Any]: The dictionary with the processed keyword arguments.
+    """
+    args = "f({})".format(options)
+    tree = ast.parse(args)
+    funccall = tree.body[0].value
+
+    kwargs = {arg.arg: ast.literal_eval(arg.value) for arg in funccall.keywords}
+    return kwargs
