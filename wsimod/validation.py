@@ -94,16 +94,27 @@ def _validate_output_dir(output_dir: Optional[Path]) -> Path:
 
 
 def load_data_into_settings(
-    settings: dict[str, Any], inputs: Optional[Path]
+    settings: dict[str, Any], input_dir: Path
 ) -> dict[str, Any]:
-    input_dir: Path = inputs if inputs else settings["inputs"]
+    """Loads data files contents into the settings dictionary.
+
+    Search for data files to load is done recursively, walking through the whole
+    settgins dictionary tree.
+
+    Args:
+        settings (dict[str, Any]): The settings dicitonary.
+        input_dir (Path): The directory where input files are located.
+
+    Returns:
+        dict[str, Any]: A new settings dictionary where data files have been loaded.
+    """
     loaded_settings: dict[str, Any] = {}
 
     for k, v in settings.items():
         if isinstance(v, dict):
             loaded_settings[k] = load_data_into_settings(v, input_dir)
         elif isinstance(v, str) and v.startswith("file:"):
-            loaded_settings[k] = load_data(v.strip("file:"), inputs)
+            loaded_settings[k] = load_data(v.strip("file:"), input_dir)
         else:
             loaded_settings[k] = v
 
@@ -147,6 +158,9 @@ def process_options(options: str) -> dict[str, Any]:
     Returns:
         dict[str, Any]: The dictionary with the processed keyword arguments.
     """
+    if not options:
+        return {}
+
     args = "f({})".format(options)
     tree = ast.parse(args)
     funccall = tree.body[0].value
