@@ -1,10 +1,12 @@
 import ast
 import os
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Optional, Union
 
 import pandas as pd
-from tomllib import load
+import yaml
+
+from wsimod.core import constants
 
 
 def validate_io_args(
@@ -32,7 +34,7 @@ def validate_io_args(
         )
 
     with settings.open("rb") as f:
-        settings_ = load(f)
+        settings_ = yaml.safe_load(f)
 
     # Valildate inputs folder
     settings_["inputs"] = _validate_input_dir(settings_.get("inputs", inputs))
@@ -60,6 +62,7 @@ def _validate_input_dir(input_dir: Optional[Path]) -> Path:
     if not input_dir:
         return Path.cwd().absolute()
 
+    input_dir = Path(input_dir)
     if not input_dir.is_dir():
         raise ValueError(
             f"The inputs base directory at {input_dir} is not a directory."
@@ -86,6 +89,7 @@ def _validate_output_dir(output_dir: Optional[Path]) -> Path:
     if not output_dir:
         return Path.cwd().absolute()
 
+    output_dir = Path(output_dir)
     if output_dir.exists() and not output_dir.is_dir():
         raise ValueError(f"A file at {output_dir} exists and is not a directory.")
 
@@ -111,43 +115,86 @@ def load_data_into_settings(
     loaded_settings: dict[str, Any] = {}
 
     for k, v in settings.items():
-        if isinstance(v, dict):
+        if isinstance(v, dict) and "filename" in v.keys():
+            loaded_settings[k] = load_data(v, input_dir)
+        elif isinstance(v, dict):
             loaded_settings[k] = load_data_into_settings(v, input_dir)
         elif isinstance(v, list):
             loaded_settings[k] = [
                 load_data_into_settings(item, input_dir) for item in v
             ]
-        elif isinstance(v, str) and v.startswith("file:"):
-            loaded_settings[k] = load_data(v.strip("file:"), input_dir)
         else:
             loaded_settings[k] = v
 
     return loaded_settings
 
 
-def load_data(instruction: str, inputs: Path) -> pd.DataFrame:
-    """Parses a string with information on how to load data, and then loads it.
+def load_data(
+    instructions: dict[str, Any], inputs: Path
+) -> Union[pd.DataFrame, pd.Series, dict]:
+    """Uses the instructions to load tabular data.
 
-    The instruction string must follow the format:
+    The instructions are a dictionary of options that define what file to load, how
+    to load it and some simple manipulations to do to the loaded pandas Dataframe
+    before returing it.
 
-        FILENAME[:comma_separated_reading_options]
+    The keys to control this proces are:
 
-    Where the reading options must be valid input arguments to `pandas.read_csv`. For
-    example, if instruction is simply `"data_file.csv"`, the reading command will be
-    `pd.read_csv("data_file.csv")`. However if the instruction string is
-    `"data_file.csv:sep=' ',index_col='datetime'"`, it will result in
-    `pd.read_csv("data_file.csv", sep=' ', index_col='datetime')` being called.
+        filename: Filename of the data to load
+        filter (optional): List of filters for the dataframe, each a dictionary in the form:
+            where: column to filer
+            is: value of that column
+        scaling (optional): List of variable scaling, each a dictionary of the form:
+            where: column to filer (optional)
+            is: value of that column (optional)
+            variable: name of the column to scale
+            factor: unit conversion factor, as defined in `wsimod.core.constants`,
+                eg. MM_TO_M
+        format (optional): How the output should be provided. If format is `dict` then
+            the output is provided as a dictonary, otherwise a Dataframe or a Series
+            (if there is only 1 column) is output.
+        index (optional): Column(s) to use as index.
+        output (optional): Column to provide as output.
+        options (optional): Options to pass to the `pandas.read_csv` function.
+
+    The order in which operations are done is:
+
+        read -> filter -> scale -> set_index -> select_output -> convert_format
+
+    Only the `read` step will always happen. The others depend on the inputs.
 
     Args:
-        instruction (str): A string detailing how to load the data.
+        instructions (str): A dictionary with instructions to load the data.
         inputs (Path): Base directory of inputs.
 
     Returns:
-        pd.DataFrame: Loaded dataframe following the instructions.
+        Union[pd.DataFrame, pd.Series, dict]: Loaded dataframe or dictionary following the
+        instructions.
     """
-    filename, _, options = instruction.partition(":")
-    options_: dict[str, Any] = process_options(options)
-    return pd.read_csv(inputs / Path(filename), **options_)
+    filename = inputs / Path(instructions["filename"])
+    options_: dict[str, Any] = process_options(instructions.get("options", ""))
+    data = pd.read_csv(inputs / Path(filename), **options_)
+
+    for filter in instructions.get("filters", []):
+        data = data.loc[data[filter["where"]] == filter["is"]]
+
+    for scaler in instructions.get("scaling", []):
+        idx = data[scaler["where"]] == scaler["is"] if "is" in scaler else slice(None)
+        data.loc[idx, scaler["variable"]] *= getattr(constants, scaler["factor"])
+
+    if index := instructions.get("index", None):
+        data = data.set_index(index)
+
+    if output := instructions.get("output", None):
+        data = data[output]
+
+    if instructions.get("format", "") == "dict":
+        return data.to_dict()
+
+    if len(data.columns) == 1:
+        data = data.squeeze()
+
+    return data
 
 
 def process_options(options: str) -> dict[str, Any]:

@@ -15,7 +15,7 @@ def create_parser() -> ArgumentParser:
     parser.add_argument(
         "settings",
         type=Path,
-        help="Path to the WSIMOD input file, in TOML format.",
+        help="Path to the WSIMOD input file, in YAML format.",
     )
     parser.add_argument(
         "--inputs",
