@@ -1,10 +1,12 @@
 import ast
 import os
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Optional, cast
 
 import pandas as pd
 from tomllib import load
+
+from wsimod.orchestration.model import Model
 
 
 def validate_io_args(
@@ -171,3 +173,22 @@ def process_options(options: str) -> dict[str, Any]:
 
     kwargs = {arg.arg: ast.literal_eval(arg.value) for arg in funccall.keywords}
     return kwargs
+
+
+def run_model(settings: dict[str, Any]) -> None:
+    """Runs the mode with the chosen settings and saves the outputs as csv.
+
+    Args:
+        settings (dict[str, Any]): Settings dictionary with loaded data.
+    """
+    model = Model()
+
+    model.dates = cast(pd.Series, settings["dates"]).drop_duplicates()
+    model.add_nodes(settings["nodes"])
+    model.add_arcs(settings["arcs"])
+
+    flows, tanks, _, surfaces = model.run()
+
+    pd.DataFrame(flows).to_csv(settings["outputs"] / "flows.csv")
+    pd.DataFrame(tanks).to_csv(settings["outputs"] / "tanks.csv")
+    pd.DataFrame(surfaces).to_csv(settings["outputs"] / "surfaces.csv")
