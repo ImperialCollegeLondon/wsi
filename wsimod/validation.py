@@ -113,6 +113,10 @@ def load_data_into_settings(
     for k, v in settings.items():
         if isinstance(v, dict):
             loaded_settings[k] = load_data_into_settings(v, input_dir)
+        elif isinstance(v, list):
+            loaded_settings[k] = [
+                load_data_into_settings(item, input_dir) for item in v
+            ]
         elif isinstance(v, str) and v.startswith("file:"):
             loaded_settings[k] = load_data(v.strip("file:"), input_dir)
         else:
