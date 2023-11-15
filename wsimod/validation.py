@@ -38,12 +38,12 @@ def validate_io_args(
 
     # Valildate inputs folder
     settings_["inputs"] = _validate_input_dir(
-        settings_.get("inputs", inputs), default=settings.parent
+        inputs if inputs else settings_.get("inputs", None), default=settings.parent
     )
 
     # Valildate outputs folder
     settings_["outputs"] = _validate_output_dir(
-        settings_.get("outputs", outputs), default=settings.parent
+        outputs if outputs else settings_.get("outputs", None), default=settings.parent
     )
 
     return settings_
