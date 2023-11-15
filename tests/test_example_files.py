@@ -11,7 +11,7 @@ def collect_examples() -> list[Path]:
 @mark.parametrize("example", collect_examples())
 def test_examples(example: Path, tmp_path: Path) -> None:
     result = subprocess.run(
-        ["python", "-m", "wsimod", str(example), "-o", str(tmp_path)],
+        ["wsimod", str(example), "-o", str(tmp_path)],
         shell=True,
         check=True,
     )
