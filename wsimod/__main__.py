@@ -6,7 +6,7 @@ from typing import Any, cast
 import pandas as pd
 
 from wsimod.orchestration.model import Model
-from wsimod.validation import load_data_into_settings, validate_io_args
+from wsimod.validation import assign_data_to_settings, load_data_files, validate_io_args
 
 
 def create_parser() -> ArgumentParser:
@@ -35,11 +35,12 @@ def create_parser() -> ArgumentParser:
     return parser
 
 
-def run_model(settings: dict[str, Any]) -> None:
+def run_model(settings: dict[str, Any], outputs: Path) -> None:
     """Runs the mode with the chosen settings and saves the outputs as csv.
 
     Args:
         settings (dict[str, Any]): Settings dictionary with loaded data.
+        outputs(Path): Directory where to save the outputs.
     """
     model = Model()
 
@@ -49,14 +50,19 @@ def run_model(settings: dict[str, Any]) -> None:
 
     flows, tanks, _, surfaces = model.run()
 
-    pd.DataFrame(flows).to_csv(settings["outputs"] / "flows.csv")
-    pd.DataFrame(tanks).to_csv(settings["outputs"] / "tanks.csv")
-    pd.DataFrame(surfaces).to_csv(settings["outputs"] / "surfaces.csv")
+    pd.DataFrame(flows).to_csv(outputs / "flows.csv")
+    pd.DataFrame(tanks).to_csv(outputs / "tanks.csv")
+    pd.DataFrame(surfaces).to_csv(outputs / "surfaces.csv")
 
 
 def run() -> None:
     """Main entry point of the application."""
     args = vars(create_parser().parse_args())
     settings = validate_io_args(**args)
-    loaded_settings = load_data_into_settings(settings, settings["inputs"])
-    run_model(loaded_settings)
+
+    inputs = settings.pop("inputs")
+    outputs = settings.pop("outputs")
+    loaded_data = load_data_files(settings.pop("data", {}), inputs)
+    loaded_settings = assign_data_to_settings(settings, loaded_data)
+
+    run_model(loaded_settings, outputs)

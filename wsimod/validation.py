@@ -97,10 +97,29 @@ def _validate_output_dir(output_dir: Optional[Path]) -> Path:
     return output_dir.absolute()
 
 
-def load_data_into_settings(
-    settings: dict[str, Any], input_dir: Path
+def load_data_files(
+    data_settings: dict[str, Any], input_dir: Path
+) -> dict[str, Union[pd.DataFrame, pd.Series, dict]]:
+    """Reads the settings data section and reads the required data from files.
+
+    Args:
+        data_settings (dict[str, Any]): The data section of the settings file.
+        input_dir (Path): The directory where input files are located.
+
+    Returns:
+        dict[str, Union[pd.DataFrame, pd.Series, dict]]: Loaded dataframe, series or
+        dictionary following the instructions.
+    """
+    return {
+        f"data:{key}": read_data(var, input_dir) for key, var in data_settings.items()
+    }
+
+
+def assign_data_to_settings(
+    settings: dict[str, Any],
+    data_settings: dict[str, Union[pd.DataFrame, pd.Series, dict]],
 ) -> dict[str, Any]:
-    """Loads data files contents into the settings dictionary.
+    """Assigns the data files to the right variables in the settings dictionary.
 
     Search for data files to load is done recursively, walking through the whole
     settgins dictionary tree.
@@ -115,21 +134,21 @@ def load_data_into_settings(
     loaded_settings: dict[str, Any] = {}
 
     for k, v in settings.items():
-        if isinstance(v, dict) and "filename" in v.keys():
-            loaded_settings[k] = load_data(v, input_dir)
-        elif isinstance(v, dict):
-            loaded_settings[k] = load_data_into_settings(v, input_dir)
+        if isinstance(v, dict):
+            loaded_settings[k] = assign_data_to_settings(v, data_settings)
         elif isinstance(v, list):
             loaded_settings[k] = [
-                load_data_into_settings(item, input_dir) for item in v
+                assign_data_to_settings(item, data_settings) for item in v
             ]
+        elif v in data_settings.keys():
+            loaded_settings[k] = data_settings[v]
         else:
             loaded_settings[k] = v
 
     return loaded_settings
 
 
-def load_data(
+def read_data(
     instructions: dict[str, Any], inputs: Path
 ) -> Union[pd.DataFrame, pd.Series, dict]:
     """Uses the instructions to load tabular data.
@@ -168,8 +187,8 @@ def load_data(
         inputs (Path): Base directory of inputs.
 
     Returns:
-        Union[pd.DataFrame, pd.Series, dict]: Loaded dataframe or dictionary following the
-        instructions.
+        Union[pd.DataFrame, pd.Series, dict]: Loaded dataframe, series or dictionary
+        following the instructions.
     """
     filename = inputs / Path(instructions["filename"])
     options_: dict[str, Any] = process_options(instructions.get("options", ""))
