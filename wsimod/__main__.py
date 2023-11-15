@@ -66,3 +66,7 @@ def run() -> None:
     loaded_settings = assign_data_to_settings(settings, loaded_data)
 
     run_model(loaded_settings, outputs)
+
+
+if __name__ == "__main__":
+    run()
