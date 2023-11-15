@@ -37,21 +37,26 @@ def validate_io_args(
         settings_ = yaml.safe_load(f)
 
     # Valildate inputs folder
-    settings_["inputs"] = _validate_input_dir(settings_.get("inputs", inputs))
+    settings_["inputs"] = _validate_input_dir(
+        settings_.get("inputs", inputs), default=settings.parent
+    )
 
     # Valildate outputs folder
-    settings_["outputs"] = _validate_output_dir(settings_.get("outputs", outputs))
+    settings_["outputs"] = _validate_output_dir(
+        settings_.get("outputs", outputs), default=settings.parent
+    )
 
     return settings_
 
 
-def _validate_input_dir(input_dir: Optional[Path]) -> Path:
+def _validate_input_dir(input_dir: Optional[Path], default: Path) -> Path:
     """Validates the directory of input files.
 
-    If not provided, the currect working directory is used.
+    If not provided, the default directory is used.
 
     Args:
         input_dir (Optional[Path]): The potential directory with the inputs.
+        default (Path): Default input path if none provided.
 
     Raises:
         ValueError: If the inputs base directory is not actually a directory.
@@ -60,24 +65,24 @@ def _validate_input_dir(input_dir: Optional[Path]) -> Path:
         Path: The validated path containing the inputs.
     """
     if not input_dir:
-        return Path.cwd().absolute()
+        return default.absolute()
 
-    input_dir = Path(input_dir)
+    input_dir = Path(input_dir).absolute()
     if not input_dir.is_dir():
         raise ValueError(
             f"The inputs base directory at {input_dir} is not a directory."
         )
-    return input_dir.absolute()
+    return input_dir
 
 
-def _validate_output_dir(output_dir: Optional[Path]) -> Path:
+def _validate_output_dir(output_dir: Optional[Path], default: Path) -> Path:
     """Validates the directory for output files.
 
-    If not provided, the currect working directory is used. If it does not exist, it
-    is created.
+    If not provided, the default path is used. If it does not exist, it is created.
 
     Args:
         output_dir (Optional[Path]): The potential directory for the outputs.
+        default (Path): Defualt output path if none provided.
 
     Raises:
         ValueError: If a file with the same name already exist.
@@ -85,16 +90,15 @@ def _validate_output_dir(output_dir: Optional[Path]) -> Path:
     Returns:
         Path: The validated path containing where outputs will be saved.
     """
-
     if not output_dir:
-        return Path.cwd().absolute()
+        return default.absolute()
 
-    output_dir = Path(output_dir)
+    output_dir = Path(output_dir).absolute()
     if output_dir.exists() and not output_dir.is_dir():
         raise ValueError(f"A file at {output_dir} exists and is not a directory.")
 
     os.makedirs(output_dir, exist_ok=True)
-    return output_dir.absolute()
+    return output_dir
 
 
 def load_data_files(
@@ -140,8 +144,14 @@ def assign_data_to_settings(
             loaded_settings[k] = [
                 assign_data_to_settings(item, data_settings) for item in v
             ]
-        elif v in data_settings.keys():
-            loaded_settings[k] = data_settings[v]
+        elif isinstance(v, str) and v.startswith("data:"):
+            try:
+                loaded_settings[k] = data_settings[v]
+            except KeyError:
+                raise ValueError(
+                    f"{v} could not be found. Did you configure loading that data in"
+                    " the data section of the settings file?"
+                )
         else:
             loaded_settings[k] = v
 
