@@ -156,3 +156,4 @@ cython_debug/
 
 # Scratch folder to do testing
 scratch
+results
