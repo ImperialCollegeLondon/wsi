@@ -180,7 +180,12 @@ def load_data(
 
     for scaler in instructions.get("scaling", []):
         idx = data[scaler["where"]] == scaler["is"] if "is" in scaler else slice(None)
-        data.loc[idx, scaler["variable"]] *= getattr(constants, scaler["factor"])
+        factor = (
+            getattr(constants, scaler["factor"])
+            if isinstance(scaler["factor"], str)
+            else scaler["factor"]
+        )
+        data.loc[idx, scaler["variable"]] *= factor
 
     if index := instructions.get("index", None):
         data = data.set_index(index)
@@ -188,11 +193,11 @@ def load_data(
     if output := instructions.get("output", None):
         data = data[output]
 
+    if isinstance(data, pd.DataFrame) and len(data.columns) == 1:
+        data = data.squeeze()
+
     if instructions.get("format", "") == "dict":
         return data.to_dict()
-
-    if len(data.columns) == 1:
-        data = data.squeeze()
 
     return data
 
