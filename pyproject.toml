@@ -19,7 +19,8 @@ requires-python = ">=3.9"
 dependencies = [
     "PyYAML",
     "tqdm",
-    "dill"
+    "dill",
+    "pandas"
 ]
 
 [project.scripts]
@@ -36,7 +37,6 @@ dev = [
 ]
 
 demos = [
-    "pandas",
     "geopandas",
     "matplotlib",
     "shapely"
