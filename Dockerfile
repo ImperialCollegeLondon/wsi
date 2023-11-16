@@ -1,10 +1,8 @@
 FROM python:3.11.5-alpine
 
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
 COPY --chown=nobody . /usr/src/app
 WORKDIR /usr/src/app
+RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install .
 USER nobody
 
