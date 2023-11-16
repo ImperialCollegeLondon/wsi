@@ -1,0 +1,10 @@
+version: '3'
+services:
+  wsimod:
+    build: .
+    environment:
+      - WSIMOD_SETTINGS=settings.yaml
+    volumes:
+      - .:/usr/src/app
+      - ./scratch:/data/inputs
+      - ./scratch:/data/outputs
