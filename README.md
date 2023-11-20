@@ -18,7 +18,7 @@ that we have experienced in industry collaboration. The WSIMOD Python package
 provides tutorials and examples to help modellers create nodes, connect them
 with arcs, and create simulations.
 
-You can access our documentation below or at [https://imperialcollegelondon.github.io/wsi](https://barneydobson.github.io/wsi).
+You can access our documentation below or at [https://imperialcollegelondon.github.io/wsi](https://imperialcollegelondon.github.io/wsi).
 
 *Requires*: Python 3 (tested on versions >=3.7), [tqdm](https://tqdm.github.io/), [PyYAML](https://pyyaml.org/), [dill](https://dill.readthedocs.io/en/latest/)
 
@@ -35,21 +35,21 @@ project documentation as described by Daniele Procida
 in the [Diátaxis documentation framework](https://diataxis.fr/)
 and consists of:
 
-1. [About](https://barneydobson.github.io/wsi/paper/paper/)
+1. [About](https://imperialcollegelondon.github.io/wsi/paper/paper/)
 
-2. [Installation](https://barneydobson.github.io/wsi/installation/)
+2. [Installation](https://imperialcollegelondon.github.io/wsi/installation/)
 
-3. [Tutorials](https://barneydobson.github.io/wsi/tutorials/)
+3. [Tutorials](https://imperialcollegelondon.github.io/wsi/tutorials/)
 
-4. [How-To Guides](https://barneydobson.github.io/wsi/how-to/)
+4. [How-To Guides](https://imperialcollegelondon.github.io/wsi/how-to/)
 
-5. [Component library](https://barneydobson.github.io/wsi/component-library/)
+5. [Component library](https://imperialcollegelondon.github.io/wsi/component-library/)
 
-6. [API reference](https://barneydobson.github.io/wsi/reference/)
+6. [API reference](https://imperialcollegelondon.github.io/wsi/reference/)
 
-7. [Quickstart](https://barneydobson.github.io/wsi/demo/scripts/quickstart_demo/)
+7. [Quickstart](https://imperialcollegelondon.github.io/wsi/demo/scripts/quickstart_demo/)
 
-8. [Coverage](https://barneydobson.github.io/wsi/coverage/)
+8. [Coverage](https://imperialcollegelondon.github.io/wsi/coverage/)
 
 ## Installation
 
