@@ -1,0 +1,37 @@
+# This is the model file required to deploy WSIMOD in DAFNI
+# For details of the file and its specification see:
+#
+# https://docs.secure.dafni.rl.ac.uk/docs/how-to/how-to-write-a-model-definition-file
+#
+kind: M
+api_version: v1beta2
+
+metadata:
+  display_name: WSIMOD
+  name: wsimod
+  summary: WSIMOD is a software for simulating water quality and quantity.
+  type: model
+  publisher: Imperial College London
+  description: >
+    The terrestrial water cycle is a highly interconnected system where the movement of
+    water is affected by physical and human processes. Thus, environmental models may
+    become inaccurate if they do not provide a complete picture of the water cycle,
+    missing out on unexpected opportunities and omitting impacts that arise from complex
+    interactions.
+
+    WSIMOD is a modelling framework to integrate these different processes. It provides
+    a message passing interface to enable different subsystem models to communicate
+    water flux and water quality information between each other, and self-contained
+    representations of the key parts of the water cycle (rivers, reservoirs, urban and
+    rural hydrological catchments, treatment plants, and pipe networks).
+
+spec:
+  inputs:
+
+    dataslots:
+      - name: Settings file
+        description: Settings file setting up a WSIMOD simulation.
+        path: inputs/settings.yaml
+        required: true
+
+# Other datasets are likely to be needed, but their number is simulation dependent
