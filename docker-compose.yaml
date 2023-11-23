@@ -1,0 +1,10 @@
+version: '3'
+services:
+  wsimod:
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - .:/usr/src/app
+      - ${WSIMOD_INPUTS}:/data/inputs
+      - ${WSIMOD_OUTPUTS}:/data/outputs
