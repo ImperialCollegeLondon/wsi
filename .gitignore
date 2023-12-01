@@ -153,3 +153,7 @@ cython_debug/
 
 # VScode configuration
 .vscode
+
+# Scratch folder to do testing
+scratch
+results
