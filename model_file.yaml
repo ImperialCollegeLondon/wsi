@@ -28,10 +28,24 @@ metadata:
 spec:
   inputs:
 
+    parameters:
+      - name: WSIMOD_SETTINGS
+        title: Settings file name
+        description: The name of the settings file to be used.
+        type: string
+        default: settings.yaml
+        required: true
+
     dataslots:
       - name: Settings file
         description: Settings file setting up a WSIMOD simulation.
-        path: inputs/settings.yaml
+        path: inputs/
         required: true
 
-# Other datasets are likely to be needed, but their number is simulation dependent
+      - name: Additional Data Files
+        description: >
+          These are files, required by the WSIMOD simulation and that contain the input
+          data. The filenames should be the same as those indicated in the WSIMOD
+          settings file.
+        path: inputs/
+        required: False
