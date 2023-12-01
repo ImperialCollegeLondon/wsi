@@ -45,7 +45,7 @@ spec:
         description: Settings file setting up a WSIMOD simulation.
         path: inputs/
         default:
-          - 8cea5a04-ac8c-42c7-b742-3864436efef2
+          - 5f2ce2a8-98db-4da2-b6d5-5de869295db5
         required: true
 
       - name: Additional Data Files
