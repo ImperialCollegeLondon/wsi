@@ -42,11 +42,11 @@ spec:
 
     dataslots:
       - name: Settings file
-        description: Settings file setting up a WSIMOD simulation.
+        description: >
+          Settings file setting up a WSIMOD simulation. Providing a settings file is
+          required.
         path: inputs/
-        default:
-          - 8cea5a04-ac8c-42c7-b742-3864436efef2
-        required: true
+        required: false
 
       - name: Additional Data Files
         description: >
