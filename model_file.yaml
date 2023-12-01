@@ -4,7 +4,7 @@
 # https://docs.secure.dafni.rl.ac.uk/docs/how-to/how-to-write-a-model-definition-file
 #
 kind: M
-api_version: v1beta2
+api_version: v1beta3
 
 metadata:
   display_name: WSIMOD
@@ -24,6 +24,10 @@ metadata:
     water flux and water quality information between each other, and self-contained
     representations of the key parts of the water cycle (rivers, reservoirs, urban and
     rural hydrological catchments, treatment plants, and pipe networks).
+  contact_point_email: d.alonso-alvarez@imperial.ac.uk
+  contact_point_name: Diego Alonso Álvarez
+  source_code: https://github.com/ImperialCollegeLondon/wsi
+  licence: https://raw.githubusercontent.com/ImperialCollegeLondon/wsi/main/LICENSE
 
 spec:
   inputs:
@@ -40,12 +44,14 @@ spec:
       - name: Settings file
         description: Settings file setting up a WSIMOD simulation.
         path: inputs/
+        default:
+          - 8cea5a04-ac8c-42c7-b742-3864436efef2
         required: true
 
       - name: Additional Data Files
         description: >
           These are files, required by the WSIMOD simulation and that contain the input
           data. The filenames should be the same as those indicated in the WSIMOD
-          settings file.
+          settings file. It can be empty if no data files are required.
         path: inputs/
         required: False
