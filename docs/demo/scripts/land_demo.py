@@ -55,10 +55,8 @@ from wsimod.orchestration.model import Model
 # Load input data
 # %%
 
-# Use this path if compiling documentation
+# Select the root path for the data folder. Use the appropriate value for your case.
 data_folder = os.path.join(os.path.abspath(""), "docs", "demo", "data")
-# Use this path otherwise
-data_folder = os.path.join(os.path.split(os.path.abspath(""))[0], "data")
 
 input_fid = os.path.join(data_folder, "processed", "timeseries_data.csv")
 input_data = pd.read_csv(input_fid)

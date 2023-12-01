@@ -55,10 +55,8 @@ from wsimod.demo.create_oxford import create_oxford_model
 # %% [markdown]
 # The model can be automatically created using the data_folder
 # %%
-# Use this path if compiling documentation
+# Select the root path for the data folder. Use the appropriate value for your case.
 data_folder = os.path.join(os.path.abspath(""), "docs", "demo", "data")
-# Use this path otherwise
-data_folder = os.path.join(os.path.split(os.path.abspath(""))[0], "data")
 
 baseline_model = create_oxford_model(data_folder)
 # %% [markdown]
