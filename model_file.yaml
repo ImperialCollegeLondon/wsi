@@ -1,0 +1,59 @@
+# This is the model file required to deploy WSIMOD in DAFNI
+# For details of the file and its specification see:
+#
+# https://docs.secure.dafni.rl.ac.uk/docs/how-to/how-to-write-a-model-definition-file
+#
+kind: M
+api_version: v1beta3
+
+metadata:
+  display_name: WSIMOD
+  name: wsimod
+  summary: WSIMOD is a software for simulating water quality and quantity.
+  type: model
+  publisher: Imperial College London
+  description: >
+    The terrestrial water cycle is a highly interconnected system where the movement of
+    water is affected by physical and human processes. Thus, environmental models may
+    become inaccurate if they do not provide a complete picture of the water cycle,
+    missing out on unexpected opportunities and omitting impacts that arise from complex
+    interactions.
+
+    WSIMOD is a modelling framework to integrate these different processes. It provides
+    a message passing interface to enable different subsystem models to communicate
+    water flux and water quality information between each other, and self-contained
+    representations of the key parts of the water cycle (rivers, reservoirs, urban and
+    rural hydrological catchments, treatment plants, and pipe networks).
+  contact_point_email: d.alonso-alvarez@imperial.ac.uk
+  contact_point_name: Diego Alonso Álvarez
+  source_code: https://github.com/ImperialCollegeLondon/wsi
+  licence: https://raw.githubusercontent.com/ImperialCollegeLondon/wsi/main/LICENSE
+
+spec:
+  inputs:
+
+    parameters:
+      - name: WSIMOD_SETTINGS
+        title: Settings file name
+        description: The name of the settings file to be used.
+        type: string
+        default: settings.yaml
+        required: true
+
+    dataslots:
+      - name: Settings file
+        description: Settings file setting up a WSIMOD simulation.
+        path: inputs/
+        default:
+          - 5f2ce2a8-98db-4da2-b6d5-5de869295db5
+        required: true
+
+      - name: Additional Data Files
+        description: >
+          These are files, required by the WSIMOD simulation and that contain the input
+          data. The filenames should be the same as those indicated in the WSIMOD
+          settings file. It can be empty if no data files are required.
+        path: inputs/
+        default:
+          - 599816bb-4487-406e-b765-996b64462ba6
+        required: False
