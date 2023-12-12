@@ -112,7 +112,8 @@ class WTW(Node):
         # Calculate effluent, liquor and solids
         discharge_holder = self.empty_vqip()
 
-        # Assume non-additive pollutants are unchanged in discharge and are proportionately mixed in liquor
+        # Assume non-additive pollutants are unchanged in discharge and are 
+        # proportionately mixed in liquor
         for key in constants.NON_ADDITIVE_POLLUTANTS:
             discharge_holder[key] = influent[key]
             self.liquor[key] = (
@@ -123,8 +124,10 @@ class WTW(Node):
                 + influent["volume"] * self.liquor_multiplier["volume"]
             )
 
-        # TODO this should probably just be for process_parameters.keys() to avoid having to declare non changing parameters
-        # TODO should the liquoring be temperature sensitive too? As it is the solids will take the brunt of the temperature variability which maybe isn't sensible
+        # TODO this should probably just be for process_parameters.keys() to avoid 
+        # having to declare non changing parameters
+        # TODO should the liquoring be temperature sensitive too? As it is the solids 
+        # will take the brunt of the temperature variability which maybe isn't sensible
         for key in constants.ADDITIVE_POLLUTANTS + ["volume"]:
             if key != "volume":
                 # Temperature sensitive transform
@@ -175,9 +178,12 @@ class WWTW(WTW):
         solids leave the model.
 
         Args:
-            stormwater_storage_capacity (float, optional): Capacity of stormwater tank. Defaults to 10.
-            stormwater_storage_area (float, optional): Area of stormwater tank. Defaults to 1.
-            stormwater_storage_elevation (float, optional): Datum of stormwater tank. Defaults to 10.
+            stormwater_storage_capacity (float, optional): Capacity of stormwater tank.
+                Defaults to 10.
+            stormwater_storage_area (float, optional): Area of stormwater tank.
+                Defaults to 1.
+            stormwater_storage_elevation (float, optional): Datum of stormwater tank.
+                Defaults to 10.
 
         Functions intended to call in orchestration:
             calculate_discharge
@@ -238,7 +244,8 @@ class WWTW(WTW):
         # Run WWTW model
 
         # Try to clear stormwater
-        # TODO (probably more tidy to use push_set_sewer? though maybe less computationally efficient)
+        # TODO (probably more tidy to use push_set_sewer? though maybe less 
+        # computationally efficient)
         excess = self.get_excess_throughput()
         if (self.stormwater_tank.get_avail()["volume"] > constants.FLOAT_ACCURACY) & (
             excess > constants.FLOAT_ACCURACY
@@ -402,7 +409,8 @@ class FWTW(WTW):
             - See `wtw.py/WTW` for treatment.
             - Stores treated water in a service reservoir tank, with a single tank
                 per `FWTW` node.
-            - Aims to satisfy a throughput that would top up the service reservoirs until full.
+            - Aims to satisfy a throughput that would top up the service reservoirs 
+                until full.
             - Currently, will not allow a deficit, thus introducing water from
                 'other measures' if pulls cannot fulfil demand. Behaviour under a
                 deficit should be determined and validated before introducing.
@@ -444,8 +452,10 @@ class FWTW(WTW):
             datum=self.service_reservoir_storage_elevation,
             initial_storage=self.service_reservoir_initial_storage,
         )
-        # self.service_reservoir_tank.storage['volume'] = self.service_reservoir_inital_storage
-        # self.service_reservoir_tank.storage_['volume'] = self.service_reservoir_inital_storage
+        # self.service_reservoir_tank.storage['volume'] = 
+        # self.service_reservoir_inital_storage
+        # self.service_reservoir_tank.storage_['volume'] = 
+        # self.service_reservoir_inital_storage
 
         # Mass balance
         self.mass_balance_in.append(lambda: self.total_deficit)
