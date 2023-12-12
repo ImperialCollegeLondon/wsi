@@ -31,7 +31,6 @@ metadata:
 
 spec:
   inputs:
-
     parameters:
       - name: WSIMOD_SETTINGS
         title: Settings file name

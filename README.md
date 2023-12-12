@@ -20,9 +20,9 @@ with arcs, and create simulations.
 
 You can access our documentation below or at [https://imperialcollegelondon.github.io/wsi](https://imperialcollegelondon.github.io/wsi).
 
-*Requires*: Python 3 (tested on versions >=3.7), [tqdm](https://tqdm.github.io/), [PyYAML](https://pyyaml.org/), [dill](https://dill.readthedocs.io/en/latest/)
+_Requires_: Python 3 (tested on versions >=3.7), [tqdm](https://tqdm.github.io/), [PyYAML](https://pyyaml.org/), [dill](https://dill.readthedocs.io/en/latest/)
 
-*Optional requirements to run demos*: [Pandas](https://pandas.pydata.org/), [GeoPandas](https://geopandas.org/en/stable/), [Matplotlib](https://matplotlib.org/), [Shapely](https://shapely.readthedocs.io/en/stable/manual.html)
+_Optional requirements to run demos_: [Pandas](https://pandas.pydata.org/), [GeoPandas](https://geopandas.org/en/stable/), [Matplotlib](https://matplotlib.org/), [Shapely](https://shapely.readthedocs.io/en/stable/manual.html)
 
 Please consider [contributing](./docs/CONTRIBUTING.md) and note the [code of conduct](./docs/CODE_OF_CONDUCT.md)
 
@@ -84,13 +84,13 @@ pip install -e .[dev,demos]
 
 If you would like to use our software, please cite it using the following:
 
- > Dobson, B., Liu, L. and Mijic, A. (2023)
- ‘Water Systems Integrated Modelling framework, WSIMOD: A Python package for integrated modelling of water quality and quantity across the water cycle’,
- Journal of Open Source Software.
- The Open Journal,
- 8(83),
- p. 4996.
- doi: 10.21105/joss.04996.
+> Dobson, B., Liu, L. and Mijic, A. (2023)
+> ‘Water Systems Integrated Modelling framework, WSIMOD: A Python package for integrated modelling of water quality and quantity across the water cycle’,
+> Journal of Open Source Software.
+> The Open Journal,
+> 8(83),
+> p. 4996.
+> doi: 10.21105/joss.04996.
 
 Find the bibtex citation below:
 
