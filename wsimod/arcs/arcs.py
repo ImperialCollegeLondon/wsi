@@ -10,7 +10,8 @@ Converted to totals on Thur Apr 21 2022
 from wsimod.core import constants
 from wsimod.core.core import DecayObj, WSIObj
 
-# from wsimod.nodes import nodes #Complains about circular imports.. I don't think it should do..
+# from wsimod.nodes import nodes #Complains about circular imports.
+# I don't think it should do..
 
 
 class Arc(WSIObj):
@@ -104,10 +105,11 @@ class Arc(WSIObj):
 
         Args:
             vqip (dict): A dict VQIP of water to push
-            tag (str, optional):  optional message to direct the out_port's query_handler which
-                function to call. Defaults to 'default'.
+            tag (str, optional):  optional message to direct the out_port's query_
+                handler which function to call. Defaults to 'default'.
             force (bool, optional): Argument used to cause function to ignore tank
-                capacity of out_port, possibly resulting in pooling. Should not be used unless
+                capacity of out_port, possibly resulting in pooling. Should not be used
+                    unless
                 out_port is a tank object. Defaults to False.
 
         Returns:
@@ -151,8 +153,10 @@ class Arc(WSIObj):
         another node (out_port).
 
         Args:
-            vqip (dict): A dict VQIP of water to pull (by default, only 'volume' key is used)
-            tag (str, optional): optional message to direct the out_port's query_handler which
+            vqip (dict): A dict VQIP of water to pull (by default, only 'volume' key is
+                used)
+            tag (str, optional): optional message to direct the out_port's query_handler
+                which
                 function to call. Defaults to 'default'.
 
         Returns:
@@ -189,10 +193,10 @@ class Arc(WSIObj):
         another node (out_port).
 
         Args:
-            vqip (dict): A dict VQIP of water to push that can be specified. Defaults to None,
-                which returns maximum capacity to push.
-            tag (str, optional):  optional message to direct the out_port's query_handler which
-                function to call. Defaults to 'default'.
+            vqip (dict): A dict VQIP of water to push that can be specified. Defaults to
+                None, which returns maximum capacity to push.
+            tag (str, optional):  optional message to direct the out_port's
+                query_handler which function to call. Defaults to 'default'.
 
         Returns:
             (dict): A VQIP amount of water that could be pushed
@@ -206,10 +210,10 @@ class Arc(WSIObj):
 
         Args:
             vqip (dict): A dict VQIP of water to pull that can be specified (by default,
-                only the 'volume' key is used). Defaults to None, which returns all available
-                water to pull.
-            tag (str, optional):  optional message to direct the out_port's query_handler which
-                function to call. Defaults to 'default'.
+                only the 'volume' key is used). Defaults to None, which returns all
+                    available water to pull.
+            tag (str, optional):  optional message to direct the out_port's
+                query_handler which function to call. Defaults to 'default'.
 
         Returns:
             (dict): A VQIP amount of water that could be pulled
@@ -226,8 +230,8 @@ class Arc(WSIObj):
             vqip (dict, optional): A VQIP amount to push/pull that can be
                 specified. Defaults to None, which returns all available water to
                 pull or maximum capacity to push (depending on 'direction').
-            tag (str, optional): optional message to direct the out_port's query_handler which
-                function to call. Defaults to 'default'.
+            tag (str, optional): optional message to direct the out_port's query_handler
+                which function to call. Defaults to 'default'.
 
         Returns:
             (dict): A VQIP amount of water that could be pulled/pushed
@@ -243,14 +247,13 @@ class Arc(WSIObj):
             node_excess = self.in_port.pull_check(vqip, tag)
         excess = min(pipe_excess, node_excess["volume"])
 
-        # TODO - sensible to min(vqip, excess) here? (though it should be applied by node)
+        # TODO sensible to min(vqip, excess) here? (though it should be applied by node)
 
         return self.v_change_vqip(node_excess, excess)
 
     def end_timestep(self):
         """End timestep in an arc, resetting flow/vqip in/out (which determine)
-        the capacity for that timestep.
-        """
+        the capacity for that timestep."""
         self.vqip_in = self.empty_vqip()
         self.vqip_out = self.empty_vqip()
         self.flow_in = 0
@@ -317,11 +320,12 @@ class QueueArc(Arc):
         not been extensively tested.
 
         Args:
-            vqip (_type_): A dict VQIP of water to pull (by default, only 'volume' key is used)
-            tag (str, optional): optional message to direct the out_port's query_handler which
-                function to call. Defaults to 'default'.
-            time (int, optional): Travel time for request to spend in the arc (in addition to the
-                arc's 'number_of_timesteps' parameter). Defaults to 0.
+            vqip (_type_): A dict VQIP of water to pull (by default, only 'volume' key
+                is used)
+            tag (str, optional): optional message to direct the out_port's query_handler
+                which function to call. Defaults to 'default'.
+            time (int, optional): Travel time for request to spend in the arc (in
+                addition to the arc's 'number_of_timesteps' parameter). Defaults to 0.
 
         Returns:
             (dict): A VQIP amount of water that was successfully pulled.
@@ -358,12 +362,12 @@ class QueueArc(Arc):
 
         Args:
             vqip_ (dict): A dict VQIP of water to push.
-            tag (str, optional): optional message to direct the out_port's query_handler which
-                function to call. Defaults to 'default'.
-            force (bool, optional): Ignore the capacity of the arc (note does not currently,
-                pass the force argument to the out_port). Defaults to False.
-            time (int, optional): Travel time for request to spend in the arc (in addition to the
-                arc's 'number_of_timesteps' parameter). Defaults to 0.
+            tag (str, optional): optional message to direct the out_port's query_handler
+                which function to call. Defaults to 'default'.
+            force (bool, optional): Ignore the capacity of the arc (note does not
+                currently, pass the force argument to the out_port). Defaults to False.
+            time (int, optional): Travel time for request to spend in the arc (in 
+                addition to the arc's 'number_of_timesteps' parameter). Defaults to 0.
 
         Returns:
             (dict): A VQIP amount of water that was not successfully pushed
@@ -410,8 +414,8 @@ class QueueArc(Arc):
             request (dict): A dict with a VQIP under the 'vqip' key and the travel
                 time under the 'time' key.
             direction (str): Direction of flow, can be 'push' or 'pull
-            tag (str, optional):  optional message to direct the out_port's query_handler which
-                function to call. Defaults to 'default'.
+            tag (str, optional):  optional message to direct the out_port's
+                query_handler which function to call. Defaults to 'default'.
 
         Returns:
             (dict): The request dict with additional information entered for the queue.
@@ -433,8 +437,8 @@ class QueueArc(Arc):
             request (dict): A dict with a VQIP under the 'vqip' key and the travel
                 time under the 'time' key.
             direction (str): Direction of flow, can be 'push' or 'pull
-            tag (str, optional):  optional message to direct the out_port's query_handler which
-                function to call. Defaults to 'default'.
+            tag (str, optional):  optional message to direct the out_port's
+                query_handler which function to call. Defaults to 'default'.
 
         """
         # Update inflows and format request
@@ -458,16 +462,17 @@ class QueueArc(Arc):
 
 
         Args:
-            direction (str, optional): Direction of flow, can be 'push' or 'pull. Defaults to None.
-            backflow_enabled (bool, optional): Enable backflow, described above, if not enabled
-                then the request will remain in the queue until all water has been received.
-                Defaults to True.
+            direction (str, optional): Direction of flow, can be 'push' or 'pull.
+                Defaults to None.
+            backflow_enabled (bool, optional): Enable backflow, described above, if not
+                enabled then the request will remain in the queue until all water has 
+                been received. Defaults to True.
 
         Returns:
-            total_backflow (dict): In the case of a push direction, any backflow will be returned
-                as a VQIP amount
-            total_removed (dict): In the case of a pull direction, any pulled water will be returned
-                as a VQIP amount
+            total_backflow (dict): In the case of a push direction, any backflow will be
+                returned as a VQIP amount
+            total_removed (dict): In the case of a pull direction, any pulled water will
+                be returned as a VQIP amount
 
         """
         done_requests = []
@@ -500,7 +505,8 @@ class QueueArc(Arc):
                     vqip_ = self.v_change_vqip(vqip, removed)
                     total_removed = self.sum_vqip(total_removed, vqip_)
 
-                    # Assume that any water that cannot arrive at destination this timestep is backflow
+                    # Assume that any water that cannot arrive at destination this 
+                    # timestep is backflow
                     rejected = self.v_change_vqip(vqip, vqip["volume"] - removed)
 
                     if backflow_enabled | (
@@ -609,13 +615,13 @@ class AltQueueArc(QueueArc):
 
         Args:
             direction (str): Direction of flow, can be 'push' only. Defaults to 'push'
-            backflow_enabled (bool, optional): Enable backflow, described above, if not enabled
-                then the request will remain in the queue until all water has been received.
-                Defaults to True.
+            backflow_enabled (bool, optional): Enable backflow, described above, if not
+                enabled then the request will remain in the queue until all water has
+                been received. Defaults to True.
 
         Returns:
-            backflow (dict): In the case of a push direction, any backflow will be returned
-                as a VQIP amount
+            backflow (dict): In the case of a push direction, any backflow will be
+                returned as a VQIP amount
 
         """
         # TODO - can this work for pulls??
@@ -676,9 +682,9 @@ class DecayArc(QueueArc, DecayObj):
         """A QueueArc that applies decays from a DecayObj.
 
         Args:
-            decays (dict, optional): A dict of dicts containing a key for each pollutant that decays
-                and within that, a key for each parameter (a constant and exponent).
-                Defaults to {}.
+            decays (dict, optional): A dict of dicts containing a key for each pollutant
+                that decays and within that, a key for each parameter (a constant and
+                exponent). Defaults to {}.
 
         """
         self.decays = decays
@@ -696,8 +702,8 @@ class DecayArc(QueueArc, DecayObj):
             request (dict): A dict with a VQIP under the 'vqip' key and the travel
                 time under the 'time' key.
             direction (str): Direction of flow, can be 'push' or 'pull
-            tag (str, optional):  optional message to direct the out_port's query_handler which
-                function to call. Defaults to 'default'.
+            tag (str, optional):  optional message to direct the out_port's
+                query_handler which function to call. Defaults to 'default'.
 
         """
         # Update inflows and format
@@ -742,9 +748,9 @@ class DecayArcAlt(AltQueueArc, DecayObj):
         """An AltQueueArc that applies decays from a DecayObj.
 
         Args:
-            decays (dict, optional): A dict of dicts containing a key for each pollutant that decays
-                and within that, a key for each parameter (a constant and exponent).
-                Defaults to {}.
+            decays (dict, optional): A dict of dicts containing a key for each pollutant
+                that decays and within that, a key for each parameter (a constant and
+                exponent). Defaults to {}.
 
         """
         self.decays = {}
@@ -834,11 +840,11 @@ class PullArc(Arc):
 
         Args:
             vqip (dict): A dict VQIP of water to push
-            tag (str, optional):  optional message to direct the out_port's query_handler which
-                function to call. Defaults to 'default'.
+            tag (str, optional):  optional message to direct the out_port's
+                query_handler which function to call. Defaults to 'default'.
             force (bool, optional): Argument used to cause function to ignore tank
-                capacity of out_port, possibly resulting in pooling. Should not be used unless
-                out_port is a tank object. Defaults to False.
+                capacity of out_port, possibly resulting in pooling. Should not be used
+                unless out_port is a tank object. Defaults to False.
 
         Returns:
             (dict): A VQIP amount of water that was not successfully pushed
@@ -850,10 +856,10 @@ class PullArc(Arc):
         """Function used to deny any push checks.
 
         Args:
-            vqip (dict): A dict VQIP of water to push that can be specified. Defaults to None,
-                which returns maximum capacity to push.
-            tag (str, optional):  optional message to direct the out_port's query_handler which
-                function to call. Defaults to 'default'.
+            vqip (dict): A dict VQIP of water to push that can be specified. Defaults to
+                None, which returns maximum capacity to push.
+            tag (str, optional):  optional message to direct the out_port's
+                query_handler which function to call. Defaults to 'default'.
 
         Returns:
             (dict): An empty VQIP amount of water indicating no water can be pushed
@@ -881,11 +887,11 @@ class PushArc(Arc):
 
         Args:
             vqip (dict): A dict VQIP of water to pull
-            tag (str, optional):  optional message to direct the out_port's query_handler which
-                function to call. Defaults to 'default'.
+            tag (str, optional):  optional message to direct the out_port's
+                query_handler which function to call. Defaults to 'default'.
             force (bool, optional): Argument used to cause function to ignore tank
-                capacity of out_port, possibly resulting in pooling. Should not be used unless
-                out_port is a tank object. Defaults to False.
+                capacity of out_port, possibly resulting in pooling. Should not be used
+                unless  out_port is a tank object. Defaults to False.
 
         Returns:
             (dict): A VQIP amount of water that was successfully pulled
@@ -897,10 +903,10 @@ class PushArc(Arc):
         """Function used to deny any pull checks.
 
         Args:
-            vqip (dict): A dict VQIP of water to pull that can be specified. Defaults to None,
-                which returns maximum capacity to pull.
-            tag (str, optional):  optional message to direct the out_port's query_handler which
-                function to call. Defaults to 'default'.
+            vqip (dict): A dict VQIP of water to pull that can be specified. Defaults to
+                None, which returns maximum capacity to pull.
+            tag (str, optional):  optional message to direct the out_port's
+                query_handler which function to call. Defaults to 'default'.
 
         Returns:
             (dict): An empty VQIP amount of water indicating no water can be pulled
@@ -910,12 +916,12 @@ class PushArc(Arc):
 
 
 class SewerArc(Arc):
-    """ """
+    """"""
 
     pass
 
 
 class WeirArc(SewerArc):
-    """ """
+    """"""
 
     pass
