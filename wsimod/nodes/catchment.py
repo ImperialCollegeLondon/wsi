@@ -4,7 +4,6 @@
 @author: bdobson
 
 Converted to totals on 2022-05-03
-
 """
 from wsimod.core import constants
 from wsimod.nodes.nodes import Node
@@ -18,8 +17,8 @@ class Catchment(Node):
         name,
         data_input_dict={},
     ):
-        """Node that reads input data to create VQIPs that are pushed downstream
-        and tracks abstractions made from the node, adjusting pushes accordingly.
+        """Node that reads input data to create VQIPs that are pushed downstream and
+        tracks abstractions made from the node, adjusting pushes accordingly.
 
         Args:
             name (str): Node name
@@ -41,7 +40,6 @@ class Catchment(Node):
             - Values for each variable defined in `constants.POLLUTANTS` also
                 stored in `data_input_dict` at the model timestep.
                 _Units_: kg/m3/timestep (additive pollutants)
-
         """
         # Update args
         super().__init__(name)
@@ -59,12 +57,11 @@ class Catchment(Node):
         self.end_timestep = self.end_timestep_
 
     def get_flow(self):
-        """Read volume data, read pollutant data, convert additibve pollutants
-        from kg/m3 to kg.
+        """Read volume data, read pollutant data, convert additibve pollutants from
+        kg/m3 to kg.
 
         Returns:
             vqip (dict): Return read data as a VQIP
-
         """
         # TODO (if used) - note that if flow is < float accuracy then it won't
         # get pushed, and the pollutants will 'disappear', causing a mass balance error
@@ -93,7 +90,6 @@ class Catchment(Node):
 
         Returns:
             avail (dict): A VQIP of water available for abstraction
-
         """
         # Get available vqip
         avail = self.get_flow()
@@ -113,7 +109,6 @@ class Catchment(Node):
 
         Returns:
             avail (dict): A VQIP of water available for abstraction
-
         """
         # Respond to abstraction check request
         avail = self.get_avail()
@@ -131,7 +126,6 @@ class Catchment(Node):
 
         Returns:
             avail (dict): A VQIP of water abstracted
-
         """
         # Respond to abstraction set request
         avail = self.get_avail()

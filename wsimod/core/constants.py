@@ -2,7 +2,6 @@
 """Created on Fri Dec  6 15:17:07 2019.
 
 @author: bdobson
-
 """
 from wsimod.core import constants
 

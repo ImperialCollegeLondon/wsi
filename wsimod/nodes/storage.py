@@ -3,7 +3,6 @@
 
 @author: bdobson
 Converted to totals on 2022-05-03
-
 """
 from math import exp
 
@@ -36,7 +35,6 @@ class Storage(Node):
 
         Functions intended to call in orchestration:
             distribute (optional, depends on subclass)
-
         """
         # Set parameters
         self.initial_storage = initial_storage
@@ -83,7 +81,6 @@ class Storage(Node):
 
         Returns:
             reply (dict): A VQIP amount that was not successfully pushed
-
         """
         # Update tank
         reply = self.tank.push_storage(vqip)
@@ -91,9 +88,7 @@ class Storage(Node):
         return reply
 
     def distribute(self):
-        """Optional function that discharges all tank storage with
-        push_distributed.
-        """
+        """Optional function that discharges all tank storage with push_distributed."""
         # Distribute any active storage
         storage = self.tank.pull_storage(self.tank.get_avail())
         retained = self.push_distributed(storage)
@@ -102,9 +97,8 @@ class Storage(Node):
             print("Storage unable to push")
 
     def get_percent(self):
-        """Function that returns the volume in the storage tank expressed as a
-        percent of capacity.
-        """
+        """Function that returns the volume in the storage tank expressed as a percent
+        of capacity."""
         return self.tank.storage["volume"] / self.tank.capacity
 
     def end_timestep(self):
@@ -172,7 +166,6 @@ class Groundwater(Storage):
                 parameters (a constant and a temperature sensitivity exponent)
                 as values.
                 _Units_: -
-
         """
         self.residence_time = residence_time
         self.infiltration_threshold = infiltration_threshold
@@ -191,9 +184,7 @@ class Groundwater(Storage):
             print("Storage unable to push")
 
     def infiltrate(self):
-        """Calculate amount of water available for infiltration and send to
-        sewers.
-        """
+        """Calculate amount of water available for infiltration and send to sewers."""
         # Calculate infiltration
         avail = self.tank.get_avail()["volume"]
         avail = max(avail - self.tank.capacity * self.infiltration_threshold, 0)
@@ -214,9 +205,9 @@ class QueueGroundwater(Storage):
 
     # TODO - no infiltration as yet
     def __init__(self, timearea={0: 1}, data_input_dict={}, **kwargs):
-        """Alternate formulation of Groundwater that uses a timearea property to
-        enable more nonlinear time behaviour of baseflow routing. Uses the
-        QueueTank or DecayQueueTank (see nodes.py/Tank subclassses).
+        """Alternate formulation of Groundwater that uses a timearea property to enable
+        more nonlinear time behaviour of baseflow routing. Uses the QueueTank or
+        DecayQueueTank (see nodes.py/Tank subclassses).
 
         NOTE: abstraction behaviour from this kind of node need careful checking
 
@@ -250,7 +241,6 @@ class QueueGroundwater(Storage):
                 parameters (a constant and a temperature sensitivity exponent)
                 as values.
                 _Units_: -
-
         """
         self.timearea = timearea
         # TODO not used
@@ -282,15 +272,14 @@ class QueueGroundwater(Storage):
 
     def push_set_timearea(self, vqip):
         """Push setting that enables timearea behaviour, (see __init__ for
-        description).Used to receive flow that is assumed to occur widely across
-        some kind of catchment.
+        description).Used to receive flow that is assumed to occur widely across some
+        kind of catchment.
 
         Args:
             vqip (dict): A VQIP that has been pushed
 
         Returns:
             reply (dict): A VQIP amount that was not successfuly receivesd
-
         """
         reply = self.empty_vqip()
         # Iterate over timearea diagram
@@ -330,7 +319,6 @@ class QueueGroundwater(Storage):
 
         Returns:
             (dict): A VQIP amount that is available to pull
-
         """
         if vqip is None:
             return self.tank.active_storage
@@ -340,16 +328,15 @@ class QueueGroundwater(Storage):
 
     def pull_set_active(self, vqip):
         # TODO - this is quite weird behaviour, and inconsistent with pull_check_active
-        """Pull proportionately from both the active storage and the queue.
-        Adjudging groundwater abstractions to not be particularly sensitive to the
-        within catchment travel time.
+        """Pull proportionately from both the active storage and the queue. Adjudging
+        groundwater abstractions to not be particularly sensitive to the within
+        catchment travel time.
 
         Args:
             vqip (dict): A VQIP amount to be pulled (only volume key is used)
 
         Returns:
             pulled (dict): A VQIP amount that was successfully pulled
-
         """
         # Calculate actual pull
         total_storage = self.tank.storage["volume"]
@@ -459,7 +446,6 @@ class River(Storage):
                 _Units_: -
              - minimum required flow
                 _Units_: m3/day
-
         """
         # Set parameters
         self.depth = depth  # [m]
@@ -576,7 +562,6 @@ class River(Storage):
 
         Returns:
             avail (dict): A VQIP amount that can be pulled
-
         """
         # Get storage
         avail = self.tank.get_avail()
@@ -605,7 +590,6 @@ class River(Storage):
 
         Returns:
             (dict): A VQIP amount that was pulled
-
         """
         # Calculate available pull
         avail = self.pull_check_river(vqip)
@@ -629,7 +613,6 @@ class River(Storage):
 
         Returns:
             (dict): A VQIP amount that was not successfully received
-
         """
         _ = self.tank.push_storage(vqip, force=True)
         return self.empty_vqip()
@@ -643,7 +626,6 @@ class River(Storage):
 
         Returns:
             (float): total din
-
         """
         return sum(
             [self.tank.storage[x] for x in self.din_components]
@@ -655,7 +637,6 @@ class River(Storage):
         Returns:
             in_ (dict): A VQIP amount that represents total gain in pollutant amounts
             out_ (dict): A VQIP amount that represents total loss in pollutant amounts
-
         """
         # TODO make more modular
         self.update_depth()
@@ -818,12 +799,11 @@ class River(Storage):
         return in_, out_
 
     def get_riverrc(self):
-        """Get river outflow coefficient (i.e., how much water leaves the tank in
-        this timestep).
+        """Get river outflow coefficient (i.e., how much water leaves the tank in this
+        timestep).
 
         Returns:
             riverrc (float): outflow coeffficient
-
         """
         # Calculate travel time
         total_time = self.length / self.velocity
@@ -902,7 +882,6 @@ class Reservoir(Storage):
                 parameters (a constant and a temperature sensitivity exponent)
                 as values.
                 _Units_: -
-
         """
         super().__init__(**kwargs)
 
@@ -919,8 +898,8 @@ class RiverReservoir(Reservoir):
     """"""
 
     def __init__(self, environmental_flow=0, **kwargs):
-        """A reservoir with a natural river inflow, includes an environmental
-        downstream flow to satisfy.
+        """A reservoir with a natural river inflow, includes an environmental downstream
+        flow to satisfy.
 
         Args:
             environmental_flow (float, optional): Downstream environmental flow.
@@ -955,7 +934,6 @@ class RiverReservoir(Reservoir):
                 parameters (a constant and a temperature sensitivity exponent)
                 as values.
                 _Units_: -
-
         """
         # Parameters
         self.environmental_flow = environmental_flow
@@ -978,7 +956,6 @@ class RiverReservoir(Reservoir):
 
         Returns:
             reply (dict): A VQIP amount that was not successfully received
-
         """
         # Apply normal reservoir storage
         # We do this under the assumption that spill is mixed in with the reservoir
@@ -999,8 +976,8 @@ class RiverReservoir(Reservoir):
         return reply
 
     def push_check_river_reservoir(self, vqip=None):
-        """A push check to receive water, assumes spill may occur and checks
-        downstream capacity.
+        """A push check to receive water, assumes spill may occur and checks downstream
+        capacity.
 
         Args:
             vqip (dict, optional): A VQIP that can be used to limit the volume in
@@ -1008,7 +985,6 @@ class RiverReservoir(Reservoir):
 
         Returns:
             excess (dict): A VQIP amount of water that cannot be received
-
         """
         # Check downstream capacity (i.e., that would be spilled)
         downstream_availability = self.get_connected(

@@ -2,7 +2,6 @@
 """Created on Fri May 20 08:58:58 2022.
 
 @author: Barney
-
 """
 import sys
 from bisect import bisect_left
@@ -165,15 +164,13 @@ class Land(Node):
         """Iterate over any irrigation functions (needs further testing..
 
         maybe).
-
         """
         for f in self.irrigation_functions:
             f()
 
     def run(self):
-        """Call the run function in all surfaces, update surface/subsurface/
-        percolation tanks, discharge to rivers/groundwater.
-        """
+        """Call the run function in all surfaces, update surface/subsurface/ percolation
+        tanks, discharge to rivers/groundwater."""
         # Run all surfaces
         for surface in self.surfaces:
             surface.run()
@@ -218,15 +215,14 @@ class Land(Node):
                     self.subsurface_runoff.push_storage(reply_subsurface, force=True)
 
     def push_set_sewer(self, vqip):
-        """Receive water from a sewer and send it to the first ImperviousSurface
-        in surfaces.
+        """Receive water from a sewer and send it to the first ImperviousSurface in
+        surfaces.
 
         Args:
             vqip (dict): A VQIP amount to be sent to the impervious surface
 
         Returns:
             vqip (dict): A VQIP amount of water that was not received
-
         """
         # TODO currently just push to the first impervious surface... not sure if people will be having multiple impervious surfaces. If people would be only having one then it would make sense to store as a parameter... this is probably fine for now
         for surface in self.surfaces:
@@ -247,15 +243,14 @@ class Land(Node):
             tanks.end_timestep()
 
     def get_surface(self, surface_):
-        """Return a surface from the list of surfaces by the 'surface' entry in
-        the surface. I.e., the name of the surface.
+        """Return a surface from the list of surfaces by the 'surface' entry in the
+        surface. I.e., the name of the surface.
 
         Args:
             surface_ (str): Name of the surface
 
         Returns:
             surface (Surface): The first surface that matches the name
-
         """
         for surface in self.surfaces:
             if surface.surface == surface_:
@@ -285,15 +280,14 @@ class Surface(DecayTank):
         pollutant_load={},
         **kwargs,
     ):
-        """A subclass of DecayTank. Each Surface is anticipated to represent a
-        different land cover type of a Land node. Besides functioning as a Tank,
-        Surfaces have three lists of functions (inflows, processes and outflows)
-        where behaviour can be added by appending new functions. We anticipate
-        that customised surfaces should be a subclass of Surface or its subclasses
-        and add functions to these lists. These lists are executed (inflows first,
-        then processes, then outflows) in the run function, which is called by the
-        run function in Land. The lists must return any model inflows or outflows
-        as a VQIP for mass balance checking.
+        """A subclass of DecayTank. Each Surface is anticipated to represent a different
+        land cover type of a Land node. Besides functioning as a Tank, Surfaces have
+        three lists of functions (inflows, processes and outflows) where behaviour can
+        be added by appending new functions. We anticipate that customised surfaces
+        should be a subclass of Surface or its subclasses and add functions to these
+        lists. These lists are executed (inflows first, then processes, then outflows)
+        in the run function, which is called by the run function in Land. The lists must
+        return any model inflows or outflows as a VQIP for mass balance checking.
 
         If a user wishes the DecayTank portion to be active, then can provide
         'decays', which are passed upwards (see wsimod/core/core.py/DecayObj for
@@ -331,7 +325,6 @@ class Surface(DecayTank):
                 nitrates. `nhx-dry` describes nitrogen as ammonia. `srp/noy/
                 nhx-wet` can also be used to specify wet deposition.
                 _Units_: kg/m2/timestep (data is read at a monthly timestep)
-
         """
         # Assign parameters
         self.depth = depth
@@ -380,15 +373,13 @@ class Surface(DecayTank):
             )
 
     def get_data_input(self, var):
-        """Read data input from parent Land node (i.e., for
-        precipitation/et0/temp).
+        """Read data input from parent Land node (i.e., for precipitation/et0/temp).
 
         Args:
             var (str): Name of variable
 
         Returns:
             Data read
-
         """
         return self.parent.get_data_input(var)
 
@@ -400,14 +391,13 @@ class Surface(DecayTank):
 
         Returns:
             Data read
-
         """
         return self.data_input_dict[(var, self.parent.monthyear)]
 
     def dry_deposition_to_tank(self, vqip):
-        """Generic function for allocating dry pollution deposition to the
-        surface. Simply sends the pollution into the tank (some subclasses
-        overwrite this behaviour).
+        """Generic function for allocating dry pollution deposition to the surface.
+        Simply sends the pollution into the tank (some subclasses overwrite this
+        behaviour).
 
         Args:
             vqip (dict): A VQIP amount of dry deposition to send to tank
@@ -415,16 +405,15 @@ class Surface(DecayTank):
         Returns:
             vqip (dict): A VQIP amount of dry deposition that entered the tank (used
                 for mass balance checking)
-
         """
         # Default behaviour is to just enter the tank
         _ = self.push_storage(vqip, force=True)
         return vqip
 
     def wet_deposition_to_tank(self, vqip):
-        """Generic function for allocating wet pollution deposition to the
-        surface. Simply sends the pollution into the tank (some subclasses
-        overwrite this behaviour).
+        """Generic function for allocating wet pollution deposition to the surface.
+        Simply sends the pollution into the tank (some subclasses overwrite this
+        behaviour).
 
         Args:
             vqip (dict): A VQIP amount of wet deposition to send to tank
@@ -432,20 +421,18 @@ class Surface(DecayTank):
         Returns:
             vqip (dict): A VQIP amount of wet deposition that entered the tank (used
                 for mass balance checking)
-
         """
         # Default behaviour is to just enter the tank
         _ = self.push_storage(vqip, force=True)
         return vqip
 
     def simple_deposition(self):
-        """Inflow function to cause simple pollution deposition to occur, updating
-        the surface tank.
+        """Inflow function to cause simple pollution deposition to occur, updating the
+        surface tank.
 
         Returns:
             (tuple): A tuple containing a VQIP amount for model inputs and outputs
                 for mass balance checking.
-
         """
         pollution = self.empty_vqip()
 
@@ -463,13 +450,12 @@ class Surface(DecayTank):
         return (pollution, self.empty_vqip())
 
     def atmospheric_deposition(self):
-        """Inflow function to cause dry atmospheric deposition to occur, updating
-        the surface tank.
+        """Inflow function to cause dry atmospheric deposition to occur, updating the
+        surface tank.
 
         Returns:
             (tuple): A tuple containing a VQIP amount for model inputs and outputs
                 for mass balance checking.
-
         """
         # TODO double check units in preprocessing - is weight of N or weight of NHX/noy?
 
@@ -491,13 +477,12 @@ class Surface(DecayTank):
         return (in_, self.empty_vqip())
 
     def precipitation_deposition(self):
-        """Inflow function to cause wet precipitation deposition to occur,
-        updating the surface tank.
+        """Inflow function to cause wet precipitation deposition to occur, updating the
+        surface tank.
 
         Returns:
             (tuple): A tuple containing a VQIP amount for model inputs and outputs
                 for mass balance checking.
-
         """
         # TODO double check units - is weight of N or weight of NHX/noy?
 
@@ -523,12 +508,12 @@ class ImperviousSurface(Surface):
     """"""
 
     def __init__(self, pore_depth=0, et0_to_e=1, **kwargs):
-        """A surface to represent impervious surfaces that drain to storm sewers.
-        Runoff is generated by the surface tank overflowing, if a user wants all
-        precipitation to immediately go to runoff then they should reduce
-        'pore_depth', however generally this is not what happens and a small (a
-        few mm) depth should be assigned to the tank. Also includes urban
-        pollution deposition, though this will only be mobilised if runoff occurs.
+        """A surface to represent impervious surfaces that drain to storm sewers. Runoff
+        is generated by the surface tank overflowing, if a user wants all precipitation
+        to immediately go to runoff then they should reduce 'pore_depth', however
+        generally this is not what happens and a small (a few mm) depth should be
+        assigned to the tank. Also includes urban pollution deposition, though this will
+        only be mobilised if runoff occurs.
 
         Note that the tank does not have a runoff coefficient because it doesn't make
         sense from an integrated perspective. If a user wants to mimic runoff
@@ -542,7 +527,6 @@ class ImperviousSurface(Surface):
             et0_to_e (float, optional): Multiplier applied to the parent's data
                 timeseries of et0 to determine how much evaporation takes place on the
                 ImperviousSurface. Defaults to 1.
-
         """
         # Assign parameters
         self.et0_to_e = et0_to_e  # Total evaporation
@@ -560,8 +544,7 @@ class ImperviousSurface(Surface):
         self.outflows.append(self.push_to_sewers)
 
     def precipitation_evaporation(self):
-        """Inflow function that is a simple rainfall-evaporation model, updating
-        the.
+        """Inflow function that is a simple rainfall-evaporation model, updating the.
 
         surface tank. All precipitation that is not evaporated is forced into the tank
         (even though some of that will later be pushed to sewers) - this enables runoff
@@ -570,7 +553,6 @@ class ImperviousSurface(Surface):
         Returns:
             (tuple): A tuple containing a VQIP amount for model inputs and outputs
                 for mass balance checking.
-
         """
         # Read data in length units
         precipitation_depth = self.get_data_input("precipitation")
@@ -616,13 +598,12 @@ class ImperviousSurface(Surface):
         return (self.precipitation, self.evaporation)
 
     def push_to_sewers(self):
-        """Outflow function that distributes ponded water (i.e., surface runoff)
-        to the parent node's attached sewers.
+        """Outflow function that distributes ponded water (i.e., surface runoff) to the
+        parent node's attached sewers.
 
         Returns:
             (tuple): A tuple containing a VQIP amount for model inputs and outputs
                 for mass balance checking.
-
         """
         # Get runoff
         surface_runoff = self.pull_ponded()
@@ -655,8 +636,7 @@ class PerviousSurface(Surface):
         ihacres_p=10,
         **kwargs,
     ):
-        """A generic pervious surface that represents hydrology with the IHACRES
-        model.
+        """A generic pervious surface that represents hydrology with the IHACRES model.
 
         Args:
             depth (float, optional): Soil tank (i.e., root) depth. Defaults to 0.75.
@@ -710,7 +690,6 @@ class PerviousSurface(Surface):
                 _Units_: -
              - ihacres_p.
                 _Units_: -
-
         """
         # Assign parameters (converting field capacity and wilting point to depth)
         self.field_capacity = field_capacity
@@ -763,7 +742,6 @@ class PerviousSurface(Surface):
 
         Returns:
             (float): current moisture deficit
-
         """
         return self.get_excess()["volume"] / self.area
 
@@ -772,7 +750,6 @@ class PerviousSurface(Surface):
 
         Returns:
             (float): soil moisture content
-
         """
         # Depth of soil moisture
         return self.storage["volume"] / self.area
@@ -788,14 +765,13 @@ class PerviousSurface(Surface):
         return precipitation_depth, evaporation_depth
 
     def ihacres(self):
-        """Inflow function that runs the IHACRES model equations, updates tanks,
-        and store flows in state variables (which are later sent to the parent
-        land node in the route function).
+        """Inflow function that runs the IHACRES model equations, updates tanks, and
+        store flows in state variables (which are later sent to the parent land node in
+        the route function).
 
         Returns:
             (tuple): A tuple containing a VQIP amount for model inputs and outputs
                 for mass balance checking.
-
         """
         # Read data (leave in depth units since that is what IHACRES equations are in)
         precipitation_depth, evaporation_depth = self.get_climate()
@@ -918,13 +894,12 @@ class PerviousSurface(Surface):
         return (in_, out_)
 
     def route(self):
-        """An outflow function that sends percolation, subsurface runoff and
-        surface runoff to their respective tanks in the parent land node.
+        """An outflow function that sends percolation, subsurface runoff and surface
+        runoff to their respective tanks in the parent land node.
 
         Returns:
             (tuple): A tuple containing a VQIP amount for model inputs and outputs
                 for mass balance checking.
-
         """
         self.parent.surface_runoff.push_storage(self.infiltration_excess, force=True)
         self.parent.subsurface_runoff.push_storage(self.subsurface_flow, force=True)
@@ -941,7 +916,6 @@ class PerviousSurface(Surface):
         Returns:
             (tuple): A tuple containing a VQIP amount for model inputs and outputs
                 for mass balance checking.
-
         """
         auto = self.storage["temperature"] * self.soil_temp_w_prev
         air = self.get_data_input("temperature") * self.soil_temp_w_air
@@ -1200,18 +1174,17 @@ class GrowingSurface(PerviousSurface):
                 ]
 
     def pull_storage(self, vqip):
-        """Pull water from the surface, updating the surface storage VQIP.
-        Nutrient pool pollutants (nitrate/nitrite/ammonia/phosphate/org-
-        phosphorus/ org-nitrogen) are removed in proportion to their amounts in
-        the dissolved nutrient pools, if they are simulated. Other pollutants are
-        removed in proportion to their amount in the surface tank.
+        """Pull water from the surface, updating the surface storage VQIP. Nutrient pool
+        pollutants (nitrate/nitrite/ammonia/phosphate/org- phosphorus/ org-nitrogen) are
+        removed in proportion to their amounts in the dissolved nutrient pools, if they
+        are simulated. Other pollutants are removed in proportion to their amount in the
+        surface tank.
 
         Args:
             vqip (dict): VQIP amount to be pulled, (only 'volume' key is needed)
 
         Returns:
             reply (dict): A VQIP amount successfully pulled from the tank
-
         """
         if self.storage["volume"] == 0:
             return self.empty_vqip()
@@ -1263,8 +1236,7 @@ class GrowingSurface(PerviousSurface):
         return reply
 
     def quick_interp(self, x, xp, yp):
-        """A simple version of np.interp to intepolate crop information on the
-        fly.
+        """A simple version of np.interp to intepolate crop information on the fly.
 
         Args:
             x (int): Current time (i.e., day of year)
@@ -1273,7 +1245,6 @@ class GrowingSurface(PerviousSurface):
 
         Returns:
             y (float): Interpolated value for current time
-
         """
         x_ind = bisect_left(xp, x)
         x_left = xp[x_ind - 1]
@@ -1286,13 +1257,12 @@ class GrowingSurface(PerviousSurface):
 
     def calc_crop_cover(self):
         """Process function that calculates how much crop cover there is, assigns
-        whether crops are sown/harvested, and calculates et0_coefficient based on
-        growth stage of crops.
+        whether crops are sown/harvested, and calculates et0_coefficient based on growth
+        stage of crops.
 
         Returns:
             (tuple): A tuple containing a VQIP amount for model inputs and outputs
                 for mass balance checking.
-
         """
         # Get current day of year
         doy = self.parent.t.dayofyear
@@ -1377,14 +1347,12 @@ class GrowingSurface(PerviousSurface):
         return vqip
 
     def effective_precipitation_flushing(self):
-        """Remove the nutrients brought out by effective precipitation, which is
-        surface runoff, subsurface runoff, and percolation, from the nutrients
-        pool.
+        """Remove the nutrients brought out by effective precipitation, which is surface
+        runoff, subsurface runoff, and percolation, from the nutrients pool.
 
         Returns:
             (tuple): A tuple containing a VQIP amount for model inputs and outputs
                     for mass balance checking.
-
         """
         # inorganic
         out = self.nutrient_pool.get_empty_nutrient()
@@ -1428,7 +1396,6 @@ class GrowingSurface(PerviousSurface):
         Returns:
             (tuple): A tuple containing a VQIP amount for model inputs and outputs
                 for mass balance checking.
-
         """
         # TODO tidy up fertiliser/manure/residue/deposition once preprocessing is sorted
 
@@ -1461,7 +1428,6 @@ class GrowingSurface(PerviousSurface):
         Returns:
             (tuple): A tuple containing a VQIP amount for model inputs and outputs
                 for mass balance checking.
-
         """
         # Scale for surface
         nhx = self.get_data_input_surface("nhx-manure") * self.area
@@ -1494,7 +1460,6 @@ class GrowingSurface(PerviousSurface):
         Returns:
             (tuple): A tuple containing a VQIP amount for model inputs and outputs
                 for mass balance checking.
-
         """
         nhx = self.get_data_input_surface("nhx-residue") * self.area
         noy = self.get_data_input_surface("noy-residue") * self.area
@@ -1521,13 +1486,12 @@ class GrowingSurface(PerviousSurface):
         return (vqip, self.empty_vqip())
 
     def soil_pool_transformation(self):
-        """A process function that run transformation functions in the nutrient
-        pool and updates the pollutant concentrations in the surface tank.
+        """A process function that run transformation functions in the nutrient pool and
+        updates the pollutant concentrations in the surface tank.
 
         Returns:
             (tuple): A tuple containing a VQIP amount for model inputs and outputs
                 for mass balance checking.
-
         """
         # Initialise mass balance tracking variables
         in_ = self.empty_vqip()
@@ -1591,13 +1555,12 @@ class GrowingSurface(PerviousSurface):
         return (in_, out_)
 
     def calc_temperature_dependence_factor(self):
-        """Process function that calculates the temperature dependence factor for
-        the nutrient pool (which impacts soil pool transformations).
+        """Process function that calculates the temperature dependence factor for the
+        nutrient pool (which impacts soil pool transformations).
 
         Returns:
             (tuple): A tuple containing a VQIP amount for model inputs and outputs
                 for mass balance checking.
-
         """
         # Parameters/equations from HYPE documentation
         if self.storage["temperature"] > 5:
@@ -1612,13 +1575,12 @@ class GrowingSurface(PerviousSurface):
         return (self.empty_vqip(), self.empty_vqip())
 
     def calc_soil_moisture_dependence_factor(self):
-        """Process function that calculates the soil moisture dependence factor
-        for the nutrient pool (which impacts soil pool transformations).
+        """Process function that calculates the soil moisture dependence factor for the
+        nutrient pool (which impacts soil pool transformations).
 
         Returns:
             (tuple): A tuple containing a VQIP amount for model inputs and outputs
                 for mass balance checking.
-
         """
         # Parameters/equations from HYPE documentation
         current_soil_moisture = self.get_smc()
@@ -1638,13 +1600,12 @@ class GrowingSurface(PerviousSurface):
         return (self.empty_vqip(), self.empty_vqip())
 
     def calc_crop_uptake(self):
-        """Process function that calculates how much nutrient crops uptake and
-        updates nutrient pool and surface tank.
+        """Process function that calculates how much nutrient crops uptake and updates
+        nutrient pool and surface tank.
 
         Returns:
             (tuple): A tuple containing a VQIP amount for model inputs and outputs
                 for mass balance checking.
-
         """
         # Parameters/equations from HYPE documentation
 
@@ -1709,13 +1670,12 @@ class GrowingSurface(PerviousSurface):
             return (self.empty_vqip(), self.empty_vqip())
 
     def erosion(self):
-        """Outflow function that erodes adsorbed/humus phosphorus and sediment and
-        sends onwards to percolation/surface runoff/subsurface runoff.
+        """Outflow function that erodes adsorbed/humus phosphorus and sediment and sends
+        onwards to percolation/surface runoff/subsurface runoff.
 
         Returns:
             (tuple): A tuple containing a VQIP amount for model inputs and outputs
                 for mass balance checking.
-
         """
         # Parameters/equations from HYPE documentation (which explains why my documentation is a bit ambiguous - because theirs is too)
 
@@ -1873,13 +1833,12 @@ class GrowingSurface(PerviousSurface):
         return (in_, self.empty_vqip())
 
     def denitrification(self):
-        """Outflow function that performs denitirication processes, updating
-        nutrient pool and soil tank.
+        """Outflow function that performs denitirication processes, updating nutrient
+        pool and soil tank.
 
         Returns:
             (tuple): A tuple containing a VQIP amount for model inputs and outputs
                 for mass balance checking.
-
         """
         # Parameters/equations from HYPE documentation
         # TODO could more of this be moved to NutrientPool
@@ -1938,7 +1897,6 @@ class GrowingSurface(PerviousSurface):
         Returns:
             (tuple): A tuple containing a VQIP amount for model inputs and outputs
                 for mass balance checking.
-
         """
         # Parameters/equations from HYPE documentation
         # TODO could this be moved to the nutrient pool?
@@ -2047,8 +2005,7 @@ class GrowingSurface(PerviousSurface):
         return (in_, out_)
 
     def dry_deposition_to_tank(self, vqip):
-        """Allocate dry deposition to surface tank, updating nutrient pool
-        accordingly.
+        """Allocate dry deposition to surface tank, updating nutrient pool accordingly.
 
         Args:
             vqip (dict): A VQIP amount of dry deposition to send to tank
@@ -2056,7 +2013,6 @@ class GrowingSurface(PerviousSurface):
         Returns:
             vqip (dict): A VQIP amount of dry deposition that entered the tank (used
                 for mass balance checking)
-
         """
         # Convert to nutrients
         deposition = self.nutrient_pool.get_empty_nutrient()
@@ -2072,8 +2028,7 @@ class GrowingSurface(PerviousSurface):
         return vqip
 
     def wet_deposition_to_tank(self, vqip):
-        """Allocate wet deposition to surface tank, updating nutrient pool
-        accordingly.
+        """Allocate wet deposition to surface tank, updating nutrient pool accordingly.
 
         Args:
             vqip (dict): A VQIP amount of dry deposition to send to tank
@@ -2081,7 +2036,6 @@ class GrowingSurface(PerviousSurface):
         Returns:
             vqip (dict): A VQIP amount of dry deposition that entered the tank (used
                 for mass balance checking)
-
         """
         # Convert to nutrients
         deposition = self.nutrient_pool.get_empty_nutrient()
@@ -2101,15 +2055,14 @@ class IrrigationSurface(GrowingSurface):
     """"""
 
     def __init__(self, irrigation_coefficient=0.1, **kwargs):
-        """A subclass of GrowingSurface that can calculate water demand for the
-        crops that is not met by precipitation and use the parent node to acquire
-        water. When the surface is created by the parent node, the irrigate
-        function below is assigned.
+        """A subclass of GrowingSurface that can calculate water demand for the crops
+        that is not met by precipitation and use the parent node to acquire water. When
+        the surface is created by the parent node, the irrigate function below is
+        assigned.
 
         Args:
             irrigation_coefficient (float, optional): proportion area irrigated *
                 proportion of demand met. Defaults to 0.1.
-
         """
         # Assign param
         self.irrigation_coefficient = irrigation_coefficient  # proportion area irrigated * proportion of demand met
@@ -2118,8 +2071,7 @@ class IrrigationSurface(GrowingSurface):
 
     def irrigate(self):
         """Calculate water demand for crops and call parent node to acquire water,
-        updating surface tank and nutrient pools.
-        """
+        updating surface tank and nutrient pools."""
         if self.days_after_sow:
             # Irrigation is just difference between evaporation and precipitation amount
             irrigation_demand = (
@@ -2159,17 +2111,16 @@ class GardenSurface(GrowingSurface):
 
     # TODO - probably a simplier version of this is useful, building just on pervioussurface
     def __init__(self, **kwargs):
-        """A specific surface for gardens that treats the garden as a grass crop,
-        but that can calculate/receive irrigation through functions that are
-        assigned by the parent land node's handlers, which in turn are expected to
-        be triggered by a query from an attached Demand node.
-        """
+        """A specific surface for gardens that treats the garden as a grass crop, but
+        that can calculate/receive irrigation through functions that are assigned by the
+        parent land node's handlers, which in turn are expected to be triggered by a
+        query from an attached Demand node."""
         super().__init__(**kwargs)
 
     def calculate_irrigation_demand(self, ignore_vqip=None):
-        """A check function (assigned by parent to push check from demand nodes)
-        that calculations irrigation demand (i.e., difference between evaporation
-        and preciptiation).
+        """A check function (assigned by parent to push check from demand nodes) that
+        calculations irrigation demand (i.e., difference between evaporation and
+        preciptiation).
 
         Args:
             ignore_vqip (any, optional): Conventional push checks send an optional
@@ -2179,7 +2130,6 @@ class GardenSurface(GrowingSurface):
         Returns:
             reply (dict): A VQIP amount of irrigation demand (note only 'volume' key
                 is used)
-
         """
         # Calculate irrigation demand
         irrigation_demand = max(
@@ -2206,7 +2156,6 @@ class GardenSurface(GrowingSurface):
         Returns:
             (dict): A VQIP amount of irrigation that was not received (should always
                 be empty)
-
         """
         # update tank
         return self.push_storage(vqip, force=True)

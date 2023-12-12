@@ -2,7 +2,6 @@
 """Created on Sun Aug 14 16:27:14 2022.
 
 @author: bdobson
-
 """
 
 from wsimod.core import constants
@@ -10,10 +9,10 @@ from wsimod.nodes.nodes import Node
 
 
 def decorate_leakage_set(self, f):
-    """Decorator to extend the functionality of `f` by introducing leakage. This
-    is achieved by adjusting the volume of the request (vqip) to include
-    anticipated leakage, calling the original function `f`, and then distributing
-    the leaked amount to groundwater.
+    """Decorator to extend the functionality of `f` by introducing leakage. This is
+    achieved by adjusting the volume of the request (vqip) to include anticipated
+    leakage, calling the original function `f`, and then distributing the leaked amount
+    to groundwater.
 
     Args:
         self (instance of Distribution class): The Distribution object to be
@@ -24,7 +23,6 @@ def decorate_leakage_set(self, f):
     Returns:
         pull_set (function): The decorated function which includes the
             original functionality of `f` and additional leakage operations.
-
     """
 
     def pull_set(vqip, **kwargs):
@@ -62,9 +60,9 @@ def decorate_leakage_set(self, f):
 
 
 def decorate_leakage_check(self, f):
-    """Decorator to extend the functionality of `f` by introducing leakage. This
-    is achieved by adjusting the volume of the request (vqip) to include
-    anticipated leakage and then calling the original function `f`.
+    """Decorator to extend the functionality of `f` by introducing leakage. This is
+    achieved by adjusting the volume of the request (vqip) to include anticipated
+    leakage and then calling the original function `f`.
 
     Args:
         self (instance of Distribution class): The Distribution object to be
@@ -75,7 +73,6 @@ def decorate_leakage_check(self, f):
     Returns:
         pull_check (function): The decorated function which includes the
             original functionality of `f` and additional leakage operations.
-
     """
 
     def pull_check(vqip, **kwargs):
@@ -153,7 +150,6 @@ class UnlimitedDistribution(Distribution):
 
         Input data and parameter requirements:
             - None
-
         """
         super().__init__(**kwargs)
         # Update handlers
@@ -168,15 +164,13 @@ class UnlimitedDistribution(Distribution):
         self.mass_balance_in.append(lambda: self.supplied)
 
     def pull_set_unlimited(self, vqip):
-        """Respond that VQIP was fulfilled and update state variables for mass
-        balance.
+        """Respond that VQIP was fulfilled and update state variables for mass balance.
 
         Args:
             vqip (dict): A VQIP amount to request
 
         Returns:
             vqip (dict): A VQIP amount that was supplied
-
         """
         # TODO maybe need some pollutant concentrations?
         vqip = self.v_change_vqip(self.empty_vqip(), vqip["volume"])

@@ -2,7 +2,6 @@
 """Created on Mon Jul  4 16:01:48 2022.
 
 @author: bdobson
-
 """
 import csv
 import gzip
@@ -31,13 +30,11 @@ class to_datetime:
 
     # TODO document and make better
     def __init__(self, date_string):
-        """Simple datetime wrapper that has key properties used in WSIMOD
-        components.
+        """Simple datetime wrapper that has key properties used in WSIMOD components.
 
         Args:
             date_string (str): A string containing the date, expected in
                 format %Y-%m-%d or %Y-%m.
-
         """
         self._date = self._parse_date(date_string)
 
@@ -137,7 +134,6 @@ class Model(WSIObj):
 
         Returns:
             Model: An empty model object
-
         """
         super().__init__()
         self.arcs = {}
@@ -165,9 +161,7 @@ class Model(WSIObj):
         self.nodes_type = {x: {} for x in self.nodes_type}
 
     def get_init_args(self, cls):
-        """Get the arguments of the __init__ method for a class and its
-        superclasses.
-        """
+        """Get the arguments of the __init__ method for a class and its superclasses."""
         init_args = []
         for c in cls.__mro__:
             # Get the arguments of the __init__ method
@@ -218,14 +212,13 @@ class Model(WSIObj):
             self.dates = [to_datetime(x) for x in data["dates"]]
 
     def save(self, address, config_name="config.yml", compress=False):
-        """Save the model object to a yaml file and input data to csv.gz format in
-        the directory specified.
+        """Save the model object to a yaml file and input data to csv.gz format in the
+        directory specified.
 
         Args:
             address (str): Path to a directory
             config_name (str, optional): Name of yaml model file.
                 Defaults to 'model.yml'
-
         """
         if not os.path.exists(address):
             os.mkdir(address)
@@ -396,7 +389,6 @@ class Model(WSIObj):
             >>> # of the previous run
             >>> new_model = Model()
             >>> new_model = new_model.load_pickle('model_at_end_of_run.pkl')
-
         """
         file = open(fid, "rb")
         return pickle.load(file)
@@ -409,20 +401,17 @@ class Model(WSIObj):
 
         Returns:
             message (str): Exit message of pickle dump
-
         """
         file = open(fid, "wb")
         pickle.dump(self, file)
         return file.close()
 
     def add_nodes(self, nodelist):
-        """Add nodes to the model object from a list of dicts, where each dict
-        contains all of the parameters for a node. Intended to be called before
-        add_arcs.
+        """Add nodes to the model object from a list of dicts, where each dict contains
+        all of the parameters for a node. Intended to be called before add_arcs.
 
         Args:
             nodelist (list): List of dicts, where a dict is a node
-
         """
 
         def all_subclasses(cls):
@@ -457,13 +446,11 @@ class Model(WSIObj):
             self.nodelist = [x for x in self.nodes.values()]
 
     def add_instantiated_nodes(self, nodelist):
-        """Add nodes to the model object from a list of objects, where each object
-        is an already instantiated node object. Intended to be called before
-        add_arcs.
+        """Add nodes to the model object from a list of objects, where each object is an
+        already instantiated node object. Intended to be called before add_arcs.
 
         Args:
             nodelist (list): list of objects that are nodes
-
         """
         self.nodelist = nodelist
         self.nodes = {x.name: x for x in nodelist}
@@ -471,12 +458,11 @@ class Model(WSIObj):
             self.nodes_type[x.__class__.__name__][x.name] = x
 
     def add_arcs(self, arclist):
-        """Add nodes to the model object from a list of dicts, where each dict
-        contains all of the parameters for an arc.
+        """Add nodes to the model object from a list of dicts, where each dict contains
+        all of the parameters for an arc.
 
         Args:
             arclist (list): list of dicts, where a dict is an arc
-
         """
         river_arcs = {}
         for arc in arclist:
@@ -513,12 +499,11 @@ class Model(WSIObj):
                     self.river_discharge_order.append(node[0])
 
     def add_instantiated_arcs(self, arclist):
-        """Add arcs to the model object from a list of objects, where each object
-        is an already instantiated arc object.
+        """Add arcs to the model object from a list of objects, where each object is an
+        already instantiated arc object.
 
         Args:
             arclist (list): list of objects that are arcs.
-
         """
         self.arclist = arclist
         self.arcs = {x.name: x for x in arclist}
@@ -549,8 +534,8 @@ class Model(WSIObj):
                 self.river_discharge_order.append(node[0])
 
     def assign_upstream(self, arcs, upstreamness):
-        """Recursive function to trace upstream up arcs to determine which are the
-        most upstream.
+        """Recursive function to trace upstream up arcs to determine which are the most
+        upstream.
 
         Args:
             arcs (list): list of dicts where dicts are arcs
@@ -560,7 +545,6 @@ class Model(WSIObj):
 
         Returns:
             upstreamness (dict): final version of upstreamness
-
         """
         upstreamness_ = upstreamness.copy()
         in_nodes = [
@@ -580,8 +564,7 @@ class Model(WSIObj):
 
     def debug_node_mb(self):
         """Simple function that iterates over nodes calling their mass balance
-        function.
-        """
+        function."""
         for node in self.nodelist:
             _ = node.node_mass_balance()
 
@@ -590,7 +573,6 @@ class Model(WSIObj):
 
         Returns:
             (dict): default settings
-
         """
         return {
             "arcs": {"flows": True, "pollutants": True},
@@ -606,7 +588,6 @@ class Model(WSIObj):
                 node is multiplied by (grass area is changed in compensation)
             nodes (list, optional): list of land nodes to change the parameters of.
                 Defaults to None, which applies the change to all land nodes.
-
         """
         # Multiplies impervious area by relative change and adjusts grassland accordingly
         if nodes is None:
@@ -686,7 +667,6 @@ class Model(WSIObj):
                            'function' : @ (x, model) sum([y['storage'] < (model.nodes['my_reservoir'].tank.capacity / 2) for y in x])
                            }]
             _, _, results, _ = my_model.run(record_all = False, objectives = objectives)
-
         """
         if record_arcs is None:
             record_arcs = []
@@ -990,9 +970,8 @@ class Model(WSIObj):
         return flows, tanks, objective_results, surfaces
 
     def reinit(self):
-        """Reinitialise by ending all node/arc timesteps and calling reinit
-        function in all nodes (generally zero-ing their storage values).
-        """
+        """Reinitialise by ending all node/arc timesteps and calling reinit function in
+        all nodes (generally zero-ing their storage values)."""
         for node in self.nodes.values():
             node.end_timestep()
             for prop in dir(node):

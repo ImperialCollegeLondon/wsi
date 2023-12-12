@@ -4,7 +4,6 @@
 @author: Barney
 
 Converted to totals on Thur Apr 21 2022
-
 """
 from math import log10
 
@@ -15,18 +14,17 @@ class WSIObj:
     """"""
 
     def __init__(self):
-        """WSIObj is the base object of everything in WSIMOD. It is used to
-        perform VQIP operations and mass balance checking behaviour.
+        """WSIObj is the base object of everything in WSIMOD. It is used to perform VQIP
+        operations and mass balance checking behaviour.
 
-        RSE has suggested that it would make more sense to leave VQIP operations
-        as regular functions in a module or associated them with a VQIP class.
+        RSE has suggested that it would make more sense to leave VQIP operations as
+        regular functions in a module or associated them with a VQIP class.
 
-        Predefining empty_vqip_predefined in a class object is sensible though
-        because it is the foundation of many operations, and copying a dict is
-        many times quicker than copying a class.
+        Predefining empty_vqip_predefined in a class object is sensible though because
+        it is the foundation of many operations, and copying a dict is many times
+        quicker than copying a class.
 
         For now I will leave WSIObj as the base object, but this may change.
-
         """
         # Predefine empty concentrations because copying is quicker than defining
         self.empty_vqip_predefined = dict.fromkeys(constants.POLLUTANTS + ["volume"], 0)
@@ -41,7 +39,6 @@ class WSIObj:
         Examples:
             >>> obj = WSIObj()
             >>> obj.empty_vqip()
-
         """
         return self.empty_vqip_predefined.copy()
 
@@ -53,14 +50,12 @@ class WSIObj:
 
         Returns:
             (dict): A copy of t
-
         """
         return t.copy()
 
     def blend_vqip(self, c1, c2):
-        """Blends together two VQIPs that are assumed to have pollutant entries
-        set as pollution concentrations, blending occurs with proportionate
-        mixing.
+        """Blends together two VQIPs that are assumed to have pollutant entries set as
+        pollution concentrations, blending occurs with proportionate mixing.
 
         NOTE: VQIPs in WSIMOD in general store pollution as a total rather than a
         concentration. So you should only blend if you are doing it intentionally and
@@ -72,7 +67,6 @@ class WSIObj:
 
         Returns:
             c (dict): A new VQIP where c1 and c2 have been proportionately blended
-
         """
         # Blend two vqips given as concentrations
         c = self.empty_vqip()
@@ -87,9 +81,9 @@ class WSIObj:
         return c
 
     def sum_vqip(self, t1, t2):
-        """Combines two VQIPs where pollutant entries are assumed to be given as
-        mass. Volume and additive pollutants are summed while non additive
-        pollutants are proportionately blended.
+        """Combines two VQIPs where pollutant entries are assumed to be given as mass.
+        Volume and additive pollutants are summed while non additive pollutants are
+        proportionately blended.
 
         Args:
             t1 (dict): A VQIP where pollutant entries are mass totals
@@ -105,7 +99,6 @@ class WSIObj:
             >>> t = sum_vqip(t1, t2)
             >>> print(t)
             {'phosphate' : 0.5, 'volume' : 110, 'temperature' : 10.45}
-
         """
         # Sum two vqips given as totals
         t = self.copy_vqip(t1)
@@ -123,15 +116,13 @@ class WSIObj:
         return t
 
     def concentration_to_total(self, c):
-        """Convert a VQIP that has pollutant entries as concentrations into mass
-        totals.
+        """Convert a VQIP that has pollutant entries as concentrations into mass totals.
 
         Args:
             c (dict): A VQIP where pollutant entries are concentrations
 
         Returns:
             c (dict): A VQIP where pollutant entries are mass totals
-
         """
         c = self.copy_vqip(c)
         for pollutant in constants.ADDITIVE_POLLUTANTS:
@@ -148,7 +139,6 @@ class WSIObj:
 
         Returns:
             c (dict): A VQIP where pollutant entries are concentrations
-
         """
         c = self.copy_vqip(t)
         for pollutant in constants.ADDITIVE_POLLUTANTS:
@@ -176,7 +166,6 @@ class WSIObj:
             >>> t = extract_vqip(t1, t2)
             >>> print(t)
             {'phosphate' : 0, 'volume' : 90, 'temperature' : 10}
-
         """
         # TODO should probably be called 'subtract_vqip'
         # TODO need to analyse uses of this to see if it is sensible to do something for non additive
@@ -202,7 +191,6 @@ class WSIObj:
         Returns:
             c (dict): A copy of c1 where each additive pollutant and volume has had
                 c2 proportionately extracted from it
-
         """
         c = self.copy_vqip(c1)
 
@@ -226,7 +214,6 @@ class WSIObj:
 
         Returns:
             t (dict): Updated VQIP
-
         """
         # Distill v from t
         t = self.copy_vqip(t)
@@ -247,7 +234,6 @@ class WSIObj:
 
         Returns:
             c (dict): Updated VQIP
-
         """
         # Distill v from c
         c = self.copy_vqip(c)
@@ -260,8 +246,8 @@ class WSIObj:
         return c_
 
     def v_change_vqip(self, t, v):
-        """Change the volume of a VQIP, where pollutants are mass totals, and
-        update pollutant values in proportion to the change in volume.
+        """Change the volume of a VQIP, where pollutants are mass totals, and update
+        pollutant values in proportion to the change in volume.
 
         Args:
             t (dict): A VQIP where pollutant entries are mass totals to get
@@ -280,7 +266,6 @@ class WSIObj:
 
             >>> print(to_extract)
             {'volume': 10, 'phosphate': 0.025}
-
         """
         t = self.copy_vqip(t)
         if t["volume"] > 0:
@@ -307,7 +292,6 @@ class WSIObj:
 
         Returns:
             c (dict): A new VQIP with volume udpated
-
         """
         # Change volume of vqip
         c = self.copy_vqip(c)
@@ -315,8 +299,8 @@ class WSIObj:
         return c
 
     def ds_vqip(self, t, t_):
-        """Get difference between each additive pollutant and volume for VQIPs
-        where pollutants are given as mass totals.
+        """Get difference between each additive pollutant and volume for VQIPs where
+        pollutants are given as mass totals.
 
         Args:
             t (dict): A VQIP where pollutant entries are mass totals to subtract
@@ -333,7 +317,6 @@ class WSIObj:
             >>> t = ds_vqip(t1, t2)
             >>> print(t)
             {'phosphate' : 0.05, 'volume' : 10, 'temperature' : 0}
-
         """
         ds = self.empty_vqip()
         for pol in constants.ADDITIVE_POLLUTANTS + ["volume"]:
@@ -341,9 +324,8 @@ class WSIObj:
         return ds
 
     def ds_vqip_c(self, c, c_):
-        """Get difference between each additive pollutant and volume for VQIPs
-        where pollutants are given as concentrations but difference is given as
-        mass totals.
+        """Get difference between each additive pollutant and volume for VQIPs where
+        pollutants are given as concentrations but difference is given as mass totals.
 
         NOTE: VQIPs in WSIMOD in general store pollution as a total rather than a
         concentration. So you should only work with concentrations if you are doing it intentionally and know what you're doing.
@@ -356,7 +338,6 @@ class WSIObj:
 
         Returns:
             ds (dict): Difference between c and c_ in mass totals
-
         """
         ds = self.empty_vqip()
         ds["volume"] = c["volume"] - c_["volume"]
@@ -366,8 +347,8 @@ class WSIObj:
         return ds
 
     def compare_vqip(self, t1, t2):
-        """Compare two VQIPs and check if the difference between each key is less
-        ' than constants.FLOAT_ACCURACY.
+        """Compare two VQIPs and check if the difference between each key is less ' than
+        constants.FLOAT_ACCURACY.
 
         Args:
             t1 (dict): A VQIP
@@ -375,7 +356,6 @@ class WSIObj:
 
         Returns:
             bool: True if the difference is less for each key, False otherwise
-
         """
         reply = True
         for v in t1.keys():
@@ -384,8 +364,8 @@ class WSIObj:
         return reply
 
     def mass_balance(self):
-        """Call all mass balance functions and compare to see if discrepancy
-        (i.e., if in_ != (out_ + ds_) for volume or for any additive pollutant).
+        """Call all mass balance functions and compare to see if discrepancy (i.e., if
+        in_ != (out_ + ds_) for volume or for any additive pollutant).
 
         Comparison is performed in the magnitude of the largest value of in_, ds_ or
         out_. And so judgement should be exercised as to whether a mass balance has
@@ -398,7 +378,6 @@ class WSIObj:
 
         Raises:
             Message if mass balance does not close to constants.FLOAT_ACCURACY
-
         """
         # Iterate over mass_balance_in functions, summing values in in_
         in_ = self.empty_vqip()
@@ -473,7 +452,6 @@ class DecayObj(WSIObj):
 
         Raises:
             Message if no access to temperature data
-
         """
         # Store decays
         self.decays = decays
@@ -490,15 +468,14 @@ class DecayObj(WSIObj):
         self.total_decayed = self.empty_vqip()
 
     def make_decay(self, vqip):
-        """Make decay, reading tempature and updating pollutant amounts. A wrapper
-        for generic_temperature_decay.
+        """Make decay, reading tempature and updating pollutant amounts. A wrapper for
+        generic_temperature_decay.
 
         Args:
             vqip (dict): A VQIP to decay where pollutants are given as mass totals
 
         Returns:
             vqip_ (dict): A VQIP with pollutant amounts updated
-
         """
         # Read temperature data
         temperature = self.data_input_object.data_input_dict[
@@ -511,8 +488,8 @@ class DecayObj(WSIObj):
         return vqip_
 
     def generic_temperature_decay(self, t, d, temperature):
-        """Performs temperature sensitive pollutant decay calculations for a VQIP
-        where pollutants are given as mass totals.
+        """Performs temperature sensitive pollutant decay calculations for a VQIP where
+        pollutants are given as mass totals.
 
         Args:
             t (dict): A VQIP to decay where pollutants are given as mass totals
@@ -523,7 +500,6 @@ class DecayObj(WSIObj):
             t (dict): A VQIP with updated pollutant values
             diff (dict): A VQIP storing the change in pollutant values (decreases
                 stored as positive numbers)
-
         """
         t = self.copy_vqip(t)
         diff = self.empty_vqip()
@@ -542,8 +518,8 @@ class DecayObj(WSIObj):
         return t, diff
 
     def generic_temperature_decay_c(self, c, d, temperature):
-        """Performs temperature sensitive pollutant decay calculations for a VQIP
-        where pollutants are given as concentrations.
+        """Performs temperature sensitive pollutant decay calculations for a VQIP where
+        pollutants are given as concentrations.
 
         Args:
             c (dict): A VQIP to decay where pollutants are given as concentrations.
@@ -555,7 +531,6 @@ class DecayObj(WSIObj):
                 concentrations)
             diff (dict): A VQIP storing the change in pollutant values (decreases
                 stored as positive numbers). Pollutants as mass totals.
-
         """
         c = self.copy_vqip(c)
         diff = self.empty_vqip()
