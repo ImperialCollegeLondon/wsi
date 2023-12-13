@@ -20,6 +20,10 @@ jobs:
         with:
           path: dist/wsimod*
 
+      - uses: softprops/action-gh-release@v1
+        with:
+          files: dist/wsimod*
+
   publish-TestPyPI:
     needs: build-wheel
     name: Publish WSIMOD to TestPyPI
