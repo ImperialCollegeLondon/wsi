@@ -6,6 +6,7 @@ theme:
 extra_css:
   - stylesheets/extra.css
 
+
 plugins:
   - mkdocstrings
   - mkdocs-jupyter:
@@ -17,8 +18,8 @@ plugins:
       csl_file: "./docs/paper/apa.csl"
       cite_inline: false
   - coverage:
-      page_name: coverage # default
-      html_report_dir: htmlcov # default
+      page_name: coverage  # default
+      html_report_dir: htmlcov  # default
 
 markdown_extensions:
   - footnotes

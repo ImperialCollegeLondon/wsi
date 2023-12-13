@@ -3,9 +3,9 @@
 1. [Introduction](#introduction)
 2. [What data do you need](#what-data-do-you-need)
 3. [WSIMOD model](#wsimod-model)
-   3.1. [Nodes](#nodes)
-   3.2. [Arcs](#arcs)
-   3.3. [Model properties](#model-properties)
+    3.1. [Nodes](#nodes)
+    3.2. [Arcs](#arcs)
+    3.3. [Model properties](#model-properties)
 4. [Input data](#input-data)
 5. [Limitations](#limitations)
 
