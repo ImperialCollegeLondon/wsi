@@ -29,7 +29,7 @@ def evaluate_input_file(settings: Path) -> Literal["saved", "custom"]:
     with settings.open("rb") as f:
         settings_ = yaml.safe_load(f)
 
-    if set(["file", "inputs", "outputs"]).isdisjoint(settings_.keys()):
+    if set(["data", "inputs", "outputs"]).isdisjoint(settings_.keys()):
         return "saved"
 
     return "custom"
