@@ -121,3 +121,14 @@ As it can be seen, while this manipulation is somewhat limitted in the grand sch
 things, it already offers a lot of flexibility. For example, if we want to repeat the
 very same analysis but with `thames` instead of `oxford_land`, we just need to replace
 that argument in the input and everythig else is kept the same.
+
+## Output files
+
+As a result of a WSIMOD simulation, there will always be 3 CSV files created:
+
+- `flows.csv`
+- `surfaces.csv`
+- `tanks.csv`
+
+See the output of [`Model.run` in the documentaiton](reference-model.md) for a
+description of the contents of these files.
