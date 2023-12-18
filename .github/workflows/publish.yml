@@ -75,7 +75,7 @@ jobs:
       VERSION: ${{ github.event.release.tag_name }}
       DAFNI_USERNAME: ${{ secrets.DAFNI_USERNAME }}
       DAFNI_PASSWORD: ${{ secrets.DAFNI_PASSWORD }}
-      PARENT_ID: ${{ secrets.PARENT_ID }}
+      PARENT_ID: ${{ vars.PARENT_ID }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
