@@ -48,29 +48,33 @@ and consists of:
 
     4.3. [Customise interactions](./demo/scripts/customise_interactions.py)
 
-5. [Component library](component-library.md)
+5. [Command line interface](wsimod-cli.md)
 
-6. [API reference](reference.md)
+6. [Component library](component-library.md)
 
-    6.1. [API reference - arc](reference-arc.md)
+7. [Run WSIMOD in DAFNI](dafni.md)
 
-    6.2. [API reference - core](reference-core.md)
+8. [API reference](reference.md)
 
-    6.3. [API reference - land](reference-land.md)
+    8.1. [API reference - arc](reference-arc.md)
 
-    6.4. [API reference - nodes](reference-nodes.md)
+    8.2. [API reference - core](reference-core.md)
 
-    6.5. [API reference - sewer](reference-sewer.md)
+    8.3. [API reference - land](reference-land.md)
 
-    6.6. [API reference - storage (reservoir, river, groundwater)](reference-storage.md)
+    8.4. [API reference - nodes](reference-nodes.md)
 
-    6.7. [API reference - wtw](reference-wtw.md)
+    8.5. [API reference - sewer](reference-sewer.md)
 
-    6.8. [API reference - other components](reference-other.md)
+    8.6. [API reference - storage (reservoir, river, groundwater)](reference-storage.md)
 
-    6.9. [API reference - model](reference-model.md)
+    8.7. [API reference - wtw](reference-wtw.md)
 
-7. [Coverage](coverage.md)
+    8.8. [API reference - other components](reference-other.md)
+
+    8.9. [API reference - model](reference-model.md)
+
+9. [Coverage](coverage.md)
 
 ## Acknowledgements
 
