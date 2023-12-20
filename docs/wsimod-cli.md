@@ -117,7 +117,7 @@ that. In this case, records will be selected based on a couple of (`variable`, `
 In this case, we choose a `dict` format, which is what WSIMOD requires in nodes and
 arcs. Note that we did not do this conversion for the dates above.
 
-As it can be seen, while this manipulation is somewhat limitted in the grand scheme of
+As it can be seen, while this manipulation is somewhat limited in the grand scheme of
 things, it already offers a lot of flexibility. For example, if we want to repeat the
 very same analysis but with `thames` instead of `oxford_land`, we just need to replace
 that argument in the input and everythig else is kept the same.
