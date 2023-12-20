@@ -1,12 +1,38 @@
 import ast
 import os
 from pathlib import Path
-from typing import Any, Optional, Union
+from typing import Any, Literal, Optional, Union
 
 import pandas as pd
 import yaml
 
 from wsimod.core import constants
+
+
+def evaluate_input_file(settings: Path) -> Literal["saved", "custom"]:
+    """Decides what type of input file we are dealing with.
+
+    "save" correspond to fully constructed models which have been saved, alongside
+    any necessary data files. "custom" are input files constructed manually.
+
+    Raises:
+        ValueError: If the settings file do not exist.
+
+    Return:
+        If the input file is a saved model file or a custom input.
+    """
+    if settings.is_dir() or not settings.exists():
+        raise ValueError(
+            f"The settings file at {settings.absolute()} could not be found."
+        )
+
+    with settings.open("rb") as f:
+        settings_ = yaml.safe_load(f)
+
+    if set(["data", "inputs", "outputs"]).isdisjoint(settings_.keys()):
+        return "saved"
+
+    return "custom"
 
 
 def validate_io_args(
