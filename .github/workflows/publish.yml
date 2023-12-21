@@ -66,3 +66,30 @@ jobs:
 
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
+
+  publish-DAFNI:
+    needs: publish-PyPI
+    name: Publish WSIMOD to DAFNI
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ github.event.release.tag_name }}
+      DAFNI_USERNAME: ${{ secrets.DAFNI_USERNAME }}
+      DAFNI_PASSWORD: ${{ secrets.DAFNI_PASSWORD }}
+      PARENT_ID: ${{ vars.PARENT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+
+      - name: Create Docker image
+        run: |
+          docker build -t wsimod:$VERSION .
+          docker save -o wsimod-$VERSION.tar.gz wsimod:$VERSION
+
+      - name: Install DAFNI API
+        run: python -m pip install dafni-cli
+
+      - name: Log in to DAFNI
+        run: dafni login
+
+      - name: Upload updated model
+        run: dafni upload model model_file.yaml wsimod-$VERSION.tar.gz --parent-id $PARENT_ID -m "v$VERSION, see release notes."
