@@ -53,9 +53,9 @@ class Node(WSIObj):
 
         #Initiailise default handlers
         self.pull_set_handler = {'default' : self.pull_distributed}
-        self.push_set_handler = {'default' : lambda x : self.push_distributed(x, of_type = ['Node', 'River', 'Waste', 'Reservoir'])}
+        self.push_set_handler = {'default' : lambda x : self.push_distributed(x, of_type = ['Node', 'River', 'Waste', 'Reservoir', 'Lake'])}
         self.pull_check_handler = {'default' : self.pull_check_basic}
-        self.push_check_handler = {'default' : lambda x : self.push_check_basic(x, of_type = ['Node', 'River', 'Waste', 'Reservoir'])}
+        self.push_check_handler = {'default' : lambda x : self.push_check_basic(x, of_type = ['Node', 'River', 'Waste', 'Reservoir', 'Lake'])}
         
         super().__init__()
 
@@ -724,6 +724,7 @@ class Tank(WSIObj):
     def __init__(self,
                  capacity = 0,
                  area = 1,
+                 specific_yield = 1,
                  datum = 10,
                  initial_storage = 0):
         """A standard storage object
@@ -731,6 +732,9 @@ class Tank(WSIObj):
         Args:
             capacity (float, optional): Volumetric tank capacity. Defaults to 0.
             area (float, optional): Area of tank. Defaults to 1.
+            specific_yield (float, optional): Specific yield to represent optional
+                porous storage features (e.g., groundwater). This is only used in
+                self.get_head(). Defaults to 1 (to represent no porous features).
             datum (float, optional): Datum of tank base (not currently used in any 
                 functions). Defaults to 10.
             initial_storage (optional): Initial storage for tank. 
@@ -743,6 +747,7 @@ class Tank(WSIObj):
         #Set parameters
         self.capacity = capacity
         self.area = area
+        self.specific_yield = specific_yield
         self.datum = datum
         self.initial_storage = initial_storage
                 
@@ -991,7 +996,7 @@ class Tank(WSIObj):
         head_storage = max(self.storage['volume'] - non_head_storage, 0)
         
         #Perform head calculation
-        head = head_storage / self.area + datum
+        head = head_storage / self.area / self.specific_yield + datum
         
         return head
     
