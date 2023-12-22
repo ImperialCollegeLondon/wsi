@@ -331,8 +331,8 @@ class Model(WSIObj):
             arc['out_port'] = self.nodes[arc['out_port']]
             self.arcs[name] = getattr(arcs_mod,type_)(**dict(arc))
             
-            if arc['in_port'].__class__.__name__ in ['River', 'Node', 'Waste','Reservoir']:
-                if arc['out_port'].__class__.__name__ in ['River', 'Node', 'Waste','Reservoir']:
+            if arc['in_port'].__class__.__name__ in ['River', 'Node', 'Waste','Reservoir', 'Lake']:
+                if arc['out_port'].__class__.__name__ in ['River', 'Node', 'Waste','Reservoir', 'Lake']:
                     river_arcs[name] = self.arcs[name]
                 
         if any(river_arcs):
@@ -456,7 +456,8 @@ class Model(WSIObj):
             record_arcs = None,
             record_tanks = None,
             verbose = True,
-            record_all = True):
+            record_all = True,
+            other_attr = {}):
         """Run the model object with the default orchestration
 
         Args:
@@ -472,12 +473,20 @@ class Model(WSIObj):
                 Defaults to True.
             record_all (bool, optional): Specifies to store all results.
                 Defaults to True.
+            other_attr (dict, optional): Dict to store additional attributes of 
+                specified nodes/arcs. Example: 
+                {'arc.name1': ['arc.attribute1'],
+                 'arc.name2': ['arc.attribute1', 'arc.attribute2'],
+                 'node.name1': ['node.attribute1'],
+                 'node.name2': ['node.attribute1', 'node.attribute2']}
+                Defaults to None.
 
         Returns:
             flows: simulated flows in a list of dicts
             tanks: simulated tanks storages in a list of dicts
             node_mb: mass balance differences in a list of dicts (not currently used)
             surfaces: simulated surface storages of land nodes in a list of dicts
+            requested_attr: timeseries of attributes of specified nodes/arcs requested by the users
         """
         
         if record_arcs is None:
@@ -488,6 +497,7 @@ class Model(WSIObj):
         
         if settings is None:
             settings = self.default_settings()
+            
         def blockPrint():
             stdout = sys.stdout
             sys.stdout = open(os.devnull, 'w')
@@ -503,6 +513,7 @@ class Model(WSIObj):
         tanks = []
         node_mb = []
         surfaces = []
+        requested_attr = []
         for date in tqdm(dates, disable = (not verbose)):
         # for date in dates:
             for node in self.nodelist:
@@ -524,6 +535,8 @@ class Model(WSIObj):
             #Infiltrate GW
             for node in self.nodes_type['Groundwater'].values():
                 node.infiltrate()
+            for node in self.nodes_type['Groundwater_h'].values():
+                node.infiltrate()
             
             #Discharge sewers (pushed to other sewers or WWTW)
             for node in self.nodes_type['Sewer'].values():
@@ -541,7 +554,14 @@ class Model(WSIObj):
             for node in self.nodes_type['Groundwater'].values():
                 node.distribute()
             
+            for node in self.nodes_type['Groundwater_h'].values():
+                node.distribute_gw_gw()
+            for node in self.nodes_type['Groundwater_h'].values():
+                node.distribute_gw_rw()
+            
             #river
+            for node in self.nodes_type['Lake'].values():
+                node.calculate_discharge()
             for node in self.nodes_type['River'].values():
                 node.calculate_discharge()
             
@@ -560,6 +580,8 @@ class Model(WSIObj):
                 node.route()
             
             #river
+            for node in self.nodes_type['Lake'].values():
+                node.distribute()
             for node_name in self.river_discharge_order:
                 self.nodes[node_name].distribute()
             
@@ -667,7 +689,22 @@ class Model(WSIObj):
                                               'time' : date})
                             for pol in constants.POLLUTANTS:
                                 surfaces[-1][pol] = surface.storage[pol]
-                        
+            
+            if len(other_attr) > 0:
+                obj_dict = self.arcs | self.nodes # merge two dicts
+                
+                for obj_name in other_attr.keys():
+                    if obj_name in obj_dict.keys():
+                        obj = obj_dict[obj_name]
+                        attr_dict = {}
+                        for attr in other_attr[obj_name]:
+                            attr_dict[attr] = getattr(obj, attr)
+                        attr_dict['object'] = obj.name
+                        attr_dict['time'] = date
+                        requested_attr.append(attr_dict)
+                    else:
+                        print('ERROR: the reqested object ('+obj_name+') does not exist in the model')
+        
             for node in self.nodes.values():
                 node.end_timestep()
             
@@ -675,7 +712,7 @@ class Model(WSIObj):
                 arc.end_timestep()
         if not verbose:
             enablePrint(stdout)
-        return flows, tanks, node_mb, surfaces
+        return flows, tanks, node_mb, surfaces, requested_attr
     
     def reinit(self):
         """Reinitialise by ending all node/arc timesteps and calling reinit
