@@ -166,7 +166,7 @@ class Land(Node):
         percolation = self.percolation.pull_outflow()
         
         #Distribute percolation
-        reply = self.push_distributed(percolation, of_type = ['Groundwater'])
+        reply = self.push_distributed(percolation, of_type = ['Groundwater', 'Groundwater_h'])
         
         if reply['volume'] > constants.FLOAT_ACCURACY:
             #Update percolation 'tank'
@@ -1779,6 +1779,7 @@ class IrrigationSurface(GrowingSurface):
                                                          of_type = ['River',
                                                                     'Node',
                                                                     'Groundwater',
+                                                                    'Groundwater_h',
                                                                     'Reservoir'
                                                                     ])
                 
