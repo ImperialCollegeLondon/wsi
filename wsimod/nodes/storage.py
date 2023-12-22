@@ -196,8 +196,183 @@ class Groundwater(Storage):
         if retained['volume'] > constants.FLOAT_ACCURACY:
             #print('unable to infiltrate')
             pass
-            
+
+class Groundwater_h(Storage):
+    def __init__(self, 
+                        h_initial = 200,
+                        z_surface = 250,
+                        s = 0.1,
+                        c_riverbed = 0,
+                        c_aquifer = {},
+                        infiltration_threshold = 1,
+                        infiltration_pct = 0,
+                        data_input_dict = {},
+                        **kwargs):
+        # TODO can infiltrate to sewers?
+        """A head-driven storage for groundwater. Can also infiltrate to sewers.
+
+        Args:
+            h_initial (float, compulsory): initial groundwater head (m asl). Defaults to 200.
+            z_surface (float, compulsoty): elevation of land surface (m asl), 
+                which determines the maximum storage capacity. Default to 250.
+            s (float, optional): storage coefficient (-). Defaults to 0.1.
+            A (float, compulsory): area of the groundwater body (polygon) (m2). Defaults to 0.
+            c_riverbed (float, compulsory): the river bed conductance 
+                (which could be taken from the BGWM parameterisation) (1/day). Defaults to 0.
+            data_input_dict (dict, optional): Dictionary of data inputs relevant for 
+                the node (though I don't think it is used). Defaults to {}.
+            c_aquifer (dict, optional): aquifer conductance, which can be 
+                calculated from parameterisation of British Groundwater Model 
+                for any polygonal mesh (m2/day). Defaults to {}.
+        
+        Functions intended to call in orchestration:
+            infiltrate (before sewers are discharged)
+
+            distribute
+
+        Key assumptions:
+            - Conceptualises groundwater as a tank. The total volume of storage is controlled by a storage coefficient.
+            - Exchange flow between groundwater bodies is driven by head difference through an aquifer conductance.
+            - River-groundwater interactions are bi-directional, which is determined by the head difference.
+            - Infiltration to `sewer.py/Sewer` nodes occurs when the storage 
+                in the tank is greater than a specified threshold, at a rate 
+                proportional to the sqrt of volume above the threshold. (Note, 
+                this behaviour is __not validated__ and a high uncertainty process 
+                in general)
+            - If `decays` are provided to model water quality transformations, 
+                see `core.py/DecayObj`.
+
+        Input data and parameter requirements:
+            - Groundwater tank `capacity`, `area`, and `datum`.
+                _Units_: cubic metres, squared metres, metres
+            - Infiltration behaviour determined by an `infiltration_threshold` 
+                and `infiltration_pct`.
+                _Units_: proportion of capacity
+            - Optional dictionary of decays with pollutants as keys and decay 
+                parameters (a constant and a temperature sensitivity exponent) 
+                as values.
+                _Units_: -
+        """
+        self.h = h_initial
+        self.z_surface = z_surface
+        self.s = s
+        self.c_riverbed = c_riverbed
+        self.c_aquifer = c_aquifer
+        #
+        self.infiltration_threshold = infiltration_threshold
+        self.infiltration_pct = infiltration_pct
+        #TODO not used data_input
+        self.data_input_dict = data_input_dict
+        super().__init__(**kwargs)
+        
+        # update tank
+        self.tank.specific_yield = self.s
+        self.tank.storage['volume'] = self.h * self.area * self.s # [m3]
+        self.tank.capacity = self.z_surface * self.area * self.s # [m3]
+        #Update handlers
+        self.push_check_handler['Groundwater_h'] = self.push_check_head
+        self.push_check_handler[('River', 'head')] = self.push_check_head
+        self.push_check_handler[('River', 'c_riverbed')] = self.push_check_criverbed
+        
+    def distribute_gw_rw(self):
+        ## pumping rate via pull_request through arcs
+        ## recharge rate via push_request through arcs
+        """Calculate exchange between Rivers and Groundwater_h
+        """
+        ## river-groundwater exchange
+        # query river elevation
+        # list of arcs that connect with gw bodies
+        _, arcs = self.get_direction_arcs(direction='push', of_type=['River'])
+        # if there is only one river arc
+        if len(arcs) == 1:
+            arc = arcs[0]
+            z_river = arc.send_push_check(tag=('Groundwater_h', 'datum'))['volume'] # [m asl]
+            length = arc.send_push_check(tag=('Groundwater_h', 'length'))['volume'] # [m]
+            width = arc.send_push_check(tag=('Groundwater_h', 'width'))['volume'] # [m]
+            # calculate riverbed hydraulic conductance
+            C_riverbed = self.c_riverbed * length * width # [m2/day]
+            # calculate river-gw flux
+            flux = C_riverbed * (self.h - z_river) # [m3/day]
+            if flux > 0:
+                to_send = self.tank.pull_storage({'volume' : flux}) # vqip afterwards
+                retained = self.push_distributed(to_send, of_type = ['River'])
+                _ = self.tank.push_storage(retained, force = True)
+                if retained['volume'] > constants.FLOAT_ACCURACY:
+                    print('Groundwater to river: gw baseflow unable to push into river at '+self.name)
+            # else: wait river to discharge back
+        # TODO may need consider when one river connects to multiple gws
+        elif len(arcs) > 1:
+            print('WARNING: '+self.name+' connects with more than one river - cannot model this at this stage and please re-setup the model')
+         
+         
+    def distribute_gw_gw(self):
+        """Calculate exchange between Groundwater_h and Groundwater_h
+        """
+        ## groundwater-groundwater exchange
+        # list of arcs that connect with gw bodies
+        _, arcs = self.get_direction_arcs(direction='push', of_type=['Groundwater_h'])
+        for arc in arcs:
+            h = arc.send_push_check(tag='Groundwater_h')['volume'] # check the head of the adjacent groundwater_h
+            # if h < self.h, there will be flux discharged outside
+            if h < self.h:
+                # get the c_aquifer [m2/day]
+                adj_node_name = arc.out_port.name # get the name of the adjacent gw_h
+                if adj_node_name in self.c_aquifer.keys():
+                    c_aquifer = self.c_aquifer[adj_node_name]
+                else:
+                    print('ERROR: the name of '+adj_node_name+' is not consistent with the c_aquifer input in '+self.name+', please recheck')
+                # calculate the flux
+                flux = c_aquifer * (self.h - h) # [m3/day]
+                if flux > 0:
+                    to_send = self.tank.pull_storage({'volume' : flux}) # vqip afterwards
+                    retained = arc.send_push_request(to_send)
+                    _ = self.tank.push_storage(retained, force = True)
+                    if retained['volume'] > constants.FLOAT_ACCURACY:
+                        print('Groundwater to groundwater: gw baseflow unable to push from '+self.name+' into '+adj_node_name)
+            # if h > self.h, wait the adjacent node to push flux here
+        
+    def infiltrate(self):
+        # TODO could use head-drive approach here
+        """Calculate amount of water available for infiltration and send to sewers
+        """
+        #Calculate infiltration
+        avail = self.tank.get_avail()['volume']
+        avail = max(avail - self.tank.capacity * self.infiltration_threshold, 0)
+        avail = (avail * self.infiltration_pct) ** 0.5
+        
+        #Push to sewers
+        to_send = self.tank.pull_storage({'volume' : avail})
+        retained = self.push_distributed(to_send, of_type = 'Sewer')
+        _ = self.tank.push_storage(retained, force = True)
+        #Any not sent is left in tank
+        if retained['volume'] > constants.FLOAT_ACCURACY:
+            #print('unable to infiltrate')
+            pass         
     
+    def push_check_head(self, vqip = None):
+        # TODO should revise arc.get_excess to consider information transfer not in vqip?
+        """Return a pseudo vqip whose volume is self.h
+        """
+        reply = self.empty_vqip()
+        reply['volume'] = self.h
+        
+        return reply
+    
+    def push_check_criverbed(self, vqip = None):
+        # TODO should revise arc.get_excess to consider information transfer not in vqip?
+        """Return a pseudo vqip whose volume is self.h
+        """
+        reply = self.empty_vqip()
+        reply['volume'] = self.c_riverbed
+        
+        return reply
+    
+    def end_timestep(self):
+        """Update tank states & self.h
+        """
+        self.tank.end_timestep()
+        self.h = self.tank.get_head()
+        
 class QueueGroundwater(Storage):
     #TODO - no infiltration as yet
     def __init__(self,
@@ -509,7 +684,9 @@ class River(Storage):
         #Update handlers
         self.push_set_handler['default'] = self.push_set_river
         self.push_check_handler['default'] = self.push_check_accept
-
+        self.push_check_handler[('Groundwater_h', 'datum')] = self.push_check_datum
+        self.push_check_handler[('Groundwater_h', 'length')] = self.push_check_length
+        self.push_check_handler[('Groundwater_h', 'width')] = self.push_check_width
         self.pull_check_handler['default'] = self.pull_check_river
         self.pull_set_handler['default'] = self.pull_set_river
 
@@ -787,10 +964,34 @@ class River(Storage):
         #Get outflow
         outflow = self.tank.pull_storage({'volume' : self.tank.storage['volume'] * self.get_riverrc()})
         #Distribute outflow
-        reply = self.push_distributed(outflow, of_type = ['River','Node','Waste'])
+        reply = self.push_distributed(outflow, of_type = ['River','Node','Waste','Lake'])
         _ = self.tank.push_storage(reply, force = True)
         if reply['volume'] > constants.FLOAT_ACCURACY:
             print('river cant push: {0}'.format(reply['volume']))
+        ## river-groundwater exchange
+        # query river elevation
+        # list of arcs that connect with gw bodies
+        _, arcs = self.get_direction_arcs(direction='push', of_type=['Groundwater_h'])
+        # if there is only one arc to gw_h
+        if len(arcs) == 1:
+            arc = arcs[0]
+            h = arc.send_push_check(tag=('River', 'head'))['volume'] # [m asl]
+            c_riverbed = arc.send_push_check(tag=('River', 'c_riverbed'))['volume'] # [m]
+            # calculate riverbed hydraulic conductance
+            C_riverbed = c_riverbed * self.length * self.width # [m2/day]
+            # calculate river-gw flux
+            flux = C_riverbed * (self.datum - h) # [m3/day]
+            if flux > 0:
+                to_send = self.tank.pull_storage({'volume' : flux}) # vqip afterwards
+                retained = self.push_distributed(to_send, of_type = ['Groundwater_h'])
+                _ = self.tank.push_storage(retained, force = True)
+                if retained['volume'] > constants.FLOAT_ACCURACY:
+                    print('River to groundwater: river return flow unable to push into groundwater at '+self.name)
+            # else: wait gw to discharge back
+        # TODO may need consider when one river connects to multiple gws
+        elif len(arcs) > 1:
+            print('WARNING: '+self.name+' connects with more than one gw - cannot model this at this stage and please re-setup the model')
+             
             
     def pull_check_fp(self, vqip = None):
         #TODO Pull checking for riparian buffer, needs updating
@@ -798,12 +999,141 @@ class River(Storage):
         self.update_depth()
         return self.current_depth, self.area, self.width, self.river_tank.storage
     
+    def push_check_datum(self, vqip = None):
+        # TODO should revise arc.get_excess to consider information transfer not in vqip?
+        """Return a pseudo vqip whose volume is self.datum
+        """
+        datum = self.empty_vqip()
+        datum['volume'] = self.datum
+        
+        return datum
+    
+    def push_check_length(self, vqip = None):
+        # TODO should revise arc.get_excess to consider information transfer not in vqip?
+        """Return a pseudo vqip whose volume is self.length
+        """
+        length = self.empty_vqip()
+        length['volume'] = self.length
+        
+        return length
+    
+    def push_check_width(self, vqip = None):
+        # TODO should revise arc.get_excess to consider information transfer not in vqip?
+        """Return a pseudo vqip whose volume is self.width
+        """
+        width = self.empty_vqip()
+        width['volume'] = self.width
+        
+        return width
+    
     def end_timestep_(self):
         """Update state variables
         """
         self.tank.end_timestep()
         self.bio_in = self.empty_vqip()
         self.bio_out = self.empty_vqip()
+
+class Lake(River):
+    #TODO non-day timestep
+    def __init__(self, 
+                        w0 = 0,
+                        k = 1,
+                        p = 2,
+                        **kwargs):
+        """Lake is a revised version of River
+
+        Args:
+            
+            Note that the other input parameters are shared with River: 
+                - some of them are still used: depth, length, width
+                - some of them are not used: velocity, damp, mrf
+            depth (float, optional): River tank depth. Defaults to 2.
+            length (float, optional): River tank length. Defaults to 200.
+            width (float, optional): River tank width. Defaults to 20.
+            velocity (float, optional): River velocity (if someone wants to calculate 
+                this on the fly that would also work). Defaults to 0.2*constants.M_S_TO_M_DT.
+            damp (float, optional): Flow delay and attentuation parameter. Defaults 
+                to 0.1.
+            mrf (float, optional): Minimum required flow in river (volume per timestep), 
+                can limit pulls made to the river. Defaults to 0.
+        
+        Functions intended to call in orchestration:
+            distribute
+            
+        Key assumptions:
+             - Lake is a revised version of River: the major difference is 
+                 - interact with precipitation and evaporation
+                 - the outflow is controlled by rating curve in an updated distribute() function
+                 - temprature is calculated based on 5-day average rather than 20-day average in the river node
+                 - (TODO) not able to interact with gw flows yet
+             - It is primarily designed as a shallow lake with vertical uniform distribution of 
+               pollutant concentration/temperature (TODO for stratification)
+
+        Input data and parameter requirements:
+             - depth, length, width
+                _Units_: m
+        """
+        self.kw = 0.7 # pan coefficient for evaporation at open water bodies
+        self.w0 = w0 # threshold above which outflow can happen
+        self.k = k # outflow rate parameters
+        self.p = p # outflow exponential parameters
+        super().__init__(**kwargs)
+        
+        self.wt = self.tank.get_head()
+        self.wt_1 = self.tank.get_head()
+        
+        # update mass balance
+        self.precipitation_in = self.empty_vqip()
+        self.evaporation_out = self.empty_vqip()
+        
+        self.mass_balance_in.append(lambda : self.precipitation_in)
+        self.mass_balance_out.append(lambda : self.evaporation_out)
+        
+    def distribute(self):
+        # input precipitation
+        precipitation_vqip = self.empty_vqip()
+        precipitation_vqip['volume'] = self.get_data_input('precipitation') * self.area # [m3]
+        _ = self.tank.push_storage(precipitation_vqip, force = True)
+        self.precipitation_in = precipitation_vqip
+        # output evaporation
+        evaporation = self.kw * self.get_data_input('et0') * self.area # [m3]
+        evaporation = self.tank.evaporate(evaporation) # [m3 and not vqip]
+        self.evaporation_out['volume'] = evaporation
+        # outflow
+        self.wt = self.tank.get_head() # [m] water depth
+        if self.wt > self.w0:
+
+            wst = self.wt - self.w0 # [m]
+            dh = self.wt - self.wt_1#(input_vqip['volume'] - self.actual_ET[i] - self.percolation_vqip[i]['volume']/self.areas[i]/constants.MM_KM2_TO_ML) * constants.MM_TO_M # [m]
+            h0 = wst - dh # [m]
+            if h0 > 0:
+                t2 = constants.D_TO_S # [s/day]
+                hr = h0 # [m]
+            elif h0 + dh > 0:
+                t1 = -h0 / dh
+                t2 = constants.D_TO_S * (1 - t1)
+                hr = dh / constants.D_TO_S * t2 / 10 # [m]
+            else:
+                t2 = 0
+            
+            qut = 0
+            if t2 > 0:
+                r = self.p * self.k * hr ** (self.p - 1) / self.area # [1/s]
+                if r > 0:
+                    z = hr + dh / constants.D_TO_S / r - hr / self.p # [m]
+                    h = (hr - z) * exp(-r * t2) + z # [m]
+                    qut = self.area * (dh - (h - h0)) # [m3/day]
+                    if qut < 0:
+                        qut = 0
+            
+            qut = min(qut, wst * self.area)   # [m3/day]
+        else:
+            qut = 0
+        
+        outflow = self.tank.pull_storage({'volume': qut})
+        reply = self.push_distributed(outflow, of_type=['River', 'Node', 'Waste'])
+        _ = self.tank.push_storage(reply, force = True)
+        self.wt_1 = self.tank.get_head()
 
 class Reservoir(Storage):
     def __init__(self, **kwargs):
