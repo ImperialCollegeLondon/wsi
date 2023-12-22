@@ -267,8 +267,8 @@ class Groundwater_h(Storage):
         
         # update tank
         self.tank.specific_yield = self.s
-        self.tank.storage['volume'] = self.h * self.area * self.s # [m3]
-        self.tank.capacity = self.z_surface * self.area * self.s # [m3]
+        self.tank.storage['volume'] = (self.h - self.datum) * self.area * self.s # [m3]
+        self.tank.capacity = (self.z_surface - self.datum) * self.area * self.s # [m3]
         #Update handlers
         self.push_check_handler['Groundwater_h'] = self.push_check_head
         self.push_check_handler[('River', 'head')] = self.push_check_head
@@ -360,7 +360,7 @@ class Groundwater_h(Storage):
     
     def push_check_criverbed(self, vqip = None):
         # TODO should revise arc.get_excess to consider information transfer not in vqip?
-        """Return a pseudo vqip whose volume is self.h
+        """Return a pseudo vqip whose volume is self.c_riverbed
         """
         reply = self.empty_vqip()
         reply['volume'] = self.c_riverbed
@@ -967,7 +967,7 @@ class River(Storage):
         reply = self.push_distributed(outflow, of_type = ['River','Node','Waste','Lake'])
         _ = self.tank.push_storage(reply, force = True)
         if reply['volume'] > constants.FLOAT_ACCURACY:
-            print('river cant push: {0}'.format(reply['volume']))
+            print('river cant push: {0}'.format(reply['volume']) + ' at '+self.name)
         ## river-groundwater exchange
         # query river elevation
         # list of arcs that connect with gw bodies
@@ -1131,7 +1131,7 @@ class Lake(River):
             qut = 0
         
         outflow = self.tank.pull_storage({'volume': qut})
-        reply = self.push_distributed(outflow, of_type=['River', 'Node', 'Waste'])
+        reply = self.push_distributed(outflow, of_type=['River', 'Node', 'Waste', 'Lake'])
         _ = self.tank.push_storage(reply, force = True)
         self.wt_1 = self.tank.get_head()
 
