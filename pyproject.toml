@@ -34,7 +34,9 @@ dev = [
     "ruff",
     "pip-tools",
     "pytest-cov",
-    "wsimod[demos]"
+    "geopandas",
+    "matplotlib",
+    "shapely"
 ]
 
 demos = [
