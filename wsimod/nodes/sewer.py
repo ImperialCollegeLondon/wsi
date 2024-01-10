@@ -69,7 +69,8 @@ class Sewer(Node):
         Input data and parameter requirements:
             - `pipe_timearea` is a dictionary containing the timearea diagram.
                 _Units_: duration of flow (in timesteps) and proportion of flow
-            - `pipe_time` describes the travel time of water received from upstream `Sewer`
+            - `pipe_time` describes the travel time of water received from upstream
+                `Sewer`
                 objects.
                 _Units_: number of timesteps
             - `capacity`, `chamber_area`, `chamber_datum` describe the dimensions of the

@@ -589,7 +589,8 @@ class Model(WSIObj):
             nodes (list, optional): list of land nodes to change the parameters of.
                 Defaults to None, which applies the change to all land nodes.
         """
-        # Multiplies impervious area by relative change and adjusts grassland accordingly
+        # Multiplies impervious area by relative change and adjusts grassland
+        # accordingly
         if nodes is None:
             nodes = self.nodes_type["Land"].values()
 
@@ -664,7 +665,8 @@ class Model(WSIObj):
                            },
                           {'element_type' : 'tanks',
                            'name' : 'my_reservoir',
-                           'function' : @ (x, model) sum([y['storage'] < (model.nodes['my_reservoir'].tank.capacity / 2) for y in x])
+                           'function' : @ (x, model) sum([y['storage'] < (model.nodes
+                           ['my_reservoir'].tank.capacity / 2) for y in x])
                            }]
             _, _, results, _ = my_model.run(record_all = False, objectives = objectives)
         """
@@ -811,7 +813,8 @@ class Model(WSIObj):
                 largest = max(sys_in[v], sys_in[v], sys_in[v])
 
                 if largest > constants.FLOAT_ACCURACY:
-                    # Convert perform comparison in a magnitude to match the largest value
+                    # Convert perform comparison in a magnitude to match the largest
+                    # value
                     magnitude = 10 ** int(log10(largest))
                     in_10 = sys_in[v] / magnitude
                     out_10 = sys_in[v] / magnitude

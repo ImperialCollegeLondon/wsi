@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 """Created on Mon Nov 15 14:20:36 2021.
 
-@author: bdobson
-Converted to totals on 2022-05-03
+@author: bdobson Converted to totals on 2022-05-03
 """
 from math import exp
 
@@ -26,12 +25,12 @@ class Storage(Node):
         """A Node wrapper for a Tank or DecayTank.
 
         Args:
-            name (str): node name
-            capacity (float, optional): Tank capacity (see nodes.py/Tank). Defaults to 0.
-            area (float, optional): Tank area (see nodes.py/Tank). Defaults to 0.
-            datum (float, optional): Tank datum (see nodes.py/Tank). Defaults to 0.
-            decays (dict, optional): Tank decays if needed, (see nodes.py/DecayTank). Defaults to None.
-            initial_storage (float or dict, optional): Initial storage (see nodes.py/Tank). Defaults to 0.
+            name (str): node name capacity (float, optional): Tank capacity (see
+            nodes.py/Tank). Defaults to 0. area (float, optional): Tank area (see
+            nodes.py/Tank). Defaults to 0. datum (float, optional): Tank datum (see
+            nodes.py/Tank). Defaults to 0. decays (dict, optional): Tank decays if
+            needed, (see nodes.py/DecayTank). Defaults to None. initial_storage (float
+            or dict, optional): Initial storage (see nodes.py/Tank). Defaults to 0.
 
         Functions intended to call in orchestration:
             distribute (optional, depends on subclass)
@@ -150,9 +149,9 @@ class Groundwater(Storage):
                 `waste.py/Waste` nodes.
             - Infiltration to `sewer.py/Sewer` nodes occurs when the storage
                 in the tank is greater than a specified threshold, at a rate
-                proportional to the sqrt of volume above the threshold. (Note,
-                this behaviour is __not validated__ and a high uncertainty process
-                in general)
+                proportional to the sqrt of volume above the threshold. (Note, this
+                behaviour is __not validated__ and a high uncertainty process in
+                general)
             - If `decays` are provided to model water quality transformations,
                 see `core.py/DecayObj`.
 
@@ -160,12 +159,10 @@ class Groundwater(Storage):
             - Groundwater tank `capacity`, `area`, and `datum`.
                 _Units_: cubic metres, squared metres, metres
             - Infiltration behaviour determined by an `infiltration_threshold`
-                and `infiltration_pct`.
-                _Units_: proportion of capacity
+                and `infiltration_pct`. _Units_: proportion of capacity
             - Optional dictionary of decays with pollutants as keys and decay
-                parameters (a constant and a temperature sensitivity exponent)
-                as values.
-                _Units_: -
+                parameters (a constant and a temperature sensitivity exponent) as
+                values. _Units_: -
         """
         self.residence_time = residence_time
         self.infiltration_threshold = infiltration_threshold
@@ -213,10 +210,10 @@ class QueueGroundwater(Storage):
 
         Args:
             timearea (dict, optional): Time area diagram that enables flows to
-                take a range of different durations to 'traverse' the tank. The keys
-                of the dict are the number of timesteps while the values are the
-                proportion of flow. E.g., {0 : 0.7, 1 : 0.3} means 70% of flow takes
-                0 timesteps and 30% takes 1 timesteps. Defaults to {0 : 1}.
+                take a range of different durations to 'traverse' the tank. The keys of
+                the dict are the number of timesteps while the values are the proportion
+                of flow. E.g., {0 : 0.7, 1 : 0.3} means 70% of flow takes 0 timesteps
+                and 30% takes 1 timesteps. Defaults to {0 : 1}.
             data_input_dict (dict, optional): Dictionary of data inputs relevant for
                 the node (though I don't think it is used). Defaults to {}.
 
@@ -238,9 +235,8 @@ class QueueGroundwater(Storage):
             - `timearea` is a dictionary containing the timearea diagram.
                 _Units_: duration of flow (in timesteps) and proportion of flow
             - Optional dictionary of decays with pollutants as keys and decay
-                parameters (a constant and a temperature sensitivity exponent)
-                as values.
-                _Units_: -
+                parameters (a constant and a temperature sensitivity exponent) as
+                values. _Units_: -
         """
         self.timearea = timearea
         # TODO not used
@@ -282,8 +278,8 @@ class QueueGroundwater(Storage):
             reply (dict): A VQIP amount that was not successfuly receivesd
         """
         reply = self.empty_vqip()
-        # Iterate over timearea diagram
-        # TODO timearea diagram behaviour be generalised across nodes
+        # Iterate over timearea diagram TODO timearea diagram behaviour be generalised
+        # across nodes
         for time, normalised in self.timearea.items():
             vqip_ = self.v_change_vqip(vqip, vqip["volume"] * normalised)
             reply_ = self.tank.push_storage(vqip_, time=time)
@@ -374,17 +370,19 @@ class QueueGroundwater(Storage):
                 # Recalculate storage
                 self.tank.storage = self.extract_vqip(self.tank.storage, pulled)
                 return pulled
-            # elif isinstance(self.tank.internal_arc.queue, list):
-            #     for req in self.tank.internal_arc.queue:
-            #         t_pulled = req['vqtip']['volume'] * total_pull / total_storage
-            #         req['vqtip'] = self.v_change_vqip(req['vqtip'], req['vqtip']['volume'] - t_pulled)
-            #         pulled += t_pulled
-            #     a_pulled = self.tank.active_storage['volume'] * total_pull / total_storage
-            #     self.tank.active_storage = self.v_change_vqip(self.tank.active_storage, self.tank.active_storage['volume'] - a_pulled)
-            #     pulled += a_pulled
+            # elif isinstance(self.tank.internal_arc.queue, list): for req in
+            #     self.tank.internal_arc.queue: t_pulled = req['vqtip']['volume'] *
+            #         total_pull / total_storage req['vqtip'] =
+            #         self.v_change_vqip(req['vqtip'], req['vqtip']['volume'] -
+            #         t_pulled) pulled += t_pulled a_pulled =
+            #     self.tank.active_storage['volume'] * total_pull / total_storage
+            #     self.tank.active_storage =
+            #     self.v_change_vqip(self.tank.active_storage,
+            #     self.tank.active_storage['volume'] - a_pulled) pulled += a_pulled
 
             #     #Recalculate storage - doing this differently causes numerical errors
-            #     new_v = sum([x['vqtip']['volume'] for x in self.tank.internal_arc.queue])+ self.tank.active_storage['volume']
+            #     new_v = sum([x['vqtip']['volume'] for x in
+            #     self.tank.internal_arc.queue])+ self.tank.active_storage['volume']
             #     self.tank.storage = self.v_change_vqip(self.tank.storage, new_v)
 
             # return self.v_change_vqip(self.tank.storage, pulled)
@@ -407,11 +405,12 @@ class River(Storage):
         """Node that contains extensive in-river biochemical processes.
 
         Args:
-            depth (float, optional): River tank depth. Defaults to 2.
-            length (float, optional): River tank length. Defaults to 200.
-            width (float, optional): River tank width. Defaults to 20.
-            velocity (float, optional): River velocity (if someone wants to calculate
-                this on the fly that would also work). Defaults to 0.2*constants.M_S_TO_M_DT.
+            depth (float, optional): River tank depth. Defaults to 2. length (float,
+            optional): River tank length. Defaults to 200. width (float, optional):
+            River tank width. Defaults to 20. velocity (float, optional): River velocity
+            (if someone wants to calculate
+                this on the fly that would also work). Defaults to
+                0.2*constants.M_S_TO_M_DT.
             damp (float, optional): Flow delay and attentuation parameter. Defaults
                 to 0.1.
             mrf (float, optional): Minimum required flow in river (volume per timestep),
@@ -422,20 +421,22 @@ class River(Storage):
 
         Key assumptions:
              - River is conceptualised as a water tank that receives flows from various
-                sources (e.g., runoffs from urban and rural land, baseflow from groundwater),
-                interacts with water infrastructure (e.g., abstraction for irrigation and
-                domestic supply, sewage and treated effluent discharge), and discharges
-                flows downstream. It has length and width as shape parameters, average
-                velocity to indicate flow speed and capacity to indicate the maximum storage limit.
-             - Flows from different sources into rivers will fully mix. River tank is assumed to
-                have delay and attenuation effects when generate outflows. These effects are
-                simulated based on the average velocity.
-             - In-river biochemical processes are simulated as sources/sinks of nutrients
-                in the river tank, including
-                - denitrification (for nitrogen)
-                - phytoplankton absorption/release (for nitrogen and phosphorus)
-                - macrophyte uptake (for nitrogen and phosphorus)
-                These processes are affected by river temperature.
+                sources (e.g., runoffs from urban and rural land, baseflow from
+                groundwater), interacts with water infrastructure (e.g., abstraction for
+                irrigation and domestic supply, sewage and treated effluent discharge),
+                and discharges flows downstream. It has length and width as shape
+                parameters, average velocity to indicate flow speed and capacity to
+                indicate the maximum storage limit.
+             - Flows from different sources into rivers will fully mix. River tank is
+               assumed to
+                have delay and attenuation effects when generate outflows. These effects
+                are simulated based on the average velocity.
+             - In-river biochemical processes are simulated as sources/sinks of
+               nutrients
+                in the river tank, including - denitrification (for nitrogen) -
+                phytoplankton absorption/release (for nitrogen and phosphorus) -
+                macrophyte uptake (for nitrogen and phosphorus) These processes are
+                affected by river temperature.
 
         Input data and parameter requirements:
              - depth, length, width
@@ -467,13 +468,14 @@ class River(Storage):
 
         super().__init__(**kwargs)
 
-        # TODO check units
-        # TODO Will a user want to change any of these?
-        # Wide variety of river parameters (from HYPE)
+        # TODO check units TODO Will a user want to change any of these? Wide variety of
+        # river parameters (from HYPE)
         self.uptake_PNratio = 1 / 7.2  # [-] P:N during crop uptake
         self.bulk_density = 1300  # [kg/m3] soil density
-        self.denpar_w = 0.0015  # 0.001, # [kg/m2/day] reference denitrification rate in water course
-        self.T_wdays = 5  # [days] weighting constant for river temperature calculation (similar to moving average period)
+        self.denpar_w = 0.0015  # 0.001, # [kg/m2/day] reference denitrification rate
+        # in water course
+        self.T_wdays = 5  # [days] weighting constant for river temperature calculation
+        # (similar to moving average period)
         self.halfsatINwater = (
             1.5 * constants.MG_L_TO_KG_M3
         )  # [kg/m3] half saturation parameter for denitrification in river
@@ -506,19 +508,16 @@ class River(Storage):
         self.lagged_total_phosphorus = []
 
         self.din_components = ["ammonia", "nitrate"]
-        # TODO need a cleaner way to do this depending on whether e.g., nitrite is included
+        # TODO need a cleaner way to do this depending on whether e.g., nitrite is
+        # included
 
         # Initialise paramters
         self.current_depth = 0  # [m]
-        # self.river_temperature = 0 # [degree C]
-        # self.river_denitrification = 0 # [kg/day]
-        # self.macrophyte_uptake_N = 0 # [kg/day]
-        # self.macrophyte_uptake_P = 0 # [kg/day]
-        # self.sediment_particulate_phosphorus_pool = 60000 # [kg]
-        # self.sediment_pool = 1000000 # [kg]
-        # self.benthos_source_sink = 0 # [kg/day]
-        # self.t_res = 0 # [day]
-        # self.outflow = self.empty_vqip()
+        # self.river_temperature = 0 # [degree C] self.river_denitrification = 0 #
+        # [kg/day] self.macrophyte_uptake_N = 0 # [kg/day] self.macrophyte_uptake_P = 0
+        # # [kg/day] self.sediment_particulate_phosphorus_pool = 60000 # [kg]
+        # self.sediment_pool = 1000000 # [kg] self.benthos_source_sink = 0 # [kg/day]
+        # self.t_res = 0 # [day] self.outflow = self.empty_vqip()
 
         # Update end_teimstep
         self.end_timestep = self.end_timestep_
@@ -540,18 +539,16 @@ class River(Storage):
         self.mass_balance_in.append(lambda: self.bio_in)
         self.mass_balance_out.append(lambda: self.bio_out)
 
-    # TODO something like this might be needed if you want sewers backing up from river height... would need to incorporate expected river outflow
-    # def get_dt_excess(self, vqip = None):
-    #     reply = self.empty_vqip()
-    #     reply['volume'] = self.tank.get_excess()['volume'] + self.tank.get_avail()['volume'] * self.get_riverrc()
-    #     if vqip is not None:
-    #         reply['volume'] = min(vqip['volume'], reply['volume'])
-    #     return reply
+    # TODO something like this might be needed if you want sewers backing up from river
+    # height... would need to incorporate expected river outflow def get_dt_excess(self,
+    #     vqip = None): reply = self.empty_vqip() reply['volume'] =
+    #     self.tank.get_excess()['volume'] + self.tank.get_avail()['volume'] *
+    #     self.get_riverrc() if vqip is not None: reply['volume'] = min(vqip['volume'],
+    #         reply['volume']) return reply
 
-    # def push_set_river(self, vqip):
-    #     vqip_ = vqip.copy()
-    #     vqip_ = self.v_change_vqip(vqip_, min(vqip_['volume'], self.get_dt_excess()['volume']))
-    #     _ = self.tank.push_storage(vqip_, force=True)
+    # def push_set_river(self, vqip): vqip_ = vqip.copy() vqip_ =
+    #     self.v_change_vqip(vqip_, min(vqip_['volume'],
+    #     self.get_dt_excess()['volume'])) _ = self.tank.push_storage(vqip_, force=True)
     #     return self.extract_vqip(vqip, vqip_)
 
     def pull_check_river(self, vqip=None):
@@ -629,7 +626,8 @@ class River(Storage):
         """
         return sum(
             [self.tank.storage[x] for x in self.din_components]
-        )  # TODO + self.tank.storage['nitrite'] but nitrite might not be modelled... need some ways to address this
+        )  # TODO + self.tank.storage['nitrite'] but nitrite might not be modelled...
+        # need some ways to address this
 
     def biochemical_processes(self):
         """Runs all biochemical processes and updates pollutant amounts.
@@ -698,8 +696,7 @@ class River(Storage):
 
         din = self.get_din_pool()
 
-        # Calculate moving averages
-        # TODO generalise
+        # Calculate moving averages TODO generalise
         temp_10_day = sum(self.lagged_temperatures[-10:]) / 10
         temp_20_day = sum(self.lagged_temperatures[-20:]) / 20
         total_phos_365_day = sum(self.lagged_total_phosphorus) / self.max_phosphorus_lag
@@ -715,8 +712,7 @@ class River(Storage):
         else:
             totalphosfcn = 0
 
-        # Mineralisation/production
-        # TODO this feels like it could be much tidier
+        # Mineralisation/production TODO this feels like it could be much tidier
         minprodN = (
             self.prodNpar * totalphosfcn * tempfcn * self.area * self.current_depth
         )  # [kg N/day]
@@ -772,8 +768,7 @@ class River(Storage):
 
         din = self.get_din_pool()
 
-        # macrophyte uptake
-        # temperature dependence factor
+        # macrophyte uptake temperature dependence factor
         tempfcn1 = (max(0, self.tank.storage["temperature"]) / 20) ** 0.3
         tempfcn2 = (self.tank.storage["temperature"] - temp_20_day) / 5
         tempfcn = max(0, tempfcn1 * tempfcn2)
@@ -793,9 +788,7 @@ class River(Storage):
         out_["phosphate"] += macrophyte_uptake_P
         self.tank.storage["phosphate"] -= macrophyte_uptake_P
 
-        # TODO
-        # source/sink for benthos sediment P
-        # suspension/resuspension
+        # TODO source/sink for benthos sediment P suspension/resuspension
         return in_, out_
 
     def get_riverrc(self):
@@ -818,8 +811,7 @@ class River(Storage):
     def calculate_discharge(self):
         """"""
         if "nitrate" in constants.POLLUTANTS:
-            # TODO clumsy
-            # Run biochemical processes
+            # TODO clumsy Run biochemical processes
             in_, out_ = self.biochemical_processes()
             # Mass balance
             self.bio_in = in_
@@ -827,8 +819,7 @@ class River(Storage):
 
     def distribute(self):
         """Run biochemical processes, track mass balance, and distribute water."""
-        # self.calculate_discharge()
-        # Get outflow
+        # self.calculate_discharge() Get outflow
         outflow = self.tank.pull_storage(
             {"volume": self.tank.storage["volume"] * self.get_riverrc()}
         )
@@ -847,8 +838,7 @@ class River(Storage):
         Returns:
 
         """
-        # TODO Pull checking for riparian buffer, needs updating
-        # update river depth
+        # TODO Pull checking for riparian buffer, needs updating update river depth
         self.update_depth()
         return self.current_depth, self.area, self.width, self.river_tank.storage
 
@@ -879,9 +869,8 @@ class Reservoir(Storage):
             - Tank `capacity`, `area`, and `datum`.
                 _Units_: cubic metres, squared metres, metres
             - Optional dictionary of decays with pollutants as keys and decay
-                parameters (a constant and a temperature sensitivity exponent)
-                as values.
-                _Units_: -
+                parameters (a constant and a temperature sensitivity exponent) as
+                values. _Units_: -
         """
         super().__init__(**kwargs)
 
@@ -917,8 +906,8 @@ class RiverReservoir(Reservoir):
                 inflowing arcs.
             - Reservoir aims to satisfy a static `environmental_flow`.
             - If tank capacity is exceeded, reservoir spills downstream
-                towards `nodes.py/Node`, `storage.py/River` or `waste.py/Waste`
-                nodes. Spill counts towards `environmental_flow`.
+                towards `nodes.py/Node`, `storage.py/River` or `waste.py/Waste` nodes.
+                Spill counts towards `environmental_flow`.
             - Evaporation/precipitation onto surface area currently ignored.
             - Currently, if a reservoir satisfies a pull from a downstream
                 node, it does __not__ count towards `environmental_flow`.
@@ -931,9 +920,8 @@ class RiverReservoir(Reservoir):
             - `environmental_flow`
                 _Units_: cubic metres/timestep
             - Optional dictionary of decays with pollutants as keys and decay
-                parameters (a constant and a temperature sensitivity exponent)
-                as values.
-                _Units_: -
+                parameters (a constant and a temperature sensitivity exponent) as
+                values. _Units_: -
         """
         # Parameters
         self.environmental_flow = environmental_flow
@@ -957,13 +945,12 @@ class RiverReservoir(Reservoir):
         Returns:
             reply (dict): A VQIP amount that was not successfully received
         """
-        # Apply normal reservoir storage
-        # We do this under the assumption that spill is mixed in with the reservoir
-        # If the reservoir can't spill everything you'll get some weird numbers in
-        # reply, but if your reservoir can't spill as much as you like then you
-        # should probably be pushing the right amount through push_check_river_reservoir
-        # Some cunning could probably avoid this by checking vqip, but this is a
-        # serious edge case
+        # Apply normal reservoir storage We do this under the assumption that spill is
+        # mixed in with the reservoir If the reservoir can't spill everything you'll get
+        # some weird numbers in reply, but if your reservoir can't spill as much as you
+        # like then you should probably be pushing the right amount through
+        # push_check_river_reservoir Some cunning could probably avoid this by checking
+        # vqip, but this is a serious edge case
         _ = self.tank.push_storage(vqip, force=True)
         spill = self.tank.pull_ponded()
 
@@ -1003,8 +990,8 @@ class RiverReservoir(Reservoir):
 
     def satisfy_environmental(self):
         """Satisfy environmental flow downstream."""
-        # Calculate how much environmental flow is yet to satisfy
-        # #(some may have been already if pull-and-take abstractions have taken place)
+        # Calculate how much environmental flow is yet to satisfy #(some may have been
+        # already if pull-and-take abstractions have taken place)
         to_satisfy = max(
             self.environmental_flow - self.total_environmental_satisfied, 0
         )

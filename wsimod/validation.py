@@ -170,7 +170,8 @@ def read_data(
     The keys to control this proces are:
 
         filename: Filename of the data to load
-        filter (optional): List of filters for the dataframe, each a dictionary in the form:
+        filter (optional): List of filters for the dataframe, each a dictionary in the
+            form:
             where: column to filer
             is: value of that column
         scaling (optional): List of variable scaling, each a dictionary of the form:

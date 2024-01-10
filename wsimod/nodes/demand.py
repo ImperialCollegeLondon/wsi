@@ -23,22 +23,22 @@ class Demand(Node):
         ResidentialDemand is in use.
 
         Args:
-            name (str): node name
-            constant_demand (float, optional): A constant portion of demand if no subclass
+            name (str): node name constant_demand (float, optional): A constant portion
+            of demand if no subclass
                 is used. Defaults to 0.
-            pollutant_load (dict, optional): Pollutant mass per timestep of constant_demand.
+            pollutant_load (dict, optional): Pollutant mass per timestep of
+            constant_demand.
                 Defaults to {}.
             data_input_dict (dict, optional):  Dictionary of data inputs relevant for
                 the node (temperature). Keys are tuples where first value is the name of
-                the variable to read from the dict and the second value is the
-                time. Defaults to {}
+                the variable to read from the dict and the second value is the time.
+                Defaults to {}
 
         Functions intended to call in orchestration:
             create_demand
         """
-        # TODO should temperature be defined in pollutant dict?
-        # TODO a lot of this should be moved to ResidentialDemand
-        # Assign parameters
+        # TODO should temperature be defined in pollutant dict? TODO a lot of this
+        # should be moved to ResidentialDemand Assign parameters
         self.constant_demand = constant_demand
         self.pollutant_load = pollutant_load
         # Update args
@@ -54,10 +54,8 @@ class Demand(Node):
         self.total_backup = self.empty_vqip()  # ew
         self.total_received = self.empty_vqip()
 
-        # Mass balance
-        # Because we assume demand is always satisfied
-        # received water 'disappears' for mass balance
-        # and consumed water 'appears' (this makes)
+        # Mass balance Because we assume demand is always satisfied received water
+        # 'disappears' for mass balance and consumed water 'appears' (this makes)
         # introduction of pollutants easy
         self.mass_balance_in.append(lambda: self.total_demand)
         self.mass_balance_out.append(lambda: self.total_backup)
@@ -154,20 +152,20 @@ class ResidentialDemand(Demand):
         """Subclass of demand with functions to handle internal and external water use.
 
         Args:
-            population (float, optional): population of node. Defaults to 1.
-            per_capita (float, optional): Volume per person per timestep of water
+            population (float, optional): population of node. Defaults to 1. per_capita
+            (float, optional): Volume per person per timestep of water
                 used. Defaults to 0.12.
             pollutant_load (dict, optional): Mass per person per timestep of
                 different pollutants generated. Defaults to {}.
             gardening_efficiency (float, optional): Value between 0 and 1 that
                 translates irrigation demand from GardenSurface into water requested
-                from the distribution network. Should account for percent of garden
-                that is irrigated and the efficacy of people in meeting their garden
-                water demand. Defaults to 0.6*0.7.
+                from the distribution network. Should account for percent of garden that
+                is irrigated and the efficacy of people in meeting their garden water
+                demand. Defaults to 0.6*0.7.
             data_input_dict (dict, optional):  Dictionary of data inputs relevant for
                 the node (temperature). Keys are tuples where first value is the name of
-                the variable to read from the dict and the second value is the
-                time. Defaults to {}
+                the variable to read from the dict and the second value is the time.
+                Defaults to {}
             constant_temp (float, optional): A constant temperature associated with
                 generated water. Defaults to 30
             constant_weighting (float, optional): Proportion of temperature that is
@@ -175,8 +173,10 @@ class ResidentialDemand(Demand):
 
         Key assumptions:
             - Per capita calculations to generate demand based on population.
-            - Pollutant concentration of generated demand uses a fixed mass per person per timestep.
-            - Temperature of generated wastewater is based partially on air temperature and partially on a constant.
+            - Pollutant concentration of generated demand uses a fixed mass per person
+              per timestep.
+            - Temperature of generated wastewater is based partially on air temperature
+              and partially on a constant.
             - Can interact with `land.py/GardenSurface` to simulate garden water use.
 
         Input data and parameter requirements:
@@ -245,7 +245,8 @@ class ResidentialDemand(Demand):
         Returns:
             (dict): A VQIP of water that includes pollutants to be sent to land
         """
-        # TODO Fertilisers are currently applied in the land node... which is preferable?
+        # TODO Fertilisers are currently applied in the land node... which is
+        # preferable?
         vqip = self.empty_vqip()
         vqip["volume"] = excess
         return vqip
@@ -259,8 +260,8 @@ class ResidentialDemand(Demand):
         Returns:
             (float): Amount of water actually applied to garden
         """
-        # TODO Anything more than this needed?
-        # (yes - population presence if eventually included!)
+        # TODO Anything more than this needed? (yes - population presence if eventually
+        # included!)
 
         return excess * self.gardening_efficiency
 
@@ -271,15 +272,15 @@ class ResidentialDemand(Demand):
         Returns:
             (dict): A VQIP containg foul water
         """
-        # TODO water that is consumed but not sent onwards as foul
-        # Total water required
+        # TODO water that is consumed but not sent onwards as foul Total water required
         consumption = self.population * self.per_capita
         # Apply pollutants
         foul = self.copy_vqip(self.pollutant_load)
         # Scale to population
         for pol in constants.ADDITIVE_POLLUTANTS:
             foul[pol] *= self.population
-        # Update volume and temperature (which is weighted based on air temperature and constant_temp)
+        # Update volume and temperature (which is weighted based on air temperature and
+        # constant_temp)
         foul["volume"] = consumption
         foul["temperature"] = (
             self.get_data_input("temperature") * (1 - self.constant_weighting)

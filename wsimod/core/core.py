@@ -62,8 +62,8 @@ class WSIObj:
         know what you're doing. This won't do anything on VQIPs with 0 volume.
 
         Args:
-            c1 (dict): A VQIP where pollutant entries are concentrations
-            c2 (dict): A VQIP where pollutant entries are concentrations
+            c1 (dict): A VQIP where pollutant entries are concentrations c2 (dict): A
+            VQIP where pollutant entries are concentrations
 
         Returns:
             c (dict): A new VQIP where c1 and c2 have been proportionately blended
@@ -86,8 +86,8 @@ class WSIObj:
         proportionately blended.
 
         Args:
-            t1 (dict): A VQIP where pollutant entries are mass totals
-            t2 (dict): A VQIP where pollutant entries are mass totals
+            t1 (dict): A VQIP where pollutant entries are mass totals t2 (dict): A VQIP
+            where pollutant entries are mass totals
 
         Returns:
             t (dict): A VQIP that is the sum of t1 and t2 (except for non-additive
@@ -142,7 +142,8 @@ class WSIObj:
         """
         c = self.copy_vqip(t)
         for pollutant in constants.ADDITIVE_POLLUTANTS:
-            # Divide concentration by volume to get concentration for additive pollutants
+            # Divide concentration by volume to get concentration for additive
+            # pollutants
             c[pollutant] /= c["volume"]
         return c
 
@@ -167,8 +168,8 @@ class WSIObj:
             >>> print(t)
             {'phosphate' : 0, 'volume' : 90, 'temperature' : 10}
         """
-        # TODO should probably be called 'subtract_vqip'
-        # TODO need to analyse uses of this to see if it is sensible to do something for non additive
+        # TODO should probably be called 'subtract_vqip' TODO need to analyse uses of
+        # this to see if it is sensible to do something for non additive
         t = self.copy_vqip(t1)
         # Directly subtract t2 from t1 for vol and additive pollutants
         for pol in constants.ADDITIVE_POLLUTANTS + ["volume"]:
@@ -181,7 +182,8 @@ class WSIObj:
         concentrations. Operation performed for volume and additive pollutants.
 
         NOTE: VQIPs in WSIMOD in general store pollution as a total rather than a
-        concentration. So you should only work with concentrations if you are doing it intentionally and know what you're doing.
+        concentration. So you should only work with concentrations if you are doing it
+        intentionally and know what you're doing.
 
         Args:
             c1 (dict): A VQIP where pollutant entries are concentrations to subtract
@@ -225,7 +227,8 @@ class WSIObj:
         concentrations.
 
         NOTE: VQIPs in WSIMOD in general store pollution as a total rather than a
-        concentration. So you should only work with concentrations if you are doing it intentionally and know what you're doing.
+        concentration. So you should only work with concentrations if you are doing it
+        intentionally and know what you're doing.
 
         Args:
             c (dict): A VQIP where pollutant entries are concentrations to remove
@@ -284,11 +287,12 @@ class WSIObj:
         """Change the volume of a VQIP, where pollutants are concentrations.
 
         NOTE: VQIPs in WSIMOD in general store pollution as a total rather than a
-        concentration. So you should only work with concentrations if you are doing it intentionally and know what you're doing.
+        concentration. So you should only work with concentrations if you are doing it
+        intentionally and know what you're doing.
 
         Args:
-            c (dict): A VQIP where pollutant entries are concentrations
-            v (float): Volume to change c's volume to
+            c (dict): A VQIP where pollutant entries are concentrations v (float):
+            Volume to change c's volume to
 
         Returns:
             c (dict): A new VQIP with volume udpated
@@ -328,7 +332,8 @@ class WSIObj:
         pollutants are given as concentrations but difference is given as mass totals.
 
         NOTE: VQIPs in WSIMOD in general store pollution as a total rather than a
-        concentration. So you should only work with concentrations if you are doing it intentionally and know what you're doing.
+        concentration. So you should only work with concentrations if you are doing it
+        intentionally and know what you're doing.
 
         Args:
             c (dict): A VQIP where pollutant entries are concentrations to subtract
@@ -351,8 +356,7 @@ class WSIObj:
         constants.FLOAT_ACCURACY.
 
         Args:
-            t1 (dict): A VQIP
-            t2 (dict): A VQIP
+            t1 (dict): A VQIP t2 (dict): A VQIP
 
         Returns:
             bool: True if the difference is less for each key, False otherwise
@@ -372,9 +376,9 @@ class WSIObj:
         actually occurred
 
         Returns:
-            in_ (dict): A VQIP of the total from mass_balance_in functions
-            ds_ (dict): A VQIP of the total from mass_balance_ds functions
-            out_ (dict): A VQIP of the total from mass_balance_out functions
+            in_ (dict): A VQIP of the total from mass_balance_in functions ds_ (dict): A
+            VQIP of the total from mass_balance_ds functions out_ (dict): A VQIP of the
+            total from mass_balance_out functions
 
         Raises:
             Message if mass balance does not close to constants.FLOAT_ACCURACY
@@ -413,8 +417,8 @@ class WSIObj:
                 out_10 = out_[v]
 
             if abs(in_10 - ds_10 - out_10) > constants.FLOAT_ACCURACY:
-                # Print mass balance error
-                # Print actual difference rather than magnitude comparison to enable user judgement
+                # Print mass balance error Print actual difference rather than magnitude
+                # comparison to enable user judgement
 
                 print(
                     "mass balance error for {0} of {1} in {2}".format(
@@ -428,25 +432,25 @@ class WSIObj:
 class DecayObj(WSIObj):
     """"""
 
-    # TODO - internet says this is a bad idea (diamond will occur when a Node -
-    # a type of WSIObj inherits a DecayObj - also a type of WSIObj). The reason
-    # diamonds are problems is because there can be conflicts in functions. But
-    # I don't want anyone to overwrite WSIObj functions so I don't see an issue?
+    # TODO - internet says this is a bad idea (diamond will occur when a Node - a type
+    # of WSIObj inherits a DecayObj - also a type of WSIObj). The reason diamonds are
+    # problems is because there can be conflicts in functions. But I don't want anyone
+    # to overwrite WSIObj functions so I don't see an issue?
     def __init__(self, decays):
         """A WSIObj that has decay functions built in.
 
         Args:
-            decays (dict): A dict of dicts containing a key for each pollutant that decays
+            decays (dict): A dict of dicts containing a key for each pollutant that
+            decays
                 and, within that, a key for each parameter (a constant and exponent)
 
         Examples:
             The 'constant' parameter represents what proportion of an amount will
             decrease each time make_decay is called. Lower value will reduce decay.
-            Bounded between 0 and 1.
-            The 'exponent' parameter represents how temperature sensitive the decay
-            is. The higher the value, the more pollution occurs at higher values.
-            Values expected to vary between 1 (no temperature sensitivity) and 1.1
-            (high temperature sensitivity).
+            Bounded between 0 and 1. The 'exponent' parameter represents how temperature
+            sensitive the decay is. The higher the value, the more pollution occurs at
+            higher values. Values expected to vary between 1 (no temperature
+            sensitivity) and 1.1 (high temperature sensitivity).
 
             >>> decays = {'phosphate' : {'constant' : 0.001, 'exponent' : 1.005}}
 
@@ -492,13 +496,12 @@ class DecayObj(WSIObj):
         pollutants are given as mass totals.
 
         Args:
-            t (dict): A VQIP to decay where pollutants are given as mass totals
-            d (dict): decays in a DecayObj
-            temperature (float): temperature
+            t (dict): A VQIP to decay where pollutants are given as mass totals d
+            (dict): decays in a DecayObj temperature (float): temperature
 
         Returns:
-            t (dict): A VQIP with updated pollutant values
-            diff (dict): A VQIP storing the change in pollutant values (decreases
+            t (dict): A VQIP with updated pollutant values diff (dict): A VQIP storing
+            the change in pollutant values (decreases
                 stored as positive numbers)
         """
         t = self.copy_vqip(t)
@@ -522,9 +525,8 @@ class DecayObj(WSIObj):
         pollutants are given as concentrations.
 
         Args:
-            c (dict): A VQIP to decay where pollutants are given as concentrations.
-            d (dict): decays in a DecayObj
-            temperature (float): temperature
+            c (dict): A VQIP to decay where pollutants are given as concentrations. d
+            (dict): decays in a DecayObj temperature (float): temperature
 
         Returns:
             t (dict): A VQIP with updated pollutant values (pollutants as
