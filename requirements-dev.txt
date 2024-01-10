@@ -10,8 +10,6 @@ build==1.0.3
     # via pip-tools
 cfgv==3.4.0
     # via pre-commit
-charset-normalizer==3.3.2
-    # via docformatter
 click==8.1.7
     # via
     #   black
@@ -22,8 +20,6 @@ dill==0.3.7
     # via wsimod (pyproject.toml)
 distlib==0.3.7
     # via virtualenv
-docformatter==1.7.5
-    # via wsimod (pyproject.toml)
 filelock==3.13.1
     # via virtualenv
 identify==2.5.31
@@ -79,8 +75,6 @@ tqdm==4.66.1
     # via wsimod (pyproject.toml)
 tzdata==2023.3
     # via pandas
-untokenize==0.1.1
-    # via docformatter
 virtualenv==20.24.6
     # via pre-commit
 wheel==0.41.3
