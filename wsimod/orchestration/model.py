@@ -194,7 +194,21 @@ class Model(WSIObj):
         constants.NON_ADDITIVE_POLLUTANTS = data["non_additive_pollutants"]
         constants.FLOAT_ACCURACY = float(data["float_accuracy"])
         self.__dict__.update(Model().__dict__)
-
+        
+        """
+        FLAG:
+            E.G. ADDITION FOR NEW CLASSES
+        """
+        
+        if 'extensions' in data.keys():
+            if 'new_classes' in data['extensions'].keys():
+                import wsimod
+                for class_name, class_address in data['extensions']['new_classes'].items():
+                    sys.path.append(class_address)
+                    new_node = __import__(class_name, fromlist=[''])
+                    setattr(wsimod.nodes, class_name, getattr(new_node, class_name))
+                    self.nodes_type[class_name] = {}
+                    
         nodes = data["nodes"]
 
         for name, node in nodes.items():
@@ -216,6 +230,18 @@ class Model(WSIObj):
         self.add_arcs(list(arcs.values()))
         if "dates" in data.keys():
             self.dates = [to_datetime(x) for x in data["dates"]]
+        
+        """
+        FLAG:
+            E.G. ADDITION FOR EXTENSIONS SCRIPT
+        
+        if you want this to work with 'model.save' functionality, you'll probably
+        need to store the extensions and new classes addresses in the model object
+        """
+        if 'extensions' in data.keys():
+            sys.path.append(data['extensions']['extension_file'])
+            from model_extensions import extensions
+            extensions(self)
 
     def save(self, address, config_name="config.yml", compress=False):
         """Save the model object to a yaml file and input data to csv.gz format in
