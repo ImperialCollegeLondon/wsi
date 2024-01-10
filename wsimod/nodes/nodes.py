@@ -218,7 +218,7 @@ class Node(WSIObj):
         Examples:
             >>> arcs_to_push_to = my_node.get_direction_arcs('push')
             >>> arcs_to_pull_from = my_node.get_direction_arcs('pull')
-            >>> arcs_from_reservoirs = my_node.get_direction_arcs('pull', of_type = 
+            >>> arcs_from_reservoirs = my_node.get_direction_arcs('pull', of_type =
                 'Reservoir')
         """
         if of_type is None:
@@ -427,7 +427,7 @@ class Node(WSIObj):
             connected = self.get_connected(direction="push", of_type=of_type, tag=tag)
             iter_ = 0
             if not_pushed > connected["avail"]:
-                # If more water than can be pushed, ignore preference and allocate all 
+                # If more water than can be pushed, ignore preference and allocate all
                 #   available based on capacity
                 connected["priority"] = connected["avail"]
                 connected["allocation"] = connected["capacity"]
@@ -801,7 +801,7 @@ class Tank(WSIObj):
 
         Examples:
             >>> constants.ADDITIVE_POLLUTANTS = ['phosphate']
-            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 10, 
+            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 10,
                 'phosphate' : 0.2})
             >>> print(my_tank.storage)
             {'volume' : 10, 'phosphate' : 0.2}
@@ -828,7 +828,7 @@ class Tank(WSIObj):
 
         Examples:
             >>> constants.ADDITIVE_POLLUTANTS = ['phosphate']
-            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 10, 
+            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 10,
                 'phosphate' : 0.2})
             >>> print(my_tank.storage)
             {'volume' : 10, 'phosphate' : 0.2}
@@ -858,7 +858,7 @@ class Tank(WSIObj):
 
         Examples:
             >>> constants.ADDITIVE_POLLUTANTS = ['phosphate']
-            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 5, 
+            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 5,
                 'phosphate' : 0.2})
             >>> print(my_tank.get_excess())
             {'volume' : 4, 'phosphate' : 0.16}
@@ -870,7 +870,7 @@ class Tank(WSIObj):
             vol = min(vqip["volume"], vol)
 
         # Adjust storage pollutants to match volume in vqip
-        # TODO the v_change_vqip in the reply here is a weird default (if a VQIP is not 
+        # TODO the v_change_vqip in the reply here is a weird default (if a VQIP is not
         #   provided)
         return self.v_change_vqip(self.storage, vol)
 
@@ -890,7 +890,7 @@ class Tank(WSIObj):
             >>> constants.ADDITIVE_POLLUTANTS = ['phosphate']
             >>> constants.POLLUTANTS = ['phosphate']
             >>> constants.NON_ADDITIVE_POLLUTANTS = []
-            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 5, 
+            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 5,
                 'phosphate' : 0.2})
             >>> my_push = {'volume' : 10, 'phosphate' : 0.5}
             >>> reply = my_tank.push_storage(my_push)
@@ -933,7 +933,7 @@ class Tank(WSIObj):
 
         Examples:
             >>> constants.ADDITIVE_POLLUTANTS = ['phosphate']
-            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 5, 
+            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 5,
                 'phosphate' : 0.2})
             >>> print(my_tank.pull_storage({'volume' : 6}))
             {'volume': 5.0, 'phosphate': 0.2}
@@ -967,7 +967,7 @@ class Tank(WSIObj):
 
         Examples:
             >>> constants.ADDITIVE_POLLUTANTS = ['phosphate']
-            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 5, 
+            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 5,
                 'phosphate' : 0.2})
             >>> print(my_tank.pull_pollutants({'volume' : 2, 'phosphate' : 0.15}))
             {'volume': 2.0, 'phosphate': 0.15}
@@ -1056,7 +1056,7 @@ class Tank(WSIObj):
         Returns:
 
         """
-        # Push vqip to storage where pollutants are given as a concentration rather 
+        # Push vqip to storage where pollutants are given as a concentration rather
         #   than storage
         vqip = self.concentration_to_total(self.vqip)
         self.storage = self.sum_vqip(self.storage, vqip)
@@ -1114,8 +1114,8 @@ class DecayTank(Tank, DecayObj):
         beginning of the timestep.
 
         Args:
-            decays (dict): A dict of dicts containing a key for each pollutant that 
-                decays and, within that, a key for each parameter (a constant and 
+            decays (dict): A dict of dicts containing a key for each pollutant that
+                decays and, within that, a key for each parameter (a constant and
                 exponent)
             parent (object): An object that can be used to read temperature data from
         """
@@ -1177,7 +1177,7 @@ class QueueTank(Tank):
         self.internal_arc = AltQueueArc(
             in_port=self, out_port=self, number_of_timesteps=self.number_of_timesteps
         )
-        # TODO should mass balance call internal arc (is this arc called in arc mass 
+        # TODO should mass balance call internal arc (is this arc called in arc mass
         #   balance?)
 
     def get_avail(self):
@@ -1351,7 +1351,7 @@ class DecayQueueTank(QueueTank):
     def _end_timestep(self):
         """End timestep wrapper that removes decayed pollutants and calls internal
         arc."""
-        # TODO Should the active storage decay if decays are given (probably.. though 
+        # TODO Should the active storage decay if decays are given (probably.. though
         #   that sounds like a nightmare)?
         self.storage = self.extract_vqip(self.storage, self.internal_arc.total_decayed)
         self.storage_ = self.copy_vqip(self.storage)

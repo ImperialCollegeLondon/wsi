@@ -488,7 +488,7 @@ class QueueArc(Arc):
                     vqip_ = self.v_change_vqip(vqip, removed)
                     total_removed = self.sum_vqip(total_removed, vqip_)
 
-                    # Assume that any water that cannot arrive at destination this 
+                    # Assume that any water that cannot arrive at destination this
                     # timestep is backflow
                     rejected = self.v_change_vqip(vqip, vqip["volume"] - removed)
 
