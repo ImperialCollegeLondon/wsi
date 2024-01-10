@@ -13,5 +13,6 @@ def available_tutorials() -> List[Path]:
 @mark.parametrize("tutorial", available_tutorials())
 def test_tutorials(tutorial):
     import subprocess
+    import sys
 
-    subprocess.run(["python", tutorial]).check_returncode()
+    subprocess.run([sys.executable, tutorial]).check_returncode()
