@@ -34,6 +34,7 @@ dev = [
     "ruff",
     "pip-tools",
     "pytest-cov",
+    "wsimod[demos]"
 ]
 
 demos = [
