@@ -3,7 +3,6 @@
 
 @author: bdobson
 Converted to totals on 2022-05-03
-
 """
 from wsimod.core import constants
 from wsimod.nodes.nodes import Node, Tank
@@ -20,12 +19,11 @@ class WTW(Node):
         liquor_multiplier={},
         percent_solids=0.0002,
     ):
-        """Generic treatment processes that apply temperature a sensitive
-        transform of pollutants into liquor and solids (behaviour depends on
-        subclass). Push requests are stored in the current_input state variable,
-        but treatment must be triggered with treat_current_input. This treated
-        water is stored in the discharge_holder state variable, which will be sent
-        different depending on FWTW/WWTW.
+        """Generic treatment processes that apply temperature a sensitive transform of
+        pollutants into liquor and solids (behaviour depends on subclass). Push requests
+        are stored in the current_input state variable, but treatment must be triggered
+        with treat_current_input. This treated water is stored in the discharge_holder
+        state variable, which will be sent different depending on FWTW/WWTW.
 
         Args:
             name (str): Node name
@@ -62,7 +60,6 @@ class WTW(Node):
                 _Units_: -
             - `liquor_multiplier` and `percent_solids` describe the proportion of
                 throughput that goes to liquor/solids.
-
         """
         # Set/Default parameters
         self.treatment_throughput_capacity = treatment_throughput_capacity
@@ -103,21 +100,20 @@ class WTW(Node):
 
         Returns:
             (float): Amount of volume that can still be treated this timestep
-
         """
         return max(self.treatment_throughput_capacity - self.current_input["volume"], 0)
 
     def treat_current_input(self):
         """Run treatment processes this timestep, including temperature sensitive
-        transforms, liquoring, solids.
-        """
+        transforms, liquoring, solids."""
         # Treat current input
         influent = self.copy_vqip(self.current_input)
 
         # Calculate effluent, liquor and solids
         discharge_holder = self.empty_vqip()
 
-        # Assume non-additive pollutants are unchanged in discharge and are proportionately mixed in liquor
+        # Assume non-additive pollutants are unchanged in discharge and are
+        # proportionately mixed in liquor
         for key in constants.NON_ADDITIVE_POLLUTANTS:
             discharge_holder[key] = influent[key]
             self.liquor[key] = (
@@ -128,8 +124,10 @@ class WTW(Node):
                 + influent["volume"] * self.liquor_multiplier["volume"]
             )
 
-        # TODO this should probably just be for process_parameters.keys() to avoid having to declare non changing parameters
-        # TODO should the liquoring be temperature sensitive too? As it is the solids will take the brunt of the temperature variability which maybe isn't sensible
+        # TODO this should probably just be for process_parameters.keys() to avoid
+        # having to declare non changing parameters
+        # TODO should the liquoring be temperature sensitive too? As it is the solids
+        # will take the brunt of the temperature variability which maybe isn't sensible
         for key in constants.ADDITIVE_POLLUTANTS + ["volume"]:
             if key != "volume":
                 # Temperature sensitive transform
@@ -175,14 +173,17 @@ class WWTW(WTW):
         stormwater_storage_elevation=10,
         **kwargs,
     ):
-        """A wastewater treatment works wrapper for WTW. Contains a temporary
-        stormwater storage tank. Liquor is combined with current_effluent and re-
-        treated while solids leave the model.
+        """A wastewater treatment works wrapper for WTW. Contains a temporary stormwater
+        storage tank. Liquor is combined with current_effluent and re- treated while
+        solids leave the model.
 
         Args:
-            stormwater_storage_capacity (float, optional): Capacity of stormwater tank. Defaults to 10.
-            stormwater_storage_area (float, optional): Area of stormwater tank. Defaults to 1.
-            stormwater_storage_elevation (float, optional): Datum of stormwater tank. Defaults to 10.
+            stormwater_storage_capacity (float, optional): Capacity of stormwater tank.
+                Defaults to 10.
+            stormwater_storage_area (float, optional): Area of stormwater tank.
+                Defaults to 1.
+            stormwater_storage_elevation (float, optional): Datum of stormwater tank.
+                Defaults to 10.
 
         Functions intended to call in orchestration:
             calculate_discharge
@@ -200,7 +201,6 @@ class WWTW(WTW):
             - See `wtw.py/WTW` for treatment.
             - Stormwater tank `capacity`, `area`, and `datum`.
                 _Units_: cubic metres, squared metres, metres
-
         """
         # Set parameters
         self.stormwater_storage_capacity = stormwater_storage_capacity
@@ -244,7 +244,8 @@ class WWTW(WTW):
         # Run WWTW model
 
         # Try to clear stormwater
-        # TODO (probably more tidy to use push_set_sewer? though maybe less computationally efficient)
+        # TODO (probably more tidy to use push_set_sewer? though maybe less
+        # computationally efficient)
         excess = self.get_excess_throughput()
         if (self.stormwater_tank.get_avail()["volume"] > constants.FLOAT_ACCURACY) & (
             excess > constants.FLOAT_ACCURACY
@@ -275,7 +276,6 @@ class WWTW(WTW):
 
         Returns:
             (dict): excess
-
         """
         # Get excess
         excess_throughput = self.get_excess_throughput()
@@ -291,15 +291,13 @@ class WWTW(WTW):
         return self.v_change_vqip(vqip, vol)
 
     def push_set_sewer(self, vqip):
-        """Receive water, first try to update current_input, and then stormwater
-        tank.
+        """Receive water, first try to update current_input, and then stormwater tank.
 
         Args:
             vqip (dict): A VQIP amount to be treated and then stored
 
         Returns:
             (dict): A VQIP amount of water that was not treated
-
         """
         # Receive water from sewers
         vqip = self.copy_vqip(vqip)
@@ -328,16 +326,15 @@ class WWTW(WTW):
             return vqip
 
     def pull_set_reuse(self, vqip):
-        """Enables WWTW to receive pulls of the treated water (i.e., for
-        wastewater reuse or satisfaction of environmental flows). Intended to be
-        called in between calculate_discharge and make_discharge.
+        """Enables WWTW to receive pulls of the treated water (i.e., for wastewater
+        reuse or satisfaction of environmental flows). Intended to be called in between
+        calculate_discharge and make_discharge.
 
         Args:
             vqip (dict): A VQIP amount to be pulled (only 'volume' key is used)
 
         Returns:
             reply (dict): Amount of water that has been pulled
-
         """
         # Satisfy request with treated (volume)
         reply_vol = min(vqip["volume"], self.treated["volume"])
@@ -350,11 +347,10 @@ class WWTW(WTW):
         return reply
 
     def pull_check_reuse(self, vqip=None):
-        """Pull check available water. Simply returns the previous timestep's
-        treated throughput. This is of course inaccurate (which may lead to
-        slightly longer calulcations), but it is much more flexible. This hasn't
-        been recently tested so it might be that returning treated would be fine
-        (and more accurate!).
+        """Pull check available water. Simply returns the previous timestep's treated
+        throughput. This is of course inaccurate (which may lead to slightly longer
+        calulcations), but it is much more flexible. This hasn't been recently tested so
+        it might be that returning treated would be fine (and more accurate!).
 
         Args:
             vqip (dict, optional): A VQIP that can be used to limit the volume in
@@ -363,7 +359,6 @@ class WWTW(WTW):
         Returns:
             (dict): A VQIP amount of water available. Currently just the previous
                 timestep's treated throughput
-
         """
         # Respond to request of water for reuse/MRF
         return self.copy_vqip(self.treated)
@@ -389,10 +384,10 @@ class FWTW(WTW):
         data_input_dict={},
         **kwargs,
     ):
-        """A freshwater treatment works wrapper for WTW. Contains service
-        reservoirs that treated water is released to and pulled from. Cannot allow
-        deficit (thus any deficit is satisfied by water entering the model 'via
-        other means'). Liquor and solids are sent to sewers.
+        """A freshwater treatment works wrapper for WTW. Contains service reservoirs
+        that treated water is released to and pulled from. Cannot allow deficit (thus
+        any deficit is satisfied by water entering the model 'via other means'). Liquor
+        and solids are sent to sewers.
 
         Args:
             service_reservoir_storage_capacity (float, optional): Capacity of service
@@ -414,7 +409,8 @@ class FWTW(WTW):
             - See `wtw.py/WTW` for treatment.
             - Stores treated water in a service reservoir tank, with a single tank
                 per `FWTW` node.
-            - Aims to satisfy a throughput that would top up the service reservoirs until full.
+            - Aims to satisfy a throughput that would top up the service reservoirs
+                until full.
             - Currently, will not allow a deficit, thus introducing water from
                 'other measures' if pulls cannot fulfil demand. Behaviour under a
                 deficit should be determined and validated before introducing.
@@ -423,7 +419,6 @@ class FWTW(WTW):
             - See `wtw.py/WTW` for treatment.
             - Service reservoir tank `capacity`, `area`, and `datum`.
                 _Units_: cubic metres, squared metres, metres
-
         """
         # Default parameters
         self.service_reservoir_storage_capacity = service_reservoir_storage_capacity
@@ -457,8 +452,10 @@ class FWTW(WTW):
             datum=self.service_reservoir_storage_elevation,
             initial_storage=self.service_reservoir_initial_storage,
         )
-        # self.service_reservoir_tank.storage['volume'] = self.service_reservoir_inital_storage
-        # self.service_reservoir_tank.storage_['volume'] = self.service_reservoir_inital_storage
+        # self.service_reservoir_tank.storage['volume'] =
+        # self.service_reservoir_inital_storage
+        # self.service_reservoir_tank.storage_['volume'] =
+        # self.service_reservoir_inital_storage
 
         # Mass balance
         self.mass_balance_in.append(lambda: self.total_deficit)
@@ -467,8 +464,7 @@ class FWTW(WTW):
 
     def treat_water(self):
         """Pulls water, aiming to fill service reservoirs, calls WTW
-        treat_current_input, avoids deficit, sends liquor and solids to sewers.
-        """
+        treat_current_input, avoids deficit, sends liquor and solids to sewers."""
         # Calculate how much water is needed
         target_throughput = self.service_reservoir_tank.get_excess()
         target_throughput = min(
@@ -521,7 +517,6 @@ class FWTW(WTW):
 
         Returns:
             (dict): A VQIP of availability in service reservoirs
-
         """
         return self.service_reservoir_tank.get_avail(vqip)
 
@@ -533,7 +528,6 @@ class FWTW(WTW):
 
         Returns:
             pulled (dict): A VQIP amount that was successfully pulled
-
         """
         # Pull
         pulled = self.service_reservoir_tank.pull_storage(vqip)

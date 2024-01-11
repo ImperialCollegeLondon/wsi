@@ -14,12 +14,6 @@ click==8.1.7
     # via
     #   black
     #   pip-tools
-colorama==0.4.6
-    # via
-    #   build
-    #   click
-    #   pytest
-    #   tqdm
 coverage[toml]==7.3.2
     # via pytest-cov
 dill==0.3.7
