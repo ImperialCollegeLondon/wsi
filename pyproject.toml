@@ -33,6 +33,10 @@ dev = [
     "black",
     "ruff",
     "pip-tools",
+    "pytest-cov",
+    "geopandas",
+    "matplotlib",
+    "shapely",
     "pytest-cov"
 ]
 
