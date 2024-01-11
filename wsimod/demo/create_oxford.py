@@ -2,7 +2,6 @@
 """Created on Tue Nov  1 09:03:17 2022.
 
 @author: Barney
-
 """
 import os
 import re
@@ -502,7 +501,6 @@ def create_timeseries(amount, dates, variable):
 
     Returns:
         (DataFrame): the formatted dataframe
-
     """
     df = pd.DataFrame(columns=["date", "variable", "value"])
     df["date"] = dates

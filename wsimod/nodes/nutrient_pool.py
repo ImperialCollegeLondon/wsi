@@ -2,7 +2,6 @@
 """Created on Thu May 19 16:42:20 2022.
 
 @author: barna
-
 """
 from wsimod.core import constants
 
@@ -21,62 +20,80 @@ class NutrientPool:
         fraction_manure_to_dissolved_inorganic={"N": 0.5, "P": 0.1},
         fraction_residue_to_fast={"N": 0.1, "P": 0.1},
     ):
-        """A class to track nutrient pools in a soil tank, intended to be
-        initialised and called by GrowingSurfaces (see
-        wsimod/nodes/land.py/GrowingSurface) and their subclasses. Contains five
-        pools, which have a storage that tracks the mass of nutrients. Equations
-        and parameters are based on HYPE.
+        """A class to track nutrient pools in a soil tank, intended to be initialised
+        and called by GrowingSurfaces (see wsimod/nodes/land.py/GrowingSurface) and
+        their subclasses. Contains five pools, which have a storage that tracks the mass
+        of nutrients. Equations and parameters are based on HYPE.
 
         Args:
-            fraction_dry_n_to_dissolved_inorganic (float, optional): fraction of dry nitrogen deposition going into the soil dissolved inorganic nitrogen pool, with the rest added to the fast pool. Defaults to 0.9.
-            degrhpar (dict, optional): reference humus degradation rate (fraction of humus pool to fast pool). Defaults to {'N' : 7 * 1e-5, 'P' : 7 * 1e-6}.
-            dishpar (dict, optional): reference humus dissolution rate (fraction of humus pool to dissolved organic pool). Defaults to {'N' : 7 * 1e-5, 'P' : 7 * 1e-6}.
-            minfpar (dict, optional): reference fast pool mineralisation rate (fraction of fast pool to dissolved inorganic pool). Defaults to {'N' : 0.00013, 'P' : 0.000003}.
-            disfpar (dict, optional): reference fast pool dissolution rate (fraction of fast pool to dissolved organic pool). Defaults to {'N' : 0.000003, 'P' : 0.0000001}.
-            immobdpar (dict, optional): reference immobilisation rate (fraction of dissolved inorganic pool to fast pool). Defaults to {'N' : 0.0056, 'P' : 0.2866}.
-            fraction_manure_to_dissolved_inorganic (dict, optional): fraction of nutrients from applied manure to dissolved inorganic pool, with the rest added to the fast pool. Defaults to {'N' : 0.5, 'P' : 0.1}.
-            fraction_residue_to_fast (dict, optional): fraction of nutrients from residue to fast pool, with the rest added to the humus pool. Defaults to {'N' : 0.1, 'P' : 0.1}.
+            fraction_dry_n_to_dissolved_inorganic (float, optional): fraction of dry
+            nitrogen deposition going into the soil dissolved inorganic nitrogen pool,
+            with the rest added to the fast pool. Defaults to 0.9. degrhpar (dict,
+            optional): reference humus degradation rate (fraction of humus pool to fast
+            pool). Defaults to {'N' : 7 * 1e-5, 'P' : 7 * 1e-6}. dishpar (dict,
+            optional): reference humus dissolution rate (fraction of humus pool to
+            dissolved organic pool). Defaults to {'N' : 7 * 1e-5, 'P' : 7 * 1e-6}.
+            minfpar (dict, optional): reference fast pool mineralisation rate (fraction
+            of fast pool to dissolved inorganic pool). Defaults to {'N' : 0.00013, 'P' :
+            0.000003}. disfpar (dict, optional): reference fast pool dissolution rate
+            (fraction of fast pool to dissolved organic pool). Defaults to {'N' :
+            0.000003, 'P' : 0.0000001}. immobdpar (dict, optional): reference
+            immobilisation rate (fraction of dissolved inorganic pool to fast pool).
+            Defaults to {'N' : 0.0056, 'P' : 0.2866}.
+            fraction_manure_to_dissolved_inorganic (dict, optional): fraction of
+            nutrients from applied manure to dissolved inorganic pool, with the rest
+            added to the fast pool. Defaults to {'N' : 0.5, 'P' : 0.1}.
+            fraction_residue_to_fast (dict, optional): fraction of nutrients from
+            residue to fast pool, with the rest added to the humus pool. Defaults to
+            {'N' : 0.1, 'P' : 0.1}.
 
         Key assumptions:
              - Four nutrient pools are conceptualised for both nitrogen and phosphorus
                 in soil, which includes humus pool, fast pool, dissolved inorganic pool,
-                and dissolved organic pool. Humus and fast pool represent immobile pool of
-                organic nutrients in the soil with slow and fast turnover, respectively.
-                Dissolved inorganic and organic pool represent nutrients in dissolved phase
-                in soil water (for phosphorus, dissolved organic pool might contain particulate
-                phase). Given that phoshphorus can be adsorbed and attached to soil particles,
-                an adsorbed inorganic pool is created specifically for phosphorus.
+                and dissolved organic pool. Humus and fast pool represent immobile pool
+                of organic nutrients in the soil with slow and fast turnover,
+                respectively. Dissolved inorganic and organic pool represent nutrients
+                in dissolved phase in soil water (for phosphorus, dissolved organic pool
+                might contain particulate phase). Given that phoshphorus can be adsorbed
+                and attached to soil particles, an adsorbed inorganic pool is created
+                specifically for phosphorus.
              - The major sources of nutrients to soil are conceptualised as
                 - atmospheric deposition:
                     - dry deposition:
-                        - for nitrogen, inorganic fraction of dry deposition is added to the dissovled
+                        - for nitrogen, inorganic fraction of dry deposition is added to
+                          the dissovled
                            inorganic pool, while the rest is added to the fast pool;
                         - for phosphorus, all is added to adsorbed inorganic pool.
                     - wet deposition: all is added to the dissolved inorganic pool.
                 - fertilisers: all added to the dissolved inorganic pool.
-                - manure: the inorganic fraction is added to the dissovled inorganic pool, with
+                - manure: the inorganic fraction is added to the dissovled inorganic
+                  pool, with
                     the rest added to the fast pool.
-                - residue: the part with fast turnover is added to the fast pool, with the rest
+                - residue: the part with fast turnover is added to the fast pool, with
+                  the rest
                     added to the humus pool.
-             - Nutrient fluxes between these pools are simulated to represent the biochemical processes
-                that can transform the nutrients between different forms. These processes include
-                - degradation of humus pool to fast pool
-                - dissolution of humus pool to dissovled organic pool
-                - mineralisation of fast pool to dissolved inorganic pool
-                - dissolution of fast pool to dissolved organic pool
-                - immobilisation of dissolved inroganic pool to fast pool
-                The rate of these processes are affected by the soil temperature and moisture conditions.
-             - When soil erosion happens, a portion of both the adsorbed inorganic pool and humus pool
+             - Nutrient fluxes between these pools are simulated to represent the
+               biochemical processes
+                that can transform the nutrients between different forms. These
+                processes include - degradation of humus pool to fast pool - dissolution
+                of humus pool to dissovled organic pool - mineralisation of fast pool to
+                dissolved inorganic pool - dissolution of fast pool to dissolved organic
+                pool - immobilisation of dissolved inroganic pool to fast pool The rate
+                of these processes are affected by the soil temperature and moisture
+                conditions.
+             - When soil erosion happens, a portion of both the adsorbed inorganic pool
+               and humus pool
                 for phosphorus will be eroded as well.
 
         Input data and parameter requirements:
-             - fraction_dry_n_to_dissolved_inorganic, fraction_manure_to_dissolved_inorganic, fraction_residue_to_fast.
+             - fraction_dry_n_to_dissolved_inorganic,
+               fraction_manure_to_dissolved_inorganic, fraction_residue_to_fast.
                 _Units_: -, all should in [0-1]
              - degrhpar, dishpar, minfpar, disfpar, immobdpar.
                 _Units_: -, all should in [0-1]
-
         """
-        # TODO I don't think anyone will change most of these params... they could maybe just be set here
+        # TODO I don't think anyone will change most of these params... they could maybe
+        # just be set here
         self.init_empty()
 
         # Assign parameters
@@ -130,8 +147,8 @@ class NutrientPool:
         self.storage = self.get_empty_nutrient()
 
     def allocate_inorganic_irrigation(self, irrigation):
-        """Assign inorganic irrigation, which is assumed to contain dissolved
-        inorganic nutrients and thus updates that pool.
+        """Assign inorganic irrigation, which is assumed to contain dissolved inorganic
+        nutrients and thus updates that pool.
 
         Args:
             irrigation (dict): A dict that contains the amount of nutrients entering
@@ -141,15 +158,14 @@ class NutrientPool:
             irrigation (dict): irrigation above, because no transformations take place
                 (i.e., dissolved inorganic is what is received and goes straight into
                 that pool)
-
         """
         # Update pool
         self.dissolved_inorganic_pool.receive(irrigation)
         return irrigation
 
     def allocate_organic_irrigation(self, irrigation):
-        """Assign organic irrigation, which is assumed to contain dissolved
-        organic nutrients and thus updates that pool.
+        """Assign organic irrigation, which is assumed to contain dissolved organic
+        nutrients and thus updates that pool.
 
         Args:
             irrigation (dict): A dict that contains the amount of nutrients entering
@@ -157,18 +173,16 @@ class NutrientPool:
 
         Returns:
             irrigation (dict): irrigation above, because no transformations take place
-                (i.e., dissolved organic is what is received and goes straight into
-                that pool)
-
+                (i.e., dissolved organic is what is received and goes straight into that
+                pool)
         """
         # Update pool
         self.dissolved_organic_pool.receive(irrigation)
         return irrigation
 
     def allocate_dry_deposition(self, deposition):
-        """Assign dry deposition, which is assumed to go to both dissolved
-        inorganic pool and fast pool (nitrogen) and the adsorbed pool
-        (phosphorus).
+        """Assign dry deposition, which is assumed to go to both dissolved inorganic
+        pool and fast pool (nitrogen) and the adsorbed pool (phosphorus).
 
         Args:
             deposition (dict): A dict that contains the amount of nutrients entering
@@ -178,7 +192,6 @@ class NutrientPool:
             (dict): A dict describing the amount of nutrients that enter the nutrient
                 pool in a dissolved form (and thus need to be tracked by the soil water
                 tank)
-
         """
         # Update pools
         self.fast_pool.storage["N"] += deposition["N"] * self.fraction_dry_n_to_fast
@@ -203,15 +216,14 @@ class NutrientPool:
             deposition (dict): deposition above, because no transformations take place
                 (i.e., dissolved inorganic is what is received and goes straight into
                 that pool)
-
         """
         # Update pool
         self.dissolved_inorganic_pool.receive(deposition)
         return deposition
 
     def allocate_manure(self, manure):
-        """Assign manure, which is assumed to go to both dissolved inorganic pool
-        and fast pool.
+        """Assign manure, which is assumed to go to both dissolved inorganic pool and
+        fast pool.
 
         Args:
             manure (dict): A dict that contains the amount of nutrients entering
@@ -221,7 +233,6 @@ class NutrientPool:
             (dict): A dict describing the amount of nutrients that enter the nutrient
                 pool in a dissolved form (and thus need to be tracked by the soil water
                 tank)
-
         """
         # Assign a proportion of nutrients to the dissolved inorganic pool
         self.dissolved_inorganic_pool.receive(
@@ -236,8 +247,7 @@ class NutrientPool:
         )
 
     def allocate_residue(self, residue):
-        """Assign residue, which is assumed to go to both humus pool and fast
-        pool.
+        """Assign residue, which is assumed to go to both humus pool and fast pool.
 
         Args:
             residue (dict): A dict that contains the amount of nutrients entering
@@ -247,7 +257,6 @@ class NutrientPool:
             (dict): A dict describing the amount of nutrients that enter the nutrient
                 pool in a dissolved form (and thus need to be tracked by the soil water
                 tank) - i.e., none because fast and humus pool are both solid
-
         """
         # Assign a proportion of nutrients to the humus pool
         self.humus_pool.receive(
@@ -260,8 +269,8 @@ class NutrientPool:
         return self.empty_nutrient()
 
     def allocate_fertiliser(self, fertiliser):
-        """Assign fertiliser, which is assumed to contain dissolved inorganic
-        nutrients and thus updates that pool.
+        """Assign fertiliser, which is assumed to contain dissolved inorganic nutrients
+        and thus updates that pool.
 
         Args:
             fertiliser (dict): A dict that contains the amount of nutrients entering
@@ -271,7 +280,6 @@ class NutrientPool:
             fertiliser (dict): fertiliser above, because no transformations take place
                 (i.e., dissolved inorganic is what is received and goes straight into
                 that pool)
-
         """
         self.dissolved_inorganic_pool.receive(fertiliser)
         return fertiliser
@@ -286,7 +294,6 @@ class NutrientPool:
             (dict): A dict of dicts, where the top level distinguishes between organic
                 and inorganic nutrients, and the bottom level describes how much
                 nutrients (i.e., N and P) have been extracted from those pools
-
         """
         # Extract from dissolved inorganic pool
         reply_di = self.dissolved_inorganic_pool.extract(
@@ -311,21 +318,19 @@ class NutrientPool:
 
         Returns:
             (float): total phosphorus
-
         """
         return self.adsorbed_inorganic_pool.storage["P"] + self.humus_pool.storage["P"]
 
     def erode_P(self, amount_P):
-        """Update humus and adsorbed inorganic pools to erode some amount. Removed
-        in proportion to amount in both pools.
+        """Update humus and adsorbed inorganic pools to erode some amount. Removed in
+        proportion to amount in both pools.
 
         Args:
             amount_P (float): Amount of phosphorus to be eroded
 
         Returns:
-            (float): Amount of phosphorus eroded from the humus pool
-            (float): Amount of phosphorus eroded from the adsorbed inorganic pool
-
+            (float): Amount of phosphorus eroded from the humus pool (float): Amount of
+            phosphorus eroded from the adsorbed inorganic pool
         """
         # Calculate proportion of adsorbed to be eroded
         fraction_adsorbed = self.adsorbed_inorganic_pool.storage["P"] / (
@@ -346,15 +351,14 @@ class NutrientPool:
         return reply_humus["P"], reply_adsorbed["P"]
 
     def soil_pool_transformation(self):
-        """Function to be called by a GrowingSurface that performs and tracks
-        changes resulting from soil transformation processes.
+        """Function to be called by a GrowingSurface that performs and tracks changes
+        resulting from soil transformation processes.
 
         Returns:
             (float): increase in dissolved inorganic nutrients resulting from
                 transformations (negative value indicates a decrease)
             (float): increase in dissolved organic nutrients resulting from
                 transformations (negative value indicates a decrease)
-
         """
         # For mass balance purposes, assume fast is inorganic and humus is organic
 
@@ -364,7 +368,8 @@ class NutrientPool:
 
         # Turnover of humus
         amount = self.temp_soil_process(self.degrhpar, self.humus_pool, self.fast_pool)
-        # This is solid inorganic to solid organic... no tracking needed since solid nutrients aren't tracked in mass balance of the surface soil water tank!
+        # This is solid inorganic to solid organic... no tracking needed since solid
+        # nutrients aren't tracked in mass balance of the surface soil water tank!
 
         # Dissolution of humus
         amount = self.temp_soil_process(
@@ -396,7 +401,8 @@ class NutrientPool:
         )
         increase_in_dissolved_inorganic = self.subtract_nutrients(
             increase_in_dissolved_inorganic, amount
-        )  # TODO will a negative value affect the consequent processes in growing surface?
+        )  # TODO will a negative value affect the consequent processes in growing
+        # surface?
 
         return increase_in_dissolved_inorganic, increase_in_dissolved_organic
 
@@ -405,15 +411,16 @@ class NutrientPool:
         remove nutrients from the extract pool and update the receive pool.
 
         Args:
-            parameter (dict): A dict containing a parameter for each nutrient for the given process
+            parameter (dict): A dict containing a parameter for each nutrient for the
+            given process
                 (units in per timestep)
-            extract_pool (NutrientStore): The pool to extract from
-            receive_pool (NutrientStore): The pool to receive extracted nutrients
+            extract_pool (NutrientStore): The pool to extract from receive_pool
+            (NutrientStore): The pool to receive extracted nutrients
 
         Returns:
-            to_extract (dict): A dict containing the amount extracted of each nutrient (for mass
+            to_extract (dict): A dict containing the amount extracted of each nutrient
+            (for mass
                 balance)
-
         """
         # Initialise nutrients
         to_extract = self.get_empty_nutrient()
@@ -435,7 +442,6 @@ class NutrientPool:
 
         Returns:
             (dict): A dict containing 0 for each nutrient
-
         """
         return self.empty_nutrient.copy()
 
@@ -443,12 +449,11 @@ class NutrientPool:
         """Multiply nutrients by factors.
 
         Args:
-            nutrient (dict): Dict of nutrients to multiply
-            factor (dict): Dict of factors to multiply for each nutrient
+            nutrient (dict): Dict of nutrients to multiply factor (dict): Dict of
+            factors to multiply for each nutrient
 
         Returns:
             (dict): Multiplied nutrients
-
         """
         return {x: nutrient[x] * factor[x] for x in constants.NUTRIENTS}
 
@@ -457,7 +462,6 @@ class NutrientPool:
 
         Args:
             nutrients (dict): Amount of nutrients to update store by
-
         """
         # Increase storage
         for nutrient, amount in nutrients.items():
@@ -467,12 +471,10 @@ class NutrientPool:
         """Sum two nutrients.
 
         Args:
-            n1 (dict): Dict of nutrients
-            n2 (dict): Dict of nutrients
+            n1 (dict): Dict of nutrients n2 (dict): Dict of nutrients
 
         Returns:
             (dict): Summed nutrients
-
         """
         reply = self.get_empty_nutrient()
         for nutrient in constants.NUTRIENTS:
@@ -483,12 +485,11 @@ class NutrientPool:
         """Subtract two nutrients.
 
         Args:
-            n1 (dict): Dict of nutrients to subtract from
-            n2 (dict): Dict of nutrients to subtract
+            n1 (dict): Dict of nutrients to subtract from n2 (dict): Dict of nutrients
+            to subtract
 
         Returns:
             (dict): subtracted nutrients
-
         """
         reply = self.get_empty_nutrient()
         for nutrient in constants.NUTRIENTS:
@@ -503,7 +504,6 @@ class NutrientPool:
 
         Returns:
             (dict): amount of nutrients successfully removed
-
         """
         reply = self.get_empty_nutrient()
         for nutrient, amount in nutrients.items():
