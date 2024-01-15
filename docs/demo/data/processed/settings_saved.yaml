@@ -127,6 +127,24 @@ arcs:
     in_port: gw2
     out_port: gw1
 
+orchestration:
+- FWTW: treat_water
+- Demand: create_demand
+- Land: run
+- Groundwater: infiltrate
+- Groundwater_h: infiltrate
+- Sewer: make_discharge
+- Foul: make_discharge
+- WWTW: calculate_discharge
+- Groundwater: distribute
+- Groundwater_h: distribute_gw_gw
+- Groundwater_h: distribute_gw_rw
+- River: calculate_discharge
+- Reservoir: make_abstractions
+- Land: apply_irrigation
+- WWTW: make_discharge
+- Catchment: route
+
 pollutants:
 - do
 - org-phosphorus
