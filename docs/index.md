@@ -48,9 +48,9 @@ and consists of:
 
     4.3. [Customise interactions](./demo/scripts/customise_interactions.py)
 
-5. [Command line interface](wsimod-cli.md)
+5. [Component library](component-library.md)
 
-6. [Component library](component-library.md)
+6. [Command line interface](wsimod-cli.md)
 
 7. [Run WSIMOD in DAFNI](dafni.md)
 

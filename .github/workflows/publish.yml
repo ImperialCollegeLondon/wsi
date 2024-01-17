@@ -67,8 +67,25 @@ jobs:
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
 
-  publish-DAFNI:
+  publish-docs:
     needs: publish-PyPI
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements-doc.txt
+
+      - name: Deploy Docs
+        run: mkdocs gh-deploy --force
+
+  publish-DAFNI:
+    needs: publish-docs
     name: Publish WSIMOD to DAFNI
     runs-on: ubuntu-latest
     env:

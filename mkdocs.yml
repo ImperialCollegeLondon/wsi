@@ -20,6 +20,9 @@ plugins:
   - coverage:
       page_name: coverage  # default
       html_report_dir: htmlcov  # default
+  - gen-files:
+      scripts:
+        - docs/create_class_page.py
 
 markdown_extensions:
   - footnotes
@@ -31,6 +34,8 @@ nav:
   - Tutorials: tutorials.md
   - How to guide: how-to.md
   - Component library: component-library.md
+  - Command line interface: wsimod-cli.md
+  - Run WSIMOD in DAFNI: dafni.md
   - API reference: reference.md
   - Quickstart: ./demo/scripts/quickstart_demo.py
   - Coverage report: coverage.md
