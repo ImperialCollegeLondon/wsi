@@ -5,21 +5,12 @@
 
 """
 
-from pathlib import Path
-import tempfile
+import os
 
 import pandas as pd
-import pypandoc
 
 from wsimod.core.core import WSIObj
 from wsimod.nodes.nutrient_pool import NutrientPool
-
-try:
-    pypandoc.convert_text("# test string", "rst", format="md")
-except OSError:
-    pypandoc.download_pandoc(
-        delete_installer=True, download_folder=tempfile.gettempdir()
-    )
 
 
 def get_classes():
@@ -66,11 +57,14 @@ def format_text(text):
 
 # Identify which reference file to link modules to
 reference_lookup = {}
-for file in Path(__file__).parent.glob("reference-*"):
-    with file.open() as f:
-        for line in f:
-            if ":::" in line:
-                reference_lookup[line.replace("::: ", "").replace("\n", "")] = file.stem
+for file in os.listdir(os.getcwd()):
+    if "reference-" in file:
+        with open(file) as f:
+            for line in f:
+                if ":::" in line:
+                    reference_lookup[
+                        line.replace("::: ", "").replace("\n", "")
+                    ] = file.replace(".md", "")
 
 # Iterate over classes
 subclasses = get_classes()
@@ -124,6 +118,6 @@ components, their assumptions and required input data on this page.
 """
 
 # Write
-with open(Path(__file__).parent / "component-library.md", "w") as f:
+with open("component-library.md", "w") as f:
     f.write(front_text)
     f.write(mytable.to_markdown(index=False))

@@ -56,7 +56,6 @@ doc = [
     "mkdocs-jupyter",
     "mkdocs-material-extensions",
     "pypandoc",
-    "mkdocs-gen-files",
     "wsimod[demos]"
 ]
 

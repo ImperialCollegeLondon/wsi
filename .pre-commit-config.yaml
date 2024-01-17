@@ -21,4 +21,4 @@ repos:
     rev: v0.37.0
     hooks:
       - id: markdownlint
-        args: ["--ignore", "docs/component-library.md", "--disable", "MD013", "MD033", "--"]
+        args: ["--disable", "MD013", "MD033", "--"]

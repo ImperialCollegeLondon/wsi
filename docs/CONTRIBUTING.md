@@ -44,7 +44,20 @@ coverage html
 If you want to compile new documentation you will need to clone the reposistory and `pip install` WSIMOD with some additional packages:
 
 ```bash
-pip install .[doc]
+pip install .[documentation]
+```
+
+Navigate to `docs` and run the following to create the component library:
+
+```bash
+python create_class_page.py
+```
+
+And then open python, and run:
+
+```bash
+import pypandoc
+pypandoc.download_pandoc()
 ```
 
 From here, you can make changes to the documentation pages in `docs` and view how they appear by navigating to and hosting them locally:

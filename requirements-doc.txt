@@ -36,8 +36,12 @@ cligj==0.7.2
     # via fiona
 colorama==0.4.6
     # via
+    #   click
     #   griffe
+    #   ipython
+    #   mkdocs
     #   mkdocs-material
+    #   tqdm
 comm==0.2.0
     # via ipykernel
 contourpy==1.2.0
@@ -141,7 +145,6 @@ mkdocs==1.5.3
     #   mkdocs-autorefs
     #   mkdocs-bibtex
     #   mkdocs-coverage
-    #   mkdocs-gen-files
     #   mkdocs-jupyter
     #   mkdocs-material
     #   mkdocstrings
@@ -153,8 +156,6 @@ mkdocs-autorefs==0.5.0
 mkdocs-bibtex==2.11.0
     # via wsimod (pyproject.toml)
 mkdocs-coverage==1.0.0
-    # via wsimod (pyproject.toml)
-mkdocs-gen-files==0.5.0
     # via wsimod (pyproject.toml)
 mkdocs-jupyter==0.24.6
     # via wsimod (pyproject.toml)
@@ -202,15 +203,12 @@ pandas==2.1.2
     # via
     #   geopandas
     #   wsimod
-    #   wsimod (pyproject.toml)
 pandocfilters==1.5.0
     # via nbconvert
 parso==0.8.3
     # via jedi
 pathspec==0.11.2
     # via mkdocs
-pexpect==4.9.0
-    # via ipython
 pillow==10.1.0
     # via matplotlib
 platformdirs==3.11.0
@@ -221,8 +219,6 @@ prompt-toolkit==3.0.39
     # via ipython
 psutil==5.9.6
     # via ipykernel
-ptyprocess==0.7.0
-    # via pexpect
 pure-eval==0.2.2
     # via stack-data
 pybtex==0.24.0
@@ -253,6 +249,8 @@ python-dateutil==2.8.2
     #   pandas
 pytz==2023.3.post1
     # via pandas
+pywin32==306
+    # via jupyter-core
 pyyaml==6.0.1
     # via
     #   jupytext
@@ -335,7 +333,7 @@ webencodings==0.5.1
     # via
     #   bleach
     #   tinycss2
-wsimod[demos]
+wsimod[demos] @ file:///C:/Users/tbland/Documents/Code/wsi
     # via wsimod (pyproject.toml)
 
 # The following packages are considered to be unsafe in a requirements file:
