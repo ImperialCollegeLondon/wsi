@@ -12,7 +12,7 @@ conda create --name wsimod python=3.10
 conda activate wsimod
 ```
 
-You can sintall the stable version of WSIMOD from [PyPI.org](https://pypi.org/) with:
+You can install the stable version of WSIMOD from [PyPI.org](https://pypi.org/) with:
 
 ```bash
 pip install wsimod
