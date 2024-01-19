@@ -31,7 +31,7 @@ conda create --name wsimod python=3.10
 conda activate wsimod
 ```
 
-Once in the environment, you need to clone the WSIMOD GitHub repository locally and move into the right folder. You will need [`git`](https://git-scm.com/downloads) for that.
+Once in the environment, you need to clone the WSIMOD GitHub repository locally and move into the right folder. You will need `git` for that, installed either following the [official instructions](https://git-scm.com/downloads) or with `conda install git`, if you use `conda`.
 
 ```bash
 git clone https://github.com/ImperialCollegeLondon/wsi.git
@@ -99,13 +99,7 @@ From here, you can make changes to the documentation pages in `docs` and view ho
 mkdocs serve
 ```
 
-If compiling documentation, you will need to install `git`:
-
-```bash
-conda install git
-```
-
-And deploy:
+If compiling and deploying documentation, you will need to have `git` installed (see above). Then:
 
 ```bash
 mkdocs gh-deploy
