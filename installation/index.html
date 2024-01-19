@@ -244,6 +244,17 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -253,6 +264,34 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#developing-wsimod" class="md-nav__link">
+    <span class="md-ellipsis">
+      Developing WSIMOD
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -458,6 +497,23 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#developing-wsimod" class="md-nav__link">
+    <span class="md-ellipsis">
+      Developing WSIMOD
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -472,26 +528,28 @@
 
 
 <h1 id="installation">Installation</h1>
-<p>Create and activate new conda environment</p>
+<p>It is highly recommended to setup a virtual environment to install WSIMOD into. This
+way, its installation and that of its dependencies will not interfere with any other
+tool in your system.</p>
+<p>Here we use a <code>conda</code> environment which let us use the version of python we want to use,
+but you can use any other tool you are familiar with.</p>
 <pre><code class="language-bash">conda create --name wsimod python=3.10
 conda activate wsimod
 </code></pre>
-<p>Install a GUI if you like</p>
-<pre><code class="language-bash">conda install spyder -c conda-forge
+<p>You can install the stable version of WSIMOD from <a href="https://pypi.org/">PyPI.org</a> with:</p>
+<pre><code class="language-bash">pip install wsimod
 </code></pre>
-<p>Install WSIMOD directly from GitHub</p>
-<pre><code class="language-bash">pip install https://github.com/barneydobson/wsi/archive/refs/heads/main.zip
+<p>If you want to install the development version, you can innstall WSIMOD directly from
+GitHub with:</p>
+<pre><code class="language-bash">pip install git+https://github.com/ImperialCollegeLondon/wsi@main
 </code></pre>
-<p>Use <code>[demos]</code> to include the demos and tutorials.</p>
-<pre><code class="language-bash">pip install https://github.com/barneydobson/wsi/archive/refs/heads/main.zip
-pip install wsimod[demos]
+<p>Use <code>[demos]</code> to include the dependencies required to run the demos and tutorials.</p>
+<pre><code class="language-bash">pip install wsimod[demos]
 </code></pre>
-<p>If you want to make changes WSIMOD you can download/clone this folder, navigate to it, and run:</p>
-<pre><code class="language-bash">python setup.py develop
-</code></pre>
-<p>or (with demos)</p>
-<pre><code class="language-bash">python setup.py develop easy_install &quot;wsimod[demos]&quot;
-</code></pre>
+<h2 id="developing-wsimod">Developing WSIMOD</h2>
+<p>If you want to help developing WSIMOD, or just modify it locally for your own interests,
+please read throgh the <a href="https://github.com/ImperialCollegeLondon/wsi/blob/main/docs/CONTRIBUTING.md">CONTRIBUTING guidelines</a>
+in the GitHub repository.</p>
 
 
 

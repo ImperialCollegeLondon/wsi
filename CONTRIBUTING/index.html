@@ -478,9 +478,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#installation-for-development" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installation for development
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quality-assurance-and-linting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Quality assurance and linting
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-and-coverage" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing and coverage
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#create-documentation" class="md-nav__link">
     <span class="md-ellipsis">
       Create documentation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#changing-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      Changing dependencies
     </span>
   </a>
   
@@ -504,18 +540,43 @@
 <h1 id="contributing-to-wsimod">Contributing to <code>WSIMOD</code></h1>
 <p>Thank you for considering contributing to <code>WSIMOD</code>.</p>
 <h2 id="bugs">Bugs</h2>
-<p>Please create a new <a href="https://github.com/barneydobson/wsi/issues">issues</a> if you may have found a bug. Please describe the bug and instructions on recreating it (including OS and Python version). It may be helpful to use examples from the <a href="https://barneydobson.github.io/wsi/tutorials/">tutorials</a> or <a href="https://barneydobson.github.io/wsi/how-to/">how-to's</a> to ensure that data is available.</p>
+<p>Please create a new <a href="https://github.com/ImperialCollegeLondon/wsi/issues">issues</a> if you may have found a bug. Please describe the bug and instructions on recreating it (including OS and Python version). It may be helpful to use examples from the <a href="https://imperialcollegelondon.github.io/wsi/tutorials/">tutorials</a> or <a href="https://imperialcollegelondon.github.io/wsi/how-to/">how-to's</a> to ensure that data is available.</p>
 <h2 id="confusion">Confusion</h2>
-<p>If you are confused about how a model component works, or why it is producing results that look the way they do, please first check the <a href="https://barneydobson.github.io/wsi">documentation</a> and existing <a href="https://github.com/barneydobson/wsi/issues">issues</a>. If this does not answer your question, or your question has not yet been raised, then please create a new issue where we can discuss it.</p>
+<p>If you are confused about how a model component works, or why it is producing results that look the way they do, please first check the <a href="https://imperialcollegelondon.github.io/wsi/">documentation</a> and existing <a href="https://imperialcollegelondon.github.io/wsi/issues">issues</a>. If this does not answer your question, or your question has not yet been raised, then please create a new issue where we can discuss it.</p>
 <h2 id="creating-new-functionality">Creating new functionality</h2>
-<p>Is there something in the water cycle that you would like to represent that is not included in <code>WSIMOD</code>? Whatever it is, you are probably not alone! If there is not one already, please create an <a href="https://github.com/barneydobson/wsi/issues">issue</a> where we can discuss it. Do this <em>before</em> you start developing as others may be working on the same thing!</p>
+<p>Is there something in the water cycle that you would like to represent that is not included in <code>WSIMOD</code>? Whatever it is, you are probably not alone! If there is not one already, please create an <a href="https://imperialcollegelondon.github.io/wsi/issues">issue</a> where we can discuss it. Do this <em>before</em> you start developing as others may be working on the same thing!</p>
 <p>Although the development of new functionality will depend highly on the case, there are a few generalisable points to bear in mind:</p>
 <ul>
 <li><code>WSIMOD</code> is highly object-oriented, thus, we will always try to implement a new component as a subclass of the closest component. We will collaboratively discuss this in the issue.</li>
-<li>Our <a href="https://barneydobson.github.io/wsi">documentation</a> relies heavily on use of docstrings, make sure to format it following the <a href="https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html">Google Python style</a>, see the source code of <a href="https://barneydobson.github.io/wsi/reference-land/#wsimod.nodes.land.Land.__init__"><code>Land.__init__</code></a> for an example. An admin will compile the documentation, but you can create your own pages to be added by following the directions <a href="#create-documentation">below</a>.</li>
-<li>We are incredibly grateful for contributions that include new <a href="https://barneydobson.github.io/wsi/tutorials/">tutorials</a> or <a href="https://barneydobson.github.io/wsi/how-to/">how-to's</a>, whether for new or existing functionality. Our use of the <a href="https://github.com/danielfrg/mkdocs-jupyter">mkdocs-jupyter</a> extension enables notebooks to form pages in the documentation, but that can also serve as downloadable examples that people can run.</li>
-<li>Design new tests that instantiate your new functionality and test that it produces a specified response. New tests are stored in the <code>wsi/tests/</code> folder. You can run tests by navigating to the folder and running:</li>
+<li>Our <a href="https://imperialcollegelondon.github.io/wsi">documentation</a> relies heavily on use of docstrings, make sure to format it following the <a href="https://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html">Google Python style</a>, see the source code of <a href="https://imperialcollegelondon.github.io/wsi/reference-land/#wsimod.nodes.land.Land.__init__"><code>Land.__init__</code></a> for an example. An admin will compile the documentation, but you can create your own pages to be added by following the directions <a href="#create-documentation">below</a>.</li>
+<li>We are incredibly grateful for contributions that include new <a href="https://imperialcollegelondon.github.io/wsi/tutorials/">tutorials</a> or <a href="https://imperialcollegelondon.github.io/wsi/how-to/">how-to's</a>, whether for new or existing functionality. Our use of the <a href="https://github.com/danielfrg/mkdocs-jupyter">mkdocs-jupyter</a> extension enables notebooks to form pages in the documentation, but that can also serve as downloadable examples that people can run.</li>
+<li>Design new tests that instantiate your new functionality and test that it produces a specified response. New tests are stored in the <code>wsi/tests/</code> folder.</li>
 </ul>
+<h2 id="installation-for-development">Installation for development</h2>
+<p>To install WSIMOD in development mode, first you will need a virtual environment. Here we use a <code>conda</code> environment which let us use the version of python we want to use,
+but you can use any other tool you are familiar with. Just make sure you use a version of Python compatible with WSIMOD.</p>
+<pre><code class="language-bash">conda create --name wsimod python=3.10
+conda activate wsimod
+</code></pre>
+<p>Once in the environment, you need to clone the WSIMOD GitHub repository locally and move into the right folder. You will need <code>git</code> for that, installed either following the <a href="https://git-scm.com/downloads">official instructions</a> or with <code>conda install git</code>, if you use <code>conda</code>.</p>
+<pre><code class="language-bash">git clone https://github.com/ImperialCollegeLondon/wsi.git
+cd wsi
+</code></pre>
+<p>We use <a href="https://pip-tools.readthedocs.io/en/latest/"><code>pip-tools</code></a> to ensure consistency in the development process, ensuring all people contributing to WSIMOD uses the same versions for all the dependencies, which minimiese the conflicts. To install the development dependencies and then WISMO in development mode run:</p>
+<pre><code class="language-bash">pip install -r requirements-dev.txt
+pip install -e .
+</code></pre>
+<p>You can also install the dependencies required to run the demos and tutorials with:</p>
+<pre><code class="language-bash">pip install -r requirements-demos.txt
+</code></pre>
+<h2 id="quality-assurance-and-linting">Quality assurance and linting</h2>
+<p>WSIMOD uses a collection of tools that ensure that a specific code style and formatting is follow thoughout the software. The tools we used for that are <a href="https://docs.astral.sh/ruff/"><code>ruff</code></a> and <a href="https://github.com/igorshubovych/markdownlint-cli"><code>markdownlint</code></a>. You do not need to run them manually - unless you want to - but rather they are run automatically every time you make a commit thanks to <code>pre-commit</code>.</p>
+<p><code>pre-commit</code> should already have been installed when installing the <code>dev</code> dependencies, if you followed the instructions above, but you need to activate the hooks that <code>git</code> will run when making a commit. To do that just run:</p>
+<pre><code class="language-bash">pre-commit install
+</code></pre>
+<p>You can customise the checks that <code>ruff</code> will make with the settings in <code>pyproject.toml</code>. For <code>markdownlint</code>, you need to oedit the arguments included in the .<code>pre-commit-config.yaml</code> file.</p>
+<h2 id="testing-and-coverage">Testing and coverage</h2>
+<p>WSIMOD uses <code>pytests</code> as testing suite. You can run tests by navigating to the folder and running:</p>
 <pre><code class="language-bash">pytest # run all tests
 pytest tests/test_file.py # run a specific file's tests
 </code></pre>
@@ -527,18 +588,17 @@ coverage report
 <pre><code class="language-bash">coverage html
 </code></pre>
 <h2 id="create-documentation">Create documentation</h2>
-<p>If you want to compile new documentation you will need to clone the reposistory and <code>pip install</code> WSIMOD with some additional packages:</p>
-<pre><code class="language-bash">pip install .[doc]
+<p>If you want to compile new documentation you will need some additional packages, installed with:</p>
+<pre><code class="language-bash">pip install -r requirements-doc.txt
 </code></pre>
 <p>From here, you can make changes to the documentation pages in <code>docs</code> and view how they appear by navigating to and hosting them locally:</p>
 <pre><code class="language-bash">mkdocs serve
 </code></pre>
-<p>If compiling documentation, you will need to install <code>git</code>:</p>
-<pre><code class="language-bash">conda install git
-</code></pre>
-<p>And deploy:</p>
+<p>If compiling and deploying documentation, you will need to have <code>git</code> installed (see above). Then:</p>
 <pre><code class="language-bash">mkdocs gh-deploy
 </code></pre>
+<h2 id="changing-dependencies">Changing dependencies</h2>
+<p>Is as the development process moves forward you find you need to add a new dependency, just add it to the relevant section of the <code>pyproject.toml</code> file and then run <code>pip-compile</code> as required to regenerate the different <code>requirements.txt</code> files. Read the <a href="https://pip-tools.readthedocs.io/en/latest/"><code>pip-tools</code> documentation</a> for more information on the process.</p>
 
 
 
