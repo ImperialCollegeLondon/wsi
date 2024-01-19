@@ -140,6 +140,22 @@ class Model(WSIObj):
         # self.arcs_type = {} #not sure that this would be necessary
         self.nodes = {}
         self.nodes_type = {}
+        
+        # Default orchestration
+        self.orchestration = [{'FWTW' : 'treat_water'},
+                                {'Demand' : 'create_demand'},
+                                {'Land' : 'run'},
+                                {'Groundwater' : 'infiltrate'},
+                                {'Sewer' : 'make_discharge'},
+                                {'Foul' : 'make_discharge'},
+                                {'WWTW' : 'calculate_discharge'},
+                                {'Groundwater' : 'distribute'},
+                                {'River' : 'calculate_discharge'},
+                                {'Reservoir' : 'make_abstractions'},
+                                {'Land' : 'apply_irrigation'},
+                                {'WWTW' : 'make_discharge'},
+                                {'Catchment' : 'route'}]
+        
 
         def all_subclasses(cls):
             """
@@ -188,7 +204,25 @@ class Model(WSIObj):
         constants.NON_ADDITIVE_POLLUTANTS = data["non_additive_pollutants"]
         constants.FLOAT_ACCURACY = float(data["float_accuracy"])
         self.__dict__.update(Model().__dict__)
-
+        
+        """
+        FLAG:
+            E.G. ADDITION FOR NEW CLASSES AND ORCHESTRATION
+        """
+        
+        if 'extensions' in data.keys():
+            if 'new_classes' in data['extensions'].keys():
+                import wsimod
+                for class_name, class_address in data['extensions']['new_classes'].items():
+                    sys.path.append(class_address)
+                    new_node = __import__(class_name, fromlist=[''])
+                    setattr(wsimod.nodes, class_name, getattr(new_node, class_name))
+                    self.nodes_type[class_name] = {}
+        
+        if 'orchestration' in data.keys():
+            # Update orchestration
+            self.orchestration = data['orchestration']            
+        
         nodes = data["nodes"]
 
         for name, node in nodes.items():
@@ -210,6 +244,18 @@ class Model(WSIObj):
         self.add_arcs(list(arcs.values()))
         if "dates" in data.keys():
             self.dates = [to_datetime(x) for x in data["dates"]]
+        
+        """
+        FLAG:
+            E.G. ADDITION FOR EXTENSIONS SCRIPT
+        
+        if you want this to work with 'model.save' functionality, you'll probably
+        need to store the extensions and new classes addresses in the model object
+        """
+        if 'extensions' in data.keys():
+            sys.path.append(data['extensions']['extension_file'])
+            from model_extensions import extensions
+            extensions(self)
 
     def save(self, address, config_name="config.yml", compress=False):
         """Save the model object to a yaml file and input data to csv.gz format in the
@@ -304,6 +350,7 @@ class Model(WSIObj):
         data = {
             "nodes": nodes,
             "arcs": arcs,
+            "orchestration" : self.orchestration,
             "pollutants": constants.POLLUTANTS,
             "additive_pollutants": constants.ADDITIVE_POLLUTANTS,
             "non_additive_pollutants": constants.NON_ADDITIVE_POLLUTANTS,
@@ -724,57 +771,13 @@ class Model(WSIObj):
             for node in self.nodelist:
                 node.t = date
                 node.monthyear = date.to_period("M")
-
-            # Run FWTW
-            for node in self.nodes_type["FWTW"].values():
-                node.treat_water()
-
-            # Create demand (gets pushed to sewers)
-            for node in self.nodes_type["Demand"].values():
-                node.create_demand()
-
-            # Create runoff (impervious gets pushed to sewers, pervious to groundwater)
-            for node in self.nodes_type["Land"].values():
-                node.run()
-
-            # Infiltrate GW
-            for node in self.nodes_type["Groundwater"].values():
-                node.infiltrate()
-
-            # Discharge sewers (pushed to other sewers or WWTW)
-            for node in self.nodes_type["Sewer"].values():
-                node.make_discharge()
-
-            # Foul second so that it can discharge any misconnection
-            for node in self.nodes_type["Foul"].values():
-                node.make_discharge()
-
-            # Discharge WWTW
-            for node in self.nodes_type["WWTW"].values():
-                node.calculate_discharge()
-
-            # Discharge GW
-            for node in self.nodes_type["Groundwater"].values():
-                node.distribute()
-
-            # river
-            for node in self.nodes_type["River"].values():
-                node.calculate_discharge()
-
-            # Abstract
-            for node in self.nodes_type["Reservoir"].values():
-                node.make_abstractions()
-
-            for node in self.nodes_type["Land"].values():
-                node.apply_irrigation()
-
-            for node in self.nodes_type["WWTW"].values():
-                node.make_discharge()
-
-            # Catchment routing
-            for node in self.nodes_type["Catchment"].values():
-                node.route()
-
+            
+            # Iterate over orchestration
+            for timestep_item in self.orchestration:
+                for node_type, function in timestep_item.items():
+                    for node in self.nodes_type[node_type].values():
+                        getattr(node, function)()
+                        
             # river
             for node_name in self.river_discharge_order:
                 self.nodes[node_name].distribute()
