@@ -715,53 +715,53 @@ class Model(WSIObj):
                 node.monthyear = date.to_period("M")
 
             # Run FWTW
-            for node in self.nodes_type["FWTW"].values():
+            for node in self.nodes_type.get("FWTW", {}).values():
                 node.treat_water()
 
             # Create demand (gets pushed to sewers)
-            for node in self.nodes_type["Demand"].values():
+            for node in self.nodes_type.get("Demand", {}).values():
                 node.create_demand()
 
             # Create runoff (impervious gets pushed to sewers, pervious to groundwater)
-            for node in self.nodes_type["Land"].values():
+            for node in self.nodes_type.get("Land", {}).values():
                 node.run()
 
             # Infiltrate GW
-            for node in self.nodes_type["Groundwater"].values():
+            for node in self.nodes_type.get("Groundwater", {}).values():
                 node.infiltrate()
 
             # Discharge sewers (pushed to other sewers or WWTW)
-            for node in self.nodes_type["Sewer"].values():
+            for node in self.nodes_type.get("Sewer", {}).values():
                 node.make_discharge()
 
             # Foul second so that it can discharge any misconnection
-            for node in self.nodes_type["Foul"].values():
+            for node in self.nodes_type.get("Foul", {}).values():
                 node.make_discharge()
 
             # Discharge WWTW
-            for node in self.nodes_type["WWTW"].values():
+            for node in self.nodes_type.get("WWTW", {}).values():
                 node.calculate_discharge()
 
             # Discharge GW
-            for node in self.nodes_type["Groundwater"].values():
+            for node in self.nodes_type.get("Groundwater", {}).values():
                 node.distribute()
 
             # river
-            for node in self.nodes_type["River"].values():
+            for node in self.nodes_type.get("River", {}).values():
                 node.calculate_discharge()
 
             # Abstract
-            for node in self.nodes_type["Reservoir"].values():
+            for node in self.nodes_type.get("Reservoir", {}).values():
                 node.make_abstractions()
 
-            for node in self.nodes_type["Land"].values():
+            for node in self.nodes_type.get("Land", {}).values():
                 node.apply_irrigation()
 
-            for node in self.nodes_type["WWTW"].values():
+            for node in self.nodes_type.get("WWTW", {}).values():
                 node.make_discharge()
 
             # Catchment routing
-            for node in self.nodes_type["Catchment"].values():
+            for node in self.nodes_type.get("Catchment", {}).values():
                 node.route()
 
             # river
@@ -894,7 +894,7 @@ class Model(WSIObj):
                             for pol in constants.POLLUTANTS:
                                 tanks[-1][pol] = prop.storage[pol]
 
-                for name, node in self.nodes_type["Land"].items():
+                for name, node in self.nodes_type.get("Land", {}).items():
                     for surface in node.surfaces:
                         if not isinstance(surface, ImperviousSurface):
                             surfaces.append(
