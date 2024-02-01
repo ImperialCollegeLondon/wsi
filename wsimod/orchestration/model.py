@@ -202,8 +202,20 @@ class Model(WSIObj):
         with open(os.path.join(address, config_name), "r") as file:
             data = yaml.safe_load(file)
 
-        for key, item in overrides.items():
-            data[key] = item
+        # replace and/or append the parameters that needs to be changed
+        def update_nested_dict(value, nvalue):
+            if not isinstance(value, dict) or not isinstance(nvalue, dict):
+                return nvalue
+            for k, v in nvalue.items():
+                if k not in value.keys():
+                    print('A new attribute ' + k + ' is now added to', value.keys(),' please check whether this is as expected')
+                value.setdefault(k, dict())
+                if isinstance(v, dict):
+                    v = update_nested_dict(value[k], v)
+                value[k] = v
+            return value
+        if overrides:
+            data = update_nested_dict(data, overrides)
 
         constants.POLLUTANTS = data["pollutants"]
         constants.ADDITIVE_POLLUTANTS = data["additive_pollutants"]
