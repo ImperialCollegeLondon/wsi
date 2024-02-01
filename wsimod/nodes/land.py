@@ -629,7 +629,7 @@ class ImperviousSurface(Surface):
 
         # Distribute
         # TODO in cwsd_partition this is done with timearea
-        reply = self.parent.push_distributed(surface_runoff, of_type=["Sewer"])
+        reply = self.parent.push_distributed(surface_runoff, of_type=["Sewer"], tag = 'Land')
 
         # Update tank (forcing, because if the water can't go to the sewer, where else can it go)
         _ = self.push_storage(reply, force=True)
