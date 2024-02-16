@@ -409,7 +409,7 @@ class Model(WSIObj):
                 del data["geometry"]
             del data["type_"]
 
-            if type_ not in NODES_REGISTRY.keys():
+            if node_type not in NODES_REGISTRY.keys():
                 raise ValueError(f"Node type {type_} not recognised")
 
             if type_ not in self.nodes_type.keys():
