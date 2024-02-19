@@ -15,12 +15,11 @@ import dill as pickle
 import yaml
 from tqdm import tqdm
 
-from wsimod import nodes
 from wsimod.arcs import arcs as arcs_mod
 from wsimod.core import constants
 from wsimod.core.core import WSIObj
 from wsimod.nodes.land import ImperviousSurface
-from wsimod.nodes.nodes import Node, QueueTank, ResidenceTank, Tank
+from wsimod.nodes.nodes import NODES_REGISTRY, QueueTank, ResidenceTank, Tank
 
 os.environ["USE_PYGEOS"] = "0"
 
@@ -140,25 +139,6 @@ class Model(WSIObj):
         # self.arcs_type = {} #not sure that this would be necessary
         self.nodes = {}
         self.nodes_type = {}
-
-        def all_subclasses(cls):
-            """
-
-            Args:
-                cls:
-
-            Returns:
-
-            """
-            return set(cls.__subclasses__()).union(
-                [s for c in cls.__subclasses__() for s in all_subclasses(c)]
-            )
-
-        self.nodes_type = [x.__name__ for x in all_subclasses(Node)] + ["Node"]
-        self.nodes_type = set(
-            getattr(nodes, x)(name="").__class__.__name__ for x in self.nodes_type
-        ).union(["Foul"])
-        self.nodes_type = {x: {} for x in self.nodes_type}
 
     def get_init_args(self, cls):
         """Get the arguments of the __init__ method for a class and its superclasses."""
@@ -414,19 +394,6 @@ class Model(WSIObj):
             nodelist (list): List of dicts, where a dict is a node
         """
 
-        def all_subclasses(cls):
-            """
-
-            Args:
-                cls:
-
-            Returns:
-
-            """
-            return set(cls.__subclasses__()).union(
-                [s for c in cls.__subclasses__() for s in all_subclasses(c)]
-            )
-
         for data in nodelist:
             name = data["name"]
             type_ = data["type_"]
@@ -441,7 +408,14 @@ class Model(WSIObj):
             if "geometry" in data.keys():
                 del data["geometry"]
             del data["type_"]
-            self.nodes_type[type_][name] = getattr(nodes, node_type)(**dict(data))
+
+            if node_type not in NODES_REGISTRY.keys():
+                raise ValueError(f"Node type {type_} not recognised")
+
+            if type_ not in self.nodes_type.keys():
+                self.nodes_type[type_] = {}
+
+            self.nodes_type[type_][name] = NODES_REGISTRY[node_type](**dict(data))
             self.nodes[name] = self.nodes_type[type_][name]
             self.nodelist = [x for x in self.nodes.values()]
 
@@ -455,7 +429,10 @@ class Model(WSIObj):
         self.nodelist = nodelist
         self.nodes = {x.name: x for x in nodelist}
         for x in nodelist:
-            self.nodes_type[x.__class__.__name__][x.name] = x
+            type_ = x.__class__.__name__
+            if type_ not in self.nodes_type.keys():
+                self.nodes_type[type_] = {}
+            self.nodes_type[type_][x.name] = x
 
     def add_arcs(self, arclist):
         """Add nodes to the model object from a list of dicts, where each dict contains
@@ -488,15 +465,20 @@ class Model(WSIObj):
                     river_arcs[name] = self.arcs[name]
 
         if any(river_arcs):
-            upstreamness = {x: 0 for x in self.nodes_type["Waste"].keys()}
+            upstreamness = (
+                {x: 0 for x in self.nodes_type["Waste"].keys()}
+                if "Waste" in self.nodes_type
+                else {}
+            )
             upstreamness = self.assign_upstream(river_arcs, upstreamness)
 
             self.river_discharge_order = []
-            for node in sorted(
-                upstreamness.items(), key=lambda item: item[1], reverse=True
-            ):
-                if node[0] in self.nodes_type["River"].keys():
-                    self.river_discharge_order.append(node[0])
+            if "River" in self.nodes_type:
+                for node in sorted(
+                    upstreamness.items(), key=lambda item: item[1], reverse=True
+                ):
+                    if node[0] in self.nodes_type["River"]:
+                        self.river_discharge_order.append(node[0])
 
     def add_instantiated_arcs(self, arclist):
         """Add arcs to the model object from a list of objects, where each object is an
@@ -522,16 +504,23 @@ class Model(WSIObj):
                     "Reservoir",
                 ]:
                     river_arcs[arc.name] = arc
+
+        upstreamness = (
+            {x: 0 for x in self.nodes_type["Waste"].keys()}
+            if "Waste" in self.nodes_type
+            else {}
+        )
         upstreamness = {x: 0 for x in self.nodes_type["Waste"].keys()}
 
         upstreamness = self.assign_upstream(river_arcs, upstreamness)
 
         self.river_discharge_order = []
-        for node in sorted(
-            upstreamness.items(), key=lambda item: item[1], reverse=True
-        ):
-            if node[0] in self.nodes_type["River"].keys():
-                self.river_discharge_order.append(node[0])
+        if "River" in self.nodes_type:
+            for node in sorted(
+                upstreamness.items(), key=lambda item: item[1], reverse=True
+            ):
+                if node[0] in self.nodes_type["River"]:
+                    self.river_discharge_order.append(node[0])
 
     def assign_upstream(self, arcs, upstreamness):
         """Recursive function to trace upstream up arcs to determine which are the most
@@ -726,53 +715,53 @@ class Model(WSIObj):
                 node.monthyear = date.to_period("M")
 
             # Run FWTW
-            for node in self.nodes_type["FWTW"].values():
+            for node in self.nodes_type.get("FWTW", {}).values():
                 node.treat_water()
 
             # Create demand (gets pushed to sewers)
-            for node in self.nodes_type["Demand"].values():
+            for node in self.nodes_type.get("Demand", {}).values():
                 node.create_demand()
 
             # Create runoff (impervious gets pushed to sewers, pervious to groundwater)
-            for node in self.nodes_type["Land"].values():
+            for node in self.nodes_type.get("Land", {}).values():
                 node.run()
 
             # Infiltrate GW
-            for node in self.nodes_type["Groundwater"].values():
+            for node in self.nodes_type.get("Groundwater", {}).values():
                 node.infiltrate()
 
             # Discharge sewers (pushed to other sewers or WWTW)
-            for node in self.nodes_type["Sewer"].values():
+            for node in self.nodes_type.get("Sewer", {}).values():
                 node.make_discharge()
 
             # Foul second so that it can discharge any misconnection
-            for node in self.nodes_type["Foul"].values():
+            for node in self.nodes_type.get("Foul", {}).values():
                 node.make_discharge()
 
             # Discharge WWTW
-            for node in self.nodes_type["WWTW"].values():
+            for node in self.nodes_type.get("WWTW", {}).values():
                 node.calculate_discharge()
 
             # Discharge GW
-            for node in self.nodes_type["Groundwater"].values():
+            for node in self.nodes_type.get("Groundwater", {}).values():
                 node.distribute()
 
             # river
-            for node in self.nodes_type["River"].values():
+            for node in self.nodes_type.get("River", {}).values():
                 node.calculate_discharge()
 
             # Abstract
-            for node in self.nodes_type["Reservoir"].values():
+            for node in self.nodes_type.get("Reservoir", {}).values():
                 node.make_abstractions()
 
-            for node in self.nodes_type["Land"].values():
+            for node in self.nodes_type.get("Land", {}).values():
                 node.apply_irrigation()
 
-            for node in self.nodes_type["WWTW"].values():
+            for node in self.nodes_type.get("WWTW", {}).values():
                 node.make_discharge()
 
             # Catchment routing
-            for node in self.nodes_type["Catchment"].values():
+            for node in self.nodes_type.get("Catchment", {}).values():
                 node.route()
 
             # river
@@ -905,7 +894,7 @@ class Model(WSIObj):
                             for pol in constants.POLLUTANTS:
                                 tanks[-1][pol] = prop.storage[pol]
 
-                for name, node in self.nodes_type["Land"].items():
+                for name, node in self.nodes_type.get("Land", {}).items():
                     for surface in node.surfaces:
                         if not isinstance(surface, ImperviousSurface):
                             surfaces.append(

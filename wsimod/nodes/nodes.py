@@ -5,14 +5,23 @@
 
 Converted to totals on Thur Apr 21 2022
 """
+import logging
+
 from wsimod.arcs.arcs import AltQueueArc, DecayArcAlt
 from wsimod.core import constants
 from wsimod.core.core import DecayObj, WSIObj
-from wsimod.nodes import nodes
 
 
 class Node(WSIObj):
     """"""
+
+    def __init_subclass__(cls, **kwargs):
+        """Adds all subclasses to the nodes registry."""
+        super().__init_subclass__(**kwargs)
+        if cls.__name__ in NODES_REGISTRY:
+            logging.warning(f"Overwriting {cls.__name__} in NODES_REGISTRY with {cls}")
+
+        NODES_REGISTRY[cls.__name__] = cls
 
     def __init__(self, name, data_input_dict=None):
         """Base class for CWSD nodes. Constructs all the necessary attributes for the
@@ -34,22 +43,7 @@ class Node(WSIObj):
         Input data and parameter requirements:
             - All nodes require a `name`
         """
-
-        # Get node types
-        def all_subclasses(cls):
-            """
-
-            Args:
-                cls:
-
-            Returns:
-
-            """
-            return set(cls.__subclasses__()).union(
-                [s for c in cls.__subclasses__() for s in all_subclasses(c)]
-            )
-
-        node_types = [x.__name__ for x in all_subclasses(nodes.Node)] + ["Node"]
+        node_types = list(NODES_REGISTRY.keys())
 
         # Default essential parameters
         # Dictionary of arcs
@@ -632,8 +626,8 @@ class Node(WSIObj):
 """
     This is an attempt to generalise the behaviour of pull/push_distributed
     It doesn't yet work...
-    
-    def general_distribute(self, vqip, of_type = None, tag = 'default', direction = 
+
+    def general_distribute(self, vqip, of_type = None, tag = 'default', direction =
         None):
         if direction == 'push':
             arcs = self.out_arcs
@@ -649,49 +643,49 @@ class Node(WSIObj):
                 values()}
         else:
             print('No direction')
-    
+
         if len(arcs) == 1:
-            if (of_type == None) | any([x in of_type for x, y in arcs_type.items() if 
+            if (of_type == None) | any([x in of_type for x, y in arcs_type.items() if
                 len(y) > 0]):
                 arc = next(iter(arcs.keys()))
                 return requests[arc](vqip)
             else:
                 #No viable arcs
                 return tracker
-        
+
         connected = self.get_connected(direction = direction,
                                                                 of_type = of_type,
                                                                 tag = tag)
-        
+
         iter_ = 0
-        
+
         target = self.copy_vqip(vqip)
-        #Iterate over sending nodes until deficit met	
-        while (((target['volume'] > constants.FLOAT_ACCURACY) &	
-                (connected['avail'] > constants.FLOAT_ACCURACY)) &	
+        #Iterate over sending nodes until deficit met
+        while (((target['volume'] > constants.FLOAT_ACCURACY) &
+                (connected['avail'] > constants.FLOAT_ACCURACY)) &
                 (iter_ < constants.MAXITER)):
-    
-                amount = min(connected['avail'], target['volume']) #Deficit or amount 
+
+                amount = min(connected['avail'], target['volume']) #Deficit or amount
                     still to push
                 replies = self.empty_vqip()
-                
+
                 for key, allocation in connected['allocation'].items():
                     to_request = amount * allocation / connected['priority']
                     to_request = self.v_change_vqip(target, to_request)
                     reply = requests[key](to_request)
                     replies = self.sum_vqip(replies, reply)
-                
+
                 if direction == 'pull':
                     target = self.extract_vqip(target, replies)
                 elif direction == 'push':
                     target = replies
-    
+
                 connected = self.get_connected(direction = direction,
                                                                 of_type = of_type,
                                                                 tag = tag)
-                iter_ += 1	
+                iter_ += 1
 
-                if iter_ == constants.MAXITER:	
+                if iter_ == constants.MAXITER:
                     print('Maxiter reached')
         return target"""
 
@@ -737,6 +731,9 @@ class Node(WSIObj):
 
 #     self.__dict__.clear()
 #     self.__dict__.update(newnode.__dict__)
+
+
+NODES_REGISTRY: dict[str, type[Node]] = {Node.__name__: Node}
 
 
 class Tank(WSIObj):
