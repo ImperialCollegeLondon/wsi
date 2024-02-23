@@ -9,6 +9,7 @@ Converted to totals on Thur Apr 21 2022
 from wsimod.core import constants
 from wsimod.core.core import DecayObj, WSIObj
 
+from typing import Any, Dict
 # from wsimod.nodes import nodes #Complains about circular imports.
 # I don't think it should do..
 
@@ -39,7 +40,7 @@ class Arc(WSIObj):
             out_port: A WSIMOD node object where the arc ends
         """
         # Default essential parameters
-        self.name = name
+        self._name = name
         self.in_port = in_port
         self.out_port = out_port
         self.capacity = capacity
@@ -82,6 +83,55 @@ class Arc(WSIObj):
         self.mass_balance_out = [lambda: self.vqip_out]
         self.mass_balance_ds = [lambda: self.empty_vqip()]
 
+    @property
+    def name(self):
+        """Name of arc."""
+        return self._name
+    
+    @name.setter
+    def name(self, 
+             value: str):
+        """Set the name of the arc.
+
+        Args:
+            value (str): New name for the arc.
+        """
+        if not isinstance(value, str):
+            return
+        
+        del self.in_port.out_arcs[self._name]
+        self.in_port.out_arcs[value] = self
+
+        del self.out_port.in_arcs[self._name]
+        self.out_port.in_arcs[value] = self
+
+        out_type = self.out_port.__class__.__name__
+        in_type = self.in_port.__class__.__name__
+        
+        del self.in_port.out_arcs_type[out_type][self._name]
+        self.in_port.out_arcs_type[out_type][value] = self
+        
+        del self.out_port.in_arcs_type[in_type][self._name]
+        self.out_port.in_arcs_type[in_type][value] = self
+        
+        self._name = value
+        
+    def apply_overrides(self, 
+                        overrides: Dict[str, Any] = {}) -> None:
+        """Apply overrides to the node.
+
+        Args:
+            overrides (dict, optional): Dictionary of overrides. Defaults to {}.
+
+        Example:
+            >>> my_node.apply_overrides({'name': 'new_name'})
+        """
+        for key, value in overrides.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
+            else:
+                raise AttributeError(f"{key} not found in {self.__class__.__name__}")
+            
     def arc_mass_balance(self):
         """Checks mass balance for inflows/outflows/storage change in an arc.
 

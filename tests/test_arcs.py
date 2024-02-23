@@ -313,6 +313,18 @@ class MyTestClass(TestCase):
         d1["phosphate"] = d1["phosphate"] * (1 - 0.005 * 1.005 ** (10 - 20))
         self.assertDictAlmostEqual(d1, arc1.queue[0])
 
+    def test_apply_overrides(self):
+        node1, node2, _, _, _, arc1, _, _, _ = self.get_simple_model1()
+        arc1.apply_overrides({'name' : 'new_name'})
 
+        self.assertEqual('new_name', arc1.name)
+        assert 'new_name' in node1.out_arcs.keys()
+        assert 'new_name' in node1.out_arcs_type['Waste'].keys()
+        assert 'arc1' not in node1.out_arcs.keys()
+
+        assert 'new_name' in node2.in_arcs.keys()
+        assert 'new_name' in node2.in_arcs_type['Storage'].keys()
+        assert 'arc1' not in node2.in_arcs.keys()
+        
 if __name__ == "__main__":
     unittest.main()
