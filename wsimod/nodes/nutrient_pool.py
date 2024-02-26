@@ -12,12 +12,12 @@ class NutrientPool:
 
     def __init__(
         self,
+        degrhpar,#={"N": 7 * 1e-5, "P": 7 * 1e-6},
+        dishpar,#={"N": 7 * 1e-5, "P": 7 * 1e-6},
+        minfpar,#={"N": 0.00013, "P": 0.000003},
+        disfpar,#={"N": 0.000003, "P": 0.0000001},
+        immobdpar,#={"N": 0.0056, "P": 0.2866},
         fraction_dry_n_to_dissolved_inorganic=0.9,
-        degrhpar={"N": 7 * 1e-5, "P": 7 * 1e-6},
-        dishpar={"N": 7 * 1e-5, "P": 7 * 1e-6},
-        minfpar={"N": 0.00013, "P": 0.000003},
-        disfpar={"N": 0.000003, "P": 0.0000001},
-        immobdpar={"N": 0.0056, "P": 0.2866},
         fraction_manure_to_dissolved_inorganic={"N": 0.5, "P": 0.1},
         fraction_residue_to_fast={"N": 0.1, "P": 0.1},
     ):
