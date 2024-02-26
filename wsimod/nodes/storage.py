@@ -415,6 +415,9 @@ class River(Storage):
         velocity=0.2 * constants.M_S_TO_M_DT,
         damp=0.1,
         mrf=0,
+        denpar_w = 0.0015,
+        muptNpar = 0.001,
+        muptPpar = 0.0001,
         **kwargs,
     ):
         """Node that contains extensive in-river biochemical processes.
@@ -468,6 +471,9 @@ class River(Storage):
         self.velocity = velocity  # [m/dt]
         self.damp = damp  # [>=0] flow delay and attenuation
         self.mrf = mrf
+        self.denpar_w = denpar_w  # [kg/m2/day] reference denitrification rate in water course
+        self.muptNpar = muptNpar  # [kg/m2/day] nitrogen macrophyte uptake rate
+        self.muptPpar = muptPpar # [kg/m2/day] phosphorus macrophyte uptake rate
         area = length * width  # [m2]
 
         capacity = (
@@ -486,7 +492,7 @@ class River(Storage):
         # Wide variety of river parameters (from HYPE)
         self.uptake_PNratio = 1 / 7.2  # [-] P:N during crop uptake
         self.bulk_density = 1300  # [kg/m3] soil density
-        self.denpar_w = 0.0015  # 0.001, # [kg/m2/day] reference denitrification rate in water course
+        # self.denpar_w = 0.0015  # 0.001, # [kg/m2/day] reference denitrification rate in water course
         self.T_wdays = 5  # [days] weighting constant for river temperature calculation (similar to moving average period)
         self.halfsatINwater = (
             1.5 * constants.MG_L_TO_KG_M3
@@ -500,8 +506,8 @@ class River(Storage):
         self.prodPpar = (
             0.0001  # [kg N/m3/day] phosphorus production/mineralisation rate
         )
-        self.muptNpar = 0.001  # [kg/m2/day] nitrogen macrophyte uptake rate
-        self.muptPpar = 0.0001  # 0.01, # [kg/m2/day] phosphorus macrophyte uptake rate
+        # self.muptNpar = 0.001  # [kg/m2/day] nitrogen macrophyte uptake rate
+        # self.muptPpar = 0.0001  # 0.01, # [kg/m2/day] phosphorus macrophyte uptake rate
         self.qbank_365_days = [1e6, 1e6]  # [m3/day] store outflow in the previous year
         self.qbank = (
             1e6  # [m3/day] bankfull flow = second largest outflow in the previous year
