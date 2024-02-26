@@ -967,6 +967,12 @@ class GrowingSurface(PerviousSurface):
         sowing_day=1,
         harvest_day=365,
         initial_soil_storage=None,
+        degrhpar={"N": 7 * 1e-5, "P": 7 * 1e-6},
+        dishpar={"N": 7 * 1e-5, "P": 7 * 1e-6},
+        minfpar={"N": 0.00013, "P": 0.000003},
+        disfpar={"N": 0.000003, "P": 0.0000001},
+        immobdpar={"N": 0.0056, "P": 0.2866},
+        denpar = 0.015,
         **kwargs,
     ):
         """Extensive surface subclass that implements the CatchWat equations (Liu,
@@ -1100,7 +1106,7 @@ class GrowingSurface(PerviousSurface):
         self.limpar = 0.7  # [-] above which denitrification begins
         self.exppar = 2.5  # [-] exponential parameter for soil_moisture_dependence_factor_exp calculation
         self.hsatINs = 1  # [mg/l] for calculation of half-saturation concentration dependence factor
-        self.denpar = 0.015  # [-] denitrification rate coefficient
+        self.denpar = denpar #0.015  # [-] denitrification rate coefficient
 
         # Adsorption parameters
         self.adosorption_nr_limit = 0.00001
@@ -1146,7 +1152,12 @@ class GrowingSurface(PerviousSurface):
         )
 
         # Initiliase nutrient pools
-        self.nutrient_pool = NutrientPool()
+        self.nutrient_pool = NutrientPool(degrhpar=degrhpar,
+                                            dishpar=dishpar,
+                                            minfpar=minfpar,
+                                            disfpar=disfpar,
+                                            immobdpar=immobdpar
+                                            )
 
         self.inflows.insert(0, self.calc_crop_cover)
         if "nitrate" in constants.POLLUTANTS:
