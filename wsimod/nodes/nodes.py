@@ -71,16 +71,14 @@ class Node(WSIObj):
                 x, of_type=["Node", "River", "Waste", "Reservoir"]
             )
         }
-
         super().__init__()
 
         # Mass balance checking
         self.mass_balance_in = [self.total_in]
         self.mass_balance_out = [self.total_out]
-        self.mass_balance_ds = [lambda: self.empty_vqip()]        
+        self.mass_balance_ds = [lambda: self.empty_vqip()]
 
-    def apply_overrides(self, 
-                        overrides: Dict[str, Any] = {}) -> None:
+    def apply_overrides(self, overrides: Dict[str, Any] = {}) -> None:
         """Apply overrides to the node.
 
         Args:

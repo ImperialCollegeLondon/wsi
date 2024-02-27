@@ -6,10 +6,11 @@
 Converted to totals on Thur Apr 21 2022
 """
 
+from typing import Any, Dict
+
 from wsimod.core import constants
 from wsimod.core.core import DecayObj, WSIObj
 
-from typing import Any, Dict
 # from wsimod.nodes import nodes #Complains about circular imports.
 # I don't think it should do..
 
@@ -83,15 +84,14 @@ class Arc(WSIObj):
         self.mass_balance_out = [lambda: self.vqip_out]
         self.mass_balance_ds = [lambda: self.empty_vqip()]
 
-    def apply_overrides(self, 
-                        overrides: Dict[str, Any] = {}) -> None:
+    def apply_overrides(self, overrides: Dict[str, Any] = {}) -> None:
         """Apply overrides to the node.
 
         Args:
             overrides (dict, optional): Dictionary of overrides. Defaults to {}.
         """
         pass
-            
+
     def arc_mass_balance(self):
         """Checks mass balance for inflows/outflows/storage change in an arc.
 
