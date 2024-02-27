@@ -40,7 +40,7 @@ class Arc(WSIObj):
             out_port: A WSIMOD node object where the arc ends
         """
         # Default essential parameters
-        self._name = name
+        self.name = name
         self.in_port = in_port
         self.out_port = out_port
         self.capacity = capacity
