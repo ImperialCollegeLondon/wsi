@@ -286,6 +286,23 @@ class WWTW(WTW):
             lambda: self.ds_vqip(self.liquor, self.liquor_)
         )  # Change in liquor
 
+    def apply_overrides(self, overrides=Dict[str, Any]):
+        """Apply overrides to the stormwater tank and WWTW.
+        """
+        self.stormwater_storage_capacity = overrides.pop(
+            "stormwater_storage_capacity", 
+            self.stormwater_storage_capacity)
+        self.stormwater_storage_area = overrides.pop(
+            "stormwater_storage_area", 
+            self.stormwater_storage_area)
+        self.stormwater_storage_elevation = overrides.pop(
+            "stormwater_storage_elevation", 
+            self.stormwater_storage_elevation)
+        self.stormwater_tank.area = self.stormwater_storage_area
+        self.stormwater_tank.capacity = self.stormwater_storage_capacity
+        self.stormwater_tank.datum = self.stormwater_storage_elevation
+        super().apply_overrides(overrides)
+
     def calculate_discharge(self):
         """Clear stormwater tank if possible, and call treat_current_input."""
         # Run WWTW model

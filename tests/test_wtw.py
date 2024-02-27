@@ -10,7 +10,7 @@ import unittest
 from unittest import TestCase
 
 from wsimod.core import constants
-from wsimod.nodes.wtw import WTW
+from wsimod.nodes.wtw import WTW, WWTW
 
 
 class MyTestClass(TestCase):
@@ -101,5 +101,18 @@ class MyTestClass(TestCase):
         wtw.apply_overrides(overrides)
         self.assertSetEqual(set(overrides.keys()), set(['name']))
         self.assertEqual(wtw.treatment_throughput_capacity, 20)
+
+    def test_wwtw_overrides(self):
+        wwtw = WWTW(name='')
+        vol = wwtw.process_parameters['volume']['constant']
+        wwtw.apply_overrides({'treatment_throughput_capacity' : 20,
+                              'process_parameters' : {'phosphate' : 
+                                                      {'constant' : 0.01}},
+                              'stormwater_storage_capacity': 100})
+        self.assertEqual(wwtw.treatment_throughput_capacity, 20)
+        self.assertEqual(wwtw.process_parameters['phosphate']['constant'], 0.01)
+        self.assertEqual(wwtw.process_parameters['volume']['constant'], vol)
+        self.assertEqual(wwtw.stormwater_storage_capacity, 100)
+
 if __name__ == "__main__":
     unittest.main()
