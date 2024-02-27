@@ -6,7 +6,7 @@ Converted to totals on 2022-05-03
 """
 from wsimod.core import constants
 from wsimod.nodes.nodes import Node, Tank
-
+from typing import Any, Dict
 
 class WTW(Node):
     """"""
@@ -71,18 +71,18 @@ class WTW(Node):
                 for x in constants.ADDITIVE_POLLUTANTS
             }
         if len(liquor_multiplier) > 0:
-            self.liquor_multiplier = liquor_multiplier
+            self._liquor_multiplier = liquor_multiplier
         else:
-            self.liquor_multiplier = {x: 0.7 for x in constants.ADDITIVE_POLLUTANTS}
-            self.liquor_multiplier["volume"] = 0.03
+            self._liquor_multiplier = {x: 0.7 for x in constants.ADDITIVE_POLLUTANTS}
+            self._liquor_multiplier["volume"] = 0.03
 
-        self.percent_solids = percent_solids
+        self._percent_solids = percent_solids
 
         # Update args
         super().__init__(name)
 
         self.process_parameters["volume"] = {
-            "constant": 1 - self.percent_solids - self.liquor_multiplier["volume"]
+            "constant": self.calculate_volume()
         }
 
         # Update handlers
@@ -94,6 +94,53 @@ class WTW(Node):
         self.treated = self.empty_vqip()
         self.liquor = self.empty_vqip()
         self.solids = self.empty_vqip()
+    
+    def calculate_volume(self):
+        """Calculate the volume proportion of treated water.
+
+        Returns:
+            (float): Volume of treated water
+        """
+        return 1 - self._percent_solids - self._liquor_multiplier["volume"]
+    
+    @property
+    def percent_solids(self):
+        return self._percent_solids
+    
+    @percent_solids.setter
+    def percent_solids(self, value):
+        self._percent_solids = value
+        self.process_parameters["volume"]["constant"] = self.calculate_volume()
+
+    @property
+    def liquor_multiplier(self):
+        return self._liquor_multiplier
+    
+    @liquor_multiplier.setter
+    def liquor_multiplier(self, value):
+        self._liquor_multiplier.update(value)
+        self.process_parameters["volume"]["constant"] = self.calculate_volume()
+    
+    def apply_overrides(self, overrides = Dict[str, Any]):
+        """Apply overrides to the process parameters and liquor multipliers.
+
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        self.percent_solids = overrides.pop("percent_solids", 
+                                            self._percent_solids)
+        self.liquor_multiplier = overrides.pop("liquor_multiplier", 
+                                               self._liquor_multiplier)
+        process_parameters = overrides.pop("process_parameters", {})
+        for key, value in process_parameters.items():
+            self.process_parameters[key].update(value)
+        
+        self.treatment_throughput_capacity = overrides.pop(
+            "treatment_throughput_capacity",
+            self.treatment_throughput_capacity)
+        if len(overrides) > 0:
+            print(f"No override behaviour defined for: {overrides.keys()}")
 
     def get_excess_throughput(self):
         """How much excess treatment capacity is there.
