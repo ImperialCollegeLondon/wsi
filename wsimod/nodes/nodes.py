@@ -6,6 +6,7 @@
 Converted to totals on Thur Apr 21 2022
 """
 import logging
+from typing import Any, Dict
 
 from wsimod.arcs.arcs import AltQueueArc, DecayArcAlt
 from wsimod.core import constants
@@ -70,13 +71,20 @@ class Node(WSIObj):
                 x, of_type=["Node", "River", "Waste", "Reservoir"]
             )
         }
-
         super().__init__()
 
         # Mass balance checking
         self.mass_balance_in = [self.total_in]
         self.mass_balance_out = [self.total_out]
         self.mass_balance_ds = [lambda: self.empty_vqip()]
+
+    def apply_overrides(self, overrides: Dict[str, Any] = {}) -> None:
+        """Apply overrides to the node.
+
+        Args:
+            overrides (dict, optional): Dictionary of overrides. Defaults to {}.
+        """
+        pass
 
     def total_in(self):
         """Sum flow and pollutant amounts entering a node via in_arcs.

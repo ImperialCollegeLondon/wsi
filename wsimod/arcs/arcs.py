@@ -6,6 +6,8 @@
 Converted to totals on Thur Apr 21 2022
 """
 
+from typing import Any, Dict
+
 from wsimod.core import constants
 from wsimod.core.core import DecayObj, WSIObj
 
@@ -81,6 +83,14 @@ class Arc(WSIObj):
         self.mass_balance_in = [lambda: self.vqip_in]
         self.mass_balance_out = [lambda: self.vqip_out]
         self.mass_balance_ds = [lambda: self.empty_vqip()]
+
+    def apply_overrides(self, overrides: Dict[str, Any] = {}) -> None:
+        """Apply overrides to the node.
+
+        Args:
+            overrides (dict, optional): Dictionary of overrides. Defaults to {}.
+        """
+        pass
 
     def arc_mass_balance(self):
         """Checks mass balance for inflows/outflows/storage change in an arc.
