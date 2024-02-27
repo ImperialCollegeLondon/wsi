@@ -85,15 +85,8 @@ class Node(WSIObj):
 
         Args:
             overrides (dict, optional): Dictionary of overrides. Defaults to {}.
-
-        Example:
-            >>> my_node.apply_overrides({'name': 'new_name'})
         """
-        for key, value in overrides.items():
-            if hasattr(self, key):
-                setattr(self, key, value)
-            else:
-                raise AttributeError(f"{key} not found in {self.__class__.__name__}")
+        pass
 
     def total_in(self):
         """Sum flow and pollutant amounts entering a node via in_arcs.
