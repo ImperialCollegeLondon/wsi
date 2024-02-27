@@ -312,6 +312,7 @@ class MyTestClass(TestCase):
         arc1.end_timestep()
         d1["phosphate"] = d1["phosphate"] * (1 - 0.005 * 1.005 ** (10 - 20))
         self.assertDictAlmostEqual(d1, arc1.queue[0])
-        
+
+
 if __name__ == "__main__":
     unittest.main()
