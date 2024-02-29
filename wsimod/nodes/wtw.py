@@ -6,10 +6,15 @@ Converted to totals on 2022-05-03
 """
 from wsimod.core import constants
 from wsimod.nodes.nodes import Node, Tank
-
+from typing import Any, Dict
 
 class WTW(Node):
-    """"""
+    """A generic Water Treatment Works (WTW) node.
+    
+    This class is a generic water treatment works node. It is intended to be
+    subclassed into freshwater and wastewater treatment works (FWTW and WWTW
+    respectively).
+    """
 
     def __init__(
         self,
@@ -71,18 +76,18 @@ class WTW(Node):
                 for x in constants.ADDITIVE_POLLUTANTS
             }
         if len(liquor_multiplier) > 0:
-            self.liquor_multiplier = liquor_multiplier
+            self._liquor_multiplier = liquor_multiplier
         else:
-            self.liquor_multiplier = {x: 0.7 for x in constants.ADDITIVE_POLLUTANTS}
-            self.liquor_multiplier["volume"] = 0.03
+            self._liquor_multiplier = {x: 0.7 for x in constants.ADDITIVE_POLLUTANTS}
+            self._liquor_multiplier["volume"] = 0.03
 
-        self.percent_solids = percent_solids
+        self._percent_solids = percent_solids
 
         # Update args
         super().__init__(name)
 
         self.process_parameters["volume"] = {
-            "constant": 1 - self.percent_solids - self.liquor_multiplier["volume"]
+            "constant": self.calculate_volume()
         }
 
         # Update handlers
@@ -94,6 +99,57 @@ class WTW(Node):
         self.treated = self.empty_vqip()
         self.liquor = self.empty_vqip()
         self.solids = self.empty_vqip()
+    
+    def calculate_volume(self):
+        """Calculate the volume proportion of treated water.
+
+        Returns:
+            (float): Volume of treated water
+        """
+        return 1 - self._percent_solids - self._liquor_multiplier["volume"]
+    
+    @property
+    def percent_solids(self):
+        return self._percent_solids
+    
+    @percent_solids.setter
+    def percent_solids(self, value):
+        self._percent_solids = value
+        self.process_parameters["volume"]["constant"] = self.calculate_volume()
+
+    @property
+    def liquor_multiplier(self):
+        return self._liquor_multiplier
+    
+    @liquor_multiplier.setter
+    def liquor_multiplier(self, value):
+        self._liquor_multiplier.update(value)
+        self.process_parameters["volume"]["constant"] = self.calculate_volume()
+    
+    def apply_overrides(self, overrides = Dict[str, Any]):
+        """Override parameters.
+
+        Enables a user to override any of the following parameters: 
+        percent_solids, treatment_throughput_capacity, process_parameters (the
+        entire dict does not need to be redefined, only changed values need to
+        be included), liquor_multiplier (as with process_parameters).
+
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        self.percent_solids = overrides.pop("percent_solids", 
+                                            self._percent_solids)
+        self.liquor_multiplier = overrides.pop("liquor_multiplier", 
+                                               self._liquor_multiplier)
+        process_parameters = overrides.pop("process_parameters", {})
+        for key, value in process_parameters.items():
+            self.process_parameters[key].update(value)
+        
+        self.treatment_throughput_capacity = overrides.pop(
+            "treatment_throughput_capacity",
+            self.treatment_throughput_capacity)
+        super().apply_overrides(overrides)
 
     def get_excess_throughput(self):
         """How much excess treatment capacity is there.
@@ -164,7 +220,7 @@ class WTW(Node):
 
 
 class WWTW(WTW):
-    """"""
+    """Wastewater Treatment Works (WWTW) node."""
 
     def __init__(
         self,
@@ -238,6 +294,30 @@ class WWTW(WTW):
         self.mass_balance_ds.append(
             lambda: self.ds_vqip(self.liquor, self.liquor_)
         )  # Change in liquor
+
+    def apply_overrides(self, overrides=Dict[str, Any]):
+        """Apply overrides to the stormwater tank and WWTW.
+
+        Enables a user to override any parameter of the stormwater tank, and
+        then calls any overrides in WTW.
+        
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        self.stormwater_storage_capacity = overrides.pop(
+            "stormwater_storage_capacity", 
+            self.stormwater_storage_capacity)
+        self.stormwater_storage_area = overrides.pop(
+            "stormwater_storage_area", 
+            self.stormwater_storage_area)
+        self.stormwater_storage_elevation = overrides.pop(
+            "stormwater_storage_elevation", 
+            self.stormwater_storage_elevation)
+        self.stormwater_tank.area = self.stormwater_storage_area
+        self.stormwater_tank.capacity = self.stormwater_storage_capacity
+        self.stormwater_tank.datum = self.stormwater_storage_elevation
+        super().apply_overrides(overrides)
 
     def calculate_discharge(self):
         """Clear stormwater tank if possible, and call treat_current_input."""
