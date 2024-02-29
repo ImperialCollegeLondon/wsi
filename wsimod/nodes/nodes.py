@@ -83,10 +83,15 @@ class Node(WSIObj):
                         overrides: Dict[str, Any] = {}) -> None:
         """Apply overrides to the node.
 
+        The Node does not have any overwriteable parameters. So if any 
+        overrides are passed up to the node, this means that there are unused 
+        parameters from the Node subclass, which is flagged.
+        
         Args:
             overrides (dict, optional): Dictionary of overrides. Defaults to {}.
         """
-        pass
+        if len(overrides) > 0:
+            print(f"No override behaviour defined for: {overrides.keys()}")
 
     def total_in(self):
         """Sum flow and pollutant amounts entering a node via in_arcs.

@@ -149,8 +149,7 @@ class WTW(Node):
         self.treatment_throughput_capacity = overrides.pop(
             "treatment_throughput_capacity",
             self.treatment_throughput_capacity)
-        if len(overrides) > 0:
-            print(f"No override behaviour defined for: {overrides.keys()}")
+        super().apply_overrides(overrides)
 
     def get_excess_throughput(self):
         """How much excess treatment capacity is there.
