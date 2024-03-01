@@ -11,6 +11,7 @@ from wsimod.core import constants
 from wsimod.nodes.nodes import DecayTank, Node, ResidenceTank
 from wsimod.nodes.nutrient_pool import NutrientPool
 
+from typing import Any, Dict
 
 class Land(Node):
     """"""
@@ -158,7 +159,31 @@ class Land(Node):
         self.mass_balance_ds.append(self.surface_runoff.ds)
         self.mass_balance_ds.append(self.subsurface_runoff.ds)
         self.mass_balance_ds.append(self.percolation.ds)
+    
+    def apply_overrides(self, overrides=Dict[str, Any]):
+        """Apply overrides to the Land.
 
+        Enables a user to override any parameter of the residence_time and update 
+        the residence_tank accordingly.
+        
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        self.surface_residence_time = overrides.pop(
+            "surface_residence_time", 
+            self.surface_residence_time)
+        self.subsurface_residence_time = overrides.pop(
+            "subsurface_residence_time", 
+            self.subsurface_residence_time)
+        self.percolation_residence_time = overrides.pop(
+            "percolation_residence_time", 
+            self.percolation_residence_time)
+        self.surface_runoff.residence_time = self.surface_residence_time
+        self.subsurface_runoff.residence_time = self.subsurface_residence_time
+        self.percolation.residence_time = self.percolation_residence_time
+        super().apply_overrides(overrides)
+    
     def apply_irrigation(self):
         """Iterate over any irrigation functions (needs further testing..
 
