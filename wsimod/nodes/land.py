@@ -399,7 +399,6 @@ class Surface(DecayTank):
         pollutant_load = overrides.pop("pollutant_load", {})
         for key, value in pollutant_load.items():
             self.pollutant_load[key].update(value)
-        super().apply_overrides(overrides)
     
     def run(self):
         """Call run function (called from Land node)."""
@@ -598,7 +597,28 @@ class ImperviousSurface(Surface):
         self.inflows.append(self.precipitation_evaporation)
 
         self.outflows.append(self.push_to_sewers)
+    
+    def apply_overrides(self, overrides = Dict[str, Any]):
+        """Override parameters.
 
+        Enables a user to override any of the following parameters: 
+        eto_to_e, pore_depth.
+
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        self.et0_to_e = overrides.pop("et0_to_e", 
+                                  self.et0_to_e)
+        if 'depth' in overrides.keys():
+            overrides.pop('depth')
+            print('ERROR: specifying depth is depreciated in overrides for impervious surface, please specify pore_depth instead')
+        self.pore_depth = overrides.pop("pore_depth", 
+                                  self.pore_depth)
+        self.depth = self.pore_depth
+        self.capacity = self.area * self.depth
+        super().apply_overrides(overrides)
+    
     def precipitation_evaporation(self):
         """Inflow function that is a simple rainfall-evaporation model, updating the.
 
