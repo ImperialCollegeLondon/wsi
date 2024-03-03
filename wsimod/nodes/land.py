@@ -399,6 +399,9 @@ class Surface(DecayTank):
         pollutant_load = overrides.pop("pollutant_load", {})
         for key, value in pollutant_load.items():
             self.pollutant_load[key].update(value)
+        
+        if len(overrides) > 0:
+            print(f"No override behaviour defined for: {overrides.keys()}")
     
     def run(self):
         """Call run function (called from Land node)."""
@@ -816,7 +819,59 @@ class PerviousSurface(Surface):
         # temperature... probably need to just give it the decay function
 
         self.outflows.append(self.route)
+    
+    def apply_overrides(self, overrides = Dict[str, Any]):
+        """Override parameters.
 
+        Enables a user to override any of the following parameters: 
+        field_capacity, wilting_point, total_porosity, infiltration_capacity,
+        surface_coefficient, percolation_coefficient, et0_coefficient, ihacres_p,
+        soil_temp_w_prev, soil_temp_w_air, soil_temp_w_deep, soil_temp_deep,
+        and the corresponding parameter values, including field_capacity_m,
+        wilting_point_m, depth, capacity, subsurface_coefficient.
+
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        
+        self.depth /= self.total_porosity # restore the physical depth (root)
+        
+        self.field_capacity = overrides.pop("field_capacity", 
+                                  self.field_capacity)
+        self.wilting_point = overrides.pop("wilting_point", 
+                                  self.wilting_point)
+        self.total_porosity = overrides.pop("total_porosity", 
+                                  self.total_porosity)
+        
+        self.infiltration_capacity = overrides.pop("infiltration_capacity", 
+                                  self.infiltration_capacity)
+        self.surface_coefficient = overrides.pop("surface_coefficient", 
+                                  self.surface_coefficient)
+        self.percolation_coefficient = overrides.pop("percolation_coefficient", 
+                                  self.percolation_coefficient)
+        self.subsurface_coefficient = 1 - self.percolation_coefficient
+        self.et0_coefficient = overrides.pop("et0_coefficient", 
+                                  self.et0_coefficient)
+        self.ihacres_p = overrides.pop("ihacres_p", 
+                                  self.ihacres_p)
+
+        self.soil_temp_w_prev = overrides.pop("soil_temp_w_prev", 
+                                  self.soil_temp_w_prev)
+        self.soil_temp_w_air = overrides.pop("soil_temp_w_air", 
+                                  self.soil_temp_w_air)
+        self.soil_temp_w_deep = overrides.pop("soil_temp_w_deep", 
+                                  self.soil_temp_w_deep)
+        self.soil_temp_deep = overrides.pop("soil_temp_deep", 
+                                  self.soil_temp_deep)
+        
+        super().apply_overrides(overrides)
+        self.field_capacity_m = self.field_capacity * self.depth
+        self.wilting_point_m = self.wilting_point * self.depth
+        # must after the depth has been changed
+        self.depth *= self.total_porosity # update the simulation depth
+        self.capacity = self.depth * self.area
+    
     def get_cmd(self):
         """Calculate moisture deficit (i.e., the tank excess converted to depth).
 
