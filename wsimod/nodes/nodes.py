@@ -1234,6 +1234,20 @@ class QueueTank(Tank):
         # TODO should mass balance call internal arc (is this arc called in arc mass
         #   balance?)
 
+    def apply_overrides(self, overrides: Dict[str, Any] = {}):
+        """Apply overrides to the queuetank.
+    
+        Enables a user to override any of the following parameters: 
+        number_of_timesteps.
+        
+        Args:
+            overrides (dict, optional): Dictionary of overrides. Defaults to {}.
+        """
+        self.number_of_timesteps = overrides.pop("number_of_timesteps", 
+                                                 self.number_of_timesteps)
+        self.internal_arc.number_of_timesteps = self.number_of_timesteps
+        super().apply_overrides(overrides)
+
     def get_avail(self):
         """Return the active_storage of the tank.
 
