@@ -1173,6 +1173,19 @@ class DecayTank(Tank, DecayObj):
         self.end_timestep = self.end_timestep_decay
         self.ds = self.decay_ds
 
+    def apply_overrides(self, overrides: Dict[str, Any] = {}):
+        """Apply overrides to the decaytank.
+    
+        Enables a user to override any of the following parameters: 
+        decays.
+        
+        Args:
+            overrides (dict, optional): Dictionary of overrides. Defaults to {}.
+        """
+        self.decays = overrides.pop("decays", 
+                                    self.decays)
+        super().apply_overrides(overrides)
+
     def end_timestep_decay(self):
         """Update state variables and call make_decay."""
         self.total_decayed = self.empty_vqip()
