@@ -1260,5 +1260,78 @@ class MyTestClass(TestCase):
         self.assertEqual(pervioussurface.surface, 'test_surface')
         self.assertEqual(pervioussurface.subsurface_coefficient, 1 - 0.777)
 
+    def test_growingsurface_overrides(self):
+        constants.set_default_pollutants()
+        decaytank = DecayTank()
+        surface = Surface(parent=decaytank, area=5, depth=0.1)
+        pervioussurface = PerviousSurface(
+            parent=surface, depth=0.5, area=1.5, initial_storage=0.5 * 1.5 * 0.25
+        )
+        growingsurface = GrowingSurface(
+            parent=pervioussurface, area = 1.5
+        )
+        overrides = {'ET_depletion_factor': 0.521,
+                                        'crop_cover_max': 1.342,
+                                        'ground_cover_max': 1.111,
+                                        'crop_factor_stages': [1, 2, 1],
+                                        'crop_factor_stage_dates': [1, 32, 90],
+                                        'sowing_day': 35,
+                                        'harvest_day': 89,
+                                        'satact': 0.567,
+                                        'thetaupp': 4.324,
+                                        'thetalow': 3.582,
+                                        'thetapow': 7.324,
+                                        'uptake1': 1.278,
+                                        'uptake2': 2.753,
+                                        'uptake3': 5.298,
+                                        'uptake_PNratio': 3.263,
+                                        'erodibility': 2.863,
+                                        'sreroexp': 5.634,
+                                        'cohesion': 8.903,
+                                        'slope': 6.231,
+                                        'srfilt': 9.231,
+                                        'macrofilt': 7.394,
+                                        'limpar': 4.211,
+                                        'exppar': 5.872,
+                                        'hsatINs': 20.321,
+                                        'denpar': 0.204,
+                                        'adosorption_nr_limit': 1.943,
+                                        'adsorption_nr_maxiter': 6321,
+                                        'kfr': 80.2,
+                                        'nfr': 42.3,
+                                        'kadsdes': 0.972,
+                                        'bulk_density': 1672,
+                                        
+            
+                                        'field_capacity': 0.335,
+                                        'wilting_point': 0.112,
+                                        'total_porosity': 0.476,
+                                       
+                                        'rooting_depth': 7.5
+                                        }
+        growingsurface.apply_overrides(overrides)
+        
+        for k, v in overrides.items():
+            if isinstance(v, list):
+                self.assertListEqual(getattr(growingsurface, k), v)
+            else:
+                self.assertEqual(getattr(growingsurface, k), v)
+        
+        harvest_sow_calendar = [
+            0,
+            35,
+            89,
+            89 + 1,
+            365,
+        ]
+        self.assertListEqual(growingsurface.harvest_sow_calendar, harvest_sow_calendar)
+        self.assertListEqual(growingsurface.ground_cover_stages, [0, 0, 1.111, 0, 0])
+        self.assertListEqual(growingsurface.crop_cover_stages, [0, 0, 1.342, 0, 0])
+        self.assertEqual(growingsurface.autumn_sow, False)
+        self.assertEqual(growingsurface.total_available_water, (0.335 - 0.112) * 7.5)
+        self.assertEqual(growingsurface.readily_available_water, (0.335 - 0.112) * 7.5 * 0.521)
+        self.assertEqual(growingsurface.depth, 0.476 * 7.5)
+        self.assertEqual(growingsurface.capacity, 0.476 * 7.5 * 1.5)
+
 if __name__ == "__main__":
     unittest.main()
