@@ -793,7 +793,25 @@ class Tank(WSIObj):
         else:
             self.storage = self.empty_vqip()
             self.storage_ = self.empty_vqip()  # Lagged storage for mass balance
+    
+    def apply_overrides(self, overrides: Dict[str, Any] = {}):
+        """Apply overrides to the tank.
 
+        Enables a user to override any of the following parameters: 
+        area, capacity, datum.
+        
+        Args:
+            overrides (dict, optional): Dictionary of overrides. Defaults to {}.
+        """
+        self.capacity = overrides.pop("capacity", 
+                                      self.capacity)
+        self.area = overrides.pop("area", 
+                                  self.area)
+        self.datum = overrides.pop("datum", 
+                                  self.datum)
+        if len(overrides) > 0:
+            print(f"No override behaviour defined for: {overrides.keys()}")
+    
     def ds(self):
         """Should be called by parent object to get change in storage.
 
