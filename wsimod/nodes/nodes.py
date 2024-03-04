@@ -1117,6 +1117,19 @@ class ResidenceTank(Tank):
         self.residence_time = residence_time
         super().__init__(**kwargs)
 
+    def apply_overrides(self, overrides: Dict[str, Any] = {}):
+        """Apply overrides to the residencetank.
+    
+        Enables a user to override any of the following parameters: 
+        residence_time.
+        
+        Args:
+            overrides (dict, optional): Dictionary of overrides. Defaults to {}.
+        """
+        self.residence_time = overrides.pop("residence_time", 
+                                            self.residence_time)
+        super().apply_overrides(overrides)
+
     def pull_outflow(self):
         """Pull storage by residence time from the tank, updating tank storage.
 
