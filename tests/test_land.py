@@ -21,7 +21,7 @@ from wsimod.nodes.land import (
     PerviousSurface,
     Surface,
 )
-from wsimod.nodes.nodes import Node
+from wsimod.nodes.nodes import Node, DecayTank
 from wsimod.nodes.sewer import Sewer
 from wsimod.nodes.storage import Reservoir
 from wsimod.orchestration.model import to_datetime
@@ -1168,6 +1168,19 @@ class MyTestClass(TestCase):
         d3 = {"phosphate": 0, "temperature": 0, "volume": 0.2 * 0.5 * 1.5}
         self.assertDictAlmostEqual(d3, surface.storage, 16)
 
-
+    def test_land_overrides(self):
+        constants.set_simple_pollutants()
+        node = Land(name="")
+        node.apply_overrides({'surface_residence_time': 4.9,
+                              'subsurface_residence_time': 23.7,
+                              'percolation_residence_time': 56.1
+                                })
+        self.assertEqual(node.surface_residence_time, 4.9)
+        self.assertEqual(node.surface_runoff.residence_time, 4.9)
+        self.assertEqual(node.subsurface_residence_time, 23.7)
+        self.assertEqual(node.subsurface_runoff.residence_time, 23.7)
+        self.assertEqual(node.percolation_residence_time, 56.1)
+        self.assertEqual(node.percolation.residence_time, 56.1)
+    
 if __name__ == "__main__":
     unittest.main()
