@@ -1214,6 +1214,51 @@ class MyTestClass(TestCase):
         self.assertEqual(impervioussurface.depth, 7.5)
         self.assertEqual(impervioussurface.capacity, 9.8 * 7.5)
         self.assertEqual(impervioussurface.et0_to_e, 3.5)
+ 
+    def test_pervioussurface_overrides(self):
+        constants.set_default_pollutants()
+        decaytank = DecayTank()
+        surface = Surface(parent=decaytank, area=5, depth=0.1)
+        pervioussurface = PerviousSurface(
+            parent=surface, depth=0.5, area=1.5, initial_storage=0.5 * 1.5 * 0.25
+        )
+        pervioussurface.apply_overrides({'field_capacity': 0.335,
+                                         'wilting_point': 0.112,
+                                         'total_porosity': 0.476,
+                                         'infiltration_capacity': 0.678,
+                                         'surface_coefficient': 0.237,
+                                         'percolation_coefficient': 0.777,
+                                         'et0_coefficient': 0.697,
+                                         'ihacres_p': 10.096,
+                                         'soil_temp_w_prev': 37.1,
+                                         'soil_temp_w_air': 23.6,
+                                         'soil_temp_w_deep': 3.4,
+                                         'soil_temp_deep': 2.2,
+                                         
+                                         'surface': 'test_surface',
+                                          'area': 9.8,
+                                          'depth': 7.5
+                                          })
+        self.assertEqual(pervioussurface.field_capacity, 0.335)
+        self.assertEqual(pervioussurface.wilting_point, 0.112)
+        self.assertEqual(pervioussurface.total_porosity, 0.476)
+        self.assertEqual(pervioussurface.infiltration_capacity, 0.678)
+        self.assertEqual(pervioussurface.surface_coefficient, 0.237)
+        self.assertEqual(pervioussurface.percolation_coefficient, 0.777)
+        self.assertEqual(pervioussurface.et0_coefficient, 0.697)
+        self.assertEqual(pervioussurface.ihacres_p, 10.096)
+        self.assertEqual(pervioussurface.soil_temp_w_prev, 37.1)
+        self.assertEqual(pervioussurface.soil_temp_w_air, 23.6)
+        self.assertEqual(pervioussurface.soil_temp_w_deep, 3.4)
+        self.assertEqual(pervioussurface.soil_temp_deep, 2.2)
+        
+        self.assertEqual(pervioussurface.field_capacity_m, 0.335 * 7.5)
+        self.assertEqual(pervioussurface.wilting_point_m, 0.112 * 7.5)
+        self.assertEqual(pervioussurface.depth, 0.476 * 7.5)
+        self.assertEqual(pervioussurface.area, 9.8)
+        self.assertEqual(pervioussurface.capacity, 7.5 * 0.476 * 9.8)
+        self.assertEqual(pervioussurface.surface, 'test_surface')
+        self.assertEqual(pervioussurface.subsurface_coefficient, 1 - 0.777)
 
 if __name__ == "__main__":
     unittest.main()
