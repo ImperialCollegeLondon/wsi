@@ -1182,5 +1182,20 @@ class MyTestClass(TestCase):
         self.assertEqual(node.percolation_residence_time, 56.1)
         self.assertEqual(node.percolation.residence_time, 56.1)
     
+    def test_surface_overrides(self):
+        constants.set_default_pollutants()
+        decaytank = DecayTank()
+        surface = Surface(parent=decaytank, area=5, depth=0.1)
+        surface.apply_overrides({'surface': 'test_surface',
+                                 'area': 9.8,
+                                 'depth': 7.5,
+                                 'pollutant_load': {'nitrate': 5.7, 'phosphate': 10.1}
+                                    })
+        self.assertEqual(surface.surface, 'test_surface')
+        self.assertEqual(surface.area, 9.8)
+        self.assertEqual(surface.depth, 7.5)
+        self.assertEqual(surface.capacity, 9.8 * 7.5)
+        self.assertDictEqual(surface.pollutant_load, {'nitrate': 5.7, 'phosphate': 10.1})
+
 if __name__ == "__main__":
     unittest.main()
