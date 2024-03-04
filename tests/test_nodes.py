@@ -681,7 +681,7 @@ class MyTestClass(TestCase):
         self.assertEqual(tank.datum, 3.5)
         self.assertEqual(tank.residence_time, 6)
         # decay tank
-        tank = DecayTank(capacity=10, area=8, datum = 4, decays = {'phosphate' : {'constant' : 0.001, 'exponent' : 1.005}})
+        tank = DecayTank(capacity=10, area=8, datum = 4, decays = {'nitrate' : {'constant' : 0.001, 'exponent' : 1.005}})
         tank.apply_overrides({'capacity': 3,
                               'area': 2,
                               'datum': 3.5,
@@ -690,7 +690,9 @@ class MyTestClass(TestCase):
         self.assertEqual(tank.capacity, 3)
         self.assertEqual(tank.area, 2)
         self.assertEqual(tank.datum, 3.5)
-        self.assertDictEqual(tank.decays, {'phosphate' : {'constant' : 1.001, 'exponent' : 10.005}})
+        self.assertDictEqual(tank.decays, {'nitrate' : {'constant' : 0.001, 'exponent' : 1.005},
+                                           'phosphate' : {'constant' : 1.001, 'exponent' : 10.005}
+                                           })
         # queue tank
         tank = QueueTank(capacity=10, area=8, datum = 4, number_of_timesteps = 8)
         tank.apply_overrides({'capacity': 3,
