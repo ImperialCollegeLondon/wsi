@@ -1416,6 +1416,22 @@ class DecayQueueTank(QueueTank):
 
         self.end_timestep = self._end_timestep
 
+    def apply_overrides(self, overrides: Dict[str, Any] = {}):
+        """Apply overrides to the decayqueuetank.
+    
+        Enables a user to override any of the following parameters: 
+        number_of_timesteps, decays.
+        
+        Args:
+            overrides (dict, optional): Dictionary of overrides. Defaults to {}.
+        """
+        self.number_of_timesteps = overrides.pop("number_of_timesteps", 
+                                                 self.number_of_timesteps)
+        self.internal_arc.number_of_timesteps = self.number_of_timesteps
+        self.internal_arc.decays = overrides.pop("decays", 
+                                                 self.internal_arc.decays)
+        super().apply_overrides(overrides)
+
     def _end_timestep(self):
         """End timestep wrapper that removes decayed pollutants and calls internal
         arc."""
