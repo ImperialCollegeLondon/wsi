@@ -1239,22 +1239,7 @@ class GrowingSurface(PerviousSurface):
         self.bulk_density = 1300  # [kg/m3]
         super().__init__(depth=depth, **kwargs)
 
-        # Infer basic sow/harvest calendar
-        self.harvest_sow_calendar = [
-            0,
-            self.sowing_day,
-            self.harvest_day,
-            self.harvest_day + 1,
-            365,
-        ]
-        self.ground_cover_stages = [0, 0, self.ground_cover_max, 0, 0]
-        self.crop_cover_stages = [0, 0, self.crop_cover_max, 0, 0]
-
-        # Use day number of 181 to indicate autumn-sown (from HYPE)
-        if self.sowing_day > 181:
-            self.autumn_sow = True
-        else:
-            self.autumn_sow = False
+        self.harvest_sow_calendar, self.ground_cover_stages, self.crop_cover_stages, self.autumn_sow = self.infer_sow_harvest_calendar()
 
         # State variables
         self.days_after_sow = None
@@ -1263,13 +1248,7 @@ class GrowingSurface(PerviousSurface):
         self.crop_factor = 0
         self.et0_coefficient = 1
 
-        # Calculate parameters based on capacity/wp
-        self.total_available_water = self.field_capacity_m - self.wilting_point_m
-        if self.total_available_water < 0:
-            print("warning: TAW < 0...")
-        self.readily_available_water = (
-            self.total_available_water * self.ET_depletion_factor
-        )
+        self.total_available_water, self.readily_available_water = self.calculate_available_water()
 
         # Initiliase nutrient pools
         self.nutrient_pool = NutrientPool()
@@ -1324,7 +1303,133 @@ class GrowingSurface(PerviousSurface):
                 self.nutrient_pool.fast_pool.storage["P"] = initial_soil_storage[
                     "org-phosphorus"
                 ]
+    
+    def infer_sow_harvest_calendar(self):
+        """Infer basic sow/harvest calendar and indicate autumn-sown.
+        Returns:
+            (list): havest/sow calendar
+            (list): ground cover stages
+            (list): crop cover stages
+            (boolean): indication for autumn-sown crops
+        """
+        # Infer basic sow/harvest calendar
+        harvest_sow_calendar = [
+            0,
+            self.sowing_day,
+            self.harvest_day,
+            self.harvest_day + 1,
+            365,
+        ]
+        ground_cover_stages = [0, 0, self.ground_cover_max, 0, 0]
+        crop_cover_stages = [0, 0, self.crop_cover_max, 0, 0]
 
+        # Use day number of 181 to indicate autumn-sown (from HYPE)
+        if self.sowing_day > 181:
+            autumn_sow = True
+        else:
+            autumn_sow = False
+        
+        return harvest_sow_calendar, ground_cover_stages, crop_cover_stages, autumn_sow
+    
+    def calculate_available_water(self):
+        """Calculate total/readily available water based on capacity/wp.
+        Returns:
+            (float): total available water
+            (float): readily available water
+        """
+        # Calculate parameters based on capacity/wp
+        total_available_water = self.field_capacity_m - self.wilting_point_m
+        if total_available_water < 0:
+            print("warning: TAW < 0...")
+        readily_available_water = (
+            total_available_water * self.ET_depletion_factor
+        )
+        
+        return total_available_water, readily_available_water
+    
+    def apply_overrides(self, overrides = Dict[str, Any]):
+        """Override parameters.
+
+        Enables a user to override any of the following parameters
+
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        self.ET_depletion_factor = overrides.pop("ET_depletion_factor", 
+                                  self.ET_depletion_factor)
+        self.crop_cover_max = overrides.pop("crop_cover_max", 
+                                  self.crop_cover_max)
+        self.ground_cover_max = overrides.pop("ground_cover_max", 
+                                  self.ground_cover_max)
+        self.crop_factor_stages = overrides.pop("crop_factor_stages", 
+                                  self.crop_factor_stages)
+        self.crop_factor_stage_dates = overrides.pop("crop_factor_stage_dates", 
+                                  self.crop_factor_stage_dates)
+        self.sowing_day = overrides.pop("sowing_day", 
+                                  self.sowing_day)
+        self.harvest_day = overrides.pop("harvest_day", 
+                                  self.harvest_day)
+        self.satact = overrides.pop("satact", 
+                                  self.satact)
+        self.thetaupp = overrides.pop("thetaupp", 
+                                  self.thetaupp)
+        self.thetalow = overrides.pop("thetalow", 
+                                  self.thetalow)
+        self.thetapow = overrides.pop("thetapow", 
+                                  self.thetapow)
+        self.uptake1 = overrides.pop("uptake1", 
+                                  self.uptake1)
+        self.uptake2 = overrides.pop("uptake2", 
+                                  self.uptake2)
+        self.uptake3 = overrides.pop("uptake3", 
+                                  self.uptake3)
+        self.uptake_PNratio = overrides.pop("uptake_PNratio", 
+                                  self.uptake_PNratio)
+        self.erodibility = overrides.pop("erodibility", 
+                                  self.erodibility)
+        self.sreroexp = overrides.pop("sreroexp", 
+                                  self.sreroexp)
+        self.cohesion = overrides.pop("cohesion", 
+                                  self.cohesion)
+        self.slope = overrides.pop("slope", 
+                                  self.slope)
+        self.srfilt = overrides.pop("srfilt", 
+                                  self.srfilt)
+        self.macrofilt = overrides.pop("macrofilt", 
+                                  self.macrofilt)
+        self.limpar = overrides.pop("limpar", 
+                                  self.limpar)
+        self.exppar = overrides.pop("exppar", 
+                                  self.exppar)
+        self.hsatINs = overrides.pop("hsatINs", 
+                                  self.hsatINs)
+        self.denpar = overrides.pop("denpar", 
+                                  self.denpar)
+        self.adosorption_nr_limit = overrides.pop("adosorption_nr_limit", 
+                                  self.adosorption_nr_limit)
+        self.adsorption_nr_maxiter = overrides.pop("adsorption_nr_maxiter", 
+                                  self.adsorption_nr_maxiter)
+        self.kfr = overrides.pop("kfr", 
+                                  self.kfr)
+        self.nfr = overrides.pop("nfr", 
+                                  self.nfr)
+        self.kadsdes = overrides.pop("kadsdes", 
+                                  self.kadsdes)
+        self.bulk_density = overrides.pop("bulk_density", 
+                                  self.bulk_density)
+        
+        if 'depth' in overrides.keys():
+            overrides.pop('depth')
+            print('ERROR: specifying depth is depreciated in overrides for GrowingSurface, please specify rooting_depth instead')
+        self.rooting_depth = overrides.pop("rooting_depth", 
+                                  self.rooting_depth)
+        overrides['depth'] = self.rooting_depth
+        super().apply_overrides(overrides)
+        
+        self.harvest_sow_calendar, self.ground_cover_stages, self.crop_cover_stages, self.autumn_sow = self.infer_sow_harvest_calendar()
+        self.total_available_water, self.readily_available_water = self.calculate_available_water()
+    
     def pull_storage(self, vqip):
         """Pull water from the surface, updating the surface storage VQIP. Nutrient pool
         pollutants (nitrate/nitrite/ammonia/phosphate/org- phosphorus/ org-nitrogen) are
