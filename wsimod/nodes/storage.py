@@ -614,7 +614,7 @@ class River(Storage):
                         "muptNpar", "muptPpar", "max_temp_lag", "max_phosphorus_lag"]
 
         for param in overwrite_params:
-            setattr(self, param, overrides.pop(param, getattr(self,param))
+            setattr(self, param, overrides.pop(param, getattr(self, param)))
         
         if 'area' in overrides.keys():
             print('ERROR: specifying area is depreciated in overrides for river, please specify length and width instead')
