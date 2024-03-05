@@ -376,6 +376,33 @@ class Surface(DecayTank):
         self.processes = []
         self.outflows = []
 
+    def apply_overrides(self, overrides = Dict[str, Any]):
+        """Override parameters.
+
+        Enables a user to override any of the following parameters: 
+        area and depth (both will update the capacity), pollutant_load (the
+        entire dict does not need to be redefined, only changed values need to
+        be included).
+
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        self.surface = overrides.pop("surface", 
+                                  self.surface)
+        self.pollutant_load.update(overrides.pop("pollutant_load", {}))
+        
+        self.area = overrides.pop("area", 
+                                  self.area)
+        self.depth = overrides.pop("depth", 
+                                  self.depth)
+        self.capacity = self.area * self.depth
+        
+        if 'capacity' in overrides.keys():
+            overrides.pop('capacity')
+            print('ERROR: specifying capacity is depreciated in overrides for surface, please specify depth and area instead')
+        super().apply_overrides(overrides)
+    
     def run(self):
         """Call run function (called from Land node)."""
         if "nitrite" in constants.POLLUTANTS:
