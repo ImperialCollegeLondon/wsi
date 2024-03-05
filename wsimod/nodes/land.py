@@ -2265,6 +2265,19 @@ class IrrigationSurface(GrowingSurface):
 
         super().__init__(**kwargs)
 
+    def apply_overrides(self, overrides = Dict[str, Any]):
+        """Override parameters.
+
+        Enables a user to override irrigation_coefficient
+
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        self.irrigation_coefficient = overrides.pop("irrigation_coefficient", 
+                                  self.irrigation_coefficient)
+        super().apply_overrides(overrides)
+
     def irrigate(self):
         """Calculate water demand for crops and call parent node to acquire water,
         updating surface tank and nutrient pools."""
