@@ -194,6 +194,24 @@ class Groundwater(Storage):
         self.data_input_dict = data_input_dict
         super().__init__(**kwargs)
 
+    def apply_overrides(self, overrides = Dict[str, Any]):
+        """Override parameters.
+    
+        Enables a user to override any of the following parameters: 
+        residence_time, infiltration_threshold, infiltration_pct.
+    
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        self.residence_time = overrides.pop("residence_time", 
+                                            self.residence_time)
+        self.infiltration_threshold = overrides.pop("infiltration_threshold", 
+                                                    self.infiltration_threshold)
+        self.infiltration_pct = overrides.pop("infiltration_pct", 
+                                                    self.infiltration_pct)
+        super().apply_overrides(overrides)
+
     def distribute(self):
         """Calculate outflow with residence time and send to Nodes or Rivers."""
         avail = self.tank.get_avail()["volume"] / self.residence_time
