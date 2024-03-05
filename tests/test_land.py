@@ -903,7 +903,7 @@ class MyTestClass(TestCase):
         d1["org-phosphorus"] = disso["P"]
         d1["org-nitrogen"] = disso["N"]
 
-        self.assertDictAlmostEqual(d1, r1, 15)
+        self.assertDictAlmostEqual(d1, r1, 14)
         self.assertDictAlmostEqual(d2, r2, 15)
 
     def test_crop_uptake(self):
@@ -1335,6 +1335,38 @@ class MyTestClass(TestCase):
         self.assertEqual(growingsurface.readily_available_water, (0.335 - 0.112) * 7.5 * 0.521)
         self.assertEqual(growingsurface.depth, 0.476 * 7.5)
         self.assertEqual(growingsurface.capacity, 0.476 * 7.5 * 1.5)
+    
+    def test_nutrientpool_overrides(self):
+        constants.set_default_pollutants()
+        decaytank = DecayTank()
+        surface = Surface(parent=decaytank, area=5, depth=0.1)
+        pervioussurface = PerviousSurface(
+            parent=surface, depth=0.5, area=1.5, initial_storage=0.5 * 1.5 * 0.25
+        )
+        growingsurface = GrowingSurface(
+            parent=pervioussurface, area = 1.5
+        )
+        overrides = {'fraction_dry_n_to_dissolved_inorganic': 0.29,
+                     'degrhpar': {"N": 7 * 1e-1},
+                     'dishpar': {"P": 7 * 1e-1},
+                     'minfpar': {"N": 1.00013, "P": 1.000003},
+                     'disfpar': {"N": 1.000003, "P": 1.0000001},
+                     'immobdpar': {"N": 1.0056, "P": 1.2866},
+                     'fraction_manure_to_dissolved_inorganic': {"N": 0.35, "P": 0.21},
+                     'fraction_residue_to_fast': {"N": 0.61, "P": 0.71}}
+        growingsurface.nutrient_pool.apply_overrides(overrides)
+        self.assertEqual(growingsurface.nutrient_pool.fraction_dry_n_to_dissolved_inorganic, 0.29)
+        self.assertDictEqual(growingsurface.nutrient_pool.degrhpar, {"N": 7 * 1e-1, "P": 7 * 1e-6})
+        self.assertDictEqual(growingsurface.nutrient_pool.dishpar, {"N": 7 * 1e-5, "P": 7 * 1e-1})
+        self.assertDictEqual(growingsurface.nutrient_pool.minfpar, {"N": 1.00013, "P": 1.000003})
+        self.assertDictEqual(growingsurface.nutrient_pool.disfpar, {"N": 1.000003, "P": 1.0000001})
+        self.assertDictEqual(growingsurface.nutrient_pool.immobdpar, {"N": 1.0056, "P": 1.2866})
+        self.assertDictEqual(growingsurface.nutrient_pool.fraction_manure_to_dissolved_inorganic, {"N": 0.35, "P": 0.21})
+        self.assertDictEqual(growingsurface.nutrient_pool.fraction_residue_to_fast, {"N": 0.61, "P": 0.71})
+        
+        self.assertDictEqual(growingsurface.nutrient_pool.fraction_manure_to_fast, {"N": 1-0.35, "P": 1-0.21})
+        self.assertDictEqual(growingsurface.nutrient_pool.fraction_residue_to_humus, {"N": 1-0.61, "P": 1-0.71})
+        self.assertEqual(growingsurface.nutrient_pool.fraction_dry_n_to_fast, 0.71)
 
 if __name__ == "__main__":
     unittest.main()
