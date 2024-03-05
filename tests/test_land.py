@@ -1198,6 +1198,24 @@ class MyTestClass(TestCase):
         self.assertEqual(surface.capacity, 9.8 * 7.5)
         self.assertDictEqual(surface.pollutant_load, {'nitrate': 5.7, 'phosphate': 10.1})
         self.assertDictEqual(surface.decays, {"nitrate": {"constant": 0.001, "exponent": 1.005}})
+    
+    def test_impervioussurface_overrides(self):
+        constants.set_default_pollutants()
+        decaytank = DecayTank()
+        surface = Surface(parent=decaytank, area=5, depth=0.1)
+        impervioussurface = ImperviousSurface(
+            parent=surface, area=1.5, et0_to_e=0.9, pore_depth=0.015
+        )
+        impervioussurface.apply_overrides({'surface': 'test_surface',
+                                  'area': 9.8,
+                                  'pore_depth': 7.5,
+                                  'et0_to_e': 3.5
+                                  })
+        self.assertEqual(impervioussurface.area, 9.8)
+        self.assertEqual(impervioussurface.pore_depth, 7.5)
+        self.assertEqual(impervioussurface.depth, 7.5)
+        self.assertEqual(impervioussurface.capacity, 9.8 * 7.5)
+        self.assertEqual(impervioussurface.et0_to_e, 3.5)
 
 if __name__ == "__main__":
     unittest.main()
