@@ -181,7 +181,6 @@ class MyTestClass(TestCase):
         constants.set_simple_pollutants()
         river = River(
             name="",
-            depth=2,
             length=200,
             width=20,
             velocity=0.2 * 86400,
@@ -206,7 +205,6 @@ class MyTestClass(TestCase):
         constants.set_simple_pollutants()
         river = River(
             name="",
-            depth=2,
             length=200,
             width=20,
             velocity=0.2 * 86400,
@@ -294,7 +292,88 @@ class MyTestClass(TestCase):
             "temperature": (20 * 10 + 30 * 23) / 40,
         }
         self.assertDictAlmostEqual(d2, reservoir.tank.storage, 15)
-
+    
+    def test_storage_overrides(self):
+        constants.set_default_pollutants()
+        storage = Storage(name = '', decays = {"phosphate": {"constant": 1.005, "exponent": 1.005}})
+        storage.apply_overrides({'capacity': 1.43,
+                           'area': 2.36,
+                           'datum': 0.32,
+                           'decays': {"nitrite": {"constant": 10.005, "exponent": 1.105}}
+                           })
+        self.assertEqual(storage.capacity, 1.43)
+        self.assertEqual(storage.tank.capacity, 1.43)
+        self.assertEqual(storage.area, 2.36)
+        self.assertEqual(storage.tank.area, 2.36)
+        self.assertEqual(storage.datum, 0.32)
+        self.assertEqual(storage.tank.datum, 0.32)
+        self.assertDictEqual(storage.decays, {"phosphate": {"constant": 1.005, "exponent": 1.005}, 
+                                              "nitrite": {"constant": 10.005, "exponent": 1.105}})
+        self.assertDictEqual(storage.tank.decays, {"phosphate": {"constant": 1.005, "exponent": 1.005}, 
+                                              "nitrite": {"constant": 10.005, "exponent": 1.105}})
+    
+    def test_groundwater_overrides(self):
+        groundwater = Groundwater(name = '', decays = {"phosphate": {"constant": 1.005, "exponent": 1.005}})
+        groundwater.apply_overrides({'residence_time': 27.3,
+                                     'infiltration_threshold': 200,
+                                     'infiltration_pct': 0.667,
+                                     'capacity': 1.43,
+                                     'area': 2.36,
+                                     'datum': 0.32,
+                                     'decays': {"nitrite": {"constant": 10.005, "exponent": 1.105}}
+                                     })
+        self.assertEqual(groundwater.residence_time, 27.3)
+        self.assertEqual(groundwater.infiltration_threshold, 200)
+        self.assertEqual(groundwater.infiltration_pct, 0.667)
+        self.assertEqual(groundwater.capacity, 1.43)
+        self.assertEqual(groundwater.tank.capacity, 1.43)
+        self.assertEqual(groundwater.area, 2.36)
+        self.assertEqual(groundwater.tank.area, 2.36)
+        self.assertEqual(groundwater.datum, 0.32)
+        self.assertEqual(groundwater.tank.datum, 0.32)
+        self.assertDictEqual(groundwater.decays, {"phosphate": {"constant": 1.005, "exponent": 1.005}, 
+                                              "nitrite": {"constant": 10.005, "exponent": 1.105}})
+        self.assertDictEqual(groundwater.tank.decays, {"phosphate": {"constant": 1.005, "exponent": 1.005}, 
+                                              "nitrite": {"constant": 10.005, "exponent": 1.105}})
+    
+    def test_river_overrides(self):
+        river = River(name = '')
+        overrides = {'length': 27.3,
+                               'width': 200,
+                               'velocity': 0.667,
+                               'damp': 1.43,
+                               'mrf': 2.36,
+                               'uptake_PNratio': 0.32,
+                               'bulk_density': 5.32,
+                               'denpar_w': 0.432,
+                               'T_wdays': 23.5,
+                               'halfsatINwater': 3.269,
+                               'hsatTP': 2.431,
+                               'limpppar': 6.473,
+                               'prodNpar': 7.821,
+                               'prodPpar': 8.231,
+                               'muptNpar': 6.213,
+                               'muptPpar': 7.021,
+                               'max_temp_lag': 3.213,
+                               'max_phosphorus_lag': 78.321,     
+                               # 'area': 75.2,
+                               # 'capacity': 123
+                               }
+        overrides_to_check = overrides.copy()
+        river.apply_overrides(overrides)
+        for k, v in overrides_to_check.items():
+            if k == 'area':
+                v = 27.3 * 200
+                self.assertEqual(river.tank.area, v)
+            if k == 'capacity':
+                v = constants.UNBOUNDED_CAPACITY
+                self.assertEqual(river.tank.capacity, v)
+            self.assertEqual(getattr(river, k), v)
+    
+    def test_riverreservoir_overrides(self):
+        riverreservoir = RiverReservoir(name = '')
+        riverreservoir.apply_overrides({'environmental_flow': 154})
+        self.assertEqual(riverreservoir.environmental_flow, 154)
 
 if __name__ == "__main__":
     unittest.main()
