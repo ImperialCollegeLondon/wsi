@@ -307,6 +307,20 @@ class QueueGroundwater(Storage):
                 initial_storage=self.initial_storage,
             )
 
+    def apply_overrides(self, overrides = Dict[str, Any]):
+        """Override parameters.
+    
+        Enables a user to override any of the following parameters: 
+        timearea.
+    
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        self.timearea = overrides.pop("timearea", 
+                                      self.timearea)
+        super().apply_overrides(overrides)
+
     def push_set_timearea(self, vqip):
         """Push setting that enables timearea behaviour, (see __init__ for
         description).Used to receive flow that is assumed to occur widely across some
