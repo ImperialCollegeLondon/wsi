@@ -820,6 +820,39 @@ class PerviousSurface(Surface):
 
         self.outflows.append(self.route)
 
+    def apply_overrides(self, overrides = Dict[str, Any]):
+        """Override parameters.
+
+        Enables a user to override any of the following parameters: 
+        field_capacity, wilting_point, total_porosity, infiltration_capacity,
+        surface_coefficient, percolation_coefficient, et0_coefficient, ihacres_p,
+        soil_temp_w_prev, soil_temp_w_air, soil_temp_w_deep, soil_temp_deep,
+        and the corresponding parameter values, including field_capacity_m,
+        wilting_point_m, depth, capacity, subsurface_coefficient.
+
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        
+        self.depth /= self.total_porosity # restore the physical depth (root)
+        
+        overwrite_params = ["field_capacity", "wilting_point", "total_porosity", 
+                        "infiltration_capacity", "surface_coefficient", "percolation_coefficient",
+                        "et0_coefficient", "ihacres_p",
+                        "soil_temp_w_prev", "soil_temp_w_air", "soil_temp_w_deep", "soil_temp_deep"]
+        for param in overwrite_params:
+            setattr(self, param, overrides.pop(param, getattr(self, param)))
+        
+        self.subsurface_coefficient = 1 - self.percolation_coefficient
+
+        super().apply_overrides(overrides)
+        # After the depth has been changed ...
+        self.field_capacity_m = self.field_capacity * self.depth
+        self.wilting_point_m = self.wilting_point * self.depth
+        self.depth *= self.total_porosity # update the simulation depth
+        self.capacity = self.depth * self.area
+
     def get_cmd(self):
         """Calculate moisture deficit (i.e., the tank excess converted to depth).
 
