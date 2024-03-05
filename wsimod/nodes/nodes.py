@@ -1182,8 +1182,7 @@ class DecayTank(Tank, DecayObj):
         Args:
             overrides (dict, optional): Dictionary of overrides. Defaults to {}.
         """
-        self.decays = overrides.pop("decays", 
-                                    self.decays)
+        self.decays.update(overrides.pop("decays", {}))
         super().apply_overrides(overrides)
 
     def end_timestep_decay(self):
@@ -1428,8 +1427,7 @@ class DecayQueueTank(QueueTank):
         self.number_of_timesteps = overrides.pop("number_of_timesteps", 
                                                  self.number_of_timesteps)
         self.internal_arc.number_of_timesteps = self.number_of_timesteps
-        self.internal_arc.decays = overrides.pop("decays", 
-                                                 self.internal_arc.decays)
+        self.internal_arc.decays.update(overrides.pop("decays", {}))
         super().apply_overrides(overrides)
 
     def _end_timestep(self):
