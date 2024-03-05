@@ -805,6 +805,8 @@ class Tank(WSIObj):
         """
         self.capacity = overrides.pop("capacity", 
                                       self.capacity)
+        if "area" in overrides.keys():
+            print("warning: when overriding area, capacity is not automatically recalculated")
         self.area = overrides.pop("area", 
                                   self.area)
         self.datum = overrides.pop("datum", 
