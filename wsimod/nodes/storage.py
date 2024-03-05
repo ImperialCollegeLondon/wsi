@@ -1034,6 +1034,20 @@ class RiverReservoir(Reservoir):
 
         self.__class__.__name__ = "Reservoir"
 
+    def apply_overrides(self, overrides = Dict[str, Any]):
+        """Override parameters.
+    
+        Enables a user to override any of the following parameters: 
+        environmental_flow.
+    
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        self.environmental_flow = overrides.pop("environmental_flow", 
+                                                self.environmental_flow)
+        super().apply_overrides(overrides)
+
     def push_set_river_reservoir(self, vqip):
         """Receive water.
 
