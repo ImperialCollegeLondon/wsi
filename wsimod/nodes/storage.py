@@ -608,42 +608,13 @@ class River(Storage):
             overrides (Dict[str, Any]): Dict describing which parameters should
                 be overridden (keys) and new values (values). Defaults to {}.
         """
-        self.length = overrides.pop("length", 
-                                      self.length)
-        self.width = overrides.pop("width", 
-                                      self.width)
-        self.velocity = overrides.pop("velocity", 
-                                      self.velocity)
-        self.damp = overrides.pop("damp", 
-                                      self.damp)
-        self.mrf = overrides.pop("mrf", 
-                                      self.mrf)
-        self.uptake_PNratio = overrides.pop("uptake_PNratio", 
-                                      self.uptake_PNratio)
-        self.bulk_density = overrides.pop("bulk_density", 
-                                      self.bulk_density)
-        self.denpar_w = overrides.pop("denpar_w", 
-                                      self.denpar_w)
-        self.T_wdays = overrides.pop("T_wdays", 
-                                      self.T_wdays)
-        self.halfsatINwater = overrides.pop("halfsatINwater", 
-                                      self.halfsatINwater)
-        self.hsatTP = overrides.pop("hsatTP", 
-                                      self.hsatTP)
-        self.limpppar = overrides.pop("limpppar", 
-                                      self.limpppar)
-        self.prodNpar = overrides.pop("prodNpar", 
-                                      self.prodNpar)
-        self.prodPpar = overrides.pop("prodPpar", 
-                                      self.prodPpar)
-        self.muptNpar = overrides.pop("muptNpar", 
-                                      self.muptNpar)
-        self.muptPpar = overrides.pop("muptPpar", 
-                                      self.muptPpar)
-        self.max_temp_lag = overrides.pop("max_temp_lag", 
-                                      self.max_temp_lag)
-        self.max_phosphorus_lag = overrides.pop("max_phosphorus_lag", 
-                                      self.max_phosphorus_lag)
+        overwrite_params = ["length", "width", "velocity", "damp", "mrf", 
+                        "uptake_PNratio", "bulk_density", "denpar_w", "T_wdays", 
+                        "halfsatINwater", "hsatTP", "limpppar", "prodNpar", "prodPpar", 
+                        "muptNpar", "muptPpar", "max_temp_lag", "max_phosphorus_lag"]
+
+        for param in overwrite_params:
+            setattr(self, param, overrides.pop(param, getattr(self,param))
         
         if 'area' in overrides.keys():
             print('ERROR: specifying area is depreciated in overrides for river, please specify length and width instead')
