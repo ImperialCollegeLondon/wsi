@@ -449,6 +449,7 @@ class River(Storage):
     # TODO non-day timestep
     def __init__(
         self,
+        depth=2,
         length=200,
         width=20,
         velocity=0.2 * constants.M_S_TO_M_DT,
@@ -503,6 +504,9 @@ class River(Storage):
                 _Units_: m3/day
         """
         # Set parameters
+        self.depth = depth
+        if depth != 2:
+            print('warning: the depth parameter is unused by River nodes because it is intended for capacity to be unbounded. It may be removed in a future version.')
         self.length = length  # [m]
         self.width = width  # [m]
         self.velocity = velocity  # [m/dt]
