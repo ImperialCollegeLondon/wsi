@@ -7,7 +7,7 @@ from math import exp
 
 from wsimod.core import constants
 from wsimod.nodes.nodes import DecayQueueTank, DecayTank, Node, QueueTank, Tank
-
+from typing import Any, Dict
 
 class Storage(Node):
     """"""
@@ -71,6 +71,29 @@ class Storage(Node):
 
         # Mass balance
         self.mass_balance_ds.append(lambda: self.tank.ds())
+
+    def apply_overrides(self, overrides = Dict[str, Any]):
+        """Override parameters.
+    
+        Enables a user to override any of the following parameters: 
+        capacity, area, datum, decays.
+    
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        # not using pop as these items need to stay in the overrides to be fed into the tank overrides
+        if 'capacity' in overrides.keys():
+            self.capacity = overrides['capacity']
+        if 'area' in overrides.keys():
+            self.area = overrides['area']
+        if 'datum' in overrides.keys():
+            self.datum = overrides['datum']
+        if 'decays' in overrides.keys():
+            self.decays.update(overrides['decays'])
+        # apply tank overrides
+        self.tank.apply_overrides(overrides)
+        super().apply_overrides(overrides)
 
     def push_set_storage(self, vqip):
         """A node wrapper for the tank push_storage.
