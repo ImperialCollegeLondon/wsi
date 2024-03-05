@@ -449,7 +449,6 @@ class River(Storage):
     # TODO non-day timestep
     def __init__(
         self,
-        depth=2,
         length=200,
         width=20,
         velocity=0.2 * constants.M_S_TO_M_DT,
@@ -504,7 +503,6 @@ class River(Storage):
                 _Units_: m3/day
         """
         # Set parameters
-        self.depth = depth  # [m]
         self.length = length  # [m]
         self.width = width  # [m]
         self.velocity = velocity  # [m/dt]
@@ -545,16 +543,6 @@ class River(Storage):
         )
         self.muptNpar = 0.001  # [kg/m2/day] nitrogen macrophyte uptake rate
         self.muptPpar = 0.0001  # 0.01, # [kg/m2/day] phosphorus macrophyte uptake rate
-        self.qbank_365_days = [1e6, 1e6]  # [m3/day] store outflow in the previous year
-        self.qbank = (
-            1e6  # [m3/day] bankfull flow = second largest outflow in the previous year
-        )
-        self.qbankcorrpar = 0.001  # [-] correction coefficient for qbank flow
-        self.sedexppar = 1  # [-]
-        self.EPC0 = 0.05 * constants.MG_L_TO_KG_M3  # [mg/l]
-        self.kd_s = 0 * constants.MG_L_TO_KG_M3  # 6 * 1e-6, # [kg/m3]
-        self.kadsdes_s = 2  # 0.9, # [-]
-        self.Dsed = 0.2  # [m]
 
         self.max_temp_lag = 20
         self.lagged_temperatures = []
@@ -605,7 +593,62 @@ class River(Storage):
     #     self.v_change_vqip(vqip_, min(vqip_['volume'],
     #     self.get_dt_excess()['volume'])) _ = self.tank.push_storage(vqip_, force=True)
     #     return self.extract_vqip(vqip, vqip_)
-
+    
+    def apply_overrides(self, overrides = Dict[str, Any]):
+        """Override parameters.
+    
+        Enables a user to override any of the following parameters: 
+        timearea.
+    
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        self.length = overrides.pop("length", 
+                                      self.length)
+        self.width = overrides.pop("width", 
+                                      self.width)
+        self.velocity = overrides.pop("velocity", 
+                                      self.velocity)
+        self.damp = overrides.pop("damp", 
+                                      self.damp)
+        self.mrf = overrides.pop("mrf", 
+                                      self.mrf)
+        self.uptake_PNratio = overrides.pop("uptake_PNratio", 
+                                      self.uptake_PNratio)
+        self.bulk_density = overrides.pop("bulk_density", 
+                                      self.bulk_density)
+        self.denpar_w = overrides.pop("denpar_w", 
+                                      self.denpar_w)
+        self.T_wdays = overrides.pop("T_wdays", 
+                                      self.T_wdays)
+        self.halfsatINwater = overrides.pop("halfsatINwater", 
+                                      self.halfsatINwater)
+        self.hsatTP = overrides.pop("hsatTP", 
+                                      self.hsatTP)
+        self.limpppar = overrides.pop("limpppar", 
+                                      self.limpppar)
+        self.prodNpar = overrides.pop("prodNpar", 
+                                      self.prodNpar)
+        self.prodPpar = overrides.pop("prodPpar", 
+                                      self.prodPpar)
+        self.muptNpar = overrides.pop("muptNpar", 
+                                      self.muptNpar)
+        self.muptPpar = overrides.pop("muptPpar", 
+                                      self.muptPpar)
+        self.max_temp_lag = overrides.pop("max_temp_lag", 
+                                      self.max_temp_lag)
+        self.max_phosphorus_lag = overrides.pop("max_phosphorus_lag", 
+                                      self.max_phosphorus_lag)
+        
+        if 'area' in overrides.keys():
+            print('ERROR: specifying area is depreciated in overrides for river, please specify length and width instead')
+        overrides['area'] = self.length * self.width
+        if 'capacity' in overrides.keys():
+            print('ERROR: specifying capacity is depreciated in overrides for river, it is always set as unbounded capacity')
+        overrides['capacity'] = constants.UNBOUNDED_CAPACITY
+        super().apply_overrides(overrides)
+    
     def pull_check_river(self, vqip=None):
         """Check amount of water that can be pulled from river tank and upstream.
 
