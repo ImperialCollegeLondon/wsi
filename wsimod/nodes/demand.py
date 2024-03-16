@@ -7,7 +7,7 @@ Converted to totals BD 2022-05-03
 """
 from wsimod.core import constants
 from wsimod.nodes.nodes import Node
-
+from typing import Any, Dict
 
 class Demand(Node):
     """"""
@@ -28,7 +28,7 @@ class Demand(Node):
                 is used. Defaults to 0.
             pollutant_load (dict, optional): Pollutant mass per timestep of
             constant_demand.
-                Defaults to {}.
+                Defaults to 0.
             data_input_dict (dict, optional):  Dictionary of data inputs relevant for
                 the node (temperature). Keys are tuples where first value is the name of
                 the variable to read from the dict and the second value is the time.
@@ -60,6 +60,20 @@ class Demand(Node):
         self.mass_balance_in.append(lambda: self.total_demand)
         self.mass_balance_out.append(lambda: self.total_backup)
         self.mass_balance_out.append(lambda: self.total_received)
+
+    def apply_overrides(self, overrides: Dict[str, Any] = {}):
+        """Apply overrides to the sewer.
+    
+        Enables a user to override any of the following parameters: 
+        constant_demand, pollutant_load.
+        
+        Args:
+            overrides (dict, optional): Dictionary of overrides. Defaults to {}.
+        """
+        self.constant_demand = overrides.pop("constant_demand", 
+                                             self.constant_demand)
+        self.pollutant_load.update(overrides.pop("pollutant_load", {}))
+        super().apply_overrides(overrides)
 
     def create_demand(self):
         """Function to call get_demand, which should return a dict with keys that match
@@ -197,6 +211,28 @@ class ResidentialDemand(Demand):
         )
         # Label as Demand class so that other nodes treat it the same
         self.__class__.__name__ = "Demand"
+
+    def apply_overrides(self, overrides: Dict[str, Any] = {}):
+        """Apply overrides to the sewer.
+    
+        Enables a user to override any of the following parameters: 
+        gardening_efficiency, population, per_capita, constant_weighting, constant_temp.
+        
+        Args:
+            overrides (dict, optional): Dictionary of overrides. Defaults to {}.
+        """
+        self.gardening_efficiency = overrides.pop("gardening_efficiency", 
+                                             self.gardening_efficiency)
+        self.population = overrides.pop("population", 
+                                             self.population)
+        self.per_capita = overrides.pop("per_capita", 
+                                             self.per_capita)
+        self.constant_weighting = overrides.pop("constant_weighting", 
+                                             self.constant_weighting)
+        self.constant_temp = overrides.pop("constant_temp", 
+                                             self.constant_temp)
+        self.pollutant_load.update(overrides.pop("pollutant_load", {}))
+        super().apply_overrides(overrides)
 
     def get_demand(self):
         """Overwrite get_demand and replace with custom functions.
