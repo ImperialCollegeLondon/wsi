@@ -231,7 +231,6 @@ class ResidentialDemand(Demand):
                                              self.constant_weighting)
         self.constant_temp = overrides.pop("constant_temp", 
                                              self.constant_temp)
-        self.pollutant_load.update(overrides.pop("pollutant_load", {}))
         super().apply_overrides(overrides)
 
     def get_demand(self):
