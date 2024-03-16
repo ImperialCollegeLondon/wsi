@@ -67,6 +67,10 @@ class MyTestClass(TestCase):
         self.assertEqual(v2, arc1.vqip_in["volume"])
         self.assertEqual(v2 * 0.2, arc2.vqip_in["volume"])
 
+    def test_distribution_overrides(self):
+        distribution = Distribution(name="", leakage=0.2)
+        distribution.apply_overrides({'leakage': 0})
+        self.assertEqual(distribution.leakage, 0)
 
 if __name__ == "__main__":
     unittest.main()
