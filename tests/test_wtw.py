@@ -10,7 +10,7 @@ import unittest
 from unittest import TestCase
 
 from wsimod.core import constants
-from wsimod.nodes.wtw import WTW, WWTW
+from wsimod.nodes.wtw import WTW, WWTW, FWTW
 
 
 class MyTestClass(TestCase):
@@ -113,6 +113,26 @@ class MyTestClass(TestCase):
         self.assertEqual(wwtw.process_parameters['phosphate']['constant'], 0.01)
         self.assertEqual(wwtw.process_parameters['volume']['constant'], vol)
         self.assertEqual(wwtw.stormwater_storage_capacity, 100)
+    
+    def test_fwtw_overrides(self):
+        fwtw = FWTW(name='')
+        vol = fwtw.process_parameters['volume']['constant']
+        fwtw.apply_overrides({'treatment_throughput_capacity' : 20,
+                              'process_parameters' : {'phosphate' : 
+                                                      {'constant' : 0.01}},
+                              'service_reservoir_storage_capacity': 100,
+                              'service_reservoir_storage_area': 34.7,
+                              'service_reservoir_storage_elevation': 68.2
+                              })
+        self.assertEqual(fwtw.treatment_throughput_capacity, 20)
+        self.assertEqual(fwtw.process_parameters['phosphate']['constant'], 0.01)
+        self.assertEqual(fwtw.process_parameters['volume']['constant'], vol)
+        self.assertEqual(fwtw.service_reservoir_storage_capacity, 100)
+        self.assertEqual(fwtw.service_reservoir_tank.capacity, 100)
+        self.assertEqual(fwtw.service_reservoir_storage_area, 34.7)
+        self.assertEqual(fwtw.service_reservoir_tank.area, 34.7)
+        self.assertEqual(fwtw.service_reservoir_storage_elevation, 68.2)
+        self.assertEqual(fwtw.service_reservoir_tank.datum, 68.2)
 
 if __name__ == "__main__":
     unittest.main()
