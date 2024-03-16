@@ -91,6 +91,24 @@ class MyTestClass(TestCase):
         d3 = {"volume": 7, "phosphate": 7 * 2 / 9, "temperature": 10}
         self.assertDictAlmostEqual(d3, sewer.sewer_tank.storage, 15)
 
+    def test_sewer_overrides(self):
+        sewer = Sewer(name="", capacity=10, pipe_timearea={0: 0.3, 1: 0.7})
+        sewer.apply_overrides({'capacity': 3,
+                                'chamber_area': 2,
+                                'chamber_floor': 3.5,
+                                'pipe_time': 8.4,
+                                'pipe_timearea': {0: 0.5, 1: 0.5}
+                                })
+        self.assertEqual(sewer.capacity, 3)
+        self.assertEqual(sewer.sewer_tank.capacity, 3)
+        self.assertEqual(sewer.chamber_area, 2)
+        self.assertEqual(sewer.sewer_tank.area, 2)
+        self.assertEqual(sewer.chamber_floor, 3.5)
+        self.assertEqual(sewer.sewer_tank.datum, 3.5)
+        self.assertEqual(sewer.pipe_time, 8.4)
+        self.assertEqual(sewer.pipe_timearea, {0: 0.5,
+                                               1: 0.5
+                                               })
 
 if __name__ == "__main__":
     unittest.main()

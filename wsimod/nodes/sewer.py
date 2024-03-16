@@ -6,7 +6,7 @@ Converted to totals on 2022-05-03
 """
 from wsimod.core import constants
 from wsimod.nodes.nodes import Node, QueueTank
-
+from typing import Any, Dict
 
 class Sewer(Node):
     """"""
@@ -111,6 +111,35 @@ class Sewer(Node):
 
         # Mass balance
         self.mass_balance_ds.append(lambda: self.sewer_tank.ds())
+
+    def apply_overrides(self, overrides: Dict[str, Any] = {}):
+        """Apply overrides to the sewer.
+    
+        Enables a user to override any of the following parameters: 
+        capacity, chamber_area, chamber_floor, pipe_time, pipe_timearea.
+        
+        Args:
+            overrides (dict, optional): Dictionary of overrides. Defaults to {}.
+        """
+        self.capacity = overrides.pop("capacity", 
+                                      self.capacity)
+        self.chamber_area = overrides.pop("chamber_area", 
+                                      self.chamber_area)
+        self.chamber_floor = overrides.pop("chamber_floor", 
+                                      self.chamber_floor)
+        self.sewer_tank.capacity = self.capacity
+        self.sewer_tank.area = self.chamber_area
+        self.sewer_tank.datum = self.chamber_floor
+        
+        self.pipe_time = overrides.pop("pipe_time", 
+                                      self.pipe_time)
+        if 'pipe_timearea' in overrides.keys():
+            pipe_timearea_sum = sum([v for k,v in overrides['pipe_timearea'].items()])
+            if pipe_timearea_sum != 1:
+                print('ERROR: the sum of pipe_timearea in the overrides dict is not equal to 1, please check it')
+        self.pipe_timearea = overrides.pop("pipe_timearea", 
+                                      self.pipe_timearea)
+        super().apply_overrides(overrides)
 
     def push_check_sewer(self, vqip=None):
         """Generic push check, simply looks at excess.
