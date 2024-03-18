@@ -670,6 +670,7 @@ class MyTestClass(TestCase):
         self.assertEqual(tank.capacity, 3)
         self.assertEqual(tank.area, 2)
         self.assertEqual(tank.datum, 3.5)
+        self.assertEqual(tank.get_excess()['volume'], 3)
         # residence tank
         tank = ResidenceTank(capacity=10, area=8, datum = 4, residence_time = 8)
         tank.apply_overrides({'capacity': 3,
