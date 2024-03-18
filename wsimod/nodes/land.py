@@ -401,6 +401,17 @@ class Surface(DecayTank):
         if 'capacity' in overrides.keys():
             overrides.pop('capacity')
             print('ERROR: specifying capacity is depreciated in overrides for surface, please specify depth and area instead')
+            
+        # overrides data_input_dict
+        from wsimod.orchestration.model import read_csv
+        content = overrides.pop('data_input_dict', self.data_input_dict)
+        if isinstance(content, str):
+            self.data_input_dict = read_csv(content)
+        elif isinstance(content, dict):
+            self.data_input_dict = content
+        else:
+            print('ERROR: not recognised format for data_input_dict')
+        
         super().apply_overrides(overrides)
     
     def run(self):

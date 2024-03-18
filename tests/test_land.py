@@ -1198,6 +1198,21 @@ class MyTestClass(TestCase):
         self.assertEqual(surface.capacity, 9.8 * 7.5)
         self.assertDictEqual(surface.pollutant_load, {'nitrate': 5.7, 'phosphate': 10.1})
         self.assertDictEqual(surface.decays, {"nitrate": {"constant": 0.001, "exponent": 1.005}})
+        
+        # override the data_input_dict
+        # test the format of dict
+        new_data_input_dict = {("temperature", 1): 10,
+                               ("temperature", 2): 20,
+                               }
+        surface.apply_overrides({'data_input_dict': new_data_input_dict})
+        self.assertDictEqual(surface.data_input_dict, new_data_input_dict)
+        # test the format of str
+        new_data_input_dict = "example_data_input_dict.csv.gz"
+        surface.apply_overrides({'data_input_dict': new_data_input_dict})
+        from wsimod.orchestration.model import read_csv
+        new_data_input_dict = read_csv(new_data_input_dict)
+        self.assertDictEqual(surface.data_input_dict, new_data_input_dict)
+        print(dict(list(surface.data_input_dict.items())[:5]))
     
     def test_impervioussurface_overrides(self):
         constants.set_default_pollutants()
