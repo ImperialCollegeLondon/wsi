@@ -133,6 +133,7 @@ class MyTestClass(TestCase):
         self.assertEqual(fwtw.service_reservoir_tank.area, 34.7)
         self.assertEqual(fwtw.service_reservoir_storage_elevation, 68.2)
         self.assertEqual(fwtw.service_reservoir_tank.datum, 68.2)
+        self.assertEqual(fwtw.process_parameters['nitrate']['constant'], 0.01)
 
 if __name__ == "__main__":
     unittest.main()
