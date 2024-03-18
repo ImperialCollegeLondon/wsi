@@ -125,7 +125,7 @@ class MyTestClass(TestCase):
                               'service_reservoir_storage_elevation': 68.2
                               })
         self.assertEqual(fwtw.treatment_throughput_capacity, 20)
-        self.assertEqual(fwtw.process_parameters['phosphate']['constant'], 0.01)
+        self.assertEqual(fwtw.process_parameters['phosphate']['constant'], 0.02)
         self.assertEqual(fwtw.process_parameters['volume']['constant'], vol)
         self.assertEqual(fwtw.service_reservoir_storage_capacity, 100)
         self.assertEqual(fwtw.service_reservoir_tank.capacity, 100)
