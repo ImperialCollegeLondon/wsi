@@ -119,7 +119,7 @@ class MyTestClass(TestCase):
         vol = fwtw.process_parameters['volume']['constant']
         fwtw.apply_overrides({'treatment_throughput_capacity' : 20,
                               'process_parameters' : {'phosphate' : 
-                                                      {'constant' : 0.01}},
+                                                      {'constant' : 0.02}},
                               'service_reservoir_storage_capacity': 100,
                               'service_reservoir_storage_area': 34.7,
                               'service_reservoir_storage_elevation': 68.2
