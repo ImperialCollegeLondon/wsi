@@ -95,6 +95,8 @@ class Node(WSIObj):
             self.data_input_dict = read_csv(content)
         elif isinstance(content, dict):
             self.data_input_dict = content
+        elif not content:
+                pass
         else:
             print('ERROR: not recognised format for data_input_dict')
         
