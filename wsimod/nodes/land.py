@@ -410,7 +410,7 @@ class Surface(DecayTank):
         elif isinstance(content, dict):
             self.data_input_dict = content
         else:
-            print('ERROR: not recognised format for data_input_dict')
+            raise ValueError(f'{content.__class__} is not a recognised format for data_input_dict')
         
         super().apply_overrides(overrides)
     
