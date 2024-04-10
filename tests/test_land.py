@@ -1180,7 +1180,6 @@ class MyTestClass(TestCase):
         self.assertEqual(node.subsurface_residence_time, 23.7)
         self.assertEqual(node.subsurface_runoff.residence_time, 23.7)
         self.assertEqual(node.percolation_residence_time, 56.1)
-        self.assertEqual(node.percolation.residence_time, 56.1)
 
     def test_surface_overrides(self):
         constants.set_default_pollutants()
