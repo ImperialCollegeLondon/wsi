@@ -400,7 +400,7 @@ class Surface(DecayTank):
         
         if 'capacity' in overrides.keys():
             overrides.pop('capacity')
-            print('ERROR: specifying capacity is depreciated in overrides for surface, please specify depth and area instead')
+            print('Warning: specifying capacity is depreciated in overrides for surface, please specify depth and area instead. capacity override value has been ignored')
             
         # overrides data_input_dict
         from wsimod.orchestration.model import read_csv
