@@ -114,7 +114,10 @@ class NutrientPool:
         self.disfpar = disfpar
         self.immobdpar = immobdpar
 
-        self.fraction_manure_to_fast, self.fraction_residue_to_humus, self.fraction_dry_n_to_fast = self.calculate_fraction_parameters()
+        self.fraction_manure_to_fast = None
+        self.fraction_residue_to_humus = None
+        self.fraction_dry_n_to_fast = None 
+        self.calculate_fraction_parameters()
 
         # Initialise different pools
         self.fast_pool = NutrientStore()
@@ -138,17 +141,15 @@ class NutrientPool:
             (dict): fraction of plant residue to humus pool
             (float): fraction of dry nitrogen deposition to fast pool
         '''
-        fraction_manure_to_fast = {
+        self.fraction_manure_to_fast = {
             x: 1 - self.fraction_manure_to_dissolved_inorganic[x]
             for x in constants.NUTRIENTS
         }
-        fraction_residue_to_humus = {
+        self.fraction_residue_to_humus = {
             x: 1 - self.fraction_residue_to_fast[x] for x in constants.NUTRIENTS
         }
-        fraction_dry_n_to_fast = 1 - self.fraction_dry_n_to_dissolved_inorganic
+        self.fraction_dry_n_to_fast = 1 - self.fraction_dry_n_to_dissolved_inorganic
         
-        return fraction_manure_to_fast, fraction_residue_to_humus, fraction_dry_n_to_fast
-    
     def apply_overrides(self, overrides = Dict[str, Any]):
         """Override parameters.
 
@@ -169,7 +170,7 @@ class NutrientPool:
         self.disfpar.update(overrides.pop("disfpar", {}))
         self.immobdpar.update(overrides.pop("immobdpar", {}))
         
-        self.fraction_manure_to_fast, self.fraction_residue_to_humus, self.fraction_dry_n_to_fast = self.calculate_fraction_parameters()
+        self.calculate_fraction_parameters()
         
     def init_empty(self):
         """Initialise an empty nutrient to be copied."""
