@@ -338,31 +338,11 @@ print(
 
 
 # %%
-def wrap(func):
-    """
-
-    Args:
-        func:
-
-    Returns:
-
-    """
-
-    def pull_distributed_wrapper(x):
-        """
-
-        Args:
-            x:
-
-        Returns:
-
-        """
-        return func(x, tag="FWTW")
-
-    return pull_distributed_wrapper
-
-
-my_fwtw.pull_distributed = wrap(my_fwtw.pull_distributed)
+from wsimod.extensions import extensions as extend
+@extend.model_attribute(obj=my_fwtw, attribute_name="pull_distributed")
+def new_distributed(pull_distributed, vqip):
+     """pull_distributed with the tag 'FWTW'."""
+     return pull_distributed(vqip, tag="FWTW")
 
 # %% [markdown]
 # Explaining decorators is outside the scope of this tutorial, though you can
