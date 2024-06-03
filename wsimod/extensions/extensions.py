@@ -25,9 +25,3 @@ def model_attribute(obj, attribute_name):
         return wrapped_attribute
 
     return decorator
-
-    
-@model_attribute(obj=my_fwtw, attribute_name="pull_distributed")
-def new_distributed(pull_distributed, vqip):
-     """pull_distributed with the tag 'FWTW'."""
-     return pull_distributed(vqip, tag="FWTW")
