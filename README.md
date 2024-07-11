@@ -80,7 +80,7 @@ pip install -e .[dev,demos]
 
 ## How to cite WSIMOD
 
-[![DOI](https://joss.theoj.org/papers/10.21105/joss.04996/status.svg)](https://doi.org/10.21105/joss.04996) 
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.04996/status.svg)](https://doi.org/10.21105/joss.04996)
 [![DOI](https://img.shields.io/badge/GMD-10.5194/gmd--17--449--2024-brightgreen)](https://doi.org/10.5194/gmd-17-4495-2024)
 
 If you would like to use our software, please cite it using the following:
@@ -121,6 +121,7 @@ Please also include citation to the WSIMOD theory paper:
  doi: 10.5194/gmd-17-4495-2024
 
 Find the bibtex citation below:
+
 ```bibtex
 @article{gmd-17-4495-2024,
         author = {Barnaby Dobson and Leyang Liu and Ana Mijic},
