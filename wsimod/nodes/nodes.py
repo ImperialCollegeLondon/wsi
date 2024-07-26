@@ -793,25 +793,22 @@ class Tank(WSIObj):
         else:
             self.storage = self.empty_vqip()
             self.storage_ = self.empty_vqip()  # Lagged storage for mass balance
-    
+
     def apply_overrides(self, overrides: Dict[str, Any] = {}):
         """Apply overrides to the tank.
 
-        Enables a user to override any of the following parameters: 
+        Enables a user to override any of the following parameters:
         area, capacity, datum.
-        
+
         Args:
             overrides (dict, optional): Dictionary of overrides. Defaults to {}.
         """
-        self.capacity = overrides.pop("capacity", 
-                                      self.capacity)
-        self.area = overrides.pop("area", 
-                                  self.area)
-        self.datum = overrides.pop("datum", 
-                                  self.datum)
+        self.capacity = overrides.pop("capacity", self.capacity)
+        self.area = overrides.pop("area", self.area)
+        self.datum = overrides.pop("datum", self.datum)
         if len(overrides) > 0:
             print(f"No override behaviour defined for: {overrides.keys()}")
-    
+
     def ds(self):
         """Should be called by parent object to get change in storage.
 
@@ -1119,15 +1116,14 @@ class ResidenceTank(Tank):
 
     def apply_overrides(self, overrides: Dict[str, Any] = {}):
         """Apply overrides to the residencetank.
-    
-        Enables a user to override any of the following parameters: 
+
+        Enables a user to override any of the following parameters:
         residence_time.
-        
+
         Args:
             overrides (dict, optional): Dictionary of overrides. Defaults to {}.
         """
-        self.residence_time = overrides.pop("residence_time", 
-                                            self.residence_time)
+        self.residence_time = overrides.pop("residence_time", self.residence_time)
         super().apply_overrides(overrides)
 
     def pull_outflow(self):
@@ -1175,10 +1171,10 @@ class DecayTank(Tank, DecayObj):
 
     def apply_overrides(self, overrides: Dict[str, Any] = {}):
         """Apply overrides to the decaytank.
-    
-        Enables a user to override any of the following parameters: 
+
+        Enables a user to override any of the following parameters:
         decays.
-        
+
         Args:
             overrides (dict, optional): Dictionary of overrides. Defaults to {}.
         """
@@ -1235,15 +1231,16 @@ class QueueTank(Tank):
 
     def apply_overrides(self, overrides: Dict[str, Any] = {}):
         """Apply overrides to the queuetank.
-    
-        Enables a user to override any of the following parameters: 
+
+        Enables a user to override any of the following parameters:
         number_of_timesteps.
-        
+
         Args:
             overrides (dict, optional): Dictionary of overrides. Defaults to {}.
         """
-        self.number_of_timesteps = overrides.pop("number_of_timesteps", 
-                                                 self.number_of_timesteps)
+        self.number_of_timesteps = overrides.pop(
+            "number_of_timesteps", self.number_of_timesteps
+        )
         self.internal_arc.number_of_timesteps = self.number_of_timesteps
         super().apply_overrides(overrides)
 
@@ -1417,15 +1414,16 @@ class DecayQueueTank(QueueTank):
 
     def apply_overrides(self, overrides: Dict[str, Any] = {}):
         """Apply overrides to the decayqueuetank.
-    
-        Enables a user to override any of the following parameters: 
+
+        Enables a user to override any of the following parameters:
         number_of_timesteps, decays.
-        
+
         Args:
             overrides (dict, optional): Dictionary of overrides. Defaults to {}.
         """
-        self.number_of_timesteps = overrides.pop("number_of_timesteps", 
-                                                 self.number_of_timesteps)
+        self.number_of_timesteps = overrides.pop(
+            "number_of_timesteps", self.number_of_timesteps
+        )
         self.internal_arc.number_of_timesteps = self.number_of_timesteps
         self.internal_arc.decays.update(overrides.pop("decays", {}))
         super().apply_overrides(overrides)

@@ -93,12 +93,15 @@ class MyTestClass(TestCase):
 
     def test_sewer_overrides(self):
         sewer = Sewer(name="", capacity=10, pipe_timearea={0: 0.3, 1: 0.7})
-        sewer.apply_overrides({'capacity': 3,
-                                'chamber_area': 2,
-                                'chamber_floor': 3.5,
-                                'pipe_time': 8.4,
-                                'pipe_timearea': {0: 0.5, 1: 0.5}
-                                })
+        sewer.apply_overrides(
+            {
+                "capacity": 3,
+                "chamber_area": 2,
+                "chamber_floor": 3.5,
+                "pipe_time": 8.4,
+                "pipe_timearea": {0: 0.5, 1: 0.5},
+            }
+        )
         self.assertEqual(sewer.capacity, 3)
         self.assertEqual(sewer.sewer_tank.capacity, 3)
         self.assertEqual(sewer.chamber_area, 2)
@@ -106,9 +109,8 @@ class MyTestClass(TestCase):
         self.assertEqual(sewer.chamber_floor, 3.5)
         self.assertEqual(sewer.sewer_tank.datum, 3.5)
         self.assertEqual(sewer.pipe_time, 8.4)
-        self.assertEqual(sewer.pipe_timearea, {0: 0.5,
-                                               1: 0.5
-                                               })
+        self.assertEqual(sewer.pipe_timearea, {0: 0.5, 1: 0.5})
+
 
 if __name__ == "__main__":
     unittest.main()
