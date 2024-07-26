@@ -119,6 +119,48 @@ class MyTestClass(TestCase):
         d1 = {"volume": 0.03 * 0.4, "temperature": 0, "phosphate": 0}
         self.assertDictAlmostEqual(d1, reply)
 
+    def test_demand_overrides(self):
+        demand = Demand(
+            name="",
+            constant_demand=10,
+            pollutant_load={"phosphate": 0.1, "temperature": 12},
+        )
+        demand.apply_overrides(
+            {"constant_demand": 20, "pollutant_load": {"phosphate": 0.5}}
+        )
+        self.assertEqual(demand.constant_demand, 20)
+        self.assertDictEqual(
+            demand.pollutant_load, {"phosphate": 0.5, "temperature": 12}
+        )
+
+    def test_residentialdemand_overrides(self):
+        demand = ResidentialDemand(
+            name="",
+            gardening_efficiency=0.4,
+            pollutant_load={"phosphate": 0.1, "temperature": 12},
+        )
+        demand.apply_overrides(
+            {
+                "gardening_efficiency": 0.5,
+                "population": 153.2,
+                "per_capita": 32.4,
+                "constant_weighting": 47.5,
+                "constant_temp": 0.71,
+                "constant_demand": 20,
+                "pollutant_load": {"phosphate": 0.5},
+            }
+        )
+        self.assertEqual(demand.gardening_efficiency, 0.5)
+        self.assertEqual(demand.population, 153.2)
+        self.assertEqual(demand.per_capita, 32.4)
+        self.assertEqual(demand.constant_weighting, 47.5)
+        self.assertEqual(demand.constant_temp, 0.71)
+
+        self.assertEqual(demand.constant_demand, 20)
+        self.assertDictEqual(
+            demand.pollutant_load, {"phosphate": 0.5, "temperature": 12}
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
