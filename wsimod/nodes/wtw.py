@@ -547,26 +547,28 @@ class FWTW(WTW):
 
         Enables a user to override any parameter of the service reservoir tank, and
         then calls any overrides in WTW.
-        
+
         Args:
             overrides (Dict[str, Any]): Dict describing which parameters should
                 be overridden (keys) and new values (values). Defaults to {}.
         """
         self.service_reservoir_storage_capacity = overrides.pop(
-            "service_reservoir_storage_capacity", 
-            self.service_reservoir_storage_capacity)
+            "service_reservoir_storage_capacity",
+            self.service_reservoir_storage_capacity,
+        )
         self.service_reservoir_storage_area = overrides.pop(
-            "service_reservoir_storage_area", 
-            self.service_reservoir_storage_area)
+            "service_reservoir_storage_area", self.service_reservoir_storage_area
+        )
         self.service_reservoir_storage_elevation = overrides.pop(
-            "service_reservoir_storage_elevation", 
-            self.service_reservoir_storage_elevation)
+            "service_reservoir_storage_elevation",
+            self.service_reservoir_storage_elevation,
+        )
 
         self.service_reservoir_tank.capacity = self.service_reservoir_storage_capacity
         self.service_reservoir_tank.area = self.service_reservoir_storage_area
         self.service_reservoir_tank.datum = self.service_reservoir_storage_elevation
         super().apply_overrides(overrides)
-    
+
     def treat_water(self):
         """Pulls water, aiming to fill service reservoirs, calls WTW
         treat_current_input, avoids deficit, sends liquor and solids to sewers."""
