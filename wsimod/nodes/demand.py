@@ -5,9 +5,11 @@
 
 Converted to totals BD 2022-05-03
 """
+from typing import Any, Dict
+
 from wsimod.core import constants
 from wsimod.nodes.nodes import Node
-from typing import Any, Dict
+
 
 class Demand(Node):
     """"""
@@ -63,15 +65,14 @@ class Demand(Node):
 
     def apply_overrides(self, overrides: Dict[str, Any] = {}):
         """Apply overrides to the sewer.
-    
-        Enables a user to override any of the following parameters: 
+
+        Enables a user to override any of the following parameters:
         constant_demand, pollutant_load.
-        
+
         Args:
             overrides (dict, optional): Dictionary of overrides. Defaults to {}.
         """
-        self.constant_demand = overrides.pop("constant_demand", 
-                                             self.constant_demand)
+        self.constant_demand = overrides.pop("constant_demand", self.constant_demand)
         self.pollutant_load.update(overrides.pop("pollutant_load", {}))
         super().apply_overrides(overrides)
 
@@ -214,23 +215,22 @@ class ResidentialDemand(Demand):
 
     def apply_overrides(self, overrides: Dict[str, Any] = {}):
         """Apply overrides to the sewer.
-    
-        Enables a user to override any of the following parameters: 
+
+        Enables a user to override any of the following parameters:
         gardening_efficiency, population, per_capita, constant_weighting, constant_temp.
-        
+
         Args:
             overrides (dict, optional): Dictionary of overrides. Defaults to {}.
         """
-        self.gardening_efficiency = overrides.pop("gardening_efficiency", 
-                                             self.gardening_efficiency)
-        self.population = overrides.pop("population", 
-                                             self.population)
-        self.per_capita = overrides.pop("per_capita", 
-                                             self.per_capita)
-        self.constant_weighting = overrides.pop("constant_weighting", 
-                                             self.constant_weighting)
-        self.constant_temp = overrides.pop("constant_temp", 
-                                             self.constant_temp)
+        self.gardening_efficiency = overrides.pop(
+            "gardening_efficiency", self.gardening_efficiency
+        )
+        self.population = overrides.pop("population", self.population)
+        self.per_capita = overrides.pop("per_capita", self.per_capita)
+        self.constant_weighting = overrides.pop(
+            "constant_weighting", self.constant_weighting
+        )
+        self.constant_temp = overrides.pop("constant_temp", self.constant_temp)
         super().apply_overrides(overrides)
 
     def get_demand(self):
