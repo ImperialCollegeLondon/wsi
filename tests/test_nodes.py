@@ -660,22 +660,25 @@ class MyTestClass(TestCase):
             "temperature": ((5 * 10) + (15 * 1)) / 6,
         }
         self.assertDictAlmostEqual(d4, tank.storage, 15)
-    
+
     def test_node_overrides(self):
         node = Node(name="", data_input_dict={("temperature", 1): 15})
         # check the format of dict
-        new_data_input_dict = {("temperature", 1): 10,
-                               ("temperature", 2): 20,
-                               }
-        node.apply_overrides({'data_input_dict': new_data_input_dict})
+        new_data_input_dict = {
+            ("temperature", 1): 10,
+            ("temperature", 2): 20,
+        }
+        node.apply_overrides({"data_input_dict": new_data_input_dict})
         self.assertDictEqual(node.data_input_dict, new_data_input_dict)
         # check the format of str
         new_data_input_dict = "example_data_input_dict.csv.gz"
-        node.apply_overrides({'data_input_dict': new_data_input_dict})
+        node.apply_overrides({"data_input_dict": new_data_input_dict})
         from wsimod.orchestration.model import read_csv
+
         new_data_input_dict = read_csv(new_data_input_dict)
         self.assertDictEqual(node.data_input_dict, new_data_input_dict)
         print(dict(list(node.data_input_dict.items())[:5]))
+
 
 if __name__ == "__main__":
     unittest.main()
