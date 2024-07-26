@@ -45,73 +45,87 @@ class MyTestClass(TestCase):
             name="",
             treatment_throughput_capacity=10,
         )
-        wtw.current_input= {'volume' : 8,
-                            'phosphate' : 5,
-                            'temperature' : constants.DECAY_REFERENCE_TEMPERATURE}
+        wtw.current_input = {
+            "volume": 8,
+            "phosphate": 5,
+            "temperature": constants.DECAY_REFERENCE_TEMPERATURE,
+        }
         wtw.treat_current_input()
-        self.assertEqual(8 * wtw.process_parameters['volume']['constant'], 
-                         wtw.treated["volume"])
-        self.assertEqual(5 * wtw.process_parameters['phosphate']['constant'], 
-                         wtw.treated["phosphate"])
-        self.assertEqual(8 * wtw.liquor_multiplier['volume'],
-                         wtw.liquor['volume'])
-        self.assertEqual(5 * wtw.liquor_multiplier['phosphate'],
-                         wtw.liquor['phosphate'])
-        self.assertEqual(5 - 5 * wtw.process_parameters['phosphate']['constant']\
-                         - 5 * wtw.liquor_multiplier['phosphate'],
-                         wtw.solids['phosphate'])
+        self.assertEqual(
+            8 * wtw.process_parameters["volume"]["constant"], wtw.treated["volume"]
+        )
+        self.assertEqual(
+            5 * wtw.process_parameters["phosphate"]["constant"],
+            wtw.treated["phosphate"],
+        )
+        self.assertEqual(8 * wtw.liquor_multiplier["volume"], wtw.liquor["volume"])
+        self.assertEqual(
+            5 * wtw.liquor_multiplier["phosphate"], wtw.liquor["phosphate"]
+        )
+        self.assertEqual(
+            5
+            - 5 * wtw.process_parameters["phosphate"]["constant"]
+            - 5 * wtw.liquor_multiplier["phosphate"],
+            wtw.solids["phosphate"],
+        )
 
     def test_override(self):
         wtw = WTW(
             name="",
             treatment_throughput_capacity=10,
-            percent_solids = 0.1,
-            liquor_multiplier = {'volume' : 0.05, 'phosphate' : 0.5},
-            process_parameters = {'phosphate' : {'constant' : 0.1,
-                                                 'exponent' : 1.001}}
+            percent_solids=0.1,
+            liquor_multiplier={"volume": 0.05, "phosphate": 0.5},
+            process_parameters={"phosphate": {"constant": 0.1, "exponent": 1.001}},
         )
 
-        wtw.apply_overrides({'percent_solids' : 0.05})
-        self.assertAlmostEqual(wtw.process_parameters['volume']['constant'],
-                        0.9)
+        wtw.apply_overrides({"percent_solids": 0.05})
+        self.assertAlmostEqual(wtw.process_parameters["volume"]["constant"], 0.9)
         self.assertEqual(wtw.percent_solids, 0.05)
-        
-        wtw.apply_overrides({'percent_solids' : 0.1,
-                             'liquor_multiplier' : {'volume' : 0.1}})
-        
-        self.assertEqual(wtw.process_parameters['volume']['constant'],
-                        0.8)
-        self.assertEqual(wtw.liquor_multiplier['volume'], 0.1)
-        self.assertEqual(wtw.liquor_multiplier['phosphate'], 0.5)
-        
-        wtw.apply_overrides({'percent_solids' : 0.1,
-                             'liquor_multiplier' : {'volume' : 0.1,
-                                                    'phosphate' : 0.01}})
-        self.assertEqual(wtw.liquor_multiplier['phosphate'], 0.01)
 
-        wtw.apply_overrides({'process_parameters' : {'phosphate' : {'constant' : 0.01}}})
-        self.assertEqual(wtw.process_parameters['phosphate']['constant'], 0.01)
-        self.assertEqual(wtw.process_parameters['phosphate']['exponent'], 1.001)
+        wtw.apply_overrides(
+            {"percent_solids": 0.1, "liquor_multiplier": {"volume": 0.1}}
+        )
 
-        overrides = {'process_parameters' : {'phosphate' : {'exponent' : 1.01}},
-                            'liquor_multiplier' : {'phosphate' : 0.1},
-                            'percent_solids' : 0.1,
-                            'treatment_throughput_capacity' : 20,
-                            'name' : 'new_name'}
+        self.assertEqual(wtw.process_parameters["volume"]["constant"], 0.8)
+        self.assertEqual(wtw.liquor_multiplier["volume"], 0.1)
+        self.assertEqual(wtw.liquor_multiplier["phosphate"], 0.5)
+
+        wtw.apply_overrides(
+            {
+                "percent_solids": 0.1,
+                "liquor_multiplier": {"volume": 0.1, "phosphate": 0.01},
+            }
+        )
+        self.assertEqual(wtw.liquor_multiplier["phosphate"], 0.01)
+
+        wtw.apply_overrides({"process_parameters": {"phosphate": {"constant": 0.01}}})
+        self.assertEqual(wtw.process_parameters["phosphate"]["constant"], 0.01)
+        self.assertEqual(wtw.process_parameters["phosphate"]["exponent"], 1.001)
+
+        overrides = {
+            "process_parameters": {"phosphate": {"exponent": 1.01}},
+            "liquor_multiplier": {"phosphate": 0.1},
+            "percent_solids": 0.1,
+            "treatment_throughput_capacity": 20,
+            "name": "new_name",
+        }
         wtw.apply_overrides(overrides)
-        self.assertSetEqual(set(overrides.keys()), set(['name']))
+        self.assertSetEqual(set(overrides.keys()), set(["name"]))
         self.assertEqual(wtw.treatment_throughput_capacity, 20)
 
     def test_wwtw_overrides(self):
-        wwtw = WWTW(name='')
-        vol = wwtw.process_parameters['volume']['constant']
-        wwtw.apply_overrides({'treatment_throughput_capacity' : 20,
-                              'process_parameters' : {'phosphate' : 
-                                                      {'constant' : 0.01}},
-                              'stormwater_storage_capacity': 100})
+        wwtw = WWTW(name="")
+        vol = wwtw.process_parameters["volume"]["constant"]
+        wwtw.apply_overrides(
+            {
+                "treatment_throughput_capacity": 20,
+                "process_parameters": {"phosphate": {"constant": 0.01}},
+                "stormwater_storage_capacity": 100,
+            }
+        )
         self.assertEqual(wwtw.treatment_throughput_capacity, 20)
-        self.assertEqual(wwtw.process_parameters['phosphate']['constant'], 0.01)
-        self.assertEqual(wwtw.process_parameters['volume']['constant'], vol)
+        self.assertEqual(wwtw.process_parameters["phosphate"]["constant"], 0.01)
+        self.assertEqual(wwtw.process_parameters["volume"]["constant"], vol)
         self.assertEqual(wwtw.stormwater_storage_capacity, 100)
     
     def test_fwtw_overrides(self):
@@ -134,6 +148,7 @@ class MyTestClass(TestCase):
         self.assertEqual(fwtw.service_reservoir_storage_elevation, 68.2)
         self.assertEqual(fwtw.service_reservoir_tank.datum, 68.2)
         self.assertEqual(fwtw.process_parameters['nitrate']['constant'], 0.01)
+
 
 if __name__ == "__main__":
     unittest.main()
