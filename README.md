@@ -81,6 +81,7 @@ pip install -e .[dev,demos]
 ## How to cite WSIMOD
 
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.04996/status.svg)](https://doi.org/10.21105/joss.04996)
+[![DOI](https://img.shields.io/badge/GMD-10.5194/gmd--17--449--2024-brightgreen)](https://doi.org/10.5194/gmd-17-4495-2024)
 
 If you would like to use our software, please cite it using the following:
 
@@ -107,6 +108,32 @@ Find the bibtex citation below:
         title = {Water Systems Integrated Modelling framework, WSIMOD: A Python package for integrated modelling of water quality and quantity across the water cycle},
         journal = {Journal of Open Source Software}
         }
+```
+
+Please also include citation to the WSIMOD theory paper:
+
+ > Dobson, B., Liu, L. and Mijic, A. (2024)
+ ‘Modelling water quantity and quality for integrated water cycle management with the Water Systems Integrated Modelling framework (WSIMOD) software’,
+ Geoscientific Model Development.
+ Copernicus Publications,
+ 17(10),
+ p. 4495.
+ doi: 10.5194/gmd-17-4495-2024
+
+Find the bibtex citation below:
+
+```bibtex
+@article{gmd-17-4495-2024,
+        author = {Barnaby Dobson and Leyang Liu and Ana Mijic},
+        title = {Modelling water quantity and quality for integrated water cycle management with the Water Systems Integrated Modelling framework (WSIMOD) software},
+        journal = {Geoscientific Model Development},
+        volume = {17},
+        year = {2024},
+        number = {10},
+        pages = {4495--4513},
+        url = {https://gmd.copernicus.org/articles/17/4495/2024/},
+        doi = {10.5194/gmd-17-4495-2024}
+}
 ```
 
 ## Acknowledgements
