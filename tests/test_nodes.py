@@ -21,7 +21,7 @@ from wsimod.nodes.nodes import (
 )
 from wsimod.nodes.storage import Storage
 from wsimod.nodes.waste import Waste
-import os
+from pathlib import Path
 
 
 class MyTestClass(TestCase):
