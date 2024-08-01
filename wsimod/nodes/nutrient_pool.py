@@ -3,6 +3,8 @@
 
 @author: barna
 """
+from typing import Any, Dict
+
 from wsimod.core import constants
 
 
@@ -114,14 +116,10 @@ class NutrientPool:
         self.disfpar = disfpar
         self.immobdpar = immobdpar
 
-        self.fraction_manure_to_fast = {
-            x: 1 - self.fraction_manure_to_dissolved_inorganic[x]
-            for x in constants.NUTRIENTS
-        }
-        self.fraction_residue_to_humus = {
-            x: 1 - self.fraction_residue_to_fast[x] for x in constants.NUTRIENTS
-        }
-        self.fraction_dry_n_to_fast = 1 - self.fraction_dry_n_to_dissolved_inorganic
+        self.fraction_manure_to_fast = None
+        self.fraction_residue_to_humus = None
+        self.fraction_dry_n_to_fast = None
+        self.calculate_fraction_parameters()
 
         # Initialise different pools
         self.fast_pool = NutrientStore()
@@ -136,6 +134,51 @@ class NutrientPool:
             self.dissolved_organic_pool,
             self.adsorbed_inorganic_pool,
         ]
+
+    def calculate_fraction_parameters(self):
+        """Update fractions of nutrients input transformed into other forms in soil
+        based on the input parameters
+        Returns:
+            (dict): fraction of manure to fast pool
+            (dict): fraction of plant residue to humus pool
+            (float): fraction of dry nitrogen deposition to fast pool
+        """
+        self.fraction_manure_to_fast = {
+            x: 1 - self.fraction_manure_to_dissolved_inorganic[x]
+            for x in constants.NUTRIENTS
+        }
+        self.fraction_residue_to_humus = {
+            x: 1 - self.fraction_residue_to_fast[x] for x in constants.NUTRIENTS
+        }
+        self.fraction_dry_n_to_fast = 1 - self.fraction_dry_n_to_dissolved_inorganic
+
+    def apply_overrides(self, overrides=Dict[str, Any]):
+        """Override parameters.
+
+        Enables a user to override any of the following parameters:
+        eto_to_e, pore_depth.
+
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        self.fraction_dry_n_to_dissolved_inorganic = overrides.pop(
+            "fraction_dry_n_to_dissolved_inorganic",
+            self.fraction_dry_n_to_dissolved_inorganic,
+        )
+        self.fraction_residue_to_fast.update(
+            overrides.pop("fraction_residue_to_fast", {})
+        )
+        self.fraction_manure_to_dissolved_inorganic.update(
+            overrides.pop("fraction_manure_to_dissolved_inorganic", {})
+        )
+        self.degrhpar.update(overrides.pop("degrhpar", {}))
+        self.dishpar.update(overrides.pop("dishpar", {}))
+        self.minfpar.update(overrides.pop("minfpar", {}))
+        self.disfpar.update(overrides.pop("disfpar", {}))
+        self.immobdpar.update(overrides.pop("immobdpar", {}))
+
+        self.calculate_fraction_parameters()
 
     def init_empty(self):
         """Initialise an empty nutrient to be copied."""
