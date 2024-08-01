@@ -26,6 +26,7 @@ from wsimod.nodes.sewer import Sewer
 from wsimod.nodes.storage import Reservoir
 from wsimod.orchestration.model import to_datetime
 
+from pathlib import Path
 
 class MyTestClass(TestCase):
     def assertDictAlmostEqual(self, d1, d2, accuracy=19):
@@ -1206,7 +1207,7 @@ class MyTestClass(TestCase):
         surface.apply_overrides({'data_input_dict': new_data_input_dict})
         self.assertDictEqual(surface.data_input_dict, new_data_input_dict)
         # test the format of str
-        new_data_input_dict = "example_data_input_dict.csv.gz"
+        new_data_input_dict = str(Path(__file__).parent / "example_data_input_dict.csv.gz")
         surface.apply_overrides({'data_input_dict': new_data_input_dict})
         from wsimod.orchestration.model import read_csv
         new_data_input_dict = read_csv(new_data_input_dict)
