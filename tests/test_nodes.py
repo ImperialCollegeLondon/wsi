@@ -671,7 +671,9 @@ class MyTestClass(TestCase):
         node.apply_overrides({"data_input_dict": new_data_input_dict})
         self.assertDictEqual(node.data_input_dict, new_data_input_dict)
         # check the format of str
-        new_data_input_dict = str(Path(__file__).parent / "example_data_input_dict.csv.gz")
+        new_data_input_dict = str(
+            Path(__file__).parent / "example_data_input_dict.csv.gz"
+        )
         node.apply_overrides({"data_input_dict": new_data_input_dict})
         from wsimod.orchestration.model import read_csv
 
