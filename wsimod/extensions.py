@@ -40,6 +40,12 @@ separated by periods, eg. `node_name.attribute_name.method_name`.
 It should be noted that the patched function should have the same signature as the
 original method or attribute, and the return type should be the same as well, otherwise
 there will be a runtime error.
+
+Finally, the `apply_patches` is called within the `Model.load` method and will apply all
+patches in the order they were registered. This means that users need to be careful with
+the order of the patches in their extensions files, as they may have interdependencies.
+
+TODO: Update documentation on extensions files.
 """
 
 from typing import Callable, Hashable
