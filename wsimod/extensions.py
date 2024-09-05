@@ -33,6 +33,10 @@ Example of patching an attribute item:
     >>> def patch_default_pull_set_handler(self, vqip):
     >>>     return {}
 
+If patching a method of an attribute, the `is_attr` argument should be set to `True` and
+the target should include the node name and the attribute name and the method name, all
+separated by periods, eg. `node_name.attribute_name.method_name`.
+
 It should be noted that the patched function should have the same signature as the
 original method or attribute, and the return type should be the same as well, otherwise
 there will be a runtime error.
