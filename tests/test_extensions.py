@@ -1,3 +1,5 @@
+from typing import Optional
+
 import pytest
 
 
@@ -101,7 +103,7 @@ def test_apply_patches(temp_extension_registry):
     )
 
 
-def assert_dict_almost_equal(d1: dict, d2: dict, tol: float | None = None):
+def assert_dict_almost_equal(d1: dict, d2: dict, tol: Optional[float] = None):
     """Check if two dictionaries are almost equal.
 
     Args:
