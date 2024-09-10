@@ -145,3 +145,36 @@ def test_path_method_with_reuse(temp_extension_registry):
     vq = model.nodes[node.name].pull_distributed({"volume": 5})
     assert_dict_almost_equal(vq, node.empty_vqip())
     assert node.tank.storage["volume"] == 5
+
+def test_handler_extensions(temp_extension_registry):
+    from wsimod.arcs.arcs import Arc
+    from wsimod.extensions import (
+        apply_patches,
+        extensions_registry,
+        register_node_patch,
+    )
+    from wsimod.nodes import Node
+    from wsimod.orchestration.model import Model
+
+    # Create a dummy model
+    node = Node("dummy_node")
+    node.dummy_arc = Arc("dummy_arc", in_port=node, out_port=node)
+    model = Model()
+    model.nodes[node.name] = node
+
+    # 1. Patch a handler
+    @register_node_patch("dummy_node", "pull_check_handler", item="default")
+    def dummy_patch(*args, **kwargs):
+        return 'dummy_patch'
+    
+    # 2. Patch a handler with access to self
+    @register_node_patch("dummy_node", "pull_set_handler", item="default", is_attr=True)
+    def dummy_patch(self):
+        def f(vqip, *args, **kwargs):
+            return f"{self.name} - {vqip['volume']}"
+        return f
+    
+    apply_patches(model)
+
+    assert node.pull_check() == 'dummy_patch'
+    assert node.pull_set({'volume': 1}) == 'dummy_node - 1'
