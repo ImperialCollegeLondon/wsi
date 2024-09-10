@@ -109,7 +109,7 @@ def apply_patches(model: Model) -> None:
         # Apply the patch
         if item is not None:
             obj = getattr(obj, method)
-            obj[item] = func(node) if is_attr else func.__get__(obj, obj.__class__)
+            obj[item] = func(node) if is_attr else func.__get__(node, node.__class__)
         else:
             setattr(obj, f"_patched_{method}", getattr(obj, method))
             setattr(

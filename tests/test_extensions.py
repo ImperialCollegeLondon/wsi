@@ -117,7 +117,6 @@ def assert_dict_almost_equal(d1: dict, d2: dict, tol: Optional[float] = None):
 
 
 def test_path_method_with_reuse(temp_extension_registry):
-    from functools import partial
     from wsimod.arcs.arcs import Arc
     from wsimod.extensions import apply_patches, register_node_patch
     from wsimod.nodes.storage import Reservoir
@@ -149,11 +148,7 @@ def test_path_method_with_reuse(temp_extension_registry):
 
 def test_handler_extensions(temp_extension_registry):
     from wsimod.arcs.arcs import Arc
-    from wsimod.extensions import (
-        apply_patches,
-        extensions_registry,
-        register_node_patch,
-    )
+    from wsimod.extensions import apply_patches, register_node_patch
     from wsimod.nodes import Node
     from wsimod.orchestration.model import Model
 
@@ -165,16 +160,13 @@ def test_handler_extensions(temp_extension_registry):
 
     # 1. Patch a handler
     @register_node_patch("dummy_node", "pull_check_handler", item="default")
-    def dummy_patch(*args, **kwargs):
+    def dummy_patch(self, *args, **kwargs):
         return "dummy_patch"
 
     # 2. Patch a handler with access to self
-    @register_node_patch("dummy_node", "pull_set_handler", item="default", is_attr=True)
-    def dummy_patch(self):
-        def f(vqip, *args, **kwargs):
-            return f"{self.name} - {vqip['volume']}"
-
-        return f
+    @register_node_patch("dummy_node", "pull_set_handler", item="default")
+    def dummy_patch(self, vqip, *args, **kwargs):
+        return f"{self.name} - {vqip['volume']}"
 
     apply_patches(model)
 
