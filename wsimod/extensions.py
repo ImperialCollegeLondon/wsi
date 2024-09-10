@@ -47,7 +47,6 @@ the order of the patches in their extensions files, as they may have interdepend
 
 TODO: Update documentation on extensions files.
 """
-
 from typing import Callable, Hashable
 
 from .orchestration.model import Model
@@ -113,4 +112,8 @@ def apply_patches(model: Model) -> None:
             obj = getattr(obj, method)
             obj[item] = func(node) if is_attr else func
         else:
-            setattr(obj, method, func(node) if is_attr else func)
+            if is_attr:
+                setattr(obj, method, func(node))
+            else:
+                setattr(obj, f"_patched_{method}", getattr(obj, method))
+                setattr(obj, method, func.__get__(obj, obj.__class__))

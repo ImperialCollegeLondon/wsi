@@ -82,3 +82,47 @@ def test_apply_patches(temp_extension_registry):
     assert model.nodes[node.name].t == another_dummy_patch(node)
     assert model.nodes[node.name].pull_set_handler["default"] == yet_another_dummy_patch
     assert model.nodes[node.name].dummy_arc.arc_mass_balance == arc_dummy_patch
+
+
+def assert_dict_almost_equal(d1: dict, d2: dict, tol: float | None = None):
+    """Check if two dictionaries are almost equal.
+
+    Args:
+        d1 (dict): The first dictionary.
+        d2 (dict): The second dictionary.
+        tol (float | None, optional): Relative tolerance. Defaults to 1e-6,
+            `pytest.approx` default.
+    """
+    for key in d1.keys():
+        assert d1[key] == pytest.approx(d2[key], rel=tol)
+
+
+def test_path_method_with_reuse(temp_extension_registry):
+    from functools import partial
+    from wsimod.arcs.arcs import Arc
+    from wsimod.extensions import apply_patches, register_node_patch
+    from wsimod.nodes.storage import Reservoir
+    from wsimod.orchestration.model import Model
+
+    # Create a dummy model
+    node = Reservoir(name="dummy_node", initial_storage=10, capacity=10)
+    node.dummy_arc = Arc("dummy_arc", in_port=node, out_port=node)
+
+    vq = node.pull_distributed({"volume": 5})
+    assert_dict_almost_equal(vq, node.v_change_vqip(node.empty_vqip(), 5))
+
+    model = Model()
+    model.nodes[node.name] = node
+
+    @register_node_patch("dummy_node.pull_distributed")
+    def new_pull_distributed(self, vqip, of_type=None, tag="default"):
+        return self._patched_pull_distributed(vqip, of_type=["Node"], tag=tag)
+
+    # Apply the patches
+    apply_patches(model)
+
+    # Check appropriate result
+    assert node.tank.storage["volume"] == 5
+    vq = model.nodes[node.name].pull_distributed({"volume": 5})
+    assert_dict_almost_equal(vq, node.empty_vqip())
+    assert node.tank.storage["volume"] == 5
