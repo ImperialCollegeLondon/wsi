@@ -16,21 +16,21 @@ def test_register_node_patch(temp_extension_registry):
     from wsimod.extensions import extensions_registry, register_node_patch
 
     # Define a dummy function to patch a node method
-    @register_node_patch("node_name.method_name")
+    @register_node_patch("node_name", "method_name")
     def dummy_patch():
         print("Patched method")
 
     # Check if the patch is registered correctly
-    assert extensions_registry[("node_name.method_name", None, False)] == dummy_patch
+    assert extensions_registry[("node_name", "method_name", None, False)] == dummy_patch
 
     # Another function with other arguments
-    @register_node_patch("node_name.method_name", item="default", is_attr=True)
+    @register_node_patch("node_name", "method_name", item="default", is_attr=True)
     def another_dummy_patch():
         print("Another patched method")
 
     # Check if this other patch is registered correctly
     assert (
-        extensions_registry[("node_name.method_name", "default", True)]
+        extensions_registry[("node_name", "method_name", "default", True)]
         == another_dummy_patch
     )
 
@@ -52,22 +52,22 @@ def test_apply_patches(temp_extension_registry):
     model.nodes[node.name] = node
 
     # 1. Patch a method
-    @register_node_patch("dummy_node.apply_overrides")
+    @register_node_patch("dummy_node", "apply_overrides")
     def dummy_patch():
         pass
 
     # 2. Patch an attribute
-    @register_node_patch("dummy_node.t", is_attr=True)
+    @register_node_patch("dummy_node", "t", is_attr=True)
     def another_dummy_patch(node):
         return f"A pathced attribute for {node.name}"
 
     # 3. Patch a method with an item
-    @register_node_patch("dummy_node.pull_set_handler", item="default")
+    @register_node_patch("dummy_node", "pull_set_handler", item="default")
     def yet_another_dummy_patch():
         pass
 
     # 4. Path a method of an attribute
-    @register_node_patch("dummy_node.dummy_arc.arc_mass_balance")
+    @register_node_patch("dummy_node", "dummy_arc.arc_mass_balance")
     def arc_dummy_patch():
         pass
 
@@ -131,7 +131,7 @@ def test_path_method_with_reuse(temp_extension_registry):
     model = Model()
     model.nodes[node.name] = node
 
-    @register_node_patch("dummy_node.pull_distributed")
+    @register_node_patch("dummy_node", "pull_distributed")
     def new_pull_distributed(self, vqip, of_type=None, tag="default"):
         return self._patched_pull_distributed(vqip, of_type=["Node"], tag=tag)
 
