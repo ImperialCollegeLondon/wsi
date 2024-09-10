@@ -81,11 +81,23 @@ def test_apply_patches(temp_extension_registry):
     assert (
         model.nodes[node.name].apply_overrides.__qualname__ == dummy_patch.__qualname__
     )
+    assert (
+        model.nodes[node.name]._patched_apply_overrides.__qualname__
+        == "Node.apply_overrides"
+    )
     assert model.nodes[node.name].t == another_dummy_patch(node)
-    assert model.nodes[node.name].pull_set_handler["default"] == yet_another_dummy_patch
+    assert model.nodes[node.name]._patched_t == None
+    assert (
+        model.nodes[node.name].pull_set_handler["default"].__qualname__
+        == yet_another_dummy_patch.__qualname__
+    )
     assert (
         model.nodes[node.name].dummy_arc.arc_mass_balance.__qualname__
         == arc_dummy_patch.__qualname__
+    )
+    assert (
+        model.nodes[node.name].dummy_arc._patched_arc_mass_balance.__qualname__
+        == "Arc.arc_mass_balance"
     )
 
 

@@ -39,7 +39,13 @@ separated by periods, eg. `node_name.attribute_name.method_name`.
 
 It should be noted that the patched function should have the same signature as the
 original method or attribute, and the return type should be the same as well, otherwise
-there will be a runtime error.
+there will be a runtime error. In particular, the first argument of the patched function
+should be the node object itself, which will typically be named `self`.
+
+The overridden method or attribute can be accessed within the patched function using the
+`_patched_{method_name}` attribute of the object, eg. `self._patched_pull_distributed`. 
+The exception to this is when patching an item, in which case the original item is no
+available to be used within the overriding function.
 
 Finally, the `apply_patches` is called within the `Model.load` method and will apply all
 patches in the order they were registered. This means that users need to be careful with
@@ -110,10 +116,9 @@ def apply_patches(model: Model) -> None:
         # Apply the patch
         if item is not None:
             obj = getattr(obj, method)
-            obj[item] = func(node) if is_attr else func
+            obj[item] = func(node) if is_attr else func.__get__(obj, obj.__class__)
         else:
-            if is_attr:
-                setattr(obj, method, func(node))
-            else:
-                setattr(obj, f"_patched_{method}", getattr(obj, method))
-                setattr(obj, method, func.__get__(obj, obj.__class__))
+            setattr(obj, f"_patched_{method}", getattr(obj, method))
+            setattr(
+                obj, method, func(node) if is_attr else func.__get__(obj, obj.__class__)
+            )
