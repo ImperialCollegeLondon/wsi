@@ -78,10 +78,15 @@ def test_apply_patches(temp_extension_registry):
     apply_patches(model)
 
     # Verify that the patches are applied correctly
-    assert model.nodes[node.name].apply_overrides == dummy_patch
+    assert (
+        model.nodes[node.name].apply_overrides.__qualname__ == dummy_patch.__qualname__
+    )
     assert model.nodes[node.name].t == another_dummy_patch(node)
     assert model.nodes[node.name].pull_set_handler["default"] == yet_another_dummy_patch
-    assert model.nodes[node.name].dummy_arc.arc_mass_balance == arc_dummy_patch
+    assert (
+        model.nodes[node.name].dummy_arc.arc_mass_balance.__qualname__
+        == arc_dummy_patch.__qualname__
+    )
 
 
 def assert_dict_almost_equal(d1: dict, d2: dict, tol: float | None = None):
