@@ -157,6 +157,8 @@ class Model(WSIObj):
             config_name:
             overrides:
         """
+        from ..extensions import apply_patches
+
         with open(os.path.join(address, config_name), "r") as file:
             data = yaml.safe_load(file)
 
@@ -190,6 +192,8 @@ class Model(WSIObj):
         self.add_arcs(list(arcs.values()))
         if "dates" in data.keys():
             self.dates = [to_datetime(x) for x in data["dates"]]
+
+        apply_patches(self)
 
     def save(self, address, config_name="config.yml", compress=False):
         """Save the model object to a yaml file and input data to csv.gz format in the
