@@ -2,7 +2,6 @@
 """Created on Mon Nov 15 14:20:36 2021.
 
 @author: bdobson
-
 """
 from wsimod.nodes.nodes import Node
 
@@ -25,7 +24,6 @@ class Waste(Node):
 
         Input data and parameter requirements:
             - None
-
         """
         # Update args
         super().__init__(name)
@@ -47,6 +45,5 @@ class Waste(Node):
 
         Returns:
             (dict): An empty VQIP, indicating all water was received
-
         """
         return self.empty_vqip()

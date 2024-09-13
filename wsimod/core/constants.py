@@ -2,14 +2,14 @@
 """Created on Fri Dec  6 15:17:07 2019.
 
 @author: bdobson
-
 """
 from wsimod.core import constants
 
 M3_S_TO_ML_D = 86.4
 MM_KM2_TO_ML = 1e-3 * 1e6 * 1e3 * 1e-6  # mm->m, km2->m2, m3->l, l->Ml
 MM_M2_TO_ML = 1e-3 * 1e3 * 1e-6  # mm->m, m3->l, l->Ml
-MM_M2_TO_SIM_VOLUME = MM_M2_TO_ML  # SIM volume is by default ML, but can be changed by changing MM_TO_SIM_VOLUME
+MM_M2_TO_SIM_VOLUME = MM_M2_TO_ML  # SIM volume is by default ML, but can be changed by
+# changing MM_TO_SIM_VOLUME
 MM_M2_TO_M3 = 1e-3  # mm->m
 ML_TO_M3 = 1000
 PCT_TO_PROP = 1 / 100
@@ -117,7 +117,8 @@ def set_default_pollutants():
         "do",
         "temperature",
         "ph",
-    ]  # e.g. pollutants whose concentration should not increase if volume is distilled out
+    ]  # e.g. pollutants whose concentration should not increase if volume is distilled
+    # out
     constants.ADDITIVE_POLLUTANTS = [
         "org-phosphorus",
         "phosphate",

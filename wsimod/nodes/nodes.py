@@ -4,20 +4,29 @@
 @author: Barney
 
 Converted to totals on Thur Apr 21 2022
-
 """
+import logging
+from typing import Any, Dict
+
 from wsimod.arcs.arcs import AltQueueArc, DecayArcAlt
 from wsimod.core import constants
 from wsimod.core.core import DecayObj, WSIObj
-from wsimod.nodes import nodes
 
 
 class Node(WSIObj):
     """"""
 
+    def __init_subclass__(cls, **kwargs):
+        """Adds all subclasses to the nodes registry."""
+        super().__init_subclass__(**kwargs)
+        if cls.__name__ in NODES_REGISTRY:
+            logging.warning(f"Overwriting {cls.__name__} in NODES_REGISTRY with {cls}")
+
+        NODES_REGISTRY[cls.__name__] = cls
+
     def __init__(self, name, data_input_dict=None):
-        """Base class for CWSD nodes. Constructs all the necessary attributes for
-        the node object.
+        """Base class for CWSD nodes. Constructs all the necessary attributes for the
+        node object.
 
         Args:
             name (str): Name of node
@@ -34,24 +43,8 @@ class Node(WSIObj):
 
         Input data and parameter requirements:
             - All nodes require a `name`
-
         """
-
-        # Get node types
-        def all_subclasses(cls):
-            """
-
-            Args:
-                cls:
-
-            Returns:
-
-            """
-            return set(cls.__subclasses__()).union(
-                [s for c in cls.__subclasses__() for s in all_subclasses(c)]
-            )
-
-        node_types = [x.__name__ for x in all_subclasses(nodes.Node)] + ["Node"]
+        node_types = list(NODES_REGISTRY.keys())
 
         # Default essential parameters
         # Dictionary of arcs
@@ -78,13 +71,25 @@ class Node(WSIObj):
                 x, of_type=["Node", "River", "Waste", "Reservoir"]
             )
         }
-
         super().__init__()
 
         # Mass balance checking
         self.mass_balance_in = [self.total_in]
         self.mass_balance_out = [self.total_out]
         self.mass_balance_ds = [lambda: self.empty_vqip()]
+
+    def apply_overrides(self, overrides: Dict[str, Any] = {}) -> None:
+        """Apply overrides to the node.
+
+        The Node does not have any overwriteable parameters. So if any
+        overrides are passed up to the node, this means that there are unused
+        parameters from the Node subclass, which is flagged.
+
+        Args:
+            overrides (dict, optional): Dictionary of overrides. Defaults to {}.
+        """
+        if len(overrides) > 0:
+            print(f"No override behaviour defined for: {overrides.keys()}")
 
     def total_in(self):
         """Sum flow and pollutant amounts entering a node via in_arcs.
@@ -94,7 +99,6 @@ class Node(WSIObj):
 
         Examples:
             >>> node_inflow = my_node.total_in()
-
         """
         in_ = self.empty_vqip()
         for arc in self.in_arcs.values():
@@ -110,7 +114,6 @@ class Node(WSIObj):
 
         Examples:
             >>> node_outflow = my_node.total_out()
-
         """
         out_ = self.empty_vqip()
         for arc in self.out_arcs.values():
@@ -128,14 +131,12 @@ class Node(WSIObj):
 
         Examples:
             >>> node_in, node_out, node_ds = my_node.node_mass_balance()
-
         """
         in_, ds_, out_ = self.mass_balance()
         return in_, ds_, out_
 
     def pull_set(self, vqip, tag="default"):
-        """Receives pull set requests from arcs and passes request to query
-        handler.
+        """Receives pull set requests from arcs and passes request to query handler.
 
         Args:
             vqip (dict): the VQIP pull request (by default, only the 'volume' key is
@@ -148,13 +149,11 @@ class Node(WSIObj):
 
         Examples:
             >>> water_received = my_node.pull_set({'volume' : 10})
-
         """
         return self.query_handler(self.pull_set_handler, vqip, tag)
 
     def push_set(self, vqip, tag="default"):
-        """Receives push set requests from arcs and passes request to query
-        handler.
+        """Receives push set requests from arcs and passes request to query handler.
 
         Args:
             vqip (_type_): the VQIP push request
@@ -166,13 +165,11 @@ class Node(WSIObj):
 
         Examples:
             water_not_pushed = my_node.push_set(wastewater_vqip)
-
         """
         return self.query_handler(self.push_set_handler, vqip, tag)
 
     def pull_check(self, vqip=None, tag="default"):
-        """Receives pull check requests from arcs and passes request to query
-        handler.
+        """Receives pull check requests from arcs and passes request to query handler.
 
         Args:
             vqip (dict, optional): the VQIP pull check (by default, only the
@@ -187,13 +184,11 @@ class Node(WSIObj):
         Examples:
             >>> water_available = my_node.pull_check({'volume' : 10})
             >>> total_water_available = my_node.pull_check()
-
         """
         return self.query_handler(self.pull_check_handler, vqip, tag)
 
     def push_check(self, vqip=None, tag="default"):
-        """Receives push check requests from arcs and passes request to query
-        handler.
+        """Receives push check requests from arcs and passes request to query handler.
 
         Args:
             vqip (dict, optional): the VQIP push check. Defaults to None, which
@@ -207,7 +202,6 @@ class Node(WSIObj):
         Examples:
             >>> total_available_push_capacity = my_node.push_check()
             >>> available_push_capacity = my_node.push_check(wastewater_vqip)
-
         """
         return self.query_handler(self.push_check_handler, vqip, tag)
 
@@ -231,8 +225,8 @@ class Node(WSIObj):
         Examples:
             >>> arcs_to_push_to = my_node.get_direction_arcs('push')
             >>> arcs_to_pull_from = my_node.get_direction_arcs('pull')
-            >>> arcs_from_reservoirs = my_node.get_direction_arcs('pull', of_type = 'Reservoir')
-
+            >>> arcs_from_reservoirs = my_node.get_direction_arcs('pull', of_type =
+                'Reservoir')
         """
         if of_type is None:
             # Return all arcs
@@ -292,7 +286,6 @@ class Node(WSIObj):
             >>> avail_sewer_push_to_sewers = my_node.get_direction_arcs('push',
                                                                 of_type = 'Sewer',
                                                                 tag = 'Sewer')
-
         """
         # Initialise connected dict
         connected = {"avail": 0, "priority": 0, "allocation": {}, "capacity": {}}
@@ -314,8 +307,8 @@ class Node(WSIObj):
         return connected
 
     def query_handler(self, handler, ip, tag):
-        """Sends all push/pull requests/checks using the handler (i.e., ensures
-        the correct function is used that lines up with 'tag').
+        """Sends all push/pull requests/checks using the handler (i.e., ensures the
+        correct function is used that lines up with 'tag').
 
         Args:
             handler (dict): contains all push/pull requests for various tags
@@ -328,7 +321,6 @@ class Node(WSIObj):
         Raises:
             Message if no functions are defined for tag and if request/check
             function fails
-
         """
         try:
             return handler[tag](ip)
@@ -341,9 +333,9 @@ class Node(WSIObj):
                 return handler[tag](ip)
 
     def pull_distributed(self, vqip, of_type=None, tag="default"):
-        """Send pull requests to all (or specified by type) nodes connecting to
-        self. Iterate until request is met or maximum iterations are hit.
-        Streamlines if only one in_arc exists.
+        """Send pull requests to all (or specified by type) nodes connecting to self.
+        Iterate until request is met or maximum iterations are hit. Streamlines if only
+        one in_arc exists.
 
         Args:
             vqip (dict): Total amount to pull (by default, only the
@@ -355,7 +347,6 @@ class Node(WSIObj):
 
         Returns:
             pulled (dict): VQIP of combined pulled water
-
         """
         if len(self.in_arcs) == 1:
             # If only one in_arc, just pull from that
@@ -406,9 +397,9 @@ class Node(WSIObj):
         return pulled
 
     def push_distributed(self, vqip, of_type=None, tag="default"):
-        """Send push requests to all (or specified by type) nodes connecting to
-        self. Iterate until request is met or maximum iterations are hit.
-        Streamlines if only one in_arc exists.
+        """Send push requests to all (or specified by type) nodes connecting to self.
+        Iterate until request is met or maximum iterations are hit. Streamlines if only
+        one in_arc exists.
 
         Args:
             vqip (dict): Total amount to push
@@ -419,7 +410,6 @@ class Node(WSIObj):
 
         Returns:
             not_pushed_ (dict): VQIP of water that cannot be pushed
-
         """
         if len(self.out_arcs) == 1:
             # If only one out_arc, just send the water down that
@@ -444,7 +434,8 @@ class Node(WSIObj):
             connected = self.get_connected(direction="push", of_type=of_type, tag=tag)
             iter_ = 0
             if not_pushed > connected["avail"]:
-                # If more water than can be pushed, ignore preference and allocate all available based on capacity
+                # If more water than can be pushed, ignore preference and allocate all
+                #   available based on capacity
                 connected["priority"] = connected["avail"]
                 connected["allocation"] = connected["capacity"]
 
@@ -493,7 +484,6 @@ class Node(WSIObj):
 
         Returns:
             avail (dict): VQIP responses summed over all requests
-
         """
         f, arcs = self.get_direction_arcs(direction, of_type)
 
@@ -509,8 +499,8 @@ class Node(WSIObj):
 
     def pull_check_basic(self, vqip=None, of_type=None, tag="default"):
         """Default node check behaviour that treats a node like a junction. Water
-        available to pull is just the water available to pull from upstream
-        connected nodes.
+        available to pull is just the water available to pull from upstream connected
+        nodes.
 
         Args:
             vqip (dict, optional): VQIP from handler of amount to pull check
@@ -523,14 +513,13 @@ class Node(WSIObj):
 
         Returns:
             (dict): VQIP check response of upstream nodes
-
         """
         return self.check_basic("pull", vqip, of_type, tag)
 
     def push_check_basic(self, vqip=None, of_type=None, tag="default"):
         """Default node check behaviour that treats a node like a junction. Water
-        available to push is just the water available to push to downstream
-        connected nodes.
+        available to push is just the water available to push to downstream connected
+        nodes.
 
         Args:
             vqip (dict, optional): VQIP from handler of amount to push check.
@@ -542,7 +531,6 @@ class Node(WSIObj):
 
         Returns:
             (dict): VQIP check response of downstream nodes
-
         """
         return self.check_basic("push", vqip, of_type, tag)
 
@@ -558,7 +546,6 @@ class Node(WSIObj):
         Raises:
             Message when called, since it would usually occur if a model is
             improperly connected
-
         """
         print("Attempted pull set from deny")
         return self.empty_vqip()
@@ -575,7 +562,6 @@ class Node(WSIObj):
         Raises:
             Message when called, since it would usually occur if a model is
             improperly connected
-
         """
         print("Attempted pull check from deny")
         return self.empty_vqip()
@@ -592,7 +578,6 @@ class Node(WSIObj):
         Raises:
             Message when called, since it would usually occur if a model is
             improperly connected
-
         """
         print("Attempted push set to deny")
         return vqip
@@ -609,7 +594,6 @@ class Node(WSIObj):
         Raises:
             Message when called, since it would usually occur if a model is
             improperly connected
-
         """
         print("Attempted push check to deny")
         return self.empty_vqip()
@@ -622,7 +606,6 @@ class Node(WSIObj):
 
         Returns:
             (dict): VQIP or an unbounded capacity, indicating all water can be received
-
         """
         if not vqip:
             vqip = self.empty_vqip()
@@ -630,15 +613,14 @@ class Node(WSIObj):
         return vqip
 
     def get_data_input(self, var):
-        """Read data from data_input_dict. Keys are tuples with the first entry as
-        the variable to read and second entry the time.
+        """Read data from data_input_dict. Keys are tuples with the first entry as the
+        variable to read and second entry the time.
 
         Args:
             var (str): Name of variable
 
         Returns:
             Data read
-
         """
         return self.data_input_dict[(var, self.t)]
 
@@ -646,75 +628,77 @@ class Node(WSIObj):
         """Empty function intended to be called at the end of every timestep.
 
         Subclasses will overwrite this functions.
-
         """
         pass
 
     def reinit(self):
-        """Empty function to be written if reinitialisation capability is
-        added.
-        """
+        """Empty function to be written if reinitialisation capability is added."""
         pass
 
 
 """
     This is an attempt to generalise the behaviour of pull/push_distributed
     It doesn't yet work...
-    
-    def general_distribute(self, vqip, of_type = None, tag = 'default', direction = None):
+
+    def general_distribute(self, vqip, of_type = None, tag = 'default', direction =
+        None):
         if direction == 'push':
             arcs = self.out_arcs
             arcs_type = self.out_arcs_type
             tracker = self.copy_vqip(vqip)
-            requests = {x.name : lambda y : x.send_push_request(y, tag) for x in arcs.values()}
+            requests = {x.name : lambda y : x.send_push_request(y, tag) for x in arcs.
+                values()}
         elif direction == 'pull':
             arcs = self.in_arcs
             arcs_type = self.in_arcs_type
             tracker = self.empty_vqip()
-            requests = {x.name : lambda y : x.send_pull_request(y, tag) for x in arcs.values()}
+            requests = {x.name : lambda y : x.send_pull_request(y, tag) for x in arcs.
+                values()}
         else:
             print('No direction')
-    
+
         if len(arcs) == 1:
-            if (of_type == None) | any([x in of_type for x, y in arcs_type.items() if len(y) > 0]):
+            if (of_type == None) | any([x in of_type for x, y in arcs_type.items() if
+                len(y) > 0]):
                 arc = next(iter(arcs.keys()))
                 return requests[arc](vqip)
             else:
                 #No viable arcs
                 return tracker
-        
+
         connected = self.get_connected(direction = direction,
                                                                 of_type = of_type,
                                                                 tag = tag)
-        
+
         iter_ = 0
-        
+
         target = self.copy_vqip(vqip)
-        #Iterate over sending nodes until deficit met	
-        while (((target['volume'] > constants.FLOAT_ACCURACY) &	
-                (connected['avail'] > constants.FLOAT_ACCURACY)) &	
+        #Iterate over sending nodes until deficit met
+        while (((target['volume'] > constants.FLOAT_ACCURACY) &
+                (connected['avail'] > constants.FLOAT_ACCURACY)) &
                 (iter_ < constants.MAXITER)):
-    
-                amount = min(connected['avail'], target['volume']) #Deficit or amount still to push
+
+                amount = min(connected['avail'], target['volume']) #Deficit or amount
+                    still to push
                 replies = self.empty_vqip()
-                
+
                 for key, allocation in connected['allocation'].items():
                     to_request = amount * allocation / connected['priority']
                     to_request = self.v_change_vqip(target, to_request)
                     reply = requests[key](to_request)
                     replies = self.sum_vqip(replies, reply)
-                
+
                 if direction == 'pull':
                     target = self.extract_vqip(target, replies)
                 elif direction == 'push':
                     target = replies
-    
+
                 connected = self.get_connected(direction = direction,
                                                                 of_type = of_type,
                                                                 tag = tag)
-                iter_ += 1	
+                iter_ += 1
 
-                if iter_ == constants.MAXITER:	
+                if iter_ == constants.MAXITER:
                     print('Maxiter reached')
         return target"""
 
@@ -762,6 +746,9 @@ class Node(WSIObj):
 #     self.__dict__.update(newnode.__dict__)
 
 
+NODES_REGISTRY: dict[str, type[Node]] = {Node.__name__: Node}
+
+
 class Tank(WSIObj):
     """"""
 
@@ -778,7 +765,6 @@ class Tank(WSIObj):
                     as volume
                 dict: Tank will be initialised with this VQIP
                 Defaults to 0 (i.e., no volume, no pollutants).
-
         """
         # Set parameters
         self.capacity = capacity
@@ -813,7 +799,6 @@ class Tank(WSIObj):
 
         Returns:
             (dict): Change in storage
-
         """
         return self.ds_vqip(self.storage, self.storage_)
 
@@ -826,14 +811,14 @@ class Tank(WSIObj):
 
         Examples:
             >>> constants.ADDITIVE_POLLUTANTS = ['phosphate']
-            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 10, 'phosphate' : 0.2})
+            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 10,
+                'phosphate' : 0.2})
             >>> print(my_tank.storage)
             {'volume' : 10, 'phosphate' : 0.2}
             >>> print(my_tank.pull_ponded())
             {'volume' : 1, 'phosphate' : 0.02}
             >>> print(my_tank.storage)
             {'volume' : 9, 'phosphate' : 0.18}
-
         """
         # Get amount
         ponded = max(self.storage["volume"] - self.capacity, 0)
@@ -853,14 +838,14 @@ class Tank(WSIObj):
 
         Examples:
             >>> constants.ADDITIVE_POLLUTANTS = ['phosphate']
-            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 10, 'phosphate' : 0.2})
+            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 10,
+                'phosphate' : 0.2})
             >>> print(my_tank.storage)
             {'volume' : 10, 'phosphate' : 0.2}
             >>> print(my_tank.get_avail())
             {'volume' : 10, 'phosphate' : 0.2}
             >>> print(my_tank.get_avail({'volume' : 1}))
             {'volume' : 1, 'phosphate' : 0.02}
-
         """
         reply = self.copy_vqip(self.storage)
         if vqip is None:
@@ -883,24 +868,25 @@ class Tank(WSIObj):
 
         Examples:
             >>> constants.ADDITIVE_POLLUTANTS = ['phosphate']
-            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 5, 'phosphate' : 0.2})
+            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 5,
+                'phosphate' : 0.2})
             >>> print(my_tank.get_excess())
             {'volume' : 4, 'phosphate' : 0.16}
             >>> print(my_tank.get_excess({'volume' : 2}))
             {'volume' : 2, 'phosphate' : 0.08}
-
         """
         vol = max(self.capacity - self.storage["volume"], 0)
         if vqip is not None:
             vol = min(vqip["volume"], vol)
 
         # Adjust storage pollutants to match volume in vqip
-        # TODO the v_change_vqip in the reply here is a weird default (if a VQIP is not provided)
+        # TODO the v_change_vqip in the reply here is a weird default (if a VQIP is not
+        #   provided)
         return self.v_change_vqip(self.storage, vol)
 
     def push_storage(self, vqip, force=False):
-        """Push water into tank, updating the storage VQIP. Force argument can be
-        used to ignore tank capacity.
+        """Push water into tank, updating the storage VQIP. Force argument can be used
+        to ignore tank capacity.
 
         Args:
             vqip (dict): VQIP amount to be pushed
@@ -914,7 +900,8 @@ class Tank(WSIObj):
             >>> constants.ADDITIVE_POLLUTANTS = ['phosphate']
             >>> constants.POLLUTANTS = ['phosphate']
             >>> constants.NON_ADDITIVE_POLLUTANTS = []
-            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 5, 'phosphate' : 0.2})
+            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 5,
+                'phosphate' : 0.2})
             >>> my_push = {'volume' : 10, 'phosphate' : 0.5}
             >>> reply = my_tank.push_storage(my_push)
             >>> print(reply)
@@ -925,7 +912,6 @@ class Tank(WSIObj):
             {'phosphate': 0, 'volume': 0}
             >>> print(my_tank.storage)
             {'volume': 15.0, 'phosphate': 0.7}
-
         """
         if force:
             # Directly add request to storage
@@ -946,9 +932,8 @@ class Tank(WSIObj):
         return reply
 
     def pull_storage(self, vqip):
-        """Pull water from tank, updating the storage VQIP. Pollutants are removed
-        from tank in proportion to 'volume' in vqip (pollutant values in vqip are
-        ignored).
+        """Pull water from tank, updating the storage VQIP. Pollutants are removed from
+        tank in proportion to 'volume' in vqip (pollutant values in vqip are ignored).
 
         Args:
             vqip (dict): VQIP amount to be pulled, (only 'volume' key is needed)
@@ -958,12 +943,12 @@ class Tank(WSIObj):
 
         Examples:
             >>> constants.ADDITIVE_POLLUTANTS = ['phosphate']
-            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 5, 'phosphate' : 0.2})
+            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 5,
+                'phosphate' : 0.2})
             >>> print(my_tank.pull_storage({'volume' : 6}))
             {'volume': 5.0, 'phosphate': 0.2}
             >>> print(my_tank.storage)
             {'volume': 0, 'phosphate': 0}
-
         """
         # Pull from Tank by volume (taking pollutants in proportion)
         if self.storage["volume"] == 0:
@@ -981,8 +966,8 @@ class Tank(WSIObj):
         return reply
 
     def pull_pollutants(self, vqip):
-        """Pull water from tank, updating the storage VQIP. Pollutants are removed
-        from tank in according to their values in vqip.
+        """Pull water from tank, updating the storage VQIP. Pollutants are removed from
+        tank in according to their values in vqip.
 
         Args:
             vqip (dict): VQIP amount to be pulled
@@ -992,12 +977,12 @@ class Tank(WSIObj):
 
         Examples:
             >>> constants.ADDITIVE_POLLUTANTS = ['phosphate']
-            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 5, 'phosphate' : 0.2})
+            >>> my_tank = Tank(capacity = 9, initial_storage = {'volume' : 5,
+                'phosphate' : 0.2})
             >>> print(my_tank.pull_pollutants({'volume' : 2, 'phosphate' : 0.15}))
             {'volume': 2.0, 'phosphate': 0.15}
             >>> print(my_tank.storage)
             {'volume': 3, 'phosphate': 0.05}
-
         """
         # Adjust based on available mass
         for pol in constants.ADDITIVE_POLLUTANTS + ["volume"]:
@@ -1008,8 +993,8 @@ class Tank(WSIObj):
         return vqip
 
     def get_head(self, datum=None, non_head_storage=0):
-        """Area volume calculation for head calcuations. Datum and storage that
-        does not contribute to head can be specified.
+        """Area volume calculation for head calcuations. Datum and storage that does not
+        contribute to head can be specified.
 
         Args:
             datum (float, optional): Value to add to pressure head in tank.
@@ -1029,7 +1014,6 @@ class Tank(WSIObj):
             12
             >>> print(my_tank.get_head(non_head_storage = 1, datum = 0))
             2
-
         """
         # If datum not provided use object datum
         if datum is None:
@@ -1052,7 +1036,6 @@ class Tank(WSIObj):
 
         Returns:
             evap (float): Volumetric amount of evaporation successfully removed
-
         """
         avail = self.get_avail()["volume"]
 
@@ -1083,15 +1066,15 @@ class Tank(WSIObj):
         Returns:
 
         """
-        # Push vqip to storage where pollutants are given as a concentration rather than storage
+        # Push vqip to storage where pollutants are given as a concentration rather
+        #   than storage
         vqip = self.concentration_to_total(self.vqip)
         self.storage = self.sum_vqip(self.storage, vqip)
         return self.empty_vqip()
 
     def end_timestep(self):
         """Function to be called by parent object, tracks previously timestep's
-        storage.
-        """
+        storage."""
         self.storage_ = self.copy_vqip(self.storage)
 
     def reinit(self):
@@ -1104,15 +1087,14 @@ class ResidenceTank(Tank):
     """"""
 
     def __init__(self, residence_time=2, **kwargs):
-        """A tank that has a residence time property that limits storage pulled
-        from the 'pull_outflow' function.
+        """A tank that has a residence time property that limits storage pulled from the
+        'pull_outflow' function.
 
         Args:
             residence_time (float, optional): Residence time, in theory given
                 in timesteps, in practice it just means that storage /
                 residence time can be pulled each time pull_outflow is called.
                 Defaults to 2.
-
         """
         self.residence_time = residence_time
         super().__init__(**kwargs)
@@ -1123,7 +1105,6 @@ class ResidenceTank(Tank):
         Returns:
             outflow (dict): A VQIP with volume of pulled volume and pollutants
                 proportionate to the tank's pollutants
-
         """
         # Calculate outflow
         outflow = self.storage["volume"] / self.residence_time
@@ -1143,10 +1124,10 @@ class DecayTank(Tank, DecayObj):
         beginning of the timestep.
 
         Args:
-            decays (dict): A dict of dicts containing a key for each pollutant that decays
-                and, within that, a key for each parameter (a constant and exponent)
+            decays (dict): A dict of dicts containing a key for each pollutant that
+                decays and, within that, a key for each parameter (a constant and
+                exponent)
             parent (object): An object that can be used to read temperature data from
-
         """
         # Store parameters
         self.parent = parent
@@ -1173,7 +1154,6 @@ class DecayTank(Tank, DecayObj):
 
         Returns:
             ds (dict): A VQIP of change in storage and total decayed
-
         """
         ds = self.ds_vqip(self.storage, self.storage_)
         ds = self.sum_vqip(ds, self.total_decayed)
@@ -1185,14 +1165,13 @@ class QueueTank(Tank):
 
     def __init__(self, number_of_timesteps=0, **kwargs):
         """A tank with an internal queue arc, whose queue must be completed before
-        storage is available for use. The storage that has completed the queue is
-        under the 'active_storage' property.
+        storage is available for use. The storage that has completed the queue is under
+        the 'active_storage' property.
 
         Args:
             number_of_timesteps (int, optional): Built in delay for the internal
                 queue - it is always added to the queue time, although delay can be
                 provided with pushes only. Defaults to 0.
-
         """
         # Set parameters
         self.number_of_timesteps = number_of_timesteps
@@ -1208,14 +1187,14 @@ class QueueTank(Tank):
         self.internal_arc = AltQueueArc(
             in_port=self, out_port=self, number_of_timesteps=self.number_of_timesteps
         )
-        # TODO should mass balance call internal arc (is this arc called in arc mass balance?)
+        # TODO should mass balance call internal arc (is this arc called in arc mass
+        #   balance?)
 
     def get_avail(self):
         """Return the active_storage of the tank.
 
         Returns:
             (dict): VQIP of active_storage
-
         """
         return self.copy_vqip(self.active_storage)
 
@@ -1231,7 +1210,6 @@ class QueueTank(Tank):
 
         Returns:
             reply (dict): A VQIP of water that could not be received by the tank
-
         """
         if force:
             # Directly add request to storage, skipping queue
@@ -1249,17 +1227,15 @@ class QueueTank(Tank):
         return reply
 
     def pull_storage(self, vqip):
-        """Pull storage from the QueueTank, only water in active_storage is
-        available. Returning water pulled and updating tank states. Pollutants are
-        removed from tank in proportion to 'volume' in vqip (pollutant values in
-        vqip are ignored).
+        """Pull storage from the QueueTank, only water in active_storage is available.
+        Returning water pulled and updating tank states. Pollutants are removed from
+        tank in proportion to 'volume' in vqip (pollutant values in vqip are ignored).
 
         Args:
             vqip (dict): VQIP amount to pull, only 'volume' property is used
 
         Returns:
             reply (dict): VQIP amount that was pulled
-
         """
         # Adjust based on available volume
         reply = min(vqip["volume"], self.active_storage["volume"])
@@ -1276,16 +1252,14 @@ class QueueTank(Tank):
         return reply
 
     def pull_storage_exact(self, vqip):
-        """Pull storage from the QueueTank, only water in active_storage is
-        available. Pollutants are removed from tank in according to their values
-        in vqip.
+        """Pull storage from the QueueTank, only water in active_storage is available.
+        Pollutants are removed from tank in according to their values in vqip.
 
         Args:
             vqip (dict): A VQIP amount to pull
 
         Returns:
             reply (dict): A VQIP amount successfully pulled
-
         """
         # Adjust based on available
         reply = self.copy_vqip(vqip)
@@ -1343,9 +1317,7 @@ class QueueTank(Tank):
         return self.empty_vqip()
 
     def _end_timestep(self):
-        """Wrapper for end_timestep that also ends the timestep in the
-        internal_arc.
-        """
+        """Wrapper for end_timestep that also ends the timestep in the internal_arc."""
         self.internal_arc.end_timestep()
         self.internal_arc.update_queue()
         self.storage_ = self.copy_vqip(self.storage)
@@ -1372,7 +1344,6 @@ class DecayQueueTank(QueueTank):
             number_of_timesteps (int, optional): Built in delay for the internal
                 queue - it is always added to the queue time, although delay can be
                 provided with pushes only. Defaults to 0.
-
         """
         # Initialise QueueTank
         super().__init__(number_of_timesteps=number_of_timesteps, **kwargs)
@@ -1389,9 +1360,9 @@ class DecayQueueTank(QueueTank):
 
     def _end_timestep(self):
         """End timestep wrapper that removes decayed pollutants and calls internal
-        arc.
-        """
-        # TODO Should the active storage decay if decays are given (probably.. though that sounds like a nightmare)?
+        arc."""
+        # TODO Should the active storage decay if decays are given (probably.. though
+        #   that sounds like a nightmare)?
         self.storage = self.extract_vqip(self.storage, self.internal_arc.total_decayed)
         self.storage_ = self.copy_vqip(self.storage)
         self.internal_arc.end_timestep()

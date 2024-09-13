@@ -3,7 +3,6 @@
 
 @author: bdobson
 Converted to totals on 2022-05-03
-
 """
 from wsimod.core import constants
 from wsimod.nodes.nodes import Node, QueueTank
@@ -22,9 +21,9 @@ class Sewer(Node):
         chamber_floor=10,
         data_input_dict={},
     ):
-        """Sewer node that has a QueueTank and storage capacity. Think carefully
-        about parameterising this tank, because of course the amount of water that
-        can flow through a sewer in a timestep is different in reality than in a.
+        """Sewer node that has a QueueTank and storage capacity. Think carefully about
+        parameterising this tank, because of course the amount of water that can flow
+        through a sewer in a timestep is different in reality than in a.
 
         steady state (e.g., a sewer that can handle a peak of 6m3/s in practice could
         not handle 6 * 86400 m3 of water in a day because that water does not flow
@@ -70,13 +69,13 @@ class Sewer(Node):
         Input data and parameter requirements:
             - `pipe_timearea` is a dictionary containing the timearea diagram.
                 _Units_: duration of flow (in timesteps) and proportion of flow
-            - `pipe_time` describes the travel time of water received from upstream `Sewer`
+            - `pipe_time` describes the travel time of water received from upstream
+                `Sewer`
                 objects.
                 _Units_: number of timesteps
             - `capacity`, `chamber_area`, `chamber_datum` describe the dimensions of the
                 `Tank` that controls flow.
                 _Units_: cubic metres, squared metres, metres
-
         """
         # Set parameters
         self.capacity = capacity
@@ -122,7 +121,6 @@ class Sewer(Node):
 
         Returns:
             excess (dict): Sewer tank excess
-
         """
         # Get excess
         excess = self.sewer_tank.get_excess()
@@ -133,33 +131,30 @@ class Sewer(Node):
         return excess
 
     def push_set_sewer(self, vqip):
-        """Generic push request setting that implements basic queue travel time
-        (it does NOT implement timearea travel time). Updates the sewer tank
-        storage. Assumes that the inflow arc has accurately calculated capacity
-        with push_check_sewer, thus the water is forced.
+        """Generic push request setting that implements basic queue travel time (it does
+        NOT implement timearea travel time). Updates the sewer tank storage. Assumes
+        that the inflow arc has accurately calculated capacity with push_check_sewer,
+        thus the water is forced.
 
         Args:
             vqip (dict): A VQIP amount of water to push
 
         Returns:
             (dict): A VQIP amount of water that was not received
-
         """
         # Sewer to sewer push, update queued tank
         return self.sewer_tank.push_storage(vqip, time=self.pipe_time)
 
     def push_set_land(self, vqip):
-        """Push request that applies pipe_timearea (see __init__ for description).
-        As with push_set_sewer, push is also forced. Used to receive flow from
-        land or demand that is assumed to occur widely across some kind of sewer
-        catchment.
+        """Push request that applies pipe_timearea (see __init__ for description). As
+        with push_set_sewer, push is also forced. Used to receive flow from land or
+        demand that is assumed to occur widely across some kind of sewer catchment.
 
         Args:
             vqip (dict): A VQIP amount to be pushed
 
         Returns:
             (dict): A VQIP amount that was not received
-
         """
         # Land/demand to sewer push, update queued tank
 
@@ -176,10 +171,8 @@ class Sewer(Node):
     def make_discharge(self):
         """Function to trigger downstream sewer flow.
 
-        Updates sewer tank travel time, pushes to WWTW, then sewer, then CSO. May
-        flood land if, after these attempts, the sewer tank storage is above
-        capacity.
-
+        Updates sewer tank travel time, pushes to WWTW, then sewer, then CSO. May flood
+        land if, after these attempts, the sewer tank storage is above capacity.
         """
         self.sewer_tank.internal_arc.update_queue(direction="push")
         # TODO... do I need to do anything with this backflow... does it ever happen?
@@ -241,7 +234,6 @@ class EnfieldFoulSewer(Sewer):
         """Alternate legacy sewer class...
 
         I dont think this is needed any more.
-
         """
         # TODO above
 
