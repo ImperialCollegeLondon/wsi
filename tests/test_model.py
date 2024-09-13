@@ -292,7 +292,7 @@ class MyTestClass(TestCase):
         )
     def test_customise_orchestration(self):
         my_model = Model()
-        my_model.load(os.path.join(os.getcwd(), os.pardir, "docs", "demo", "examples", "test_examples"), 
+        my_model.load(os.path.join(os.getcwd(), "docs", "demo", "examples", "test_examples"), 
                       config_name='test_customise_orchestration_example.yaml')
         revised_orchestration = [{'Land': 'run'}, 
                                  {'Groundwater': 'infiltrate'}, 
