@@ -747,8 +747,9 @@ class Model(WSIObj):
             # Iterate over orchestration
             for timestep_item in self.orchestration:
                 for node_type, function in timestep_item.items():
-                    for node in self.nodes_type[node_type].values():
-                        getattr(node, function)()
+                    if node_type in self.nodes_type.keys():
+                        for node in self.nodes_type[node_type].values():
+                            getattr(node, function)()
                         
             # river
             for node_name in self.river_discharge_order:
