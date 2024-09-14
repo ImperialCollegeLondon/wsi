@@ -17,6 +17,7 @@ from wsimod.nodes.waste import Waste
 from wsimod.orchestration.model import Model, to_datetime
 import os
 
+
 class MyTestClass(TestCase):
     def assertDictAlmostEqual(self, d1, d2, accuracy=19):
         """
@@ -290,15 +291,19 @@ class MyTestClass(TestCase):
         self.assertEqual(
             0.03, my_model.nodes["my_land"].get_surface("urban").storage["volume"]
         )
+
     def test_customise_orchestration(self):
         my_model = Model()
-        my_model.load(os.path.join(os.getcwd(), "docs", "demo", "examples", "test_examples"), 
-                      config_name='test_customise_orchestration_example.yaml')
-        revised_orchestration = [{'Land': 'run'}, 
-                                 {'Groundwater': 'infiltrate'}, 
-                                 {'Sewer': 'make_discharge'}, 
-                                 {'Land': 'apply_irrigation'}]
+        my_model.load(
+            os.path.join(os.getcwd(), "docs", "demo", "examples"),
+            config_name="test_customise_orchestration_example.yaml",
+        )
+        revised_orchestration = [
+            {"Groundwater": "infiltrate"},
+            {"Sewer": "make_discharge"},
+        ]
         self.assertListEqual(my_model.orchestration, revised_orchestration)
+
 
 if __name__ == "__main__":
     unittest.main()
