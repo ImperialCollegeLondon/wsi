@@ -139,22 +139,23 @@ class Model(WSIObj):
         # self.arcs_type = {} #not sure that this would be necessary
         self.nodes = {}
         self.nodes_type = {}
-        
+
         # Default orchestration
-        self.orchestration = [{'FWTW' : 'treat_water'},
-                                {'Demand' : 'create_demand'},
-                                {'Land' : 'run'},
-                                {'Groundwater' : 'infiltrate'},
-                                {'Sewer' : 'make_discharge'},
-                                {'Foul' : 'make_discharge'},
-                                {'WWTW' : 'calculate_discharge'},
-                                {'Groundwater' : 'distribute'},
-                                {'River' : 'calculate_discharge'},
-                                {'Reservoir' : 'make_abstractions'},
-                                {'Land' : 'apply_irrigation'},
-                                {'WWTW' : 'make_discharge'},
-                                {'Catchment' : 'route'}]
-        
+        self.orchestration = [
+            {"FWTW": "treat_water"},
+            {"Demand": "create_demand"},
+            {"Land": "run"},
+            {"Groundwater": "infiltrate"},
+            {"Sewer": "make_discharge"},
+            {"Foul": "make_discharge"},
+            {"WWTW": "calculate_discharge"},
+            {"Groundwater": "distribute"},
+            {"River": "calculate_discharge"},
+            {"Reservoir": "make_abstractions"},
+            {"Land": "apply_irrigation"},
+            {"WWTW": "make_discharge"},
+            {"Catchment": "route"},
+        ]
 
     def get_init_args(self, cls):
         """Get the arguments of the __init__ method for a class and its superclasses."""
@@ -186,16 +187,16 @@ class Model(WSIObj):
         constants.NON_ADDITIVE_POLLUTANTS = data["non_additive_pollutants"]
         constants.FLOAT_ACCURACY = float(data["float_accuracy"])
         self.__dict__.update(Model().__dict__)
-        
+
         """
         FLAG:
             E.G. ADDITION FOR NEW ORCHESTRATION
         """
-        
-        if 'orchestration' in data.keys():
+
+        if "orchestration" in data.keys():
             # Update orchestration
-            self.orchestration = data['orchestration']            
-        
+            self.orchestration = data["orchestration"]
+
         nodes = data["nodes"]
 
         for name, node in nodes.items():
@@ -313,7 +314,7 @@ class Model(WSIObj):
         data = {
             "nodes": nodes,
             "arcs": arcs,
-            "orchestration" : self.orchestration,
+            "orchestration": self.orchestration,
             "pollutants": constants.POLLUTANTS,
             "additive_pollutants": constants.ADDITIVE_POLLUTANTS,
             "non_additive_pollutants": constants.NON_ADDITIVE_POLLUTANTS,
@@ -750,7 +751,7 @@ class Model(WSIObj):
                     if node_type in self.nodes_type.keys():
                         for node in self.nodes_type[node_type].values():
                             getattr(node, function)()
-                        
+
             # river
             for node_name in self.river_discharge_order:
                 self.nodes[node_name].distribute()
