@@ -1301,19 +1301,12 @@ def load_extension_files(files: list[str]) -> None:
     import importlib
     from pathlib import Path
 
-    invalid_files: list[str] = []
     for file in files:
+        if not file.endswith(".py"):
+            raise ValueError(f"Only .py files are supported. Invalid file: {file}")
         if not Path(file).exists():
             raise FileNotFoundError(f"File {file} does not exist")
 
-        if file.endswith(".py"):
-            spec = importlib.util.spec_from_file_location("module.name", file)
-            module = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(module)
-        else:
-            invalid_files.append(file)
-
-    if invalid_files:
-        raise ValueError(
-            "Only .py files are supported. Invalid files: " + ", ".join(invalid_files)
-        )
+        spec = importlib.util.spec_from_file_location("module.name", file)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
