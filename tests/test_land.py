@@ -24,7 +24,7 @@ from wsimod.nodes.land import (
 from wsimod.nodes.nodes import Node
 from wsimod.nodes.sewer import Sewer
 from wsimod.nodes.storage import Reservoir
-from wsimod.nodes.tank import Tank
+from wsimod.nodes.tanks import Tank
 from wsimod.orchestration.model import to_datetime
 
 from pathlib import Path
