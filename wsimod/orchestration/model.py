@@ -19,7 +19,8 @@ from wsimod.arcs import arcs as arcs_mod
 from wsimod.core import constants
 from wsimod.core.core import WSIObj
 from wsimod.nodes.land import ImperviousSurface
-from wsimod.nodes.nodes import NODES_REGISTRY, QueueTank, ResidenceTank, Tank
+from wsimod.nodes.nodes import NODES_REGISTRY
+from wsimod.nodes.tanks import QueueTank, ResidenceTank, Tank
 
 os.environ["USE_PYGEOS"] = "0"
 
@@ -140,6 +141,23 @@ class Model(WSIObj):
         self.nodes = {}
         self.nodes_type = {}
 
+        # Default orchestration
+        self.orchestration = [
+            {"FWTW": "treat_water"},
+            {"Demand": "create_demand"},
+            {"Land": "run"},
+            {"Groundwater": "infiltrate"},
+            {"Sewer": "make_discharge"},
+            {"Foul": "make_discharge"},
+            {"WWTW": "calculate_discharge"},
+            {"Groundwater": "distribute"},
+            {"River": "calculate_discharge"},
+            {"Reservoir": "make_abstractions"},
+            {"Land": "apply_irrigation"},
+            {"WWTW": "make_discharge"},
+            {"Catchment": "route"},
+        ]
+
     def get_init_args(self, cls):
         """Get the arguments of the __init__ method for a class and its superclasses."""
         init_args = []
@@ -157,8 +175,10 @@ class Model(WSIObj):
             config_name:
             overrides:
         """
+        from ..extensions import apply_patches
+
         with open(os.path.join(address, config_name), "r") as file:
-            data = yaml.safe_load(file)
+            data: dict = yaml.safe_load(file)
 
         for key, item in overrides.items():
             data[key] = item
@@ -168,6 +188,15 @@ class Model(WSIObj):
         constants.NON_ADDITIVE_POLLUTANTS = data["non_additive_pollutants"]
         constants.FLOAT_ACCURACY = float(data["float_accuracy"])
         self.__dict__.update(Model().__dict__)
+
+        """
+        FLAG:
+            E.G. ADDITION FOR NEW ORCHESTRATION
+        """
+
+        if "orchestration" in data.keys():
+            # Update orchestration
+            self.orchestration = data["orchestration"]
 
         nodes = data["nodes"]
 
@@ -190,6 +219,9 @@ class Model(WSIObj):
         self.add_arcs(list(arcs.values()))
         if "dates" in data.keys():
             self.dates = [to_datetime(x) for x in data["dates"]]
+
+        load_extension_files(data.get("extensions", []))
+        apply_patches(self)
 
     def save(self, address, config_name="config.yml", compress=False):
         """Save the model object to a yaml file and input data to csv.gz format in the
@@ -284,6 +316,7 @@ class Model(WSIObj):
         data = {
             "nodes": nodes,
             "arcs": arcs,
+            "orchestration": self.orchestration,
             "pollutants": constants.POLLUTANTS,
             "additive_pollutants": constants.ADDITIVE_POLLUTANTS,
             "non_additive_pollutants": constants.NON_ADDITIVE_POLLUTANTS,
@@ -714,55 +747,11 @@ class Model(WSIObj):
                 node.t = date
                 node.monthyear = date.to_period("M")
 
-            # Run FWTW
-            for node in self.nodes_type.get("FWTW", {}).values():
-                node.treat_water()
-
-            # Create demand (gets pushed to sewers)
-            for node in self.nodes_type.get("Demand", {}).values():
-                node.create_demand()
-
-            # Create runoff (impervious gets pushed to sewers, pervious to groundwater)
-            for node in self.nodes_type.get("Land", {}).values():
-                node.run()
-
-            # Infiltrate GW
-            for node in self.nodes_type.get("Groundwater", {}).values():
-                node.infiltrate()
-
-            # Discharge sewers (pushed to other sewers or WWTW)
-            for node in self.nodes_type.get("Sewer", {}).values():
-                node.make_discharge()
-
-            # Foul second so that it can discharge any misconnection
-            for node in self.nodes_type.get("Foul", {}).values():
-                node.make_discharge()
-
-            # Discharge WWTW
-            for node in self.nodes_type.get("WWTW", {}).values():
-                node.calculate_discharge()
-
-            # Discharge GW
-            for node in self.nodes_type.get("Groundwater", {}).values():
-                node.distribute()
-
-            # river
-            for node in self.nodes_type.get("River", {}).values():
-                node.calculate_discharge()
-
-            # Abstract
-            for node in self.nodes_type.get("Reservoir", {}).values():
-                node.make_abstractions()
-
-            for node in self.nodes_type.get("Land", {}).values():
-                node.apply_irrigation()
-
-            for node in self.nodes_type.get("WWTW", {}).values():
-                node.make_discharge()
-
-            # Catchment routing
-            for node in self.nodes_type.get("Catchment", {}).values():
-                node.route()
+            # Iterate over orchestration
+            for timestep_item in self.orchestration:
+                for node_type, function in timestep_item.items():
+                    for node in self.nodes_type.get(node_type, {}).values():
+                        getattr(node, function)()
 
             # river
             for node_name in self.river_discharge_order:
@@ -1281,3 +1270,27 @@ def yaml2csv(address, config_name="config.yml", csv_folder_name="csv"):
                     writer.writerow(
                         [str(value_[x]) if x in value_.keys() else None for x in fields]
                     )
+
+
+def load_extension_files(files: list[str]) -> None:
+    """Load extension files from a list of files.
+
+    Args:
+        files (list[str]): List of file paths to load
+
+    Raises:
+        ValueError: If file is not a .py file
+        FileNotFoundError: If file does not exist
+    """
+    import importlib
+    from pathlib import Path
+
+    for file in files:
+        if not file.endswith(".py"):
+            raise ValueError(f"Only .py files are supported. Invalid file: {file}")
+        if not Path(file).exists():
+            raise FileNotFoundError(f"File {file} does not exist")
+
+        spec = importlib.util.spec_from_file_location("module.name", file)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
