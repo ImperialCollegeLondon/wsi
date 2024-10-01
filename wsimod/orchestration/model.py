@@ -178,7 +178,7 @@ class Model(WSIObj):
         from ..extensions import apply_patches
 
         with open(os.path.join(address, config_name), "r") as file:
-            data = yaml.safe_load(file)
+            data: dict = yaml.safe_load(file)
 
         for key, item in overrides.items():
             data[key] = item
@@ -220,6 +220,7 @@ class Model(WSIObj):
         if "dates" in data.keys():
             self.dates = [to_datetime(x) for x in data["dates"]]
 
+        load_extension_files(data.get("extensions", []))
         apply_patches(self)
 
     def save(self, address, config_name="config.yml", compress=False):
@@ -1269,3 +1270,27 @@ def yaml2csv(address, config_name="config.yml", csv_folder_name="csv"):
                     writer.writerow(
                         [str(value_[x]) if x in value_.keys() else None for x in fields]
                     )
+
+
+def load_extension_files(files: list[str]) -> None:
+    """Load extension files from a list of files.
+
+    Args:
+        files (list[str]): List of file paths to load
+
+    Raises:
+        ValueError: If file is not a .py file
+        FileNotFoundError: If file does not exist
+    """
+    import importlib
+    from pathlib import Path
+
+    for file in files:
+        if not file.endswith(".py"):
+            raise ValueError(f"Only .py files are supported. Invalid file: {file}")
+        if not Path(file).exists():
+            raise FileNotFoundError(f"File {file} does not exist")
+
+        spec = importlib.util.spec_from_file_location("module.name", file)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
