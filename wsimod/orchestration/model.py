@@ -19,7 +19,8 @@ from wsimod.arcs import arcs as arcs_mod
 from wsimod.core import constants
 from wsimod.core.core import WSIObj
 from wsimod.nodes.land import ImperviousSurface
-from wsimod.nodes.nodes import NODES_REGISTRY, QueueTank, ResidenceTank, Tank
+from wsimod.nodes.nodes import NODES_REGISTRY
+from wsimod.nodes.tanks import QueueTank, ResidenceTank, Tank
 
 os.environ["USE_PYGEOS"] = "0"
 
