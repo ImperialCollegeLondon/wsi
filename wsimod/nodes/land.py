@@ -9,8 +9,9 @@ from math import exp, log, log10, sin
 from typing import Any, Dict
 
 from wsimod.core import constants
-from wsimod.nodes.nodes import DecayTank, Node, ResidenceTank
+from wsimod.nodes.nodes import Node
 from wsimod.nodes.nutrient_pool import NutrientPool
+from wsimod.nodes.tanks import DecayTank, ResidenceTank
 
 
 class Land(Node):

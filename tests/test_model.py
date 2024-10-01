@@ -4,10 +4,10 @@
 @author: Barney
 
 """
-
-# import pytest
+import os
+import pytest
 import unittest
-from unittest import TestCase
+from unittest import TestCase, mock
 
 from wsimod.arcs.arcs import Arc
 from wsimod.nodes.land import Land
@@ -15,6 +15,7 @@ from wsimod.nodes.nodes import Node
 from wsimod.nodes.sewer import Sewer
 from wsimod.nodes.waste import Waste
 from wsimod.orchestration.model import Model, to_datetime
+import os
 
 
 class MyTestClass(TestCase):
@@ -290,6 +291,60 @@ class MyTestClass(TestCase):
         self.assertEqual(
             0.03, my_model.nodes["my_land"].get_surface("urban").storage["volume"]
         )
+
+    def test_customise_orchestration(self):
+        my_model = Model()
+        my_model.load(
+            os.path.join(os.getcwd(), "docs", "demo", "examples"),
+            config_name="test_customise_orchestration_example.yaml",
+        )
+        revised_orchestration = [
+            {"Groundwater": "infiltrate"},
+            {"Sewer": "make_discharge"},
+        ]
+        self.assertListEqual(my_model.orchestration, revised_orchestration)
+
+
+class TestLoadExtensionFiles:
+    def test_load_extension_files_valid(self, tmp_path_factory):
+        from wsimod.orchestration.model import load_extension_files
+
+        with tmp_path_factory.mktemp("extensions") as tempdir:
+            valid_file = os.path.join(tempdir, "valid_extension.py")
+            with open(valid_file, "w") as f:
+                f.write("def test_func(): pass")
+
+            load_extension_files([valid_file])
+
+    def test_load_extension_files_invalid_extension(self, tmp_path_factory):
+        from wsimod.orchestration.model import load_extension_files
+
+        with tmp_path_factory.mktemp("extensions") as tempdir:
+            invalid_file = os.path.join(tempdir, "invalid_extension.txt")
+            with open(invalid_file, "w") as f:
+                f.write("This is a text file")
+
+            with pytest.raises(ValueError, match="Only .py files are supported"):
+                load_extension_files([invalid_file])
+
+    def test_load_extension_files_nonexistent_file(self):
+        from wsimod.orchestration.model import load_extension_files
+
+        with pytest.raises(
+            FileNotFoundError, match="File nonexistent_file.py does not exist"
+        ):
+            load_extension_files(["nonexistent_file.py"])
+
+    def test_load_extension_files_import_error(self, tmp_path_factory):
+        from wsimod.orchestration.model import load_extension_files
+
+        with tmp_path_factory.mktemp("extensions") as tempdir:
+            valid_file = os.path.join(tempdir, "valid_extension.py")
+            with open(valid_file, "w") as f:
+                f.write("raise ImportError")
+
+            with pytest.raises(ImportError):
+                load_extension_files([valid_file])
 
 
 if __name__ == "__main__":
