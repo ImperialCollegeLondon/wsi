@@ -7,7 +7,8 @@ Converted to totals on 2022-05-03
 from typing import Any, Dict
 
 from wsimod.core import constants
-from wsimod.nodes.nodes import Node, QueueTank
+from wsimod.nodes.nodes import Node
+from wsimod.nodes.tanks import QueueTank
 
 
 class Sewer(Node):

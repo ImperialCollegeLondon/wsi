@@ -4,6 +4,8 @@
 @author: bdobson
 """
 
+from typing import Any, Dict
+
 from wsimod.core import constants
 from wsimod.nodes.nodes import Node
 
@@ -125,14 +127,30 @@ class Distribution(Node):
         # Update handlers
         self.push_set_handler["default"] = self.push_set_deny
         self.push_check_handler["default"] = self.push_check_deny
+        self.decorate_pull_handlers()
 
-        if leakage > 0:
+    def decorate_pull_handlers(self):
+        """Decorate handlers if there is leakage ratio."""
+        if self.leakage > 0:
             self.pull_set_handler["default"] = decorate_leakage_set(
                 self, self.pull_set_handler["default"]
             )
             self.pull_check_handler["default"] = decorate_leakage_check(
                 self, self.pull_check_handler["default"]
             )
+
+    def apply_overrides(self, overrides: Dict[str, Any] = {}):
+        """Apply overrides to the sewer.
+
+        Enables a user to override any of the following parameters:
+        leakage.
+
+        Args:
+            overrides (dict, optional): Dictionary of overrides. Defaults to {}.
+        """
+        self.leakage = overrides.pop("leakage", self.leakage)
+        self.decorate_pull_handlers()
+        super().apply_overrides(overrides)
 
 
 class UnlimitedDistribution(Distribution):
