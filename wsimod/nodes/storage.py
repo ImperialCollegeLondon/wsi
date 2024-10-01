@@ -6,7 +6,8 @@
 from math import exp
 
 from wsimod.core import constants
-from wsimod.nodes.nodes import DecayQueueTank, DecayTank, Node, QueueTank, Tank
+from wsimod.nodes.nodes import Node
+from wsimod.nodes.tanks import DecayQueueTank, DecayTank, QueueTank, Tank
 
 
 class Storage(Node):
