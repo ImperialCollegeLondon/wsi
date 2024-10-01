@@ -1,5 +1,7 @@
 """Module for defining tanks."""
 
+from typing import Any, Dict
+
 from wsimod.arcs.arcs import AltQueueArc, DecayArcAlt
 from wsimod.core import constants
 from wsimod.core.core import DecayObj, WSIObj
@@ -49,6 +51,21 @@ class Tank(WSIObj):
         else:
             self.storage = self.empty_vqip()
             self.storage_ = self.empty_vqip()  # Lagged storage for mass balance
+
+    def apply_overrides(self, overrides: Dict[str, Any] = {}):
+        """Apply overrides to the tank.
+
+        Enables a user to override any of the following parameters:
+        area, capacity, datum.
+
+        Args:
+            overrides (dict, optional): Dictionary of overrides. Defaults to {}.
+        """
+        self.capacity = overrides.pop("capacity", self.capacity)
+        self.area = overrides.pop("area", self.area)
+        self.datum = overrides.pop("datum", self.datum)
+        if len(overrides) > 0:
+            print(f"No override behaviour defined for: {overrides.keys()}")
 
     def ds(self):
         """Should be called by parent object to get change in storage.
@@ -355,6 +372,18 @@ class ResidenceTank(Tank):
         self.residence_time = residence_time
         super().__init__(**kwargs)
 
+    def apply_overrides(self, overrides: Dict[str, Any] = {}):
+        """Apply overrides to the residencetank.
+
+        Enables a user to override any of the following parameters:
+        residence_time.
+
+        Args:
+            overrides (dict, optional): Dictionary of overrides. Defaults to {}.
+        """
+        self.residence_time = overrides.pop("residence_time", self.residence_time)
+        super().apply_overrides(overrides)
+
     def pull_outflow(self):
         """Pull storage by residence time from the tank, updating tank storage.
 
@@ -397,6 +426,18 @@ class DecayTank(Tank, DecayObj):
         # Update timestep and ds functions
         self.end_timestep = self.end_timestep_decay
         self.ds = self.decay_ds
+
+    def apply_overrides(self, overrides: Dict[str, Any] = {}):
+        """Apply overrides to the decaytank.
+
+        Enables a user to override any of the following parameters:
+        decays.
+
+        Args:
+            overrides (dict, optional): Dictionary of overrides. Defaults to {}.
+        """
+        self.decays.update(overrides.pop("decays", {}))
+        super().apply_overrides(overrides)
 
     def end_timestep_decay(self):
         """Update state variables and call make_decay."""
@@ -445,6 +486,21 @@ class QueueTank(Tank):
         )
         # TODO should mass balance call internal arc (is this arc called in arc mass
         #   balance?)
+
+    def apply_overrides(self, overrides: Dict[str, Any] = {}):
+        """Apply overrides to the queuetank.
+
+        Enables a user to override any of the following parameters:
+        number_of_timesteps.
+
+        Args:
+            overrides (dict, optional): Dictionary of overrides. Defaults to {}.
+        """
+        self.number_of_timesteps = overrides.pop(
+            "number_of_timesteps", self.number_of_timesteps
+        )
+        self.internal_arc.number_of_timesteps = self.number_of_timesteps
+        super().apply_overrides(overrides)
 
     def get_avail(self):
         """Return the active_storage of the tank.
@@ -613,6 +669,22 @@ class DecayQueueTank(QueueTank):
         )
 
         self.end_timestep = self._end_timestep
+
+    def apply_overrides(self, overrides: Dict[str, Any] = {}):
+        """Apply overrides to the decayqueuetank.
+
+        Enables a user to override any of the following parameters:
+        number_of_timesteps, decays.
+
+        Args:
+            overrides (dict, optional): Dictionary of overrides. Defaults to {}.
+        """
+        self.number_of_timesteps = overrides.pop(
+            "number_of_timesteps", self.number_of_timesteps
+        )
+        self.internal_arc.number_of_timesteps = self.number_of_timesteps
+        self.internal_arc.decays.update(overrides.pop("decays", {}))
+        super().apply_overrides(overrides)
 
     def _end_timestep(self):
         """End timestep wrapper that removes decayed pollutants and calls internal

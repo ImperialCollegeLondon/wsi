@@ -263,6 +263,85 @@ class MyTestClass(TestCase):
         }
         self.assertDictAlmostEqual(d4, tank.storage, 15)
 
+    def test_overrides(self):
+        # node - no need to test
+        # tank
+        tank = Tank(capacity=10, area=8, datum=4)
+        tank.apply_overrides({"capacity": 3, "area": 2, "datum": 3.5})
+        self.assertEqual(tank.capacity, 3)
+        self.assertEqual(tank.area, 2)
+        self.assertEqual(tank.datum, 3.5)
+        # residence tank
+        tank = ResidenceTank(capacity=10, area=8, datum=4, residence_time=8)
+        tank.apply_overrides(
+            {"capacity": 3, "area": 2, "datum": 3.5, "residence_time": 6}
+        )
+        self.assertEqual(tank.capacity, 3)
+        self.assertEqual(tank.area, 2)
+        self.assertEqual(tank.datum, 3.5)
+        self.assertEqual(tank.residence_time, 6)
+        # decay tank
+        tank = DecayTank(
+            capacity=10,
+            area=8,
+            datum=4,
+            decays={"nitrate": {"constant": 0.001, "exponent": 1.005}},
+        )
+        tank.apply_overrides(
+            {
+                "capacity": 3,
+                "area": 2,
+                "datum": 3.5,
+                "decays": {"phosphate": {"constant": 1.001, "exponent": 10.005}},
+            }
+        )
+        self.assertEqual(tank.capacity, 3)
+        self.assertEqual(tank.area, 2)
+        self.assertEqual(tank.datum, 3.5)
+        self.assertDictEqual(
+            tank.decays,
+            {
+                "nitrate": {"constant": 0.001, "exponent": 1.005},
+                "phosphate": {"constant": 1.001, "exponent": 10.005},
+            },
+        )
+        # queue tank
+        tank = QueueTank(capacity=10, area=8, datum=4, number_of_timesteps=8)
+        tank.apply_overrides(
+            {"capacity": 3, "area": 2, "datum": 3.5, "number_of_timesteps": 6}
+        )
+        self.assertEqual(tank.capacity, 3)
+        self.assertEqual(tank.area, 2)
+        self.assertEqual(tank.datum, 3.5)
+        self.assertEqual(tank.number_of_timesteps, 6)
+        self.assertEqual(tank.internal_arc.number_of_timesteps, 6)
+        # decay queue tank
+        tank = DecayQueueTank(
+            capacity=10,
+            area=8,
+            datum=4,
+            number_of_timesteps=8,
+            decays={"phosphate": {"constant": 0.001, "exponent": 1.005}},
+        )
+        tank.apply_overrides(
+            {
+                "capacity": 3,
+                "area": 2,
+                "datum": 3.5,
+                "number_of_timesteps": 6,
+                "decays": {"phosphate": {"constant": 1.001, "exponent": 10.005}},
+            }
+        )
+        self.assertEqual(tank.capacity, 3)
+        self.assertEqual(tank.area, 2)
+        self.assertEqual(tank.datum, 3.5)
+        self.assertEqual(tank.number_of_timesteps, 6)
+        self.assertEqual(tank.internal_arc.number_of_timesteps, 6)
+        self.assertDictEqual(
+            tank.internal_arc.decays,
+            {"phosphate": {"constant": 1.001, "exponent": 10.005}},
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
