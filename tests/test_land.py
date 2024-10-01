@@ -21,9 +21,10 @@ from wsimod.nodes.land import (
     PerviousSurface,
     Surface,
 )
-from wsimod.nodes.nodes import Node, DecayTank
+from wsimod.nodes.nodes import Node
 from wsimod.nodes.sewer import Sewer
 from wsimod.nodes.storage import Reservoir
+from wsimod.nodes.tank import Tank
 from wsimod.orchestration.model import to_datetime
 
 from pathlib import Path
