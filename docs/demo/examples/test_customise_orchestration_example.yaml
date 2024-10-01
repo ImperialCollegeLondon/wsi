@@ -1,0 +1,75 @@
+orchestration:
+- Groundwater: infiltrate
+- Sewer: make_discharge
+
+nodes:
+  Sewer:
+    type_: Sewer
+    name: my_sewer
+    capacity: 0.04
+
+  Groundwater:
+    type_: Groundwater
+    name: my_groundwater
+    capacity: 100
+    area: 100
+
+  River:
+    type_: Node
+    name: my_river
+
+  Waste:
+    type_: Waste
+    name: my_outlet
+
+arcs:
+  storm_outflow:
+    type_: Arc
+    name: storm_outflow
+    in_port: my_sewer
+    out_port: my_river
+
+  baseflow:
+    type_: Arc
+    name: baseflow
+    in_port: my_groundwater
+    out_port: my_river
+
+  catchment_outflow:
+    type_: Arc
+    name: catchment_outflow
+    in_port: my_river
+    out_port: my_outlet
+
+pollutants:
+- org-phosphorus
+- phosphate
+- ammonia
+- solids
+- temperature
+- nitrate
+- nitrite
+- org-nitrogen
+additive_pollutants:
+- org-phosphorus
+- phosphate
+- ammonia
+- solids
+- nitrate
+- nitrite
+- org-nitrogen
+non_additive_pollutants:
+- temperature
+float_accuracy: 1.0e-06
+
+dates:
+- '2000-01-01'
+- '2000-01-02'
+- '2000-01-03'
+- '2000-01-04'
+- '2000-01-05'
+- '2000-01-06'
+- '2000-01-07'
+- '2000-01-08'
+- '2000-01-09'
+- '2000-01-10'
