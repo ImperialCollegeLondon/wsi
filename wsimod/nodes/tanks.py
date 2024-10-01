@@ -1,6 +1,6 @@
 """Module for defining tanks."""
 
-from wsimod.arcs import AltQueueArc, DecayArcAlt
+from wsimod.arcs.arcs import AltQueueArc, DecayArcAlt
 from wsimod.core import constants
 from wsimod.core.core import DecayObj, WSIObj
 
