@@ -262,7 +262,7 @@ class MyTestClass(TestCase):
             "temperature": ((5 * 10) + (15 * 1)) / 6,
         }
         self.assertDictAlmostEqual(d4, tank.storage, 15)
-        
+
     def test_overrides(self):
         # node - no need to test
         # tank
