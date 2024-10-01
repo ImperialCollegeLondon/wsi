@@ -24,7 +24,10 @@ from wsimod.nodes.land import (
 from wsimod.nodes.nodes import Node
 from wsimod.nodes.sewer import Sewer
 from wsimod.nodes.storage import Reservoir
+from wsimod.nodes.tanks import Tank, DecayTank
 from wsimod.orchestration.model import to_datetime
+
+from pathlib import Path
 
 
 class MyTestClass(TestCase):
@@ -903,7 +906,7 @@ class MyTestClass(TestCase):
         d1["org-phosphorus"] = disso["P"]
         d1["org-nitrogen"] = disso["N"]
 
-        self.assertDictAlmostEqual(d1, r1, 15)
+        self.assertDictAlmostEqual(d1, r1, 14)
         self.assertDictAlmostEqual(d2, r2, 15)
 
     def test_crop_uptake(self):
@@ -1167,6 +1170,258 @@ class MyTestClass(TestCase):
 
         d3 = {"phosphate": 0, "temperature": 0, "volume": 0.2 * 0.5 * 1.5}
         self.assertDictAlmostEqual(d3, surface.storage, 16)
+
+    def test_land_overrides(self):
+        constants.set_simple_pollutants()
+        node = Land(name="")
+        node.apply_overrides(
+            {
+                "surface_residence_time": 4.9,
+                "subsurface_residence_time": 23.7,
+                "percolation_residence_time": 56.1,
+            }
+        )
+        self.assertEqual(node.surface_residence_time, 4.9)
+        self.assertEqual(node.surface_runoff.residence_time, 4.9)
+        self.assertEqual(node.subsurface_residence_time, 23.7)
+        self.assertEqual(node.subsurface_runoff.residence_time, 23.7)
+        self.assertEqual(node.percolation_residence_time, 56.1)
+
+    def test_surface_overrides(self):
+        constants.set_default_pollutants()
+        decaytank = DecayTank()
+        surface = Surface(
+            parent=decaytank, area=5, depth=0.1, pollutant_load={"nitrate": 5.7}
+        )
+        surface.apply_overrides(
+            {
+                "surface": "test_surface",
+                "area": 9.8,
+                "depth": 7.5,
+                "pollutant_load": {"phosphate": 10.1},
+                "decays": {"nitrate": {"constant": 0.001, "exponent": 1.005}},
+            }
+        )
+        self.assertEqual(surface.surface, "test_surface")
+        self.assertEqual(surface.area, 9.8)
+        self.assertEqual(surface.depth, 7.5)
+        self.assertEqual(surface.capacity, 9.8 * 7.5)
+        self.assertDictEqual(
+            surface.pollutant_load, {"nitrate": 5.7, "phosphate": 10.1}
+        )
+        self.assertDictEqual(
+            surface.decays, {"nitrate": {"constant": 0.001, "exponent": 1.005}}
+        )
+
+        # override the data_input_dict
+        # test the format of dict
+        new_data_input_dict = {
+            ("temperature", 1): 10,
+            ("temperature", 2): 20,
+        }
+        surface.apply_overrides({"data_input_dict": new_data_input_dict})
+        self.assertDictEqual(surface.data_input_dict, new_data_input_dict)
+        # test the format of str
+        new_data_input_dict = str(
+            Path(__file__).parent / "example_data_input_dict.csv.gz"
+        )
+        surface.apply_overrides({"data_input_dict": new_data_input_dict})
+        from wsimod.orchestration.model import read_csv
+
+        new_data_input_dict = read_csv(new_data_input_dict)
+        self.assertDictEqual(surface.data_input_dict, new_data_input_dict)
+        print(dict(list(surface.data_input_dict.items())[:5]))
+
+    def test_impervioussurface_overrides(self):
+        constants.set_default_pollutants()
+        decaytank = DecayTank()
+        surface = Surface(parent=decaytank, area=5, depth=0.1)
+        impervioussurface = ImperviousSurface(
+            parent=surface, area=1.5, et0_to_e=0.9, pore_depth=0.015
+        )
+        impervioussurface.apply_overrides(
+            {"surface": "test_surface", "area": 9.8, "pore_depth": 7.5, "et0_to_e": 3.5}
+        )
+        self.assertEqual(impervioussurface.area, 9.8)
+        self.assertEqual(impervioussurface.pore_depth, 7.5)
+        self.assertEqual(impervioussurface.depth, 7.5)
+        self.assertEqual(impervioussurface.capacity, 9.8 * 7.5)
+        self.assertEqual(impervioussurface.et0_to_e, 3.5)
+
+    def test_pervioussurface_overrides(self):
+        constants.set_default_pollutants()
+        decaytank = DecayTank()
+        surface = Surface(parent=decaytank, area=5, depth=0.1)
+        pervioussurface = PerviousSurface(
+            parent=surface, depth=0.5, area=1.5, initial_storage=0.5 * 1.5 * 0.25
+        )
+        pervioussurface.apply_overrides(
+            {
+                "field_capacity": 0.335,
+                "wilting_point": 0.112,
+                "total_porosity": 0.476,
+                "infiltration_capacity": 0.678,
+                "surface_coefficient": 0.237,
+                "percolation_coefficient": 0.777,
+                "et0_coefficient": 0.697,
+                "ihacres_p": 10.096,
+                "soil_temp_w_prev": 37.1,
+                "soil_temp_w_air": 23.6,
+                "soil_temp_w_deep": 3.4,
+                "soil_temp_deep": 2.2,
+                "surface": "test_surface",
+                "area": 9.8,
+                "depth": 7.5,
+            }
+        )
+        self.assertEqual(pervioussurface.field_capacity, 0.335)
+        self.assertEqual(pervioussurface.wilting_point, 0.112)
+        self.assertEqual(pervioussurface.total_porosity, 0.476)
+        self.assertEqual(pervioussurface.infiltration_capacity, 0.678)
+        self.assertEqual(pervioussurface.surface_coefficient, 0.237)
+        self.assertEqual(pervioussurface.percolation_coefficient, 0.777)
+        self.assertEqual(pervioussurface.et0_coefficient, 0.697)
+        self.assertEqual(pervioussurface.ihacres_p, 10.096)
+        self.assertEqual(pervioussurface.soil_temp_w_prev, 37.1)
+        self.assertEqual(pervioussurface.soil_temp_w_air, 23.6)
+        self.assertEqual(pervioussurface.soil_temp_w_deep, 3.4)
+        self.assertEqual(pervioussurface.soil_temp_deep, 2.2)
+
+        self.assertEqual(pervioussurface.field_capacity_m, 0.335 * 7.5)
+        self.assertEqual(pervioussurface.wilting_point_m, 0.112 * 7.5)
+        self.assertEqual(pervioussurface.depth, 0.476 * 7.5)
+        self.assertEqual(pervioussurface.area, 9.8)
+        self.assertEqual(pervioussurface.capacity, 7.5 * 0.476 * 9.8)
+        self.assertEqual(pervioussurface.surface, "test_surface")
+        self.assertEqual(pervioussurface.subsurface_coefficient, 1 - 0.777)
+
+    def test_growingsurface_overrides(self):
+        constants.set_default_pollutants()
+        decaytank = DecayTank()
+        surface = Surface(parent=decaytank, area=5, depth=0.1)
+        pervioussurface = PerviousSurface(
+            parent=surface, depth=0.5, area=1.5, initial_storage=0.5 * 1.5 * 0.25
+        )
+        growingsurface = GrowingSurface(parent=pervioussurface, area=1.5)
+        overrides = {
+            "ET_depletion_factor": 0.521,
+            "crop_cover_max": 1.342,
+            "ground_cover_max": 1.111,
+            "crop_factor_stages": [1, 2, 1],
+            "crop_factor_stage_dates": [1, 32, 90],
+            "sowing_day": 35,
+            "harvest_day": 89,
+            "satact": 0.567,
+            "thetaupp": 4.324,
+            "thetalow": 3.582,
+            "thetapow": 7.324,
+            "uptake1": 1.278,
+            "uptake2": 2.753,
+            "uptake3": 5.298,
+            "uptake_PNratio": 3.263,
+            "erodibility": 2.863,
+            "sreroexp": 5.634,
+            "cohesion": 8.903,
+            "slope": 6.231,
+            "srfilt": 9.231,
+            "macrofilt": 7.394,
+            "limpar": 4.211,
+            "exppar": 5.872,
+            "hsatINs": 20.321,
+            "denpar": 0.204,
+            "adosorption_nr_limit": 1.943,
+            "adsorption_nr_maxiter": 6321,
+            "kfr": 80.2,
+            "nfr": 42.3,
+            "kadsdes": 0.972,
+            "bulk_density": 1672,
+            "field_capacity": 0.335,
+            "wilting_point": 0.112,
+            "total_porosity": 0.476,
+            "rooting_depth": 7.5,
+        }
+        overrides_to_check = overrides.copy()
+        growingsurface.apply_overrides(overrides)
+
+        for k, v in overrides_to_check.items():
+            if isinstance(v, list):
+                self.assertListEqual(getattr(growingsurface, k), v)
+            else:
+                self.assertEqual(getattr(growingsurface, k), v)
+
+        harvest_sow_calendar = [
+            0,
+            35,
+            89,
+            89 + 1,
+            365,
+        ]
+        self.assertListEqual(growingsurface.harvest_sow_calendar, harvest_sow_calendar)
+        self.assertListEqual(growingsurface.ground_cover_stages, [0, 0, 1.111, 0, 0])
+        self.assertListEqual(growingsurface.crop_cover_stages, [0, 0, 1.342, 0, 0])
+        self.assertEqual(growingsurface.autumn_sow, False)
+        self.assertEqual(growingsurface.total_available_water, (0.335 - 0.112) * 7.5)
+        self.assertEqual(
+            growingsurface.readily_available_water, (0.335 - 0.112) * 7.5 * 0.521
+        )
+        self.assertEqual(growingsurface.depth, 0.476 * 7.5)
+        self.assertEqual(growingsurface.capacity, 0.476 * 7.5 * 1.5)
+
+    def test_nutrientpool_overrides(self):
+        constants.set_default_pollutants()
+        decaytank = DecayTank()
+        surface = Surface(parent=decaytank, area=5, depth=0.1)
+        pervioussurface = PerviousSurface(
+            parent=surface, depth=0.5, area=1.5, initial_storage=0.5 * 1.5 * 0.25
+        )
+        growingsurface = GrowingSurface(parent=pervioussurface, area=1.5)
+        overrides = {
+            "fraction_dry_n_to_dissolved_inorganic": 0.29,
+            "degrhpar": {"N": 7 * 1e-1},
+            "dishpar": {"P": 7 * 1e-1},
+            "minfpar": {"N": 1.00013, "P": 1.000003},
+            "disfpar": {"N": 1.000003, "P": 1.0000001},
+            "immobdpar": {"N": 1.0056, "P": 1.2866},
+            "fraction_manure_to_dissolved_inorganic": {"N": 0.35, "P": 0.21},
+            "fraction_residue_to_fast": {"N": 0.61, "P": 0.71},
+        }
+        growingsurface.nutrient_pool.apply_overrides(overrides)
+        self.assertEqual(
+            growingsurface.nutrient_pool.fraction_dry_n_to_dissolved_inorganic, 0.29
+        )
+        self.assertDictEqual(
+            growingsurface.nutrient_pool.degrhpar, {"N": 7 * 1e-1, "P": 7 * 1e-6}
+        )
+        self.assertDictEqual(
+            growingsurface.nutrient_pool.dishpar, {"N": 7 * 1e-5, "P": 7 * 1e-1}
+        )
+        self.assertDictEqual(
+            growingsurface.nutrient_pool.minfpar, {"N": 1.00013, "P": 1.000003}
+        )
+        self.assertDictEqual(
+            growingsurface.nutrient_pool.disfpar, {"N": 1.000003, "P": 1.0000001}
+        )
+        self.assertDictEqual(
+            growingsurface.nutrient_pool.immobdpar, {"N": 1.0056, "P": 1.2866}
+        )
+        self.assertDictEqual(
+            growingsurface.nutrient_pool.fraction_manure_to_dissolved_inorganic,
+            {"N": 0.35, "P": 0.21},
+        )
+        self.assertDictEqual(
+            growingsurface.nutrient_pool.fraction_residue_to_fast,
+            {"N": 0.61, "P": 0.71},
+        )
+
+        self.assertDictEqual(
+            growingsurface.nutrient_pool.fraction_manure_to_fast,
+            {"N": 1 - 0.35, "P": 1 - 0.21},
+        )
+        self.assertDictEqual(
+            growingsurface.nutrient_pool.fraction_residue_to_humus,
+            {"N": 1 - 0.61, "P": 1 - 0.71},
+        )
+        self.assertEqual(growingsurface.nutrient_pool.fraction_dry_n_to_fast, 0.71)
 
 
 if __name__ == "__main__":

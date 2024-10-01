@@ -6,6 +6,7 @@
 import sys
 from bisect import bisect_left
 from math import exp, log, log10, sin
+from typing import Any, Dict
 
 from wsimod.core import constants
 from wsimod.nodes.nodes import Node
@@ -159,6 +160,30 @@ class Land(Node):
         self.mass_balance_ds.append(self.surface_runoff.ds)
         self.mass_balance_ds.append(self.subsurface_runoff.ds)
         self.mass_balance_ds.append(self.percolation.ds)
+
+    def apply_overrides(self, overrides=Dict[str, Any]):
+        """Apply overrides to the Land.
+
+        Enables a user to override any parameter of the residence_time and update
+        the residence_tank accordingly.
+
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        self.surface_residence_time = overrides.pop(
+            "surface_residence_time", self.surface_residence_time
+        )
+        self.subsurface_residence_time = overrides.pop(
+            "subsurface_residence_time", self.subsurface_residence_time
+        )
+        self.percolation_residence_time = overrides.pop(
+            "percolation_residence_time", self.percolation_residence_time
+        )
+        self.surface_runoff.residence_time = self.surface_residence_time
+        self.subsurface_runoff.residence_time = self.subsurface_residence_time
+        self.percolation.residence_time = self.percolation_residence_time
+        super().apply_overrides(overrides)
 
     def apply_irrigation(self):
         """Iterate over any irrigation functions (needs further testing..
@@ -351,6 +376,47 @@ class Surface(DecayTank):
             self.inflows.append(self.simple_deposition)
         self.processes = []
         self.outflows = []
+
+    def apply_overrides(self, overrides=Dict[str, Any]):
+        """Override parameters.
+
+        Enables a user to override any of the following parameters:
+        area and depth (both will update the capacity), pollutant_load (the
+        entire dict does not need to be redefined, only changed values need to
+        be included).
+
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        self.surface = overrides.pop("surface", self.surface)
+        self.pollutant_load.update(overrides.pop("pollutant_load", {}))
+
+        self.area = overrides.pop("area", self.area)
+        self.depth = overrides.pop("depth", self.depth)
+        self.capacity = self.area * self.depth
+
+        if "capacity" in overrides.keys():
+            overrides.pop("capacity")
+            print(
+                "Warning: specifying capacity is depreciated in overrides for surface, \
+		please specify depth and area instead. capacity override value has been ignored"
+            )
+
+        # overrides data_input_dict
+        from wsimod.orchestration.model import read_csv
+
+        content = overrides.pop("data_input_dict", self.data_input_dict)
+        if isinstance(content, str):
+            self.data_input_dict = read_csv(content)
+        elif isinstance(content, dict):
+            self.data_input_dict = content
+        else:
+            raise ValueError(
+                f"{content.__class__} is not a recognised format for data_input_dict"
+            )
+
+        super().apply_overrides(overrides)
 
     def run(self):
         """Call run function (called from Land node)."""
@@ -550,6 +616,28 @@ class ImperviousSurface(Surface):
 
         self.outflows.append(self.push_to_sewers)
 
+    def apply_overrides(self, overrides=Dict[str, Any]):
+        """Override parameters.
+
+        Enables a user to override any of the following parameters:
+        eto_to_e, pore_depth.
+
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        self.et0_to_e = overrides.pop("et0_to_e", self.et0_to_e)
+        if "depth" in overrides.keys():
+            overrides.pop("depth")
+            print(
+                "ERROR: specifying depth is depreciated in overrides for \
+		impervious surface, please specify pore_depth instead"
+            )
+        self.pore_depth = overrides.pop("pore_depth", self.pore_depth)
+        self.depth = self.pore_depth
+        self.capacity = self.area * self.depth
+        super().apply_overrides(overrides)
+
     def precipitation_evaporation(self):
         """Inflow function that is a simple rainfall-evaporation model, updating the.
 
@@ -747,6 +835,49 @@ class PerviousSurface(Surface):
         # temperature... probably need to just give it the decay function
 
         self.outflows.append(self.route)
+
+    def apply_overrides(self, overrides=Dict[str, Any]):
+        """Override parameters.
+
+        Enables a user to override any of the following parameters:
+        field_capacity, wilting_point, total_porosity, infiltration_capacity,
+        surface_coefficient, percolation_coefficient, et0_coefficient, ihacres_p,
+        soil_temp_w_prev, soil_temp_w_air, soil_temp_w_deep, soil_temp_deep,
+        and the corresponding parameter values, including field_capacity_m,
+        wilting_point_m, depth, capacity, subsurface_coefficient.
+
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+
+        self.depth /= self.total_porosity  # restore the physical depth (root)
+
+        overwrite_params = [
+            "field_capacity",
+            "wilting_point",
+            "total_porosity",
+            "infiltration_capacity",
+            "surface_coefficient",
+            "percolation_coefficient",
+            "et0_coefficient",
+            "ihacres_p",
+            "soil_temp_w_prev",
+            "soil_temp_w_air",
+            "soil_temp_w_deep",
+            "soil_temp_deep",
+        ]
+        for param in overwrite_params:
+            setattr(self, param, overrides.pop(param, getattr(self, param)))
+
+        self.subsurface_coefficient = 1 - self.percolation_coefficient
+
+        super().apply_overrides(overrides)
+        # After the depth has been changed ...
+        self.field_capacity_m = self.field_capacity * self.depth
+        self.wilting_point_m = self.wilting_point * self.depth
+        self.depth *= self.total_porosity  # update the simulation depth
+        self.capacity = self.depth * self.area
 
     def get_cmd(self):
         """Calculate moisture deficit (i.e., the tank excess converted to depth).
@@ -1115,22 +1246,12 @@ class GrowingSurface(PerviousSurface):
         self.bulk_density = 1300  # [kg/m3]
         super().__init__(depth=depth, **kwargs)
 
-        # Infer basic sow/harvest calendar
-        self.harvest_sow_calendar = [
-            0,
-            self.sowing_day,
-            self.harvest_day,
-            self.harvest_day + 1,
-            365,
-        ]
-        self.ground_cover_stages = [0, 0, self.ground_cover_max, 0, 0]
-        self.crop_cover_stages = [0, 0, self.crop_cover_max, 0, 0]
-
-        # Use day number of 181 to indicate autumn-sown (from HYPE)
-        if self.sowing_day > 181:
-            self.autumn_sow = True
-        else:
-            self.autumn_sow = False
+        (
+            self.harvest_sow_calendar,
+            self.ground_cover_stages,
+            self.crop_cover_stages,
+            self.autumn_sow,
+        ) = self.infer_sow_harvest_calendar()
 
         # State variables
         self.days_after_sow = None
@@ -1139,13 +1260,10 @@ class GrowingSurface(PerviousSurface):
         self.crop_factor = 0
         self.et0_coefficient = 1
 
-        # Calculate parameters based on capacity/wp
-        self.total_available_water = self.field_capacity_m - self.wilting_point_m
-        if self.total_available_water < 0:
-            print("warning: TAW < 0...")
-        self.readily_available_water = (
-            self.total_available_water * self.ET_depletion_factor
-        )
+        (
+            self.total_available_water,
+            self.readily_available_water,
+        ) = self.calculate_available_water()
 
         # Initiliase nutrient pools
         self.nutrient_pool = NutrientPool()
@@ -1200,6 +1318,113 @@ class GrowingSurface(PerviousSurface):
                 self.nutrient_pool.fast_pool.storage["P"] = initial_soil_storage[
                     "org-phosphorus"
                 ]
+
+    def infer_sow_harvest_calendar(self):
+        """Infer basic sow/harvest calendar and indicate autumn-sown.
+        Returns:
+            (list): havest/sow calendar
+            (list): ground cover stages
+            (list): crop cover stages
+            (boolean): indication for autumn-sown crops
+        """
+        # Infer basic sow/harvest calendar
+        harvest_sow_calendar = [
+            0,
+            self.sowing_day,
+            self.harvest_day,
+            self.harvest_day + 1,
+            365,
+        ]
+        ground_cover_stages = [0, 0, self.ground_cover_max, 0, 0]
+        crop_cover_stages = [0, 0, self.crop_cover_max, 0, 0]
+
+        # Use day number of 181 to indicate autumn-sown (from HYPE)
+        if self.sowing_day > 181:
+            autumn_sow = True
+        else:
+            autumn_sow = False
+
+        return harvest_sow_calendar, ground_cover_stages, crop_cover_stages, autumn_sow
+
+    def calculate_available_water(self):
+        """Calculate total/readily available water based on capacity/wp.
+        Returns:
+            (float): total available water
+            (float): readily available water
+        """
+        # Calculate parameters based on capacity/wp
+        total_available_water = self.field_capacity_m - self.wilting_point_m
+        if total_available_water < 0:
+            print("warning: TAW < 0...")
+        readily_available_water = total_available_water * self.ET_depletion_factor
+
+        return total_available_water, readily_available_water
+
+    def apply_overrides(self, overrides=Dict[str, Any]):
+        """Override parameters.
+
+        Enables a user to override any of the following parameters
+
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        overwrite_params = [
+            "ET_depletion_factor",
+            "crop_cover_max",
+            "ground_cover_max",
+            "crop_factor_stages",
+            "crop_factor_stage_dates",
+            "sowing_day",
+            "harvest_day",
+            "satact",
+            "thetaupp",
+            "thetalow",
+            "thetapow",
+            "uptake1",
+            "uptake2",
+            "uptake3",
+            "uptake_PNratio",
+            "erodibility",
+            "sreroexp",
+            "cohesion",
+            "slope",
+            "srfilt",
+            "macrofilt",
+            "limpar",
+            "exppar",
+            "hsatINs",
+            "denpar",
+            "adosorption_nr_limit",
+            "adsorption_nr_maxiter",
+            "kfr",
+            "nfr",
+            "kadsdes",
+            "bulk_density",
+        ]
+        for param in overwrite_params:
+            setattr(self, param, overrides.pop(param, getattr(self, param)))
+
+        if "depth" in overrides.keys():
+            overrides.pop("depth")
+            print(
+                "ERROR: specifying depth is depreciated in overrides for \
+		GrowingSurface, please specify rooting_depth instead"
+            )
+        self.rooting_depth = overrides.pop("rooting_depth", self.rooting_depth)
+        overrides["depth"] = self.rooting_depth
+        super().apply_overrides(overrides)
+
+        (
+            self.harvest_sow_calendar,
+            self.ground_cover_stages,
+            self.crop_cover_stages,
+            self.autumn_sow,
+        ) = self.infer_sow_harvest_calendar()
+        (
+            self.total_available_water,
+            self.readily_available_water,
+        ) = self.calculate_available_water()
 
     def pull_storage(self, vqip):
         """Pull water from the surface, updating the surface storage VQIP. Nutrient pool
@@ -2102,6 +2327,20 @@ class IrrigationSurface(GrowingSurface):
         # irrigated * proportion of demand met
 
         super().__init__(**kwargs)
+
+    def apply_overrides(self, overrides=Dict[str, Any]):
+        """Override parameters.
+
+        Enables a user to override irrigation_coefficient
+
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        self.irrigation_coefficient = overrides.pop(
+            "irrigation_coefficient", self.irrigation_coefficient
+        )
+        super().apply_overrides(overrides)
 
     def irrigate(self):
         """Calculate water demand for crops and call parent node to acquire water,
