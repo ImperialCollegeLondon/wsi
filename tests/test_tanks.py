@@ -3,6 +3,7 @@
 import unittest
 from unittest import TestCase
 
+from wsimod.core import constants
 from wsimod.nodes.nodes import Node
 from wsimod.nodes.tanks import (
     DecayQueueTank,
@@ -14,6 +15,10 @@ from wsimod.nodes.tanks import (
 
 
 class MyTestClass(TestCase):
+    def setUp(self):
+        """"""
+        constants.set_simple_pollutants()
+
     def assertDictAlmostEqual(self, d1, d2, accuracy=19):
         """
 
