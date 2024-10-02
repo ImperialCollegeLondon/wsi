@@ -17,6 +17,7 @@ from wsimod.nodes.waste import Waste
 from pathlib import Path
 import pandas as pd
 
+
 class MyTestClass(TestCase):
     def setUp(self):
         """"""
