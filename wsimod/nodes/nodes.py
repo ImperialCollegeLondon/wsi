@@ -10,7 +10,7 @@ from typing import Any, Dict
 
 from wsimod.core import constants
 from wsimod.core.core import WSIObj
-
+from wsimod.orchestration.model import read_csv
 
 class Node(WSIObj):
     """"""
@@ -88,10 +88,10 @@ class Node(WSIObj):
             overrides (dict, optional): Dictionary of overrides. Defaults to {}.
         """
         # overrides data_input_dict
-        from wsimod.orchestration.model import read_csv
-
+        
         content = overrides.pop("data_input_dict", self.data_input_dict)
-        self.data_input_dict = read_csv(content)
+        if isinstance(content, str):
+            self.data_input_dict = read_csv(content)
         elif not content:
             pass
         else:
