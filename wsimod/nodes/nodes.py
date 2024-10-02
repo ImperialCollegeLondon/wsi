@@ -91,10 +91,7 @@ class Node(WSIObj):
         from wsimod.orchestration.model import read_csv
 
         content = overrides.pop("data_input_dict", self.data_input_dict)
-        if isinstance(content, str):
-            self.data_input_dict = read_csv(content)
-        elif isinstance(content, dict):
-            self.data_input_dict = content
+        self.data_input_dict = read_csv(content)
         elif not content:
             pass
         else:
