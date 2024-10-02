@@ -15,7 +15,7 @@ from wsimod.nodes.nodes import Node
 from wsimod.nodes.storage import Storage
 from wsimod.nodes.waste import Waste
 from pathlib import Path
-
+import pandas as pd
 
 class MyTestClass(TestCase):
     def setUp(self):
@@ -413,10 +413,12 @@ class MyTestClass(TestCase):
         self.assertDictEqual(d2, reply)
 
     def test_data_read(self):
-        node = Node(name="", data_input_dict={("temperature", 1): 15})
-        node.t = 1
+        data_path = '../docs/demo/data/processed/timeries_data.csv'
+        input_data = pd.read_csv(data_path)
+        node = Node(name="", data_input_dict=data_path)
+        node.t = Node.data_input_dict.keys()[0][1]
 
-        self.assertEqual(15, node.get_data_input("temperature"))
+        self.assertEqual(input_data['temperature'].iloc[0], node.get_data_input("temperature"))
 
 
 if __name__ == "__main__":
