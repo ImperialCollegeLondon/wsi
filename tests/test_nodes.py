@@ -14,7 +14,7 @@ from wsimod.core import constants
 from wsimod.nodes.nodes import Node
 from wsimod.nodes.storage import Storage
 from wsimod.nodes.waste import Waste
-from pathlib import Path
+import os
 import pandas as pd
 
 
@@ -420,14 +420,8 @@ class MyTestClass(TestCase):
         self.assertEqual(15, node.get_data_input("temperature"))
 
     def test_data_overrides(self):
-        data_path = (
-            Path.cwd()
-            / "docs"
-            / "demo"
-            / "data"
-            / "processed"
-            / "example_override_data.csv.gz"
-        )
+        data_path = os.path.join(os.getcwd(), "docs", "demo", "data",
+                                 "processed", "example_override_data.csv.gz")
         input_data = pd.read_csv(data_path)
 
         overrides = {"data_input_dict": data_path}
