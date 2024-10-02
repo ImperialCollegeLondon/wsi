@@ -418,7 +418,7 @@ class MyTestClass(TestCase):
         node.t = 1
 
         self.assertEqual(15, node.get_data_input("temperature"))
-    
+
     def test_data_overrides(self):
         data_path = "../docs/demo/data/processed/example_override_data.csv.gz"
         input_data = pd.read_csv(data_path)
