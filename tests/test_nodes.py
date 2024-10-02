@@ -413,13 +413,13 @@ class MyTestClass(TestCase):
         self.assertDictEqual(d2, reply)
 
     def test_data_read(self):
-        data_path = '../docs/demo/data/processed/timeries_data.csv'
+        data_path = "../docs/demo/data/processed/timeries_data.csv"
         input_data = pd.read_csv(data_path)
         node = Node(name="", data_input_dict=data_path)
         node.t = Node.data_input_dict.keys()[0][1]
 
         self.assertEqual(
-            input_data['temperature'].iloc[0], node.get_data_input("temperature")
+            input_data["temperature"].iloc[0], node.get_data_input("temperature")
         )
 
 
