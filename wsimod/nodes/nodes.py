@@ -89,7 +89,7 @@ class Node(WSIObj):
             overrides (dict, optional): Dictionary of overrides. Defaults to {}.
         """
         # overrides data_input_dict
-
+        
         content = overrides.pop("data_input_dict", self.data_input_dict)
         if isinstance(content, str):
             self.data_input_dict = read_csv(content)

@@ -414,13 +414,23 @@ class MyTestClass(TestCase):
         self.assertDictEqual(d2, reply)
 
     def test_data_read(self):
-        data_path = "../docs/demo/data/processed/timeries_data.csv"
+        node = Node(name="", data_input_dict={("temperature", 1): 15})
+        node.t = 1
+
+        self.assertEqual(15, node.get_data_input("temperature"))
+    
+    def test_data_overrides(self):
+        data_path = "../docs/demo/data/processed/example_override_data.csv.gz"
         input_data = pd.read_csv(data_path)
-        node = Node(name="", data_input_dict=data_path)
-        node.t = Node.data_input_dict.keys()[0][1]
+        
+        overrides = {'data_input_dict': data_path}
+        node = Node(name="")
+        node.apply_overrides(overrides)
+        node.t = list(node.data_input_dict.keys())[0][1]
 
         self.assertEqual(
-            input_data["temperature"].iloc[0], node.get_data_input("temperature")
+            input_data.groupby("variable").get_group("temperature")["value"].iloc[0],
+            node.get_data_input("temperature")
         )
 
 
