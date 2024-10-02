@@ -418,7 +418,9 @@ class MyTestClass(TestCase):
         node = Node(name="", data_input_dict=data_path)
         node.t = Node.data_input_dict.keys()[0][1]
 
-        self.assertEqual(input_data['temperature'].iloc[0], node.get_data_input("temperature"))
+        self.assertEqual(
+            input_data['temperature'].iloc[0], node.get_data_input("temperature")
+        )
 
 
 if __name__ == "__main__":
