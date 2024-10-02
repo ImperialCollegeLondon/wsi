@@ -422,15 +422,15 @@ class MyTestClass(TestCase):
     def test_data_overrides(self):
         data_path = "../docs/demo/data/processed/example_override_data.csv.gz"
         input_data = pd.read_csv(data_path)
-        
-        overrides = {'data_input_dict': data_path}
+
+        overrides = {"data_input_dict": data_path}
         node = Node(name="")
         node.apply_overrides(overrides)
         node.t = list(node.data_input_dict.keys())[0][1]
 
         self.assertEqual(
             input_data.groupby("variable").get_group("temperature")["value"].iloc[0],
-            node.get_data_input("temperature")
+            node.get_data_input("temperature"),
         )
 
 
