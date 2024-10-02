@@ -425,7 +425,7 @@ class MyTestClass(TestCase):
             / "docs"
             / "demo"
             / "data"
-            / "processed "
+            / "processed"
             / "example_override_data.csv.gz"
         )
         input_data = pd.read_csv(data_path)
