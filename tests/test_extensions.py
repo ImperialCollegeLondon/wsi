@@ -172,3 +172,36 @@ def test_handler_extensions(temp_extension_registry):
 
     assert node.pull_check() == "dummy_patch"
     assert node.pull_set({"volume": 1}) == "dummy_node - 1"
+
+
+def test_custom_class():
+    """Test a custom class."""
+
+    import tempfile
+
+    from wsimod.nodes.nodes import Node, NODES_REGISTRY
+    from wsimod.orchestration.model import Model, to_datetime
+
+    class CustomNode(Node):
+        def __init__(self, name):
+            super().__init__(name)
+            self.custom_attr = 1
+
+        def end_timestep(self):
+            self.custom_attr += 1
+            super().end_timestep()
+
+    NODES_REGISTRY["CustomNode"] = CustomNode
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        model = Model()
+        model.nodes["node_name"] = CustomNode("node_name")
+        model.save(temp_dir)
+
+        del model
+        model = Model()
+        model.load(temp_dir)
+        model.river_dishcarge_order = []
+        assert model.nodes["node_name"].custom_attr == 1
+        model.run(dates=[to_datetime("2000-01-01")])
+        assert model.nodes["node_name"].custom_attr == 2

@@ -193,6 +193,7 @@ class Model(WSIObj):
         FLAG:
             E.G. ADDITION FOR NEW ORCHESTRATION
         """
+        load_extension_files(data.get("extensions", []))
 
         if "orchestration" in data.keys():
             # Update orchestration
@@ -220,7 +221,6 @@ class Model(WSIObj):
         if "dates" in data.keys():
             self.dates = [to_datetime(x) for x in data["dates"]]
 
-        load_extension_files(data.get("extensions", []))
         apply_patches(self)
 
     def save(self, address, config_name="config.yml", compress=False):
@@ -497,6 +497,7 @@ class Model(WSIObj):
                 ]:
                     river_arcs[name] = self.arcs[name]
 
+        self.river_discharge_order = []
         if any(river_arcs):
             upstreamness = (
                 {x: 0 for x in self.nodes_type["Waste"].keys()}
@@ -505,7 +506,6 @@ class Model(WSIObj):
             )
             upstreamness = self.assign_upstream(river_arcs, upstreamness)
 
-            self.river_discharge_order = []
             if "River" in self.nodes_type:
                 for node in sorted(
                     upstreamness.items(), key=lambda item: item[1], reverse=True
