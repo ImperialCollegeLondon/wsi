@@ -443,7 +443,7 @@ class Model(WSIObj):
             del data["type_"]
 
             if node_type not in NODES_REGISTRY.keys():
-                raise ValueError(f"Node type {type_} not recognised")
+                raise ValueError(f"Node type {node_type} not recognised")
 
             if type_ not in self.nodes_type.keys():
                 self.nodes_type[type_] = {}
