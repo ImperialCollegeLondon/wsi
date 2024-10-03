@@ -191,7 +191,6 @@ def test_custom_class():
             self.custom_attr += 1
             super().end_timestep()
 
-    NODES_REGISTRY["CustomNode"] = CustomNode
 
     with tempfile.TemporaryDirectory() as temp_dir:
         model = Model()
