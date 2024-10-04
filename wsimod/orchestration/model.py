@@ -183,20 +183,30 @@ class Model(WSIObj):
         for key, item in overrides.items():
             data[key] = item
 
-        constants.POLLUTANTS = data["pollutants"]
-        constants.ADDITIVE_POLLUTANTS = data["additive_pollutants"]
-        constants.NON_ADDITIVE_POLLUTANTS = data["non_additive_pollutants"]
-        constants.FLOAT_ACCURACY = float(data["float_accuracy"])
+        constants.POLLUTANTS = data.get("pollutants", constants.POLLUTANTS)
+        constants.ADDITIVE_POLLUTANTS = data.get(
+            "additive_pollutants", constants.ADDITIVE_POLLUTANTS
+        )
+        constants.NON_ADDITIVE_POLLUTANTS = data.get(
+            "non_additive_pollutants", constants.NON_ADDITIVE_POLLUTANTS
+        )
+        constants.FLOAT_ACCURACY = float(
+            data.get("float_accuracy", constants.FLOAT_ACCURACY)
+        )
         self.__dict__.update(Model().__dict__)
 
         """
         FLAG:
             E.G. ADDITION FOR NEW ORCHESTRATION
         """
+        load_extension_files(data.get("extensions", []))
 
         if "orchestration" in data.keys():
             # Update orchestration
             self.orchestration = data["orchestration"]
+
+        if "nodes" not in data.keys():
+            raise ValueError("No nodes found in the config")
 
         nodes = data["nodes"]
 
@@ -214,13 +224,12 @@ class Model(WSIObj):
                         )
                         del surface["filename"]
                 node["surfaces"] = list(node["surfaces"].values())
-        arcs = data["arcs"]
+        arcs = data.get("arcs", {})
         self.add_nodes(list(nodes.values()))
         self.add_arcs(list(arcs.values()))
         if "dates" in data.keys():
             self.dates = [to_datetime(x) for x in data["dates"]]
 
-        load_extension_files(data.get("extensions", []))
         apply_patches(self)
 
     def save(self, address, config_name="config.yml", compress=False):
@@ -443,7 +452,7 @@ class Model(WSIObj):
             del data["type_"]
 
             if node_type not in NODES_REGISTRY.keys():
-                raise ValueError(f"Node type {type_} not recognised")
+                raise ValueError(f"Node type {node_type} not recognised")
 
             if type_ not in self.nodes_type.keys():
                 self.nodes_type[type_] = {}
@@ -497,6 +506,7 @@ class Model(WSIObj):
                 ]:
                     river_arcs[name] = self.arcs[name]
 
+        self.river_discharge_order = []
         if any(river_arcs):
             upstreamness = (
                 {x: 0 for x in self.nodes_type["Waste"].keys()}
@@ -505,7 +515,6 @@ class Model(WSIObj):
             )
             upstreamness = self.assign_upstream(river_arcs, upstreamness)
 
-            self.river_discharge_order = []
             if "River" in self.nodes_type:
                 for node in sorted(
                     upstreamness.items(), key=lambda item: item[1], reverse=True

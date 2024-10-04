@@ -172,3 +172,64 @@ def test_handler_extensions(temp_extension_registry):
 
     assert node.pull_check() == "dummy_patch"
     assert node.pull_set({"volume": 1}) == "dummy_node - 1"
+
+
+def test_custom_class_from_file():
+    """Test a custom class."""
+    from pathlib import Path
+    import yaml
+    import tempfile
+
+    from wsimod.nodes.nodes import NODES_REGISTRY
+    from wsimod.orchestration.model import Model, to_datetime
+
+    # Remove in case it was in there from previous test
+    NODES_REGISTRY.pop("CustomNode", None)
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        config = {
+            "nodes": {"node_name": {"type_": "CustomNode", "name": "node_name"}},
+            "extensions": [str(Path(__file__).parent / "custom_class.py")],
+        }
+
+        with open(temp_dir + "/config.yml", "w") as f:
+            yaml.dump(config, f)
+
+        model = Model()
+        model.load(temp_dir)
+        assert model.nodes["node_name"].custom_attr == 1
+        model.run(dates=[to_datetime("2000-01-01")])
+        assert model.nodes["node_name"].custom_attr == 2
+
+
+def test_custom_class_on_the_fly():
+    """Test a custom class."""
+
+    import tempfile
+
+    from wsimod.nodes.nodes import Node, NODES_REGISTRY
+    from wsimod.orchestration.model import Model, to_datetime
+
+    # Remove in case it was in there from previous test
+    NODES_REGISTRY.pop("CustomNode", None)
+
+    class CustomNode(Node):
+        def __init__(self, name):
+            super().__init__(name)
+            self.custom_attr = 1
+
+        def end_timestep(self):
+            self.custom_attr += 1
+            super().end_timestep()
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        model = Model()
+        model.nodes["node_name"] = CustomNode("node_name")
+        model.save(temp_dir)
+
+        del model
+        model = Model()
+        model.load(temp_dir)
+        assert model.nodes["node_name"].custom_attr == 1
+        model.run(dates=[to_datetime("2000-01-01")])
+        assert model.nodes["node_name"].custom_attr == 2
