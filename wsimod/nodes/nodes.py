@@ -96,7 +96,7 @@ class Node(WSIObj):
         elif not content:
             pass
         else:
-            print("ERROR: not recognised format for data_input_dict")
+            raise RuntimeError("Not recognised format for data_input_dict")
 
         if len(overrides) > 0:
             print(f"No override behaviour defined for: {overrides.keys()}")
