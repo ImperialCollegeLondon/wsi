@@ -400,7 +400,9 @@ class MyTestClass(TestCase):
             self.assertEqual(getattr(river, k), v)
         # test runtimeerrors
         self.assertRaises(RuntimeError, lambda: river.apply_overrides({'area': 75.2}))
-        self.assertRaises(RuntimeError, lambda: river.apply_overrides({'capacity': 123}))
+        self.assertRaises(
+            RuntimeError, lambda: river.apply_overrides({"capacity": 123})
+        )
 
     def test_riverreservoir_overrides(self):
         riverreservoir = RiverReservoir(name="")
