@@ -439,6 +439,8 @@ class MyTestClass(TestCase):
             input_data.groupby("variable").get_group("temperature")["value"].iloc[0],
             node.get_data_input("temperature"),
         )
+        # test runtime error
+        self.assertRaises(RuntimeError, lambda: node.apply_overrides({}))
 
 
 if __name__ == "__main__":
