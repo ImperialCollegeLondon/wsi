@@ -507,7 +507,7 @@ class River(Storage):
         # Set parameters
         self.depth = depth
         if depth != 2:
-            print(
+            raise RuntimeError(
                 "warning: the depth parameter is unused by River nodes because it is \
 		intended for capacity to be unbounded. It may be removed in a future version."
             )
@@ -612,38 +612,40 @@ class River(Storage):
             overrides (Dict[str, Any]): Dict describing which parameters should
                 be overridden (keys) and new values (values). Defaults to {}.
         """
-        overwrite_params = set([
-            "length",
-            "width",
-            "velocity",
-            "damp",
-            "mrf",
-            "uptake_PNratio",
-            "bulk_density",
-            "denpar_w",
-            "T_wdays",
-            "halfsatINwater",
-            "hsatTP",
-            "limpppar",
-            "prodNpar",
-            "prodPpar",
-            "muptNpar",
-            "muptPpar",
-            "max_temp_lag",
-            "max_phosphorus_lag",
-        ])
+        overwrite_params = set(
+            [
+                "length",
+                "width",
+                "velocity",
+                "damp",
+                "mrf",
+                "uptake_PNratio",
+                "bulk_density",
+                "denpar_w",
+                "T_wdays",
+                "halfsatINwater",
+                "hsatTP",
+                "limpppar",
+                "prodNpar",
+                "prodPpar",
+                "muptNpar",
+                "muptPpar",
+                "max_temp_lag",
+                "max_phosphorus_lag",
+            ]
+        )
 
         for param in overwrite_params.intersection(overrides.keys()):
             setattr(self, param, overrides.pop(param))
 
         if "area" in overrides.keys():
-            print(
+            raise RuntimeError(
                 "ERROR: specifying area is depreciated in overrides \
 		for river, please specify length and width instead"
             )
         overrides["area"] = self.length * self.width
         if "capacity" in overrides.keys():
-            print(
+            raise RuntimeError(
                 "ERROR: specifying capacity is depreciated in overrides \
 		for river, it is always set as unbounded capacity"
             )

@@ -387,8 +387,6 @@ class MyTestClass(TestCase):
             "muptPpar": 7.021,
             "max_temp_lag": 3.213,
             "max_phosphorus_lag": 78.321,
-            # 'area': 75.2,
-            # 'capacity': 123
         }
         overrides_to_check = overrides.copy()
         river.apply_overrides(overrides)
@@ -400,6 +398,9 @@ class MyTestClass(TestCase):
                 v = constants.UNBOUNDED_CAPACITY
                 self.assertEqual(river.tank.capacity, v)
             self.assertEqual(getattr(river, k), v)
+        # test runtimeerrors
+        self.assertRaises(RuntimeError, lambda: river.apply_overrides({'area': 75.2}))
+        self.assertRaises(RuntimeError, lambda: river.apply_overrides({'capacity': 123}))
 
     def test_riverreservoir_overrides(self):
         riverreservoir = RiverReservoir(name="")
