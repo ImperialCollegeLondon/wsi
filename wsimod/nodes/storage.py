@@ -612,7 +612,7 @@ class River(Storage):
             overrides (Dict[str, Any]): Dict describing which parameters should
                 be overridden (keys) and new values (values). Defaults to {}.
         """
-        overwrite_params = [
+        overwrite_params = set([
             "length",
             "width",
             "velocity",
@@ -631,10 +631,10 @@ class River(Storage):
             "muptPpar",
             "max_temp_lag",
             "max_phosphorus_lag",
-        ]
+        ])
 
-        for param in overwrite_params:
-            setattr(self, param, overrides.pop(param, getattr(self, param)))
+        for param in overwrite_params.intersection(overrides.keys()):
+            setattr(self, param, overrides.pop(param))
 
         if "area" in overrides.keys():
             print(
