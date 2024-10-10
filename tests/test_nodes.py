@@ -14,6 +14,8 @@ from wsimod.core import constants
 from wsimod.nodes.nodes import Node
 from wsimod.nodes.storage import Storage
 from wsimod.nodes.waste import Waste
+import os
+import pandas as pd
 
 
 class MyTestClass(TestCase):
@@ -416,6 +418,29 @@ class MyTestClass(TestCase):
         node.t = 1
 
         self.assertEqual(15, node.get_data_input("temperature"))
+
+    def test_data_overrides(self):
+        data_path = os.path.join(
+            os.getcwd(),
+            "docs",
+            "demo",
+            "data",
+            "processed",
+            "example_override_data.csv.gz",
+        )
+        input_data = pd.read_csv(data_path)
+
+        overrides = {"data_input_dict": data_path}
+        node = Node(name="")
+        node.apply_overrides(overrides)
+        node.t = list(node.data_input_dict.keys())[0][1]
+
+        self.assertEqual(
+            input_data.groupby("variable").get_group("temperature")["value"].iloc[0],
+            node.get_data_input("temperature"),
+        )
+        # test runtime error
+        self.assertRaises(RuntimeError, lambda: node.apply_overrides({}))
 
 
 if __name__ == "__main__":

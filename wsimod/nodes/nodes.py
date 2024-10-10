@@ -87,6 +87,17 @@ class Node(WSIObj):
         Args:
             overrides (dict, optional): Dictionary of overrides. Defaults to {}.
         """
+        # overrides data_input_dict
+        from wsimod.orchestration.model import read_csv
+
+        content = overrides.pop("data_input_dict", self.data_input_dict)
+        if isinstance(content, str):
+            self.data_input_dict = read_csv(content)
+        elif not content:
+            pass
+        else:
+            raise RuntimeError("Not recognised format for data_input_dict")
+
         if len(overrides) > 0:
             print(f"No override behaviour defined for: {overrides.keys()}")
 
