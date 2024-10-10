@@ -4,6 +4,7 @@
 @author: bdobson Converted to totals on 2022-05-03
 """
 from math import exp
+from typing import Any, Dict
 
 from wsimod.core import constants
 from wsimod.nodes.nodes import Node
@@ -72,6 +73,30 @@ class Storage(Node):
 
         # Mass balance
         self.mass_balance_ds.append(lambda: self.tank.ds())
+
+    def apply_overrides(self, overrides=Dict[str, Any]):
+        """Override parameters.
+
+        Enables a user to override any of the following parameters:
+        capacity, area, datum, decays.
+
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        # not using pop as these items need to stay
+        # in the overrides to be fed into the tank overrides
+        if "capacity" in overrides.keys():
+            self.capacity = overrides["capacity"]
+        if "area" in overrides.keys():
+            self.area = overrides["area"]
+        if "datum" in overrides.keys():
+            self.datum = overrides["datum"]
+        if "decays" in overrides.keys():
+            self.decays.update(overrides["decays"])
+        # apply tank overrides
+        self.tank.apply_overrides(overrides)
+        super().apply_overrides(overrides)
 
     def push_set_storage(self, vqip):
         """A node wrapper for the tank push_storage.
@@ -172,6 +197,23 @@ class Groundwater(Storage):
         self.data_input_dict = data_input_dict
         super().__init__(**kwargs)
 
+    def apply_overrides(self, overrides=Dict[str, Any]):
+        """Override parameters.
+
+        Enables a user to override any of the following parameters:
+        residence_time, infiltration_threshold, infiltration_pct.
+
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        self.residence_time = overrides.pop("residence_time", self.residence_time)
+        self.infiltration_threshold = overrides.pop(
+            "infiltration_threshold", self.infiltration_threshold
+        )
+        self.infiltration_pct = overrides.pop("infiltration_pct", self.infiltration_pct)
+        super().apply_overrides(overrides)
+
     def distribute(self):
         """Calculate outflow with residence time and send to Nodes or Rivers."""
         avail = self.tank.get_avail()["volume"] / self.residence_time
@@ -266,6 +308,19 @@ class QueueGroundwater(Storage):
                 parent=self,
                 initial_storage=self.initial_storage,
             )
+
+    def apply_overrides(self, overrides=Dict[str, Any]):
+        """Override parameters.
+
+        Enables a user to override any of the following parameters:
+        timearea.
+
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        self.timearea = overrides.pop("timearea", self.timearea)
+        super().apply_overrides(overrides)
 
     def push_set_timearea(self, vqip):
         """Push setting that enables timearea behaviour, (see __init__ for
@@ -450,7 +505,12 @@ class River(Storage):
                 _Units_: m3/day
         """
         # Set parameters
-        self.depth = depth  # [m]
+        self.depth = depth
+        if depth != 2:
+            raise RuntimeError(
+                "warning: the depth parameter is unused by River nodes because it is \
+		intended for capacity to be unbounded. It may be removed in a future version."
+            )
         self.length = length  # [m]
         self.width = width  # [m]
         self.velocity = velocity  # [m/dt]
@@ -491,16 +551,6 @@ class River(Storage):
         )
         self.muptNpar = 0.001  # [kg/m2/day] nitrogen macrophyte uptake rate
         self.muptPpar = 0.0001  # 0.01, # [kg/m2/day] phosphorus macrophyte uptake rate
-        self.qbank_365_days = [1e6, 1e6]  # [m3/day] store outflow in the previous year
-        self.qbank = (
-            1e6  # [m3/day] bankfull flow = second largest outflow in the previous year
-        )
-        self.qbankcorrpar = 0.001  # [-] correction coefficient for qbank flow
-        self.sedexppar = 1  # [-]
-        self.EPC0 = 0.05 * constants.MG_L_TO_KG_M3  # [mg/l]
-        self.kd_s = 0 * constants.MG_L_TO_KG_M3  # 6 * 1e-6, # [kg/m3]
-        self.kadsdes_s = 2  # 0.9, # [-]
-        self.Dsed = 0.2  # [m]
 
         self.max_temp_lag = 20
         self.lagged_temperatures = []
@@ -551,6 +601,56 @@ class River(Storage):
     #     self.v_change_vqip(vqip_, min(vqip_['volume'],
     #     self.get_dt_excess()['volume'])) _ = self.tank.push_storage(vqip_, force=True)
     #     return self.extract_vqip(vqip, vqip_)
+
+    def apply_overrides(self, overrides=Dict[str, Any]):
+        """Override parameters.
+
+        Enables a user to override any of the following parameters:
+        timearea.
+
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        overwrite_params = set(
+            [
+                "length",
+                "width",
+                "velocity",
+                "damp",
+                "mrf",
+                "uptake_PNratio",
+                "bulk_density",
+                "denpar_w",
+                "T_wdays",
+                "halfsatINwater",
+                "hsatTP",
+                "limpppar",
+                "prodNpar",
+                "prodPpar",
+                "muptNpar",
+                "muptPpar",
+                "max_temp_lag",
+                "max_phosphorus_lag",
+            ]
+        )
+
+        for param in overwrite_params.intersection(overrides.keys()):
+            setattr(self, param, overrides.pop(param))
+
+        if "area" in overrides.keys():
+            raise RuntimeError(
+                "ERROR: specifying area is depreciated in overrides \
+		for river, please specify length and width instead"
+            )
+        overrides["area"] = self.length * self.width
+        if "capacity" in overrides.keys():
+            raise RuntimeError(
+                "ERROR: specifying capacity is depreciated in overrides \
+		for river, it is always set as unbounded capacity"
+            )
+        overrides["capacity"] = constants.UNBOUNDED_CAPACITY
+        super().apply_overrides(overrides)
 
     def pull_check_river(self, vqip=None):
         """Check amount of water that can be pulled from river tank and upstream.
@@ -936,6 +1036,21 @@ class RiverReservoir(Reservoir):
         self.end_timestep = self.end_timestep_
 
         self.__class__.__name__ = "Reservoir"
+
+    def apply_overrides(self, overrides=Dict[str, Any]):
+        """Override parameters.
+
+        Enables a user to override any of the following parameters:
+        environmental_flow.
+
+        Args:
+            overrides (Dict[str, Any]): Dict describing which parameters should
+                be overridden (keys) and new values (values). Defaults to {}.
+        """
+        self.environmental_flow = overrides.pop(
+            "environmental_flow", self.environmental_flow
+        )
+        super().apply_overrides(overrides)
 
     def push_set_river_reservoir(self, vqip):
         """Receive water.
