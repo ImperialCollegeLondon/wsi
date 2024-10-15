@@ -141,6 +141,7 @@ class Model(WSIObj):
         self.nodes = {}
         self.nodes_type = {}
         self.extensions = []
+        self.river_discharge_order = []
 
         # Default orchestration
         self.orchestration = [
@@ -333,6 +334,7 @@ class Model(WSIObj):
             "non_additive_pollutants": constants.NON_ADDITIVE_POLLUTANTS,
             "float_accuracy": constants.FLOAT_ACCURACY,
             "extensions": self.extensions,
+            "river_discharge_order": self.river_discharge_order,
         }
         if hasattr(self, "dates"):
             data["dates"] = [str(x) for x in self.dates]
