@@ -21,10 +21,21 @@
 # where you can see that the sewer uses different functions to respond to
 # differently tagged push requests. We highlight the `push_set_handler` customisations
 # below for a sewer object below.
+#
+# Following the [extensions release] the most efficient way to customise anything
+# within WSIMOD is to store your customisations in separate modules which are
+# registered and applied when the model is initialised. Thus, to incrementally
+# build up the example we will store each customisation separately in its own module.
+# However, in practice one would contain these in a single module.
+#
+# But first,
+#
+# ## What are handlers?
 # %%
 from pprint import pprint as print
 
 from wsimod.nodes.sewer import Sewer
+
 
 my_sewer = Sewer(name="mr_sewer")
 print(my_sewer.push_set_handler)
@@ -49,13 +60,17 @@ print(my_sewer.push_set_handler)
 # tag is used.
 # %% [markdown]
 # ## Illustration
-# We can illustrate the behaviour of handlers by creating a simple model.
-
+# We can illustrate the behaviour of handlers by creating a simple model. We will
+# create a temporary file to save our model files in for the purpose of this
+# tutorial.
 # %%
 # Import packages
+import tempfile
+
 from wsimod.arcs.arcs import Arc
 from wsimod.core import constants
 from wsimod.nodes import Distribution, Node
+from wsimod.orchestration.model import Model
 
 # Set simple pollutants (i.e., temperature and phosphate only)
 constants.set_simple_pollutants()
