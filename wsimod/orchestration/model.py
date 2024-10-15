@@ -140,6 +140,7 @@ class Model(WSIObj):
         # self.arcs_type = {} #not sure that this would be necessary
         self.nodes = {}
         self.nodes_type = {}
+        self.extensions = []
 
         # Default orchestration
         self.orchestration = [
@@ -200,6 +201,7 @@ class Model(WSIObj):
             E.G. ADDITION FOR NEW ORCHESTRATION
         """
         load_extension_files(data.get("extensions", []))
+        self.extensions = data.get("extensions", [])
 
         if "orchestration" in data.keys():
             # Update orchestration
@@ -330,6 +332,7 @@ class Model(WSIObj):
             "additive_pollutants": constants.ADDITIVE_POLLUTANTS,
             "non_additive_pollutants": constants.NON_ADDITIVE_POLLUTANTS,
             "float_accuracy": constants.FLOAT_ACCURACY,
+            "extensions": self.extensions,
         }
         if hasattr(self, "dates"):
             data["dates"] = [str(x) for x in self.dates]

@@ -201,6 +201,18 @@ def test_custom_class_from_file():
         model.run(dates=[to_datetime("2000-01-01")])
         assert model.nodes["node_name"].custom_attr == 2
 
+        model.save(temp_dir, "new_config.yml")
+
+        # Remove the custom class from the registry to test loading it again
+        del model
+        NODES_REGISTRY.pop("CustomNode", None)
+
+        model = Model()
+        model.load(temp_dir, "new_config.yml")
+        assert model.nodes["node_name"].custom_attr == 1
+        model.run(dates=[to_datetime("2000-01-01")])
+        assert model.nodes["node_name"].custom_attr == 2
+
 
 def test_custom_class_on_the_fly():
     """Test a custom class."""
