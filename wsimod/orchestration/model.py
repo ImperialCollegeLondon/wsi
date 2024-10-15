@@ -510,20 +510,21 @@ class Model(WSIObj):
                     river_arcs[name] = self.arcs[name]
 
         self.river_discharge_order = []
-        if any(river_arcs):
-            upstreamness = (
-                {x: 0 for x in self.nodes_type["Waste"].keys()}
-                if "Waste" in self.nodes_type
-                else {}
-            )
-            upstreamness = self.assign_upstream(river_arcs, upstreamness)
+        if not any(river_arcs):
+            return
+        upstreamness = (
+            {x: 0 for x in self.nodes_type["Waste"].keys()}
+            if "Waste" in self.nodes_type
+            else {}
+        )
+        upstreamness = self.assign_upstream(river_arcs, upstreamness)
 
-            if "River" in self.nodes_type:
-                for node in sorted(
-                    upstreamness.items(), key=lambda item: item[1], reverse=True
-                ):
-                    if node[0] in self.nodes_type["River"]:
-                        self.river_discharge_order.append(node[0])
+        if "River" in self.nodes_type:
+            for node in sorted(
+                upstreamness.items(), key=lambda item: item[1], reverse=True
+            ):
+                if node[0] in self.nodes_type["River"]:
+                    self.river_discharge_order.append(node[0])
 
     def add_instantiated_arcs(self, arclist):
         """Add arcs to the model object from a list of objects, where each object is an
@@ -549,7 +550,8 @@ class Model(WSIObj):
                     "Reservoir",
                 ]:
                     river_arcs[arc.name] = arc
-
+        if not any(river_arcs):
+            return
         upstreamness = (
             {x: 0 for x in self.nodes_type["Waste"].keys()}
             if "Waste" in self.nodes_type
