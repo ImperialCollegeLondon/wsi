@@ -42,11 +42,9 @@ and consists of:
 
 4. [How-To Guides](how-to.md)
 
-    4.1. [Customise a node](./demo/scripts/customise_a_node.py)
+    4.1. [Customise an arc](./demo/scripts/customise_an_arc.py)
 
-    4.2. [Customise an arc](./demo/scripts/customise_an_arc.py)
-
-    4.3. [Customise interactions](./demo/scripts/customise_interactions.py)
+    4.2. [Customise interactions](./demo/scripts/customise_interactions.py)
 
 5. [Component library](component-library.md)
 
