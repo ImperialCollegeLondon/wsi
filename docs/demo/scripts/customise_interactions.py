@@ -28,7 +28,7 @@
 # build up the example we will store each customisation separately in its own module.
 # However, in practice one would contain these in a single module.
 #
-# But first,
+# But first...
 #
 # ## What are handlers?
 # %%
@@ -48,10 +48,10 @@ print(my_sewer.push_set_handler)
 # different tags. Tags can take any value, but by convention they specify a
 # WSIMOD node type, or a tuple containing a node type and a specific type of
 # interaction (e.g., `('Demand','Garden')` in the
-# [land node](https://barneydobson.github.io/wsi/reference-land/#wsimod.nodes.land.Land)).
+# [land node](reference-land/#wsimod.nodes.land.Land)).
 # All nodes must have the dictionaries: `push_set_handler`, `push_check_handler`,
 # `pull_set_handler`, `pull_check_handler`, and at least one `default` key in each
-# (see the [Node](https://barneydobson.github.io/wsi/reference-nodes/#wsimod.nodes.nodes.Node)
+# (see the [Node](reference-nodes/#wsimod.nodes.nodes.Node)
 # class for defaults). If you do not want to define behaviour for a certain kind of interaction,
 # e.g., maybe you can never pull from this type of node, then you can use, e.g.,
 # the `pull_set_deny` and `pull_check_deny` functions for the `'default'` tag.
@@ -61,7 +61,7 @@ print(my_sewer.push_set_handler)
 # %% [markdown]
 # ## Illustration
 # We can illustrate the behaviour of handlers by creating a simple model. We will
-# create a temporary file to save our model files in for the purpose of this
+# create a temporary directory to save our model files in for the purpose of this
 # tutorial.
 # %%
 # Import packages
@@ -72,6 +72,9 @@ from wsimod.core import constants
 from wsimod.nodes import Distribution, Node
 from wsimod.orchestration.model import Model
 
+# Create temporary directory
+temp_dir = tempfile.TemporaryDirectory()
+
 # Set simple pollutants (i.e., temperature and phosphate only)
 constants.set_simple_pollutants()
 
@@ -80,8 +83,13 @@ my_node = Node(name="my_node")
 my_dist = Distribution(name="my_dist")
 my_arc = Arc(name="my_arc", in_port=my_node, out_port=my_dist)
 
+# Wrap in a model for convenience
+my_model = Model()
+my_model.add_instantiated_nodes([my_node, my_dist])
+my_model.add_instantiated_arcs([my_arc])
+
 # Inspect push_check_handler for distribution
-print(my_dist.push_check_handler)
+print(my_model.nodes["my_dist"].push_check_handler)
 
 # %% [markdown]
 # We have created a `Node` that is connected to a `Distribution`, and we can see by inspecting its `push_check_handler`
@@ -91,7 +99,9 @@ print(my_dist.push_check_handler)
 # Remember that a `push_check` requires sending a VQIP (a dictionary with a key for 'volume' and each pollutant
 # simulated).
 # %%
-reply = my_arc.send_push_check({"volume": 10, "phosphate": 1, "temperature": 10})
+reply = my_model.arcs["my_arc"].send_push_check(
+    {"volume": 10, "phosphate": 1, "temperature": 10}
+)
 print(reply)
 
 
@@ -99,37 +109,49 @@ print(reply)
 # The `Distribution` node replied that it can accept 0 water.
 #
 # But we might try and customise the `my_dist` object so that it calls some function before carrying on with its default push check.
-
-
+#
+# Let's have a look at what code we need to store in our extension module.
+#
+# ```python
+# from wsimod.extensions import extensions_registry, register_node_patch
+# @register_node_patch("my_dist", "push_check_handler", item="Node")
+# def custom_handler_function(self, vqip, *args, **kwargs):
+#     """A custom handler function."""
+#     print("I reached a custom handler")
+#     return self.push_check_handler["default"](vqip)
+# ```
+#
+# Which we have saved in a file called `custom_distribution_handler.py`.
+#
+# We can customise our model with this handler by specifying it under the
+# `extensions` attribute and reloading the model to apply the extension.
 # %%
-def custom_handler_function(x):
-    """
+from pathlib import Path
 
-    Args:
-        x:
+my_model.extensions = [
+    Path().cwd() / "demo" / "scripts" / "custom_distribution_handler.py"
+]
 
-    Returns:
+my_model.save(temp_dir.name)
+my_model.load(temp_dir.name)
 
-    """
-    print("I reached a custom handler")
-    return my_dist.push_check_handler["default"](x)
-
-
-my_dist.push_check_handler["Node"] = custom_handler_function
-print(my_dist.push_check_handler)
+print(my_model.nodes["my_dist"].push_check_handler)
 
 # %% [markdown]
-# We have added a new custom function for the `'Node'` tag! It includes a print statement so we should be able to see if it is triggered. Note, this is an example of how custom handlers **do not** work!
-
+# We have added a new custom function for the `Node` tag! It includes a print statement so we should be able to see if it is triggered.
+#
+# Let's see what happens when we call that node via it's connected arc. Note, this is an example of how custom handlers **do not** work!
 # %%
-reply = my_arc.send_push_check({"volume": 10, "phosphate": 1, "temperature": 10})
+reply = my_model.arcs["my_arc"].send_push_check(
+    {"volume": 10, "phosphate": 1, "temperature": 10}
+)
 print(reply)
 
 # %% [markdown]
 # Even though `my_arc` starts at a `Node` object, the custom handler wasn't used. That is because, as explained earlier, if the tag is not specified, the `'default'` tag will always be used, no matter what node type the push check is originating from. Let us instead specify a tag. Note, this is an example of how custom handlers **do** work!
 
 # %%
-reply = my_arc.send_push_check(
+reply = my_model.arcs["my_arc"].send_push_check(
     {"volume": 10, "phosphate": 1, "temperature": 10}, tag="Node"
 )
 print(reply)
@@ -174,8 +196,8 @@ print("Remaining storage: {0}".format(my_reservoir.tank.storage))
 
 # %% [markdown]
 # ### 1. Create a test model
-# We will create two nodes that pull water, a [`FWTW`](https://barneydobson.github.io/wsi/reference-wtw/#wsimod.nodes.wtw.FWTW)
-# and a [`Demand`](https://barneydobson.github.io/wsi/reference-other/#wsimod.nodes.demand.Demand). And link them both to
+# We will create two nodes that pull water, a [`FWTW`](reference-wtw/#wsimod.nodes.wtw.FWTW)
+# and a [`Demand`](reference-other/#wsimod.nodes.demand.Demand). And link them both to
 # `my_reservoir`. Under the default behaviour of a `Reservoir`, it can be pulled from both of these node types, but we may decide
 # that the water is not clean enough to go straight to `Demand`, and thus wish to customise the handler. (Of course we could more
 # simply remove the arc between `my_demand` and `my_reservoir` - but you will have to use your imagination and decide that it is
@@ -207,9 +229,9 @@ reservoir_to_demand = Arc(
 
 # %% [markdown]
 # By inspecting their documentation, we see that the
-# [`create_demand`](https://barneydobson.github.io/wsi/reference-other/#wsimod.nodes.demand.Demand.create_demand)
+# [`create_demand`](reference-other/#wsimod.nodes.demand.Demand.create_demand)
 # function pulls water for a `Demand` node, while the
-# [`treat_water`](https://barneydobson.github.io/wsi/reference-wtw/#wsimod.nodes.wtw.FWTW.treat_water)
+# [`treat_water`](reference-wtw/#wsimod.nodes.wtw.FWTW.treat_water)
 # does so for a `FWTW` node.
 
 # %%
@@ -254,23 +276,71 @@ print("Water supplied to demand: {0}".format(my_demand.total_received))
 # %% [markdown]
 # ### 2. Update reservoir handlers
 # This is a reasonably simple procedure, as we illustrated [above](#illustration).
+#
+# Again, we define our new handlers in a separate module, which we will call `custom_reservoir_handler.py`.
+#
+# ```python
+# from wsimod.extensions import register_node_patch
 
+# @register_node_patch("my_reservoir", "pull_set_handler", item="FWTW")
+# def custom_handler_function(self, vqip, *args, **kwargs):
+#     """A custom handler function."""
+#     return self.tank.pull_storage(vqip)
+
+# @register_node_patch("my_reservoir", "pull_check_handler", item="FWTW")
+# def custom_handler_function(self, vqip, *args, **kwargs):
+#     """A custom handler function."""
+#     return self.tank.get_avail()
+
+# @register_node_patch("my_reservoir", "pull_set_handler", item="default")
+# def custom_handler_function(self, vqip, *args, **kwargs):
+#     """A custom handler function."""
+#     return self.pull_set_deny()
+
+# @register_node_patch("my_reservoir", "pull_check_handler", item="default")
+# def custom_handler_function(self, vqip, *args, **kwargs):
+#     """A custom handler function."""
+#     return self.pull_check_deny()
+# ```
 # %%
+# Store everything to a model
+my_model = Model()
+my_model.add_instantiated_nodes([my_reservoir, my_fwtw, my_demand])
+my_model.add_instantiated_arcs([reservoir_to_fwtw, reservoir_to_demand])
+
 # Inspect original handlers
-print("Original set handler: {0}".format(my_reservoir.pull_set_handler))
-print("Original check handler: {0}".format(my_reservoir.pull_check_handler))
+print(
+    "Original set handler: {0}".format(my_model.nodes["my_reservoir"].pull_set_handler)
+)
+print(
+    "Original check handler: {0}".format(
+        my_model.nodes["my_reservoir"].pull_check_handler
+    )
+)
 
-# Copy existing behaviour to only be active for the FWTW tag
-my_reservoir.pull_set_handler["FWTW"] = my_reservoir.pull_set_handler["default"]
-my_reservoir.pull_check_handler["FWTW"] = my_reservoir.pull_check_handler["default"]
+# Clear the extensions registry (otherwise it will try and apply the earlier extension to ``my_dist``)
+from wsimod.extensions import extensions_registry
 
-# Overwrite default behaviour to denial
-my_reservoir.pull_set_handler["default"] = my_reservoir.pull_set_deny
-my_reservoir.pull_check_handler["default"] = my_reservoir.pull_check_deny
+extensions_registry.clear()
+
+# Reload to apply the extensions
+my_model.extensions = [
+    Path().cwd() / "demo" / "scripts" / "custom_reservoir_handler.py"
+]
+my_model.save(temp_dir.name)
+my_model.load(temp_dir.name)
 
 # Inspect new handlers
-print("Overwritten set handler: {0}".format(my_reservoir.pull_set_handler))
-print("Overwritten set handler: {0}".format(my_reservoir.pull_check_handler))
+print(
+    "Overwritten set handler: {0}".format(
+        my_model.nodes["my_reservoir"].pull_set_handler
+    )
+)
+print(
+    "Overwritten set handler: {0}".format(
+        my_model.nodes["my_reservoir"].pull_check_handler
+    )
+)
 
 # %% [markdown]
 # It seems that we can simply overwrite the handlers in this case, although when you are developing
@@ -280,7 +350,7 @@ print("Overwritten set handler: {0}".format(my_reservoir.pull_check_handler))
 # Let's verify this behaviour by ensuring that `my_demand` cannot pull from the reservoir
 #
 # But first we must call the `end_timestep` function for the `my_demand` object. You can find more
-# information in the [API](https://barneydobson.github.io/wsi/reference-other/#wsimod.nodes.demand.Demand),
+# information in the [API](reference-other/#wsimod.nodes.demand.Demand),
 # though in short, the previous call of `create_demand` had already satisfied the water demand for
 # that timestep - thus, if we called it again, it would not request any more water.
 # %%
@@ -338,9 +408,9 @@ print(
 # ### 3. Update `my_fwtw` to pull with `'FWTW'` tag
 # Now we need to ensure that `my_fwtw` includes the `'FWTW'` tag when it pulls from the reservoir.
 # By inspecting the documentation, we see that `FWTW` pulls water in the
-# [`treat_water`](https://barneydobson.github.io/wsi/reference-wtw/#wsimod.nodes.wtw.FWTW.treat_water)
+# [`treat_water`](reference-wtw/#wsimod.nodes.wtw.FWTW.treat_water)
 # function using the
-# [`pull_distributed`](https://barneydobson.github.io/wsi/reference-nodes/#wsimod.nodes.nodes.Node.pull_distributed)
+# [`pull_distributed`](reference-nodes/#wsimod.nodes.nodes.Node.pull_distributed)
 # function.
 #
 # Thus, we could either overwrite the `treat_water` function or the `pull_distributed` function.
