@@ -133,7 +133,7 @@ print(reply)
 # We can customise our model with this handler by specifying it under the
 # `extensions` attribute and reloading the model to apply the extension.
 # %%
-my_model.extensions = os.path.join(scripts_folder, "custom_distribution_handler.py")
+my_model.extensions = [os.path.join(scripts_folder, "custom_distribution_handler.py")]
 
 my_model.save(temp_dir.name)
 my_model.load(temp_dir.name)
@@ -318,7 +318,7 @@ from wsimod.extensions import extensions_registry
 extensions_registry.clear()
 
 # Reload to apply the extensions
-my_model.extensions = os.path.join(scripts_folder, "custom_reservoir_handler.py")
+my_model.extensions = [os.path.join(scripts_folder, "custom_reservoir_handler.py")]
 my_model.save(temp_dir.name)
 my_model.load(temp_dir.name)
 
