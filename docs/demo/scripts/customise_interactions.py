@@ -65,6 +65,7 @@ print(my_sewer.push_set_handler)
 # tutorial.
 # %%
 # Import packages
+import os
 import tempfile
 
 from wsimod.arcs.arcs import Arc
@@ -73,10 +74,7 @@ from wsimod.nodes import Distribution, Node
 from wsimod.orchestration.model import Model, to_datetime
 
 # Identify the location of the scripts folder
-from pathlib import Path
-
-# scripts_folder =  Path().cwd() / "demo" / "scripts"
-scripts_folder = Path(r"C:\Users\bdobson\Documents\GitHub\wsi\docs\demo\scripts")
+data_folder = os.path.join(os.path.abspath(""), "docs", "demo", "scripts")
 
 # Create temporary directory
 temp_dir = tempfile.TemporaryDirectory()
@@ -127,7 +125,7 @@ print(reply)
 # def custom_handler_function(self, vqip, *args, **kwargs):
 #     """A custom handler function."""
 #     print("I reached a custom handler")
-#     return self.push_check_handler["default"](vqip)
+#     return self.push_check_handler\["default"\](vqip)
 # </code></pre>
 #
 # </details>
@@ -432,6 +430,10 @@ print(results[0])
 
 # %% [markdown]
 # Fantastic, we've got the results we wanted and have now customised a handler!
+
+# %%
+# Close the temporary directory
+temp_dir.cleanup()
 
 # %% [markdown]
 # ## What next?
