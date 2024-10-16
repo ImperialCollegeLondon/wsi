@@ -597,10 +597,7 @@ class FWTW(WTW):
 
         if self.total_deficit["volume"] > constants.FLOAT_ACCURACY:
             print(
-                "Service reservoirs not filled at {0} on {1} by".format(
-                    self.name,
-                    self.t,
-                )
+                "Service reservoirs not filled at {0} on {1}".format(self.name, self.t)
             )
 
         # Run treatment processes
