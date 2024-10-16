@@ -14,7 +14,7 @@ extra_css:
 plugins:
   - mkdocstrings
   - mkdocs-jupyter:
-      execute: false
+      execute: true
       ignore: ["./docs/create_class_page.py"]
   - search
   - bibtex:
