@@ -74,7 +74,7 @@ from wsimod.nodes import Distribution, Node
 from wsimod.orchestration.model import Model, to_datetime
 
 # Identify the location of the scripts folder
-data_folder = os.path.join(os.path.abspath(""), "docs", "demo", "scripts")
+scripts_folder = os.path.join(os.path.abspath(""), "docs", "demo", "scripts")
 
 # Create temporary directory
 temp_dir = tempfile.TemporaryDirectory()
@@ -133,7 +133,7 @@ print(reply)
 # We can customise our model with this handler by specifying it under the
 # `extensions` attribute and reloading the model to apply the extension.
 # %%
-my_model.extensions = [str(scripts_folder / "custom_distribution_handler.py")]
+my_model.extensions = os.path.join(scripts_folder, "custom_distribution_handler.py")
 
 my_model.save(temp_dir.name)
 my_model.load(temp_dir.name)
@@ -318,7 +318,7 @@ from wsimod.extensions import extensions_registry
 extensions_registry.clear()
 
 # Reload to apply the extensions
-my_model.extensions = [str(scripts_folder / "custom_reservoir_handler.py")]
+my_model.extensions = os.path.join(scripts_folder, "custom_reservoir_handler.py")
 my_model.save(temp_dir.name)
 my_model.load(temp_dir.name)
 
@@ -405,7 +405,7 @@ print(results[0])
 # Again, we will add this extension to the model and reload it to apply the extension, verifying that the handler function has been applied and is working.
 # %%
 # Add the extension to the model
-my_model.extensions.append(str(scripts_folder / "custom_fwtw_pull.py"))
+my_model.extensions.append(os.path.join(scripts_folder, "custom_fwtw_pull.py"))
 
 # Reload to apply the extensions
 extensions_registry.clear()
