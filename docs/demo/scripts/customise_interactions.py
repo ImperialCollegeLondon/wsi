@@ -116,18 +116,21 @@ print(reply)
 #
 # But we might try and customise the `my_dist` object so that it calls some function before carrying on with its default push check.
 #
-# Let's have a look at what code we need to store in our extension module.
+# Let's have a look at what code we need to store in our extension module, which we have saved in a file called `custom_distribution_handler.py`.
 #
-# ```python
-# from wsimod.extensions import extensions_registry, register_node_patch
+# <details>
+# <summary>Source code</summary>
+# <pre><code class="language-python">
+# from wsimod.extensions import register_node_patch
+#
 # @register_node_patch("my_dist", "push_check_handler", item="Node")
 # def custom_handler_function(self, vqip, *args, **kwargs):
 #     """A custom handler function."""
 #     print("I reached a custom handler")
 #     return self.push_check_handler["default"](vqip)
-# ```
+# </code></pre>
 #
-# Which we have saved in a file called `custom_distribution_handler.py`.
+# </details>
 #
 # We can customise our model with this handler by specifying it under the
 # `extensions` attribute and reloading the model to apply the extension.
@@ -272,8 +275,10 @@ print(results[0])
 # ### 2. Update reservoir handlers
 # As we illustrated [above](#illustration), we define our new handlers in a separate module, which we will call `custom_reservoir_handler.py`.
 #
-# ```python
-# # from wsimod.extensions import register_node_patch
+# <details>
+# <summary>Source code</summary>
+# <pre><code class="language-python">
+# from wsimod.extensions import register_node_patch
 # @register_node_patch("my_reservoir", "pull_set_handler", item="FWTW")
 # def custom_pulls_fwtw(self, vqip, *args, **kwargs):
 #     """A custom handler function."""
@@ -293,7 +298,11 @@ print(results[0])
 # def custom_pullc_default(self, vqip, *args, **kwargs):
 #     """A custom handler function."""
 #     return self.pull_check_deny()
-# ```
+# </code></pre>
+#
+# </details>
+#
+# Lets add this extension to the model and reload it to apply the extension, verifying that the handler functions have changed.
 # %%
 # Inspect original handlers
 print(
@@ -358,12 +367,11 @@ print(results[0])
 # Fantastic - now we see that `my_demand` is not able to pull from `my_reservoir`, triggering a bunch of warning
 # messages that occur when trying to pull from a node with denial behaviour.
 #
-# However, we also find that now `my_fwtw` cannot pull from `my_reservoir`!
+# However, we also find that now `my_fwtw` cannot pull from `my_reservoir`! As we have explained [above](#more-realistic-example), this is because when `my_fwtw` makes a pull, it sends the `default` tag by default, not the `FWTW` tag.
 #
-# Although we see that the service_reservoir volume has increased, this is because
+# Note that we see that the service_reservoir volume has increased, this is because
 # of the [assumption](https://imperialcollegelondon.github.io/wsi/reference-wtw/#wsimod.nodes.wtw.FWTW) that FWTW deficits will be met by other measures
 #
-# As we have explained [above](#more-realistic-example), this is because when `my_fwtw` makes a pull, it sends the `default` tag by default, not the `FWTW` tag.
 # %% [markdown]
 # ### 3. Update `my_fwtw` to pull with `FWTW` tag
 # Now we need to ensure that `my_fwtw` includes the `FWTW` tag when it pulls from the reservoir.
@@ -383,14 +391,20 @@ print(results[0])
 #
 # We have the following code in a separate module, which we will call `custom_fwtw_pull.py`.
 #
-# ```python
+# <details>
+# <summary>Source code</summary>
+# <pre><code class="language-python">
 # from wsimod.extensions import register_node_patch
 #
 # @register_node_patch("my_fwtw", "pull_distributed")
 # def custom_pull_distributed(self, vqip, *args, **kwargs):
 #     """A custom handler function."""
 #     return self._patched_pull_distributed(vqip, tag = "FWTW", *args, **kwargs)
-# ```
+# </code></pre>
+#
+# </details>
+#
+# Again, we will add this extension to the model and reload it to apply the extension, verifying that the handler function has been applied and is working.
 # %%
 # Add the extension to the model
 my_model.extensions.append(str(scripts_folder / "custom_fwtw_pull.py"))
