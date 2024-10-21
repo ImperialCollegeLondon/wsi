@@ -1304,9 +1304,9 @@ class GrowingSurface(PerviousSurface):
             if initial_soil_storage:
                 self.initial_soil_storage = initial_soil_storage
                 # Reflect initial nutrient stores in solid nutrient pools
-                self.nutrient_pool.adsorbed_inorganic_pool.storage[
-                    "P"
-                ] = initial_soil_storage["phosphate"]
+                self.nutrient_pool.adsorbed_inorganic_pool.storage["P"] = (
+                    initial_soil_storage["phosphate"]
+                )
                 self.nutrient_pool.adsorbed_inorganic_pool.storage["N"] = (
                     initial_soil_storage["ammonia"]
                     + initial_soil_storage["nitrate"]
@@ -2201,9 +2201,7 @@ class GrowingSurface(PerviousSurface):
             while (
                 abs(fxn) > limit and j < self.adsorption_nr_maxiter
             ):  # iteration to calculate equilibrium concentations
-                fxn = (
-                    xn * soil_moisture_content + coeff * (xn**self.nfr) - ad_de_P_pool
-                )
+                fxn = xn * soil_moisture_content + coeff * (xn**self.nfr) - ad_de_P_pool
                 fprimxn = soil_moisture_content + self.nfr * coeff * (
                     xn ** (self.nfr - 1)
                 )
