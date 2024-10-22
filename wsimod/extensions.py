@@ -53,6 +53,7 @@ the order of the patches in their extensions files, as they may have interdepend
 
 TODO: Update documentation on extensions files.
 """
+
 from typing import Callable, Hashable
 
 from .orchestration.model import Model
