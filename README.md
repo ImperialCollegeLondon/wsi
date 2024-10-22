@@ -1,4 +1,4 @@
-# Welcome to WSIMOD <img style="float: right;" src="./docs/images/wsimod_logo_png.png">
+# Welcome to WSIMOD <img style="float: right;" src="./docs/images/wsimod_logo_png.png" alt="WSIMOD logo">
 
 WSIMOD stands for the Water Systems Integrated Modelling framework.
 
