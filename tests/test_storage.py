@@ -403,7 +403,7 @@ class MyTestClass(TestCase):
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
             river.apply_overrides({"area": 75.2})
-            assert "specifying area is depreciated" in str(w[0]) 
+            assert "specifying area is depreciated" in str(w[0])
 
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
