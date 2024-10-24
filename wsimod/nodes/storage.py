@@ -3,6 +3,7 @@
 
 @author: bdobson Converted to totals on 2022-05-03
 """
+import warnings
 from math import exp
 from typing import Any, Dict
 
@@ -507,7 +508,7 @@ class River(Storage):
         # Set parameters
         self.depth = depth
         if depth != 2:
-            raise RuntimeError(
+            warnings.warn(
                 "warning: the depth parameter is unused by River nodes because it is \
 		intended for capacity to be unbounded. It may be removed in a future version."
             )
@@ -639,13 +640,13 @@ class River(Storage):
             setattr(self, param, overrides.pop(param))
 
         if "area" in overrides.keys():
-            raise RuntimeError(
-                "ERROR: specifying area is depreciated in overrides \
+            warnings.warn(
+                "WARNING: specifying area is depreciated in overrides \
 		for river, please specify length and width instead"
             )
         overrides["area"] = self.length * self.width
         if "capacity" in overrides.keys():
-            raise RuntimeError(
+            warnings.warn(
                 "ERROR: specifying capacity is depreciated in overrides \
 		for river, it is always set as unbounded capacity"
             )

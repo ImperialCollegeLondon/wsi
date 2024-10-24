@@ -7,6 +7,7 @@
 
 # import pytest
 import unittest
+import warnings
 from unittest import TestCase
 
 from wsimod.arcs.arcs import Arc
@@ -399,10 +400,15 @@ class MyTestClass(TestCase):
                 self.assertEqual(river.tank.capacity, v)
             self.assertEqual(getattr(river, k), v)
         # test runtimeerrors
-        self.assertRaises(RuntimeError, lambda: river.apply_overrides({"area": 75.2}))
-        self.assertRaises(
-            RuntimeError, lambda: river.apply_overrides({"capacity": 123})
-        )
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            river.apply_overrides({"area": 75.2})
+            assert "specifying area is depreciated" in str(w[0])
+
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            river.apply_overrides({"capacity": 123})
+            assert "specifying capacity is depreciated" in str(w[0])
 
     def test_riverreservoir_overrides(self):
         riverreservoir = RiverReservoir(name="")
