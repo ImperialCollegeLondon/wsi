@@ -1,4 +1,5 @@
 """The entry point for the myproject program."""
+
 from argparse import ArgumentParser
 from pathlib import Path
 from typing import Any, cast
