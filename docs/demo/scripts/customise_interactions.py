@@ -114,26 +114,27 @@ print(reply)
 #
 # But we might try and customise the `my_dist` object so that it calls some function before carrying on with its default push check.
 #
-# Let's have a look at what code we need to store in our extension module, which we have saved in a file called `custom_distribution_handler.py`.
-#
-# <details>
-# <summary>Source code</summary>
-# <pre><code class="language-python">
-# from wsimod.extensions import register_node_patch
-#
-# @register_node_patch("my_dist", "push_check_handler", item="Node")
-# def custom_handler_function(self, vqip, *args, **kwargs):
-#     """A custom handler function."""
-#     print("I reached a custom handler")
-#     return self.push_check_handler\["default"\](vqip)
-# </code></pre>
-#
-# </details>
-#
+# Let's have a look at what code we need to store in our extension module, which we have saved in a file called `custom_extensions.py`.
+# We will reproduce the function below, which will cause a warning when we load our model because the patch is registered twice.
+# %%
+from wsimod.extensions import register_node_patch
+
+
+@register_node_patch("my_dist", "push_check_handler", item="Node")
+def custom_handler_function(self, vqip, *args, **kwargs):
+    """A custom `push_check_handler` function.
+
+    Call the default handler for the "Node" item.
+    """
+    print("I reached a custom handler")
+    return self.push_check_handler["default"](vqip)
+
+
+# %% [markdown]
 # We can customise our model with this handler by specifying it under the
 # `extensions` attribute and reloading the model to apply the extension.
 # %%
-my_model.extensions = [os.path.join(scripts_folder, "custom_distribution_handler.py")]
+my_model.extensions = [os.path.join(scripts_folder, "custom_extensions.py")]
 
 my_model.save(temp_dir.name)
 my_model.load(temp_dir.name)
@@ -272,34 +273,46 @@ print(results[0])
 # %% [markdown]
 # ### 2. Update reservoir handlers
 # As we illustrated [above](#illustration), we define our new handlers in a separate module, which we will call `custom_reservoir_handler.py`.
-#
-# <details>
-# <summary>Source code</summary>
-# <pre><code class="language-python">
-# from wsimod.extensions import register_node_patch
-# @register_node_patch("my_reservoir", "pull_set_handler", item="FWTW")
-# def custom_pulls_fwtw(self, vqip, *args, **kwargs):
-#     """A custom handler function."""
-#     return self.tank.pull_storage(vqip)
-#
-# @register_node_patch("my_reservoir", "pull_check_handler", item="FWTW")
-# def custom_pullc_fwtw(self, vqip, *args, **kwargs):
-#     """A custom handler function."""
-#     return self.tank.get_avail()
-#
-# @register_node_patch("my_reservoir", "pull_set_handler", item="default")
-# def custom_pulls_default(self, vqip, *args, **kwargs):
-#     """A custom handler function."""
-#     return self.pull_set_deny(vqip)
-#
-# @register_node_patch("my_reservoir", "pull_check_handler", item="default")
-# def custom_pullc_default(self, vqip, *args, **kwargs):
-#     """A custom handler function."""
-#     return self.pull_check_deny()
-# </code></pre>
-#
-# </details>
-#
+
+
+# %%
+@register_node_patch("my_reservoir", "pull_set_handler", item="FWTW")
+def custom_pulls_fwtw(self, vqip, *args, **kwargs):
+    """A custom `pull_set_handler` function.
+
+    Pull from the storage when pulled with the tag "FWTW".
+    """
+    return self.tank.pull_storage(vqip)
+
+
+@register_node_patch("my_reservoir", "pull_check_handler", item="FWTW")
+def custom_pullc_fwtw(self, vqip, *args, **kwargs):
+    """A custom `pull_check_handler` function.
+
+    Return available storage when pulled with the tag "FWTW".
+    """
+    return self.tank.get_avail()
+
+
+@register_node_patch("my_reservoir", "pull_set_handler", item="default")
+def custom_pulls_default(self, vqip, *args, **kwargs):
+    """A custom `pull_set_handler` function.
+
+    Deny pull sets by default.
+    """
+    return self.pull_set_deny(vqip)
+
+
+@register_node_patch("my_reservoir", "pull_check_handler", item="default")
+def custom_pullc_default(self, vqip, *args, **kwargs):
+    """A custom `pull_check_handler` function.
+
+    Deny pull checks by default.
+    """
+    return self.pull_check_deny()
+
+
+# %% [markdown]
 # Lets add this extension to the model and reload it to apply the extension, verifying that the handler functions have changed.
 # %%
 # Inspect original handlers
@@ -388,20 +401,19 @@ print(results[0])
 # function is called, it is called with the tag `FWTW`. Since this seems simpler, we will choose this option.
 #
 # We have the following code in a separate module, which we will call `custom_fwtw_pull.py`.
-#
-# <details>
-# <summary>Source code</summary>
-# <pre><code class="language-python">
-# from wsimod.extensions import register_node_patch
-#
-# @register_node_patch("my_fwtw", "pull_distributed")
-# def custom_pull_distributed(self, vqip, *args, **kwargs):
-#     """A custom handler function."""
-#     return self._patched_pull_distributed(vqip, tag = "FWTW", *args, **kwargs)
-# </code></pre>
-#
-# </details>
-#
+# %%
+
+
+@register_node_patch("my_fwtw", "pull_distributed")
+def custom_pull_distributed(self, vqip, *args, **kwargs):
+    """A custom `pull_distributed` function.
+
+    Call `pull_distributed` with the tag "FWTW".
+    """
+    return self._patched_pull_distributed(vqip, tag="FWTW")
+
+
+# %% [markdown]
 # Again, we will add this extension to the model and reload it to apply the extension, verifying that the handler function has been applied and is working.
 # %%
 # Add the extension to the model
