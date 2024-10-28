@@ -114,7 +114,7 @@ print(reply)
 #
 # But we might try and customise the `my_dist` object so that it calls some function before carrying on with its default push check.
 #
-# Let's have a look at what code we need to store in our extension module, which we have saved in a file called `custom_extensions.py`.
+# Let's have a look at what code we need to store in our extension module, which we have saved in a file called `custom_distribution_handler.py`.
 # We will reproduce the function below, which will cause a warning when we load our model because the patch is registered twice.
 # %%
 from wsimod.extensions import register_node_patch
@@ -134,7 +134,7 @@ def custom_handler_function(self, vqip, *args, **kwargs):
 # We can customise our model with this handler by specifying it under the
 # `extensions` attribute and reloading the model to apply the extension.
 # %%
-my_model.extensions = [os.path.join(scripts_folder, "custom_extensions.py")]
+my_model.extensions = [os.path.join(scripts_folder, "custom_distribution_handler.py")]
 
 my_model.save(temp_dir.name)
 my_model.load(temp_dir.name)
