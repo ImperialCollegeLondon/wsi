@@ -41,12 +41,12 @@ the [PyYAML](https://pyyaml.org/) data langauge.
 
 ## WSIMOD model
 
-As demonstrated in the tutorials, a [model object](./../reference-model/#wsimod.orchestration.model.Model)
+As demonstrated in the tutorials, a [model object](reference-model.md#wsimod.orchestration.model.Model)
 is a helpful way to contain your nodes/arcs and orchestrate your simulation.
 From the model object, you can `save` or `load` data by providing a data
 directory. Critically, these functions interact with a `config.yml` file that
 contains all of the information to describe your model. Below, we will explain
-this file using examples from [quickstart demo](./../demo/scripts/quickstart_demo),
+this file using examples from [quickstart demo](demo/scripts/quickstart_demo.md),
 highlighting the key features of this config file. You can create this yourself by
 running the demo and appending the following command:
 
@@ -98,21 +98,21 @@ nodes:
     node_type_override: Node
 ```
 
-By inspecting the [`Sewer`](./../reference-sewer/#wsimod.nodes.sewer.Sewer) API,
+By inspecting the [`Sewer`](reference-sewer.md#wsimod.nodes.sewer.Sewer) API,
 we can see that this entry contains the parameters required to initiliase a
 `Sewer` object, however the `capacity` and `name` fields have been updated to
-the values that they are set as in the [quickstart demo](./../demo/scripts/quickstart_demo).
+the values that they are set as in the [quickstart demo](demo/scripts/quickstart_demo.md).
 
 We see two additional fields of `type_` and `node_type_override`. If only
 `type_` is provided, then this will specify the object that is created which
 should match an object in WSIMOD. It also specifies how other nodes view it,
-for example, a [`Sewer`](./../reference-sewer/#wsimod.nodes.sewer.Sewer) node
-receives water differently from [`Land`](./../reference-sewer/#wsimod.nodes.land.Land)
-nodes than it does from [`Demand`](./../reference-other/#wsimod.nodes.demand.Demand)
+for example, a [`Sewer`](reference-sewer.md#wsimod.nodes.sewer.Sewer) node
+receives water differently from [`Land`](reference-sewer.md#wsimod.nodes.land.Land)
+nodes than it does from [`Demand`](reference-other.md#wsimod.nodes.demand.Demand)
 nodes. However, there are a variety of subclasses of `Demand` node, so to
 ensure the `Sewer` object treats all `Demand` subclasses the same, we overwrite
 the `__class__.__name__` property in each subclass so that the model treats
-(e.g.,) [`ResidentialDemand`](./../reference-other/#wsimod.nodes.demand.ResidentialDemand)
+(e.g.,) [`ResidentialDemand`](reference-other.md#wsimod.nodes.demand.ResidentialDemand)
 as a `Demand` object. In cases such as these, to ensure WSIMOD creates a
 `ResidentialDemand` object that is treated like a `Demand` object, we specify
 the `type_` as `Demand` but the `node_type_override` as `ResidentialDemand`.
@@ -120,8 +120,8 @@ the `type_` as `Demand` but the `node_type_override` as `ResidentialDemand`.
 ### Arcs
 
 The `arcs` entry of `config.yml` contains the initialisation fields of the
-[`Arc`](./../reference-arc/#wsimod.arcs.arcs.Arc)
-object. If we inspect the [quickstart demo](./../demo/scripts/quickstart_demo),
+[`Arc`](reference-arc.md#wsimod.arcs.arcs.Arc)
+object. If we inspect the [quickstart demo](demo/scripts/quickstart_demo.md),
 we will see that the `storm_outflow` arc was not initiliased with any values
 for the `preference` or `capacity` parameter. They are saved by the
 `Model.save()` function because, upon initialisation, if they are not provided,
@@ -142,9 +142,9 @@ arcs:
 
 The `pollutants` entries are used to tell the model which pollutants should be simulated, which are additive (i.e., mass based), and which are non-additive (e.g., temperature).
 
-The `float_accuracy` entry provides a number used in [mass balance checking](./../reference-core/#wsimod.core.core.WSIObj.mass_balance). Common sense is suggested in interpreting mass balance errors.
+The `float_accuracy` entry provides a number used in [mass balance checking](reference-core.md#wsimod.core.core.WSIObj.mass_balance). Common sense is suggested in interpreting mass balance errors.
 
-The `dates` entry is written if the model object has a `dates` property and is a list of `dates` for which the model will run for if the [`Model.run()`](./../reference-core/#wsimod.orchestration.model.Model.run) function is called. It is assumed that the `dates` are compatible with the dates provided in the input data.
+The `dates` entry is written if the model object has a `dates` property and is a list of `dates` for which the model will run for if the [`Model.run()`](reference-core.md#wsimod.orchestration.model.Model.run) function is called. It is assumed that the `dates` are compatible with the dates provided in the input data.
 
 ## Input data
 
@@ -153,7 +153,7 @@ WSIMOD objects, timeseries input data is stored separately to create a more
 manageable model directory. As established through the [tutorials](tutorials.md),
 any node timeseries input data must be provided as a dictionary where the keys
 are tuples containing the variable and time, and stored in the `data_input_dict`
-property. For example, using the [`Catchment`](./../reference-other/#wsimod.nodes.catchment.Catchment)
+property. For example, using the [`Catchment`](reference-other.md#wsimod.nodes.catchment.Catchment)
 node, which is primarily a data reader:
 
 ```python
@@ -182,7 +182,7 @@ print(my_catch.get_flow())
 {'volume': 2, 'phosphate': 0.4, 'temperature': 10}
 ```
 
-We note that dates can take any hashable format, however some components require the date to have properties such as `dayofyear`, and so recommend using `datetime` like objects, we provide a simple `datetime` wrapper in [`model.to_datetime`](./../reference-model/#wsimod.orchestration.model.to_datetime).
+We note that dates can take any hashable format, however some components require the date to have properties such as `dayofyear`, and so recommend using `datetime` like objects, we provide a simple `datetime` wrapper in [`model.to_datetime`](reference-model.md#wsimod.orchestration.model.to_datetime).
 
 When we call `Model.save()` it will convert each node's `data_input_dict`
 into a separate `.csv` (or `.csv.gz` if the `compress` option is specified),
