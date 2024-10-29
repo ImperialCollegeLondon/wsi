@@ -54,6 +54,7 @@ the order of the patches in their extensions files, as they may have interdepend
 TODO: Update documentation on extensions files.
 """
 
+import warnings
 from typing import Callable, Hashable
 
 from .orchestration.model import Model
@@ -81,7 +82,7 @@ def register_node_patch(
     """
     target_id = (node_name, target, item, is_attr)
     if target_id in extensions_registry:
-        raise ValueError(f"Patch for {target} already registered.")
+        warnings.warn(f"Patch for {target} already registered.")
 
     def decorator(func):
         extensions_registry[target_id] = func

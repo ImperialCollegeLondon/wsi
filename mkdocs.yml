@@ -2,6 +2,10 @@ site_name: WSIMOD docs
 
 theme:
   name: "material"
+  features:
+    - content.code.copy
+  icon:
+    repo: fontawesome/brands/github
 
 extra_css:
   - stylesheets/extra.css
@@ -23,6 +27,9 @@ plugins:
   - gen-files:
       scripts:
         - docs/create_class_page.py
+
+repo_url: https://github.com/ImperialCollegeLondon/wsi
+site_url: https://imperialcollegelondon.github.io/wsi/
 
 markdown_extensions:
   - footnotes

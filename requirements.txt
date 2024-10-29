@@ -4,6 +4,8 @@
 #
 #    pip-compile
 #
+colorama==0.4.6
+    # via tqdm
 dill==0.3.7
     # via wsimod (pyproject.toml)
 numpy==1.26.2
