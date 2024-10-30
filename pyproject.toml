@@ -57,6 +57,7 @@ doc = [
     "mkdocs-material-extensions",
     "pypandoc",
     "mkdocs-gen-files",
+    "tabulate",
     "wsimod[demos]"
 ]
 
