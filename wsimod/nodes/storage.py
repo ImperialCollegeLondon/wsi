@@ -94,6 +94,10 @@ class Storage(Node):
         if "datum" in overrides.keys():
             self.datum = overrides["datum"]
         if "decays" in overrides.keys():
+            if self.decays is None:
+                raise ValueError(
+                    "Attempting to override decays on a node initialised without decays"
+                )
             self.decays.update(overrides["decays"])
         # apply tank overrides
         self.tank.apply_overrides(overrides)

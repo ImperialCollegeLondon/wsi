@@ -313,6 +313,18 @@ class MyTestClass(TestCase):
         d1["phosphate"] = d1["phosphate"] * (1 - 0.005 * 1.005 ** (10 - 20))
         self.assertDictAlmostEqual(d1, arc1.queue[0])
 
+    def test_overrides_simple_arc(self):
+        model = self.get_simple_model1()
+        arc1 = model[5]
+        arc1.apply_overrides({"capacity": 3.1, "preference": 0.65})
+        self.assertEqual(3.1, arc1.capacity)
+        self.assertEqual(0.65, arc1.preference)
+
+        # Test incorrect label
+        overrides = {"capacity": 3.1, "preferenceasd": 0.65}
+        arc1.apply_overrides(overrides)
+        self.assertEqual({"preferenceasd": 0.65}, overrides)
+
 
 if __name__ == "__main__":
     unittest.main()

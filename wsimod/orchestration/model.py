@@ -230,6 +230,9 @@ class Model(WSIObj):
         arcs = data.get("arcs", {})
         self.add_nodes(list(nodes.values()))
         self.add_arcs(list(arcs.values()))
+
+        self.add_overrides(data.get("overrides", {}))
+
         if "dates" in data.keys():
             self.dates = [to_datetime(x) for x in data["dates"]]
 
@@ -599,6 +602,28 @@ class Model(WSIObj):
         else:
             upstreamness = self.assign_upstream(arcs, upstreamness)
             return upstreamness
+
+    def add_overrides(self, config: dict):
+        for node in config.get("nodes", {}).values():
+            type_ = node.pop("type_")
+            name = node.pop("name")
+
+            if type_ not in self.nodes_type.keys():
+                raise ValueError(f"Node type {type_} not recognised")
+
+            if name not in self.nodes_type[type_].keys():
+                raise ValueError(f"Node {name} not recognised")
+
+            self.nodes_type[type_][name].apply_overrides(node)
+
+        for arc in config.get("arcs", {}).values():
+            name = arc.pop("name")
+            type_ = arc.pop("type_")
+
+            if name not in self.arcs.keys():
+                raise ValueError(f"Arc {name} not recognised")
+
+            self.arcs[name].apply_overrides(arc)
 
     def debug_node_mb(self):
         """Simple function that iterates over nodes calling their mass balance
