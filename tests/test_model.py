@@ -7,6 +7,8 @@
 import os
 import pytest
 import unittest
+import tempfile
+import yaml
 from unittest import TestCase, mock
 
 from wsimod.arcs.arcs import Arc
@@ -303,6 +305,106 @@ class MyTestClass(TestCase):
             {"Sewer": "make_discharge"},
         ]
         self.assertListEqual(my_model.orchestration, revised_orchestration)
+
+    def test_add_overrides_on_the_fly(self):
+        overrides = {
+            "nodes": {
+                "my_groundwater": {
+                    "name": "my_groundwater",
+                    "type_": "Groundwater",
+                    "infiltration_threshold": 200,
+                    "infiltration_pct": 0.667,
+                    "capacity": 1.43,
+                    "area": 2.36,
+                    "datum": 0.32,
+                },
+                "my_sewer": {
+                    "name": "my_sewer",
+                    "type_": "Sewer",
+                    "pipe_timearea": {0: 0.5, 1: 0.5},
+                },
+            },
+            "arcs": {
+                "storm_outflow": {
+                    "name": "storm_outflow",
+                    "type_": "Arc",
+                    "capacity": 0.5,
+                }
+            },
+        }
+        my_model = Model()
+        my_model.load(
+            os.path.join(os.getcwd(), "docs", "demo", "examples"),
+            config_name="test_customise_orchestration_example.yaml",
+        )
+        my_model.add_overrides(overrides)
+
+        self.assertEqual(200, my_model.nodes["my_groundwater"].infiltration_threshold)
+        self.assertEqual(0.667, my_model.nodes["my_groundwater"].infiltration_pct)
+        self.assertEqual(1.43, my_model.nodes["my_groundwater"].capacity)
+        self.assertEqual(2.36, my_model.nodes["my_groundwater"].area)
+        self.assertEqual(0.32, my_model.nodes["my_groundwater"].datum)
+        self.assertEqual({0: 0.5, 1: 0.5}, my_model.nodes["my_sewer"].pipe_timearea)
+        self.assertEqual(0.5, my_model.arcs["storm_outflow"].capacity)
+        self.assertEqual(
+            {
+                "nodes": {"my_groundwater": {}, "my_sewer": {}},
+                "arcs": {"storm_outflow": {}},
+            },
+            overrides,
+        )
+
+    def test_add_overrides_config(self):
+        with open(
+            os.path.join(
+                os.getcwd(),
+                "docs",
+                "demo",
+                "examples",
+                "test_customise_orchestration_example.yaml",
+            ),
+            "r",
+        ) as file:
+            config = yaml.safe_load(file)
+        config["overrides"] = {
+            "nodes": {
+                "my_groundwater": {
+                    "name": "my_groundwater",
+                    "type_": "Groundwater",
+                    "infiltration_threshold": 200,
+                    "infiltration_pct": 0.667,
+                    "capacity": 1.43,
+                    "area": 2.36,
+                    "datum": 0.32,
+                },
+                "my_sewer": {
+                    "name": "my_sewer",
+                    "type_": "Sewer",
+                    "pipe_timearea": {0: 0.5, 1: 0.5},
+                },
+            },
+            "arcs": {
+                "storm_outflow": {
+                    "name": "storm_outflow",
+                    "type_": "Arc",
+                    "capacity": 0.5,
+                }
+            },
+        }
+        with tempfile.TemporaryDirectory() as tmp_path:
+            with open(os.path.join(tmp_path, "temp.yaml"), "w") as file:
+                yaml.dump(config, file)
+
+            my_model = Model()
+            my_model.load(tmp_path, config_name="temp.yaml")
+
+        self.assertEqual(200, my_model.nodes["my_groundwater"].infiltration_threshold)
+        self.assertEqual(0.667, my_model.nodes["my_groundwater"].infiltration_pct)
+        self.assertEqual(1.43, my_model.nodes["my_groundwater"].capacity)
+        self.assertEqual(2.36, my_model.nodes["my_groundwater"].area)
+        self.assertEqual(0.32, my_model.nodes["my_groundwater"].datum)
+        self.assertEqual({0: 0.5, 1: 0.5}, my_model.nodes["my_sewer"].pipe_timearea)
+        self.assertEqual(0.5, my_model.arcs["storm_outflow"].capacity)
 
 
 class TestLoadExtensionFiles:
