@@ -38,7 +38,7 @@ from wsimod.extensions import register_node_patch
 
 @register_node_patch("my_node", "pull_distributed")
 def empty_distributed(self, vqip):
-    return {}
+    return self.empty_vqip()
 ```
 
 Here `my_node` must be a valid node name in the model. In this case, we are indicating that in `my_node`, when calling `pull_distributted`, our custom `empty_distributted` should be used instead.
