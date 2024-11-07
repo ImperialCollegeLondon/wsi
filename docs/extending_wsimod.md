@@ -1,13 +1,12 @@
 # Extending and customising WSIMOD functionality
 
-WSIMOD has many features built-in, but undoubtedly, to model real life scenarios, you will
-need to customise it to your specific needs.
+WSIMOD has many features built-in, but undoubtedly, to model real life scenarios, you will need to customise it to your specific needs.
 
 WSIMOD offers 4 ways of doing this customisation of increased complexity - and flexibility: custom orchestration, overrides, patches and custom classes.
 
 ## Custom orchestration
 
-WSIMOD allows to define the order in which the sequence of actions for each node must take place. The defined orchestration is provided within the `orchestration` section of the config file. For example, the following orchestration will run the simulation with two actions: first it will run the `infiltrate` method of the `Groundwater` node, and then the `make_discharge` method of the `Sewer` node.
+WSIMOD allows to define the order in which the sequence of actions for each node must take place. This orchestration can be customised within the `orchestration` section of the config file. For example, the following orchestration will run the simulation with two actions: first it will run the `infiltrate` method of the `Groundwater` node, and then the `make_discharge` method of the `Sewer` node.
 
 ```yaml
 orchestration:
@@ -48,15 +47,15 @@ You can make a more elaborate customisation of your WSIMOD models by using patch
 Extensions files are extra Python modules that will be loaded when creating a model and that contain patches for specific nodes and custom classes - see below. Extension files are defined in the config file as:
 
 ```yaml
-extensions = [
-  "extension/file/one.py",
-  "extension/file/two.py"
+extensions: [
+  extension/file/one.py,
+  extension/file/two.py
 ]
 ```
 
 They are imported in order, something to keep in mind if the order of applying the patches matter.
 
-Each python file can have any Python code, but it can only use the libraries and dependencies that are available in the system running WSIMOD. This means that, for maximum portability no other dependencies beyond those used by WSIMOD should be used in the extension files.
+Each python file can have any Python code, but it can only use the libraries and dependencies that are available in the system running WSIMOD. This means that, for maximum portability no other dependencies beyond those used by WSIMOD itself should be used in the extension files.
 
 There are several ways in which a node can be patched. For full details, visit the [extensions reference section](./reference-extensions.md).
 
@@ -74,7 +73,7 @@ Here `my_node` must be a valid node name in the model. In this case, we are indi
 
 ## Custom classes
 
-The patches method is very powerful and allows for a great deal of flexibility. However, there might be cases where you need more complex customisation - for example, with multiple methods that require rewriting or that depend on each other.
+The patches method is very powerful and allows for a great deal of flexibility. However, there might be cases where you need more complex customisation - for example, with multiple methods that require rewriting or that depend on each other, or if new steps for the orchestration are required.
 
 In those cases, the simplest approach might be to create a new node class, subclassing an existing one - at the very least, subclassing `Node` if no other pre-defined node class is close enough.
 
@@ -93,4 +92,4 @@ class MyReservoir(Reservoir):
         """Add some further customisation here."""
 ```
 
-Custom classes defined this way must be included in extension files, the same way it is done with patches, with the same rules in terms of Python packages and dependencies available to them. Also don't forget to [customise the orchestration](orchestration.md) to ensure that the new `apply_evaporation` function is called during simulation.
+Custom classes defined this way must be included in extension files, the same way it is done with patches, with the same rules in terms of Python packages and dependencies available to them. Also don't forget to [customise the orchestration](#custom-orchestration) to ensure that the new `apply_evaporation` function is called during simulation.
