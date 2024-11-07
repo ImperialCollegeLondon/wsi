@@ -3,14 +3,43 @@
 WSIMOD has many features built-in, but undoubtedly, to model real life scenarios, you will
 need to customise it to your specific needs.
 
-WSIMOD offers 3 ways of doing this customisation of increased complexity - and flexibility:
-overrides, patches and custom classes.
+WSIMOD offers 4 ways of doing this customisation of increased complexity - and flexibility: custom orchestration, overrides, patches and custom classes.
+
+## Custom orchestration
+
+WSIMOD allows to define the order in which the sequence of actions for each node must take place. The defined orchestration is provided within the `orchestration` section of the config file. For example, the following orchestration will run the simulation with two actions: first it will run the `infiltrate` method of the `Groundwater` node, and then the `make_discharge` method of the `Sewer` node.
+
+```yaml
+orchestration:
+- Groundwater: infiltrate
+- Sewer: make_discharge
+```
+
+If no `orchestration` is provided, then a default sequence is used. Check the [Orchestration section](./orchestration.md) for more details on how to customise this.
 
 ## Overrides
 
-[**NOTE**: I have not seen this in action in any example or demo, and `apply_overrides` does not seem to be used ever, so it is unclear how this is actually used.]
+Overrides are the next way of customising the behaviour of nodes or arcs. They enable specifying the value of one or more parameters of a specific - existing - node or arc. These overrides are specified in the config file for the model under a `overrides` section, and therefore they need to be objects that can be parsed in yaml - strings, floats, etc.
 
-Overrides are the most direct way of customising the behaviour of nodes or arcs. They enable specifying the value of one or more parameters of a specific - existing - node or arc. These overrides are specified in the config file for the model under a `overrides` section, and therefore they need to be objects that can be parsed in yaml - strings, floats, etc.
+The following snippet shows and example on how to add overrides, in this case one node and one arc. `name` and `type_` are mandatory fields:
+
+```yaml
+overrides:
+  nodes:
+    my_groundwater:
+      name: my_groundwater
+      type_: Groundwater,
+      infiltration_threshold: 200
+      infiltration_pct: 0.667
+      capacity: 1.43
+      area: 2.36
+      datum: 0.32
+  arcs:
+    storm_outflow:
+      name: storm_outflow
+      type_: Arc
+      capacity: 0.5
+```
 
 ## Patches
 
@@ -49,19 +78,19 @@ The patches method is very powerful and allows for a great deal of flexibility. 
 
 In those cases, the simplest approach might be to create a new node class, subclassing an existing one - at the very least, subclassing `Node` if no other pre-defined node class is close enough.
 
-For example, we might want some new `Land`-style of node that has some custom behaviour for irrigation and the direction arcs. In that case, we could do:
+For example, we might want some new `Reservoir`-style of node that has some custom behaviour for evaporation and abstractions. In that case, we could do:
 
 ```python
-from wsimod.nodes import Land
+from wsimod.nodes.storage import Reservoir
 
 
-class MyLand(Land):
+class MyReservoir(Reservoir):
 
-    def apply_irrigation(self):
+    def apply_evaporation(self):
         """Add custom functionality here."""
 
-    def get_direction_arcs(self, direction, of_type=None):
+    def make_abstractions(self):
         """Add some further customisation here."""
 ```
 
-Custom classes defined this way must be included in extension files, the same way it is done with patches, with the same rules in terms of Python packages and dependencies available to them.
+Custom classes defined this way must be included in extension files, the same way it is done with patches, with the same rules in terms of Python packages and dependencies available to them. Also don't forget to [customise the orchestration](orchestration.md) to ensure that the new `apply_evaporation` function is called during simulation.
