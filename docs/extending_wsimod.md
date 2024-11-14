@@ -6,7 +6,9 @@ WSIMOD offers 4 ways of doing this customisation of increased complexity - and f
 
 ## Custom orchestration
 
-WSIMOD allows to define the order in which the sequence of actions for each node must take place. This orchestration can be customised within the `orchestration` section of the config file. For example, the following orchestration will run the simulation with two actions: first it will run the `infiltrate` method of the `Groundwater` node, and then the `make_discharge` method of the `Sewer` node.
+When trying to capture a given behaviour, we encourage users to first attempt to implement it by connecting [`Nodes`](reference-nodes.md#wsimod.nodes.nodes.Node) and [`Arcs`](reference-arcs.md#wsimod.arcs.arcs.Arc) in a way that enables the behaviour to spontaneously arise from node interactions. By doing this, you create a model that is less prescribed and more likely to reveal interesting integrated mechanisms. That said, sometimes it is not possible, for example see Section 2.3 in our [theory paper](https://doi.org/10.5194/gmd-17-4495-2024). In cases like this, our first recommendation is to customise your orchestration, which changes the order of operations within a timestep for a [`Model`](reference-model.md#wsimod.orchestration.model.Model) object.
+
+The model orchestration can be customised within the `orchestration` section of the config file. For example, the following orchestration will run the simulation with two actions: first it will run the `infiltrate` method for all nodes of `type_: Groundwater`, and then the `make_discharge` method for nodes all of `type_: Sewer`. Hint: just because the model sees a node as a given `type_`, doesn't mean the node has to be that class, see the [model tutorial](wsimod_models.md/#nodes) for more detail.
 
 ```yaml
 orchestration:
@@ -14,11 +16,13 @@ orchestration:
 - Sewer: make_discharge
 ```
 
-If no `orchestration` is provided, then a default sequence is used. Check the [Orchestration section](./orchestration.md) for more details on how to customise this.
+If no `orchestration` is provided, then a default sequence is used. Check the [Orchestration demonstration](./../demo/scripts/oxford_demo/#orchestration) for more details on how to customise this. Note, that if you change your orchestration *at all* then you will have to provide a full orchestration for all `type_: functions` that need calling (even ones that are in the default orchestration, which you can find in [`Model.__init__`](reference-model.md#Model.__init__)).
 
 ## Overrides
 
 Overrides are the next way of customising the behaviour of nodes or arcs. They enable specifying the value of one or more parameters of a specific - existing - node or arc. These overrides are specified in the config file for the model under a `overrides` section, and therefore they need to be objects that can be parsed in yaml - strings, floats, etc.
+
+Because many parameters require other states to change when they are changed, our recommendation is that any parameter changes are either changed directly in the `config` file or inside the `overrides` section of the config file (which offers a convenient location to include all changes made to a base `config`). Because of this, if you are changing parameters on-the-fly, we **strongly recommend** using the [`apply_overrides`](reference-model.md#wsimod.orchestration.model.Model.apply_overrides) functionality of the [`Model`](reference-model.md#wsimod.orchestration.model.Model) object.
 
 The following snippet shows and example on how to add overrides, in this case one node and one arc. `name` and `type_` are mandatory fields:
 
@@ -70,6 +74,8 @@ def empty_distributed(self, vqip):
 ```
 
 Here `my_node` must be a valid node name in the model. In this case, we are indicating that in `my_node`, when calling `pull_distributted`, our custom `empty_distributted` should be used instead.
+
+For further examples, see [customise interactions](./../demo/scripts/customise_interactions.py).
 
 ## Custom classes
 
