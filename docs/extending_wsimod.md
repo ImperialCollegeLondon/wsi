@@ -22,7 +22,7 @@ If no `orchestration` is provided, then a default sequence is used. Check the [O
 
 Overrides are the next way of customising the behaviour of nodes or arcs. They enable specifying the value of one or more parameters of a specific - existing - node or arc. These overrides are specified in the config file for the model under a `overrides` section, and therefore they need to be objects that can be parsed in yaml - strings, floats, etc.
 
-Because many parameters require other states to change when they are changed, our recommendation is that any parameter changes are either changed directly in the `config` file or inside the `overrides` section of the config file (which offers a convenient location to include all changes made to a base `config`). Because of this, if you are changing parameters on-the-fly, we **strongly recommend** using the [`apply_overrides`](reference-model.md#wsimod.orchestration.model.Model.add_overrides) functionality of the [`Model`](reference-model.md#wsimod.orchestration.model.Model) object.
+Because many parameters require other states to change when they are changed, our recommendation is that any parameter changes are either changed directly in the `config` file or inside the `overrides` section of the config file (which offers a convenient location to include all changes made to a base `config`). Because of this, if you are changing parameters on-the-fly, we **strongly recommend** using the [`add_overrides`](reference-model.md#wsimod.orchestration.model.Model.add_overrides) functionality of the [`Model`](reference-model.md#wsimod.orchestration.model.Model) object.
 
 The following snippet shows and example on how to add overrides, in this case one node and one arc. `name` and `type_` are mandatory fields:
 

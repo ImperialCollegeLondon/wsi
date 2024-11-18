@@ -604,6 +604,11 @@ class Model(WSIObj):
             return upstreamness
 
     def add_overrides(self, config: dict):
+        """Apply overrides to nodes and arcs in the model object.
+
+        Args:
+            config (dict): dictionary of overrides to apply to the model object.
+        """
         for node in config.get("nodes", {}).values():
             type_ = node.pop("type_")
             name = node.pop("name")
