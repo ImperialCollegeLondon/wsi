@@ -2,7 +2,7 @@
 ## Introduction
 
 WSIMOD contains a variety of components to represent physical processes.
-We recommend viewing the [API](#reference) for a detailed description of the
+We recommend viewing the [API](./../reference) for a detailed description of the
 models included, however, we provide an overview of documented
 components, their assumptions and required input data on this page.
 
