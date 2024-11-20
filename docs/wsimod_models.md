@@ -107,7 +107,7 @@ We see two additional fields of `type_` and `node_type_override`. If only
 `type_` is provided, then this will specify the object that is created which
 should match an object in WSIMOD. It also specifies how other nodes view it,
 for example, a [`Sewer`](reference-sewer.md#wsimod.nodes.sewer.Sewer) node
-receives water differently from [`Land`](reference-sewer.md#wsimod.nodes.land.Land)
+receives water differently from [`Land`](reference-land.md#wsimod.nodes.land.Land)
 nodes than it does from [`Demand`](reference-other.md#wsimod.nodes.demand.Demand)
 nodes. However, there are a variety of subclasses of `Demand` node, so to
 ensure the `Sewer` object treats all `Demand` subclasses the same, we overwrite
@@ -144,7 +144,7 @@ The `pollutants` entries are used to tell the model which pollutants should be s
 
 The `float_accuracy` entry provides a number used in [mass balance checking](reference-core.md#wsimod.core.core.WSIObj.mass_balance). Common sense is suggested in interpreting mass balance errors.
 
-The `dates` entry is written if the model object has a `dates` property and is a list of `dates` for which the model will run for if the [`Model.run()`](reference-core.md#wsimod.orchestration.model.Model.run) function is called. It is assumed that the `dates` are compatible with the dates provided in the input data.
+The `dates` entry is written if the model object has a `dates` property and is a list of `dates` for which the model will run for if the [`Model.run()`](reference-model.md#wsimod.orchestration.model.Model.run) function is called. It is assumed that the `dates` are compatible with the dates provided in the input data.
 
 ## Input data
 
