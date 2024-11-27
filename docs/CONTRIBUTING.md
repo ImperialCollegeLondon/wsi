@@ -41,14 +41,14 @@ cd wsi
 We use [`pip-tools`](https://pip-tools.readthedocs.io/en/latest/) to ensure consistency in the development process, ensuring all people contributing to WSIMOD uses the same versions for all the dependencies, which minimiese the conflicts. To install the development dependencies and then WISMO in development mode run:
 
 ```bash
-pip install -r requirements-dev.txt
+pip install .[dev]
 pip install -e .
 ```
 
 You can also install the dependencies required to run the demos and tutorials with:
 
 ```bash
-pip install -r requirements-demos.txt
+pip install .[demos]
 ```
 
 ## Quality assurance and linting
@@ -90,7 +90,7 @@ coverage html
 If you want to compile new documentation you will need some additional packages, installed with:
 
 ```bash
-pip install -r requirements-doc.txt
+pip install .[doc]
 ```
 
 From here, you can make changes to the documentation pages in `docs` and view how they appear by navigating to and hosting them locally:
