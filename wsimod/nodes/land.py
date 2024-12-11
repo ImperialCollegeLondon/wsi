@@ -185,6 +185,9 @@ class Land(Node):
         self.percolation.residence_time = self.percolation_residence_time
         super().apply_overrides(overrides)
 
+        for surface, override in overrides.get("surfaces", {}).items():
+            self.get_surface(surface).apply_overrides(override)
+
     def apply_irrigation(self):
         """Iterate over any irrigation functions (needs further testing..
 
