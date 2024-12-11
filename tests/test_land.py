@@ -1484,6 +1484,7 @@ def test_apply_surface_overrides(tmp_path):
                             "surface": "Woodland",
                             "type_": "GrowingSurface",
                             "area": 1000,
+                            "rooting_depth": 0.1,
                         }
                     },
                     "percolation_residence_time": 1,
@@ -1513,6 +1514,7 @@ def test_apply_surface_overrides(tmp_path):
     assert model.nodes["land1"].get_surface("Grass").area == 200
     assert model.nodes["land1"].get_surface("Grass").datum == 20
     assert model.nodes["land1"].get_surface("Woodland").area == 1000
+    assert model.nodes["land1"].get_surface("Woodland").rooting_depth == 0.1
 
 
 if __name__ == "__main__":
