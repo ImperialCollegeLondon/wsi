@@ -1423,6 +1423,99 @@ class MyTestClass(TestCase):
         )
         self.assertEqual(growingsurface.nutrient_pool.fraction_dry_n_to_fast, 0.71)
 
+    """Test surface parameter override."""
+
+
+def test_apply_surface_overrides(tmp_path):
+    """Test surface overrides are applied in model load."""
+    import yaml
+    from wsimod.orchestration.model import Model
+
+    config = {
+        "arcs": {
+            "arc1": {
+                "name": "arc1",
+                "in_port": "land1",
+                "out_port": "river1",
+                "type_": "Arc",
+                "capacity": 10,
+                "preference": 1,
+            },
+        },
+        "nodes": {
+            "land1": {
+                "name": "land1",
+                "type_": "Land",
+                "percolation_residence_time": 0.1,
+                "surfaces": {
+                    "Woodland": {
+                        "area": 100,
+                        "datum": 10,
+                        "type_": "GrowingSurface",
+                        "ET_depletion_factor": 0.75,
+                        "surface": "Woodland",
+                    },
+                    "Grass": {
+                        "area": 200,
+                        "datum": 20,
+                        "type_": "GrowingSurface",
+                        "ET_depletion_factor": 0.75,
+                        "surface": "Grass",
+                    },
+                },
+            },
+            "river1": {
+                "name": "river1",
+                "type_": "River",
+            },
+        },
+        "overrides": {
+            "arcs": {
+                "arc1": {
+                    "name": "arc1",
+                    "type_": "Arc",
+                    "capacity": 20,
+                }
+            },
+            "nodes": {
+                "land1": {
+                    "surfaces": {
+                        "Woodland": {
+                            "surface": "Woodland",
+                            "type_": "GrowingSurface",
+                            "area": 1000,
+                            "ET_depletion_factor": 0.8,
+                        }
+                    },
+                    "percolation_residence_time": 1,
+                    "name": "land1",
+                    "type_": "Land",
+                }
+            },
+        },
+    }
+
+    # Create the config file
+    with (tmp_path / "config.yml").open("w") as f:
+        yaml.dump(config, f)
+
+    # Load in the model
+    model = Model()
+    model.load(tmp_path)
+
+    # Perform the test
+    assert hasattr(model.nodes["land1"], "surfaces")
+    assert hasattr(model.nodes["land1"].get_surface("Woodland"), "surface")
+    assert hasattr(model.nodes["land1"].get_surface("Grass"), "surface")
+    assert model.arcs["arc1"].capacity == 20
+    assert model.arcs["arc1"].preference == 1
+    assert model.nodes["land1"].percolation_residence_time == 1
+    assert model.nodes["land1"].get_surface("Woodland").datum == 10
+    assert model.nodes["land1"].get_surface("Grass").area == 200
+    assert model.nodes["land1"].get_surface("Grass").datum == 20
+    assert model.nodes["land1"].get_surface("Woodland").area == 1000
+    assert model.nodes["land1"].get_surface("Woodland").ET_depletion_factor == 0.8
+
 
 if __name__ == "__main__":
     unittest.main()
