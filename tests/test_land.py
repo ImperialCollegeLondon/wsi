@@ -1514,7 +1514,7 @@ def test_apply_surface_overrides(tmp_path):
     assert model.nodes["land1"].get_surface("Grass").area == 200
     assert model.nodes["land1"].get_surface("Grass").datum == 20
     assert model.nodes["land1"].get_surface("Woodland").area == 1000
-    assert model.nodes["land1"].get_surface("Woodland").rooting_depth == 0.1
+    assert model.nodes["land1"].get_surface("Woodland").ET_depletion_factor == 0.8
 
 
 if __name__ == "__main__":
