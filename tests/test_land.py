@@ -1484,7 +1484,7 @@ def test_apply_surface_overrides(tmp_path):
                             "surface": "Woodland",
                             "type_": "GrowingSurface",
                             "area": 1000,
-                            "rooting_depth": 0.1,
+                            "ET_depletion_factor": 0.8
                         }
                     },
                     "percolation_residence_time": 1,
