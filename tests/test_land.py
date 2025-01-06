@@ -1447,6 +1447,7 @@ def test_apply_surface_overrides(tmp_path):
                 "name": "land1",
                 "type_": "Land",
                 "percolation_residence_time": 0.1,
+                "data_input_dict": {"fake-key": 1},
                 "surfaces": {
                     "Woodland": {
                         "area": 100,
@@ -1454,6 +1455,7 @@ def test_apply_surface_overrides(tmp_path):
                         "type_": "GrowingSurface",
                         "ET_depletion_factor": 0.75,
                         "surface": "Woodland",
+                        "data_input_dict": {"fake-key": 1},
                     },
                     "Grass": {
                         "area": 200,
@@ -1461,6 +1463,7 @@ def test_apply_surface_overrides(tmp_path):
                         "type_": "GrowingSurface",
                         "ET_depletion_factor": 0.75,
                         "surface": "Grass",
+                        "data_input_dict": {"fake-key": 1},
                     },
                 },
             },
