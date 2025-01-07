@@ -430,7 +430,7 @@ class MyTestClass(TestCase):
         )
         input_data = pd.read_csv(data_path)
 
-        overrides = {"data_input_dict": data_path}
+        overrides = {"filename": data_path}
         node = Node(name="")
         node.apply_overrides(overrides)
         node.t = list(node.data_input_dict.keys())[0][1]
@@ -440,7 +440,7 @@ class MyTestClass(TestCase):
             node.get_data_input("temperature"),
         )
         # test runtime error
-        self.assertRaises(RuntimeError, lambda: node.apply_overrides({}))
+        self.assertRaises(RuntimeError, lambda: node.apply_overrides({"filename": 123}))
 
 
 if __name__ == "__main__":

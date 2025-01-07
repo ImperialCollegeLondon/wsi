@@ -1493,7 +1493,6 @@ def test_apply_surface_overrides(tmp_path):
                     "surfaces": {
                         "Woodland": {
                             "surface": "Woodland",
-                            "type_": "GrowingSurface",
                             "area": 1000,
                             "ET_depletion_factor": 0.8,
                         }
