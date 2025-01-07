@@ -1431,6 +1431,14 @@ def test_apply_surface_overrides(tmp_path):
     import yaml
     from wsimod.orchestration.model import Model
 
+    with (tmp_path / "fake_surface_inputs.csv").open("w") as f:
+        f.write("node,surface,variable,time,value\n")
+        f.write("land1,Woodland,srp-dry,2000-01-01,1\n")
+
+    with (tmp_path / "fake_inputs.csv").open("w") as f:
+        f.write("node,variable,time,value\n")
+        f.write("land1,et0,2000-01-01,1\n")
+
     config = {
         "arcs": {
             "arc1": {
@@ -1447,6 +1455,7 @@ def test_apply_surface_overrides(tmp_path):
                 "name": "land1",
                 "type_": "Land",
                 "percolation_residence_time": 0.1,
+                "filename": str(tmp_path / "fake_inputs.csv"),
                 "surfaces": {
                     "Woodland": {
                         "area": 100,
@@ -1454,6 +1463,7 @@ def test_apply_surface_overrides(tmp_path):
                         "type_": "GrowingSurface",
                         "ET_depletion_factor": 0.75,
                         "surface": "Woodland",
+                        "filename": str(tmp_path / "fake_surface_inputs.csv"),
                     },
                     "Grass": {
                         "area": 200,
@@ -1461,6 +1471,7 @@ def test_apply_surface_overrides(tmp_path):
                         "type_": "GrowingSurface",
                         "ET_depletion_factor": 0.75,
                         "surface": "Grass",
+                        "filename": str(tmp_path / "fake_surface_inputs.csv"),
                     },
                 },
             },
@@ -1482,7 +1493,6 @@ def test_apply_surface_overrides(tmp_path):
                     "surfaces": {
                         "Woodland": {
                             "surface": "Woodland",
-                            "type_": "GrowingSurface",
                             "area": 1000,
                             "ET_depletion_factor": 0.8,
                         }

@@ -90,7 +90,7 @@ class Node(WSIObj):
         # overrides data_input_dict
         from wsimod.orchestration.model import read_csv
 
-        content = overrides.pop("data_input_dict", self.data_input_dict)
+        content = overrides.pop("filename", None)
         if isinstance(content, str):
             self.data_input_dict = read_csv(content)
         elif not content:

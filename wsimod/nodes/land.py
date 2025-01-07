@@ -183,10 +183,11 @@ class Land(Node):
         self.surface_runoff.residence_time = self.surface_residence_time
         self.subsurface_runoff.residence_time = self.subsurface_residence_time
         self.percolation.residence_time = self.percolation_residence_time
-        super().apply_overrides(overrides)
 
-        for surface, override in overrides.get("surfaces", {}).items():
+        for surface, override in overrides.pop("surfaces", {}).items():
             self.get_surface(surface).apply_overrides(override)
+
+        super().apply_overrides(overrides)
 
     def apply_irrigation(self):
         """Iterate over any irrigation functions (needs further testing..
