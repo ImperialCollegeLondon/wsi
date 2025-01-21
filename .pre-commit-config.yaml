@@ -1,3 +1,7 @@
+ci:
+  autoupdate_schedule: weekly  # Adjust to your preferred schedule: daily, weekly, or monthly
+  auto_merge: true             # Automatically merge PRs if tests pass
+  
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
