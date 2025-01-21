@@ -11,3 +11,4 @@ Different API sections are documented separately.
 7. [API reference - wtw](reference-wtw.md)
 8. [API reference - other components](reference-other.md)
 9. [API reference - model](reference-model.md)
+10. [API reference - extensions](reference-extensions.md)

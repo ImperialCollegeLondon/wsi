@@ -90,7 +90,10 @@ class Arc(WSIObj):
         Args:
             overrides (dict, optional): Dictionary of overrides. Defaults to {}.
         """
-        pass
+        self.capacity = overrides.pop("capacity", self.capacity)
+        self.preference = overrides.pop("preference", self.preference)
+        if len(overrides) > 0:
+            print(f"No override behaviour defined for: {overrides.keys()}")
 
     def arc_mass_balance(self):
         """Checks mass balance for inflows/outflows/storage change in an arc.
