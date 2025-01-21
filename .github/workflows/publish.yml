@@ -95,7 +95,7 @@ jobs:
       PARENT_ID: ${{ vars.PARENT_ID }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
 
       - name: Create Docker image
         run: |
