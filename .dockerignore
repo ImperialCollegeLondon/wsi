@@ -3,3 +3,5 @@
 !wsimod
 !pyproject.toml
 !LICENSE
+!.git
+!README.md
