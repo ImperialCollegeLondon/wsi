@@ -25,6 +25,7 @@ jobs:
           files: dist/wsimod*
 
   publish-PyPI:
+    needs: build-wheel
     name: Publish WSIMOD to PyPI
     runs-on: ubuntu-latest
     permissions:
