@@ -34,7 +34,7 @@ Example of patching an attribute item:
     >>>     return {}
 
 If patching a method of an attribute, the `is_attr` argument should be set to `True` and
-the target should include the attribute name and the method name, all separated by
+the target should include the attribute name and the method name, all separated by 
 periods, eg. `attribute_name.method_name`.
 
 It should be noted that the patched function should have the same signature as the
@@ -43,7 +43,7 @@ there will be a runtime error. In particular, the first argument of the patched 
 should be the node object itself, which will typically be named `self`.
 
 The overridden method or attribute can be accessed within the patched function using the
-`_patched_{method_name}` attribute of the object, eg. `self._patched_pull_distributed`.
+`_patched_{method_name}` attribute of the object, eg. `self._patched_pull_distributed`. 
 The exception to this is when patching an item, in which case the original item is no
 available to be used within the overriding function.
 
