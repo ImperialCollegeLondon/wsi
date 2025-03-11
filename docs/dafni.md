@@ -9,12 +9,18 @@ Assuming you have a DAFNI account, the steps to run a WSIMOD simulation will be 
 following:
 
 - In the `Data` tab:
-  - Upload the input `YAML` file as a dataset.
-    Please note that if your `YAML` file contains `extensions` section, it should include
-    additional linux path strings as follows:
-    `extensions: [
-      /dafni/inputs/**.py
-    ]`
+  - Upload the input `YAML` file as a dataset. Please note that if your `YAML` file 
+  contains `extensions` section, it should include additional linux path strings as
+  follows:
+
+    ```
+    extensions: [
+      /data/inputs/extension_1.py,
+      /data/inputs/extension_2.py,
+      etc...
+    ]
+    ```
+
   - Upload any other required input files as another dataset. This can contain
     multiple files.
 - In the `Workflow` tab select the `WSIMOD workflow`.
