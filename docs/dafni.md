@@ -12,15 +12,13 @@ following:
   - Upload the input `YAML` file as a dataset. Please note that if your `YAML` file
   contains `extensions` section, it should include additional linux path strings as
   follows:
-
     ```
     extensions: [
-      /data/inputs/extension_1.py,
-      /data/inputs/extension_2.py,
-      etc...
+    /data/inputs/extension_1.py,
+    /data/inputs/extension_2.py,
+    ...
     ]
     ```
-
   - Upload any other required input files as another dataset. This can contain
     multiple files.
 - In the `Workflow` tab select the `WSIMOD workflow`.
