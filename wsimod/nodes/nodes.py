@@ -88,11 +88,11 @@ class Node(WSIObj):
             overrides (dict, optional): Dictionary of overrides. Defaults to {}.
         """
         # overrides data_input_dict
-        from wsimod.orchestration.model import read_csv
+        from wsimod.orchestration.model import read_data_file
 
         content = overrides.pop("filename", None)
         if isinstance(content, str):
-            self.data_input_dict = read_csv(content)
+            self.data_input_dict = read_data_file(content)
         elif not content:
             pass
         else:

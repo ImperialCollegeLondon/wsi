@@ -408,11 +408,11 @@ class Surface(DecayTank):
             )
 
         # overrides data_input_dict
-        from wsimod.orchestration.model import read_csv
+        from wsimod.orchestration.model import read_data_file
 
         content = overrides.pop("data_input_dict", self.data_input_dict)
         if isinstance(content, str):
-            self.data_input_dict = read_csv(content)
+            self.data_input_dict = read_data_file(content)
         elif isinstance(content, dict):
             self.data_input_dict = content
         else:
