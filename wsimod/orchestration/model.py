@@ -46,12 +46,15 @@ class to_datetime:
         self._date = self._parse_date(date_string)
 
     def __str__(self):
-        try:
-            return self._date.strftime("%Y-%m-%d")
-        except ValueError:
+        # If the day is 1 and we only have year-month info, show YYYY-MM format
+        if self._date.day == 1 and self._date.hour == 0 and self._date.minute == 0 and self._date.second == 0:
             return self._date.strftime("%Y-%m")
-
+        return self._date.strftime("%Y-%m-%d")
+    
     def __repr__(self):
+        # If the day is 1 and we only have year-month info, show YYYY-MM format
+        if self._date.day == 1 and self._date.hour == 0 and self._date.minute == 0 and self._date.second == 0:
+            return self._date.strftime("%Y-%m")
         return self._date.strftime("%Y-%m-%d")
 
     @property
@@ -118,14 +121,15 @@ class to_datetime:
                 return datetime.strptime(date_string, "%Y-%m-%d")
             except ValueError:
                 try:
-                    # Check if valid 'YYYY-MM' format
-                    if len(date_string.split("-")[0]) == 4:
-                        int(date_string.split("-")[0])
-                    if len(date_string.split("-")[1]) == 2:
-                        int(date_string.split("-")[1])
-                    return date_string
+                    # Try 'YYYY-MM' format - set day to 1
+                    return datetime.strptime(date_string, "%Y-%m")
                 except ValueError:
-                    raise ValueError
+                    try:
+                        # Try 'YYYY-MM-DD HH:MM:SS' format
+                        return datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S")
+                    except ValueError:
+                        # If all parsing attempts fail, raise a clear error
+                        raise ValueError(f"Unable to parse date string '{date_string}'. Expected formats: 'YYYY-MM-DD', 'YYYY-MM', or 'YYYY-MM-DD HH:MM:SS'")
 
     def __eq__(self, other):
         if isinstance(other, to_datetime):
@@ -349,6 +353,163 @@ class Model(WSIObj):
         apply_patches(self)
         return self
 
+    def _save_model_config(self, address, config_name="config.yml", unified_data_file=None, file_type="csv", compress=False):
+        """Save model configuration to a YAML file.
+        
+        Args:
+            address (str): Path to save directory
+            config_name (str): Name of the config file
+            unified_data_file (str, optional): Name of unified data file if using unified data
+            file_type (str): File type for individual data files ("csv" or "csv.gz")
+            compress (bool): Whether to compress individual files
+        """
+        nodes = {}
+        for node in self.nodes.values():
+            init_args = self.get_init_args(node.__class__)
+            special_args = set(["surfaces", "parent", "data_input_dict"])
+
+            node_props = {
+                x: getattr(node, x) for x in set(init_args).difference(special_args)
+            }
+            node_props["type_"] = node.__class__.__name__
+            node_props["node_type_override"] = (
+                repr(node.__class__).split(".")[-1].replace("'>", "")
+            )
+
+            if "surfaces" in init_args:
+                surfaces = {}
+                for surface in node.surfaces:
+                    surface_args = self.get_init_args(surface.__class__)
+                    surface_props = {
+                        x: getattr(surface, x)
+                        for x in set(surface_args).difference(special_args)
+                    }
+                    surface_props["type_"] = surface.__class__.__name__
+
+                    # Exceptions...
+                    # TODO I need a better way to do this
+                    del surface_props["capacity"]
+                    if set(["rooting_depth", "pore_depth"]).intersection(surface_args):
+                        del surface_props["depth"]
+                    
+                    # Handle data input dict based on save mode
+                    if "data_input_dict" in surface_args:
+                        if unified_data_file and surface.data_input_dict:
+                            # Mark that data should be loaded from unified file
+                            surface_props["data_input_dict"] = True
+                        elif surface.data_input_dict:
+                            # Save individual file
+                            filename = (
+                                "{0}-{1}-inputs.{2}".format(
+                                    node.name, surface.surface, file_type
+                                )
+                                .replace("(", "_")
+                                .replace(")", "_")
+                                .replace("/", "_")
+                                .replace(" ", "_")
+                            )
+                            write_data_file(
+                                surface.data_input_dict,
+                                {"node": node.name, "surface": surface.surface},
+                                os.path.join(address, filename),
+                                compress=compress,
+                            )
+                            surface_props["filename"] = filename
+
+                    surfaces[surface_props["surface"]] = surface_props
+                node_props["surfaces"] = surfaces
+
+            # Handle node-level data input dict based on save mode
+            if "data_input_dict" in init_args:
+                if unified_data_file and node.data_input_dict:
+                    # Mark that data should be loaded from unified file
+                    node_props["data_input_dict"] = True
+                elif node.data_input_dict:
+                    # Save individual file
+                    filename = "{0}-inputs.{1}".format(node.name, file_type)
+                    write_data_file(
+                        node.data_input_dict,
+                        {"node": node.name},
+                        os.path.join(address, filename),
+                        compress=compress,
+                    )
+                    node_props["filename"] = filename
+
+            nodes[node.name] = node_props
+
+        arcs = {}
+        for arc in self.arcs.values():
+            init_args = self.get_init_args(arc.__class__)
+            special_args = set(["in_port", "out_port"])
+            arc_props = {
+                x: getattr(arc, x) for x in set(init_args).difference(special_args)
+            }
+            arc_props["type_"] = arc.__class__.__name__
+            arc_props["in_port"] = arc.in_port.name
+            arc_props["out_port"] = arc.out_port.name
+            arcs[arc.name] = arc_props
+
+        data = {
+            "nodes": nodes,
+            "arcs": arcs,
+            "orchestration": self.orchestration,
+            "pollutants": constants.POLLUTANTS,
+            "additive_pollutants": constants.ADDITIVE_POLLUTANTS,
+            "non_additive_pollutants": constants.NON_ADDITIVE_POLLUTANTS,
+            "float_accuracy": constants.FLOAT_ACCURACY,
+            "extensions": self.extensions,
+            "river_discharge_order": self.river_discharge_order,
+        }
+        
+        if unified_data_file:
+            data["unified_data_file"] = unified_data_file
+            
+        if hasattr(self, "dates"):
+            data["dates"] = [str(x) for x in self.dates]
+
+        def coerce_value(value):
+            conversion_options = {
+                "__float__": float,
+                "__iter__": list,
+                "__int__": int,
+                "__str__": str,
+                "__bool__": bool,
+            }
+            converted = False
+            for property, func in conversion_options.items():
+                if hasattr(value, property):
+                    try:
+                        yaml.safe_dump(func(value))
+                        value = func(value)
+                        converted = True
+                        break
+                    except Exception:
+                        raise ValueError(f"Cannot dump: {value} of type {type(value)}")
+            if not converted:
+                raise ValueError(f"Cannot dump: {value} of type {type(value)}")
+
+            return value
+
+        def check_and_coerce_dict(data_dict):
+            for key, value in data_dict.items():
+                if isinstance(value, dict):
+                    check_and_coerce_dict(value)
+                else:
+                    try:
+                        yaml.safe_dump(value)
+                    except yaml.representer.RepresenterError:
+                        if hasattr(value, "__iter__"):
+                            for idx, val in enumerate(value):
+                                if isinstance(val, dict):
+                                    check_and_coerce_dict(val)
+                                else:
+                                    value[idx] = coerce_value(val)
+                        data_dict[key] = coerce_value(value)
+
+        check_and_coerce_dict(data)
+
+        write_yaml(address, config_name, data)
+
     def save_unified_data(self, address, parquet_filename="unified_data.parquet", config_name="config.yml", compress=False):
         """Save model data to a unified parquet file.
         
@@ -384,112 +545,8 @@ class Model(WSIObj):
         parquet_path = os.path.join(address, parquet_filename)
         unified_df.to_parquet(parquet_path, index=False)
         
-        # Save config file (without individual data files)
-        nodes = {}
-        for node in self.nodes.values():
-            init_args = self.get_init_args(node.__class__)
-            special_args = set(["surfaces", "parent", "data_input_dict"])
-
-            node_props = {
-                x: getattr(node, x) for x in set(init_args).difference(special_args)
-            }
-            node_props["type_"] = node.__class__.__name__
-            node_props["node_type_override"] = (
-                repr(node.__class__).split(".")[-1].replace("'>", "")
-            )
-
-            if "surfaces" in init_args:
-                surfaces = {}
-                for surface in node.surfaces:
-                    surface_args = self.get_init_args(surface.__class__)
-                    surface_props = {
-                        x: getattr(surface, x)
-                        for x in set(surface_args).difference(special_args)
-                    }
-                    surface_props["type_"] = surface.__class__.__name__
-
-                    # Mark that data should be loaded from unified file
-                    if "data_input_dict" in surface_args and surface.data_input_dict:
-                        surface_props["data_input_dict"] = True
-
-                    surfaces[surface_props["surface"]] = surface_props
-                node_props["surfaces"] = surfaces
-
-            # Mark that data should be loaded from unified file
-            if "data_input_dict" in init_args and node.data_input_dict:
-                node_props["data_input_dict"] = True
-
-            nodes[node.name] = node_props
-
-        arcs = {}
-        for arc in self.arcs.values():
-            init_args = self.get_init_args(arc.__class__)
-            special_args = set(["in_port", "out_port"])
-            arc_props = {
-                x: getattr(arc, x) for x in set(init_args).difference(special_args)
-            }
-            arc_props["type_"] = arc.__class__.__name__
-            arc_props["in_port"] = arc.in_port.name
-            arc_props["out_port"] = arc.out_port.name
-            arcs[arc.name] = arc_props
-
-        data = {
-            "nodes": nodes,
-            "arcs": arcs,
-            "orchestration": self.orchestration,
-            "pollutants": constants.POLLUTANTS,
-            "additive_pollutants": constants.ADDITIVE_POLLUTANTS,
-            "non_additive_pollutants": constants.NON_ADDITIVE_POLLUTANTS,
-            "float_accuracy": constants.FLOAT_ACCURACY,
-            "extensions": self.extensions,
-            "river_discharge_order": self.river_discharge_order,
-            "unified_data_file": parquet_filename,  # Add reference to unified data file
-        }
-        if hasattr(self, "dates"):
-            data["dates"] = [str(x) for x in self.dates]
-
-        def coerce_value(value):
-            conversion_options = {
-                "__float__": float,
-                "__iter__": list,
-                "__int__": int,
-                "__str__": str,
-                "__bool__": bool,
-            }
-            converted = False
-            for property, func in conversion_options.items():
-                if hasattr(value, property):
-                    try:
-                        yaml.safe_dump(func(value))
-                        value = func(value)
-                        converted = True
-                        break
-                    except Exception:
-                        raise ValueError(f"Cannot dump: {value} of type {type(value)}")
-            if not converted:
-                raise ValueError(f"Cannot dump: {value} of type {type(value)}")
-
-            return value
-
-        def check_and_coerce_dict(data_dict):
-            for key, value in data_dict.items():
-                if isinstance(value, dict):
-                    check_and_coerce_dict(value)
-                else:
-                    try:
-                        yaml.safe_dump(value)
-                    except yaml.representer.RepresenterError:
-                        if hasattr(value, "__iter__"):
-                            for idx, val in enumerate(value):
-                                if isinstance(val, dict):
-                                    check_and_coerce_dict(val)
-                                else:
-                                    value[idx] = coerce_value(val)
-                        data_dict[key] = coerce_value(value)
-
-        check_and_coerce_dict(data)
-
-        write_yaml(address, config_name, data)
+        # Save config file using the extracted method
+        self._save_model_config(address, config_name, unified_data_file=parquet_filename)
 
     def save(self, address, config_name="config.yml", compress=False):
         """Save the model object to a yaml file and input data to csv.gz format in the
@@ -502,154 +559,14 @@ class Model(WSIObj):
         """
         if not os.path.exists(address):
             os.mkdir(address)
-        nodes = {}
-
+        
         if compress:
             file_type = "csv.gz"
         else:
             file_type = "csv"
-        for node in self.nodes.values():
-            init_args = self.get_init_args(node.__class__)
-            special_args = set(["surfaces", "parent", "data_input_dict"])
-
-            node_props = {
-                x: getattr(node, x) for x in set(init_args).difference(special_args)
-            }
-            node_props["type_"] = node.__class__.__name__
-            node_props["node_type_override"] = (
-                repr(node.__class__).split(".")[-1].replace("'>", "")
-            )
-
-            if "surfaces" in init_args:
-                surfaces = {}
-                for surface in node.surfaces:
-                    surface_args = self.get_init_args(surface.__class__)
-                    surface_props = {
-                        x: getattr(surface, x)
-                        for x in set(surface_args).difference(special_args)
-                    }
-                    surface_props["type_"] = surface.__class__.__name__
-
-                    # Exceptions...
-                    # TODO I need a better way to do this
-                    del surface_props["capacity"]
-                    if set(["rooting_depth", "pore_depth"]).intersection(surface_args):
-                        del surface_props["depth"]
-                    if "data_input_dict" in surface_args:
-                        if surface.data_input_dict:
-                            filename = (
-                                "{0}-{1}-inputs.{2}".format(
-                                    node.name, surface.surface, file_type
-                                )
-                                .replace("(", "_")
-                                .replace(")", "_")
-                                .replace("/", "_")
-                                .replace(" ", "_")
-                            )
-                            write_data_file(
-                                surface.data_input_dict,
-                                {"node": node.name, "surface": surface.surface},
-                                os.path.join(address, filename),
-                                compress=compress,
-                            )
-                            surface_props["filename"] = filename
-                    surfaces[surface_props["surface"]] = surface_props
-                node_props["surfaces"] = surfaces
-
-            if "data_input_dict" in init_args:
-                if node.data_input_dict:
-                    filename = "{0}-inputs.{1}".format(node.name, file_type)
-                    write_data_file(
-                        node.data_input_dict,
-                        {"node": node.name},
-                        os.path.join(address, filename),
-                        compress=compress,
-                    )
-                    node_props["filename"] = filename
-
-            nodes[node.name] = node_props
-
-        arcs = {}
-        for arc in self.arcs.values():
-            init_args = self.get_init_args(arc.__class__)
-            special_args = set(["in_port", "out_port"])
-            arc_props = {
-                x: getattr(arc, x) for x in set(init_args).difference(special_args)
-            }
-            arc_props["type_"] = arc.__class__.__name__
-            arc_props["in_port"] = arc.in_port.name
-            arc_props["out_port"] = arc.out_port.name
-            arcs[arc.name] = arc_props
-
-        data = {
-            "nodes": nodes,
-            "arcs": arcs,
-            "orchestration": self.orchestration,
-            "pollutants": constants.POLLUTANTS,
-            "additive_pollutants": constants.ADDITIVE_POLLUTANTS,
-            "non_additive_pollutants": constants.NON_ADDITIVE_POLLUTANTS,
-            "float_accuracy": constants.FLOAT_ACCURACY,
-            "extensions": self.extensions,
-            "river_discharge_order": self.river_discharge_order,
-        }
-        if hasattr(self, "dates"):
-            data["dates"] = [str(x) for x in self.dates]
-
-        def coerce_value(value):
-            """
-
-            Args:
-                value:
-
-            Returns:
-
-            """
-            conversion_options = {
-                "__float__": float,
-                "__iter__": list,
-                "__int__": int,
-                "__str__": str,
-                "__bool__": bool,
-            }
-            converted = False
-            for property, func in conversion_options.items():
-                if hasattr(value, property):
-                    try:
-                        yaml.safe_dump(func(value))
-                        value = func(value)
-                        converted = True
-                        break
-                    except Exception:
-                        raise ValueError(f"Cannot dump: {value} of type {type(value)}")
-            if not converted:
-                raise ValueError(f"Cannot dump: {value} of type {type(value)}")
-
-            return value
-
-        def check_and_coerce_dict(data_dict):
-            """
-
-            Args:
-                data_dict:
-            """
-            for key, value in data_dict.items():
-                if isinstance(value, dict):
-                    check_and_coerce_dict(value)
-                else:
-                    try:
-                        yaml.safe_dump(value)
-                    except yaml.representer.RepresenterError:
-                        if hasattr(value, "__iter__"):
-                            for idx, val in enumerate(value):
-                                if isinstance(val, dict):
-                                    check_and_coerce_dict(val)
-                                else:
-                                    value[idx] = coerce_value(val)
-                        data_dict[key] = coerce_value(value)
-
-        check_and_coerce_dict(data)
-
-        write_yaml(address, config_name, data)
+            
+        # Use the extracted config save method
+        self._save_model_config(address, config_name, file_type=file_type, compress=compress)
 
     def load_pickle(self, fid):
         """Load model object to a pickle file, including the model states.
@@ -1513,13 +1430,59 @@ def load_data_from_dataframe(df, node_name, surface_name=None):
     
     filtered_df = df[mask]
     
-    # Convert to data_input_dict format
+    # Convert to data_input_dict format using vectorized operations
+    # Much faster than iterrows()
+    if len(filtered_df) == 0:
+        return {}
+    
+    # Convert time column to to_datetime objects and create tuple keys
+    # Use itertuples which is much faster than iterrows
     data = {}
-    for _, row in filtered_df.iterrows():
-        key = (row['variable'], to_datetime(row['time']))
-        data[key] = float(row['value'])
+    for row in filtered_df.itertuples(index=False):
+        key = (row.variable, to_datetime(row.time))
+        data[key] = float(row.value)
     
     return data
+
+
+def batch_load_data_from_dataframe(df, nodes_config):
+    """Batch load data for multiple nodes/surfaces from a unified DataFrame.
+    This is more efficient than calling load_data_from_dataframe multiple times.
+    
+    Args:
+        df (pd.DataFrame): Unified DataFrame with all data
+        nodes_config (set): Set of (node_name, surface_name) tuples to load
+                           where surface_name is None for node-level data
+        
+    Returns:
+        dict: Dictionary mapping (node_name, surface_name) tuples to data_input_dict
+    """
+    if not PANDAS_AVAILABLE:
+        raise ImportError("pandas is required for DataFrame support")
+    
+    # Group by node and surface once for efficiency
+    grouped = df.groupby(['node', 'surface'])
+    
+    results = {}
+    for (node_name, surface_name), group_df in grouped:
+        # Handle None surface (node-level data)
+        if pd.isna(surface_name):
+            surface_key = None
+        else:
+            surface_key = surface_name
+        
+        key = (node_name, surface_key)
+        
+        # Only process if this node/surface combination is needed
+        if key in nodes_config:
+            # Convert to data_input_dict format using itertuples
+            data = {}
+            for row in group_df.itertuples(index=False):
+                dict_key = (row.variable, to_datetime(row.time))
+                data[dict_key] = float(row.value)
+            results[key] = data
+    
+    return results
 
 
 def flatten_dict(d, parent_key="", sep="-"):
