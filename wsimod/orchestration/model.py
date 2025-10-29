@@ -44,16 +44,17 @@ class to_datetime:
                 format %Y-%m-%d or %Y-%m.
         """
         self._date = self._parse_date(date_string)
+        self._original_format = self._detect_original_format(date_string)
 
     def __str__(self):
-        # If the day is 1 and we only have year-month info, show YYYY-MM format
-        if self._date.day == 1 and self._date.hour == 0 and self._date.minute == 0 and self._date.second == 0:
+        # Return format based on original input format
+        if self._original_format == "YYYY-MM":
             return self._date.strftime("%Y-%m")
         return self._date.strftime("%Y-%m-%d")
     
     def __repr__(self):
-        # If the day is 1 and we only have year-month info, show YYYY-MM format
-        if self._date.day == 1 and self._date.hour == 0 and self._date.minute == 0 and self._date.second == 0:
+        # Return format based on original input format
+        if self._original_format == "YYYY-MM":
             return self._date.strftime("%Y-%m")
         return self._date.strftime("%Y-%m-%d")
 
@@ -113,6 +114,21 @@ class to_datetime:
         year = self._date.year
         return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
 
+    def _detect_original_format(self, date_string):
+        """Detect the original format of the date string.
+        
+        Args:
+            date_string (str): The original date string
+            
+        Returns:
+            str: "YYYY-MM" or "YYYY-MM-DD" based on original format
+        """
+        # Check if it matches YYYY-MM format (exactly 7 characters, no dashes after month)
+        if len(date_string) == 7 and date_string.count('-') == 1:
+            return "YYYY-MM"
+        else:
+            return "YYYY-MM-DD"
+    
     def _parse_date(self, date_string, date_format="%Y-%m-%d %H:%M:%S"):
         try:
             return datetime.strptime(date_string, date_format)
@@ -234,6 +250,19 @@ class Model(WSIObj):
             # Load unified data
             unified_data_path = os.path.join(address, unified_data_file)
             self.unified_data = pd.read_parquet(unified_data_path)
+            def convert_mixed_dates(series):
+                """Convert mixed date formats, preserving YYYY-MM as periods."""
+                result = []
+                for date_str in series:
+                    if len(str(date_str)) == 7 and str(date_str).count('-') == 1:
+                        # YYYY-MM format - convert to period
+                        result.append(pd.Period(date_str, freq='M'))
+                    else:
+                        # Full date format - convert to datetime
+                        result.append(pd.to_datetime(date_str))
+                return result
+
+            self.unified_data["time"] = convert_mixed_dates(self.unified_data["time"])
             
             # Create a single comprehensive data dictionary for all nodes
             # This is much faster than individual lookups

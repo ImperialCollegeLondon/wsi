@@ -412,7 +412,7 @@ class TestRealModel(TestCase):
 
         model2 = Model()
         model2.load(r"C:\Users\bdobson\OneDrive - Imperial College London\temp\bwick\v2\model_compressed")
-        results2 = model2.run(dates = model.dates[0:3])
+        results2 = model2.run(dates = model2.dates[0:3])
         
         self.assertEqual(results, results2)
 
