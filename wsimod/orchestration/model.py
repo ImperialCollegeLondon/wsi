@@ -230,23 +230,27 @@ class Model(WSIObj):
         # Check if using unified data file
         unified_data_file = data.get("unified_data_file")
         if unified_data_file and PANDAS_AVAILABLE:
+            
             # Load unified data
             unified_data_path = os.path.join(address, unified_data_file)
             self.unified_data = pd.read_parquet(unified_data_path)
             
-            # Load data from unified DataFrame
+            # Create a single comprehensive data dictionary for all nodes
+            # This is much faster than individual lookups
+            surface_data = self.unified_data.dropna(subset=["surface"]).groupby(['node', 'surface']).apply(lambda x: x.set_index(['variable', 'time']).value.to_dict()).to_dict()
+            node_data = self.unified_data.loc[self.unified_data.surface.isna()].groupby('node').apply(lambda x: x.set_index(['variable', 'time']).value.to_dict()).to_dict()
+            
+            # Assign the same comprehensive data dict to all nodes that need it
             for name, node in nodes.items():
                 if "data_input_dict" in node.keys() and node["data_input_dict"]:
-                    node["data_input_dict"] = load_data_from_dataframe(
-                        self.unified_data, name
-                    )
+                    node["data_input_dict"] = node_data[name]
                 if "surfaces" in node.keys():
                     for key, surface in node["surfaces"].items():
                         if "data_input_dict" in surface.keys() and surface["data_input_dict"]:
-                            node["surfaces"][key]["data_input_dict"] = load_data_from_dataframe(
-                                self.unified_data, name, surface.get("surface", key)
-                            )
+                            node["surfaces"][key]["data_input_dict"] = surface_data[(name, key)]
                     node["surfaces"] = list(node["surfaces"].values())
+            if "dates" in data.keys():
+                self.dates = pd.to_datetime(data["dates"])
         else:
             # Use individual files (original behavior)
             for name, node in nodes.items():
@@ -263,14 +267,15 @@ class Model(WSIObj):
                             )
                             del surface["filename"]
                     node["surfaces"] = list(node["surfaces"].values())
+            if "dates" in data.keys():
+                self.dates = [to_datetime(x) for x in data["dates"]]
         arcs = data.get("arcs", {})
         self.add_nodes(list(nodes.values()))
         self.add_arcs(list(arcs.values()))
 
         self.add_overrides(data.get("overrides", {}))
 
-        if "dates" in data.keys():
-            self.dates = [to_datetime(x) for x in data["dates"]]
+        
 
         apply_patches(self)
 
@@ -324,21 +329,25 @@ class Model(WSIObj):
 
         nodes = data["nodes"]
 
-        # Load data from unified DataFrame instead of individual files
+        # Create a single comprehensive data dictionary for all nodes
+        # This is much faster than individual lookups
+        all_data = {}
+        for _, row in self.unified_data.itertuples(index=False):
+            # Use pandas datetime directly for speed
+            key = (row.variable, pd.to_datetime(row.time))
+            all_data[key] = float(row.value)
+        
+        # Assign the same comprehensive data dict to all nodes that need it
         for name, node in nodes.items():
             if "data_input_dict" in node.keys():
                 # Load node-level data from unified DataFrame
-                node["data_input_dict"] = load_data_from_dataframe(
-                    self.unified_data, name
-                )
+                node["data_input_dict"] = all_data
             
             if "surfaces" in node.keys():
                 for key, surface in node["surfaces"].items():
                     if "data_input_dict" in surface.keys():
                         # Load surface-level data from unified DataFrame
-                        node["surfaces"][key]["data_input_dict"] = load_data_from_dataframe(
-                            self.unified_data, name, surface.get("surface", key)
-                        )
+                        node["surfaces"][key]["data_input_dict"] = all_data
                 node["surfaces"] = list(node["surfaces"].values())
         
         arcs = data.get("arcs", {})
@@ -346,9 +355,6 @@ class Model(WSIObj):
         self.add_arcs(list(arcs.values()))
 
         self.add_overrides(data.get("overrides", {}))
-
-        if "dates" in data.keys():
-            self.dates = [to_datetime(x) for x in data["dates"]]
 
         apply_patches(self)
         return self
@@ -1430,16 +1436,15 @@ def load_data_from_dataframe(df, node_name, surface_name=None):
     
     filtered_df = df[mask]
     
-    # Convert to data_input_dict format using vectorized operations
-    # Much faster than iterrows()
     if len(filtered_df) == 0:
         return {}
     
-    # Convert time column to to_datetime objects and create tuple keys
-    # Use itertuples which is much faster than iterrows
+    # Convert to data_input_dict format using vectorized operations
+    # Create all keys at once using pandas datetime (much faster)
     data = {}
     for row in filtered_df.itertuples(index=False):
-        key = (row.variable, to_datetime(row.time))
+        # Use pandas datetime directly instead of to_datetime conversion
+        key = (row.variable, pd.to_datetime(row.time))
         data[key] = float(row.value)
     
     return data
