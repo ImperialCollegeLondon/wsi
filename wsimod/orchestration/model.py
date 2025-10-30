@@ -500,6 +500,28 @@ class Model(WSIObj):
 
         write_yaml(address, config_name, data)
 
+    def save(self, address, config_name="config.yml", compress=False):
+        """Save the model object to a yaml file and input data to csv.gz format in the
+        directory specified.
+
+        Args:
+            address (str): Path to a directory
+            config_name (str, optional): Name of yaml model file.
+                Defaults to 'model.yml'
+        """
+        if not os.path.exists(address):
+            os.mkdir(address)
+
+        if compress:
+            file_type = "csv.gz"
+        else:
+            file_type = "csv"
+
+        # Use the extracted config save method
+        self._save_model_config(
+            address, config_name, file_type=file_type, compress=compress
+        )
+
     def save_unified_data(
         self,
         address,
@@ -546,28 +568,6 @@ class Model(WSIObj):
         # Save config file using the extracted method
         self._save_model_config(
             address, config_name, unified_data_file=parquet_filename
-        )
-
-    def save(self, address, config_name="config.yml", compress=False):
-        """Save the model object to a yaml file and input data to csv.gz format in the
-        directory specified.
-
-        Args:
-            address (str): Path to a directory
-            config_name (str, optional): Name of yaml model file.
-                Defaults to 'model.yml'
-        """
-        if not os.path.exists(address):
-            os.mkdir(address)
-
-        if compress:
-            file_type = "csv.gz"
-        else:
-            file_type = "csv"
-
-        # Use the extracted config save method
-        self._save_model_config(
-            address, config_name, file_type=file_type, compress=compress
         )
 
     def load_pickle(self, fid):
