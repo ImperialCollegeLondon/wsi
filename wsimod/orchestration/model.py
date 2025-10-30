@@ -1405,80 +1405,8 @@ def create_unified_dataframe(nodes_data, surfaces_data=None):
     return pd.DataFrame(rows)
 
 
-def load_data_from_dataframe(df, node_name, surface_name=None):
-    """Load data for a specific node/surface from a unified DataFrame.
-
-    Args:
-        df (pd.DataFrame): Unified DataFrame with all data
-        node_name (str): Name of the node
-        surface_name (str, optional): Name of the surface (None for node-level data)
-
-    Returns:
-        dict: Dictionary with (variable, time) keys and data values
-    """
-    if not PANDAS_AVAILABLE:
-        raise ImportError("pandas is required for DataFrame support")
-
-    # Filter data for the specific node and surface
-    if surface_name is None:
-        mask = (df["node"] == node_name) & (df["surface"].isna())
-    else:
-        mask = (df["node"] == node_name) & (df["surface"] == surface_name)
-
-    filtered_df = df[mask]
-
-    if len(filtered_df) == 0:
-        return {}
-
-    # Convert to data_input_dict format using vectorized operations
-    # Create all keys at once using pandas datetime (much faster)
-    data = {}
-    for row in filtered_df.itertuples(index=False):
-        # Use pandas datetime directly instead of to_datetime conversion
-        key = (row.variable, pd.to_datetime(row.time))
-        data[key] = float(row.value)
-
-    return data
-
-
-def batch_load_data_from_dataframe(df, nodes_config):
-    """Batch load data for multiple nodes/surfaces from a unified DataFrame.
-    This is more efficient than calling load_data_from_dataframe multiple times.
-
-    Args:
-        df (pd.DataFrame): Unified DataFrame with all data
-        nodes_config (set): Set of (node_name, surface_name) tuples to load
-                           where surface_name is None for node-level data
-
-    Returns:
-        dict: Dictionary mapping (node_name, surface_name) tuples to data_input_dict
-    """
-    if not PANDAS_AVAILABLE:
-        raise ImportError("pandas is required for DataFrame support")
-
-    # Group by node and surface once for efficiency
-    grouped = df.groupby(["node", "surface"])
-
-    results = {}
-    for (node_name, surface_name), group_df in grouped:
-        # Handle None surface (node-level data)
-        if pd.isna(surface_name):
-            surface_key = None
-        else:
-            surface_key = surface_name
-
-        key = (node_name, surface_key)
-
-        # Only process if this node/surface combination is needed
-        if key in nodes_config:
-            # Convert to data_input_dict format using itertuples
-            data = {}
-            for row in group_df.itertuples(index=False):
-                dict_key = (row.variable, to_datetime(row.time))
-                data[dict_key] = float(row.value)
-            results[key] = data
-
-    return results
+# The following helpers are intentionally minimal; additional DataFrame loaders
+# were removed to keep only what is necessary for the tests.
 
 
 def flatten_dict(d, parent_key="", sep="-"):
