@@ -11,19 +11,34 @@ import unittest
 from pathlib import Path
 from unittest import TestCase
 import pandas as pd
-
+import zipfile
 
 from wsimod.orchestration.model import Model, PANDAS_AVAILABLE
 
 
+def _unzip_model_data(temp_dir: str):
+    """Unzip the model data to the given directory.
+    
+    Args:
+        temp_dir: Path to the temporary directory to extract the model data to
+
+    Returns:
+        Path to the directory containing the extracted model data
+    """
+    model_path = Path(temp_dir) / "model"
+    with zipfile.ZipFile(Path(__file__).parent / "test_model_data.zip", 'r') as zip_ref:
+        zip_ref.extractall(model_path)
+    return model_path
 class TestDataLoading(TestCase):
     """Test a real model with data loading and saving functionality."""
 
     def test_load_save(self):
         """Set up test model with data."""
 
-        model_path = Path(__file__).parent / "test_catchment"
+         
         with tempfile.TemporaryDirectory() as temp_dir:
+            model_path = _unzip_model_data(temp_dir)
+            
             model = Model()
             model.load(model_path)
             results = model.run(dates=model.dates[0:3])
@@ -40,19 +55,10 @@ class TestDataLoading(TestCase):
 
     def test_performance_comparison(self):
         """Compare performance of original vs unified data save/load/run."""
-        if not PANDAS_AVAILABLE:
-            self.skipTest("pandas not available")
-
-        # Define the model path (update this path as needed)
-        model_path = Path(__file__).parent / "test_catchment"
-
-        # Check if model path exists
-        if not os.path.exists(model_path):
-            self.skipTest(f"Model path {model_path} does not exist")
-
         with tempfile.TemporaryDirectory() as temp_dir:
-            csv_dir = os.path.join(temp_dir, "csv_format")
-            parquet_dir = os.path.join(temp_dir, "parquet_format")
+            model_path = _unzip_model_data(temp_dir)
+            csv_dir = model_path.parent / "csv_format"
+            parquet_dir = model_path.parent / "parquet_format"
 
             def load_original_model():
                 """Load model using original CSV format."""
