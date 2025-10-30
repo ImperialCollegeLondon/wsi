@@ -445,6 +445,14 @@ class Model(WSIObj):
             data["dates"] = [str(x) for x in self.dates]
 
         def coerce_value(value):
+            """
+
+            Args:
+                value:
+
+            Returns:
+
+            """
             conversion_options = {
                 "__float__": float,
                 "__iter__": list,
@@ -468,6 +476,11 @@ class Model(WSIObj):
             return value
 
         def check_and_coerce_dict(data_dict):
+            """
+
+            Args:
+                data_dict:
+            """
             for key, value in data_dict.items():
                 if isinstance(value, dict):
                     check_and_coerce_dict(value)
