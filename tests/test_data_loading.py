@@ -8,6 +8,7 @@ import os
 import tempfile
 import timeit
 import unittest
+from pathlib import Path
 from unittest import TestCase
 import pandas as pd
 
@@ -21,7 +22,7 @@ class TestDataLoading(TestCase):
     def test_load_save(self):
         """Set up test model with data."""
 
-        model_path = r"/Users/barneydobson/Library/CloudStorage/OneDrive-ImperialCollegeLondon/temp/bwick/v2/model"
+        model_path = Path(__file__).parent / "test_catchment"
         with tempfile.TemporaryDirectory() as temp_dir:
             model = Model()
             model.load(model_path)
@@ -43,7 +44,7 @@ class TestDataLoading(TestCase):
             self.skipTest("pandas not available")
 
         # Define the model path (update this path as needed)
-        model_path = r"/Users/barneydobson/Library/CloudStorage/OneDrive-ImperialCollegeLondon/temp/bwick/v2/model"
+        model_path = Path(__file__).parent / "test_catchment"
 
         # Check if model path exists
         if not os.path.exists(model_path):
