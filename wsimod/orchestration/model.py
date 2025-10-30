@@ -322,6 +322,28 @@ class Model(WSIObj):
 
         apply_patches(self)
 
+    def save(self, address, config_name="config.yml", compress=False):
+        """Save the model object to a yaml file and input data to csv.gz format in the
+        directory specified.
+
+        Args:
+            address (str): Path to a directory
+            config_name (str, optional): Name of yaml model file.
+                Defaults to 'model.yml'
+        """
+        if not os.path.exists(address):
+            os.mkdir(address)
+
+        if compress:
+            file_type = "csv.gz"
+        else:
+            file_type = "csv"
+
+        # Use the extracted config save method
+        self._save_model_config(
+            address, config_name, file_type=file_type, compress=compress
+        )
+
     def _save_model_config(
         self,
         address,
@@ -499,28 +521,6 @@ class Model(WSIObj):
         check_and_coerce_dict(data)
 
         write_yaml(address, config_name, data)
-
-    def save(self, address, config_name="config.yml", compress=False):
-        """Save the model object to a yaml file and input data to csv.gz format in the
-        directory specified.
-
-        Args:
-            address (str): Path to a directory
-            config_name (str, optional): Name of yaml model file.
-                Defaults to 'model.yml'
-        """
-        if not os.path.exists(address):
-            os.mkdir(address)
-
-        if compress:
-            file_type = "csv.gz"
-        else:
-            file_type = "csv"
-
-        # Use the extracted config save method
-        self._save_model_config(
-            address, config_name, file_type=file_type, compress=compress
-        )
 
     def save_unified_data(
         self,
