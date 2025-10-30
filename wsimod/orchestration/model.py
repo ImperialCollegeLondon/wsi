@@ -5,6 +5,7 @@
 """
 import csv
 import gzip
+import importlib.util
 import inspect
 import os
 import sys
@@ -19,7 +20,11 @@ from tqdm import tqdm
 try:
     import pandas as pd
 
-    PANDAS_AVAILABLE = True
+    # Check if parquet engine is available
+    pyarrow_available = importlib.util.find_spec("pyarrow") is not None
+    fastparquet_available = importlib.util.find_spec("fastparquet") is not None
+
+    PANDAS_AVAILABLE = pyarrow_available or fastparquet_available
 except ImportError:
     PANDAS_AVAILABLE = False
 
@@ -1306,10 +1311,6 @@ def create_unified_dataframe(nodes_data, surfaces_data=None):
                 )
 
     return pd.DataFrame(rows)
-
-
-# The following helpers are intentionally minimal; additional DataFrame loaders
-# were removed to keep only what is necessary for the tests.
 
 
 def flatten_dict(d, parent_key="", sep="-"):
