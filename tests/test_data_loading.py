@@ -18,7 +18,7 @@ from wsimod.orchestration.model import Model, PANDAS_AVAILABLE
 
 def _unzip_model_data(temp_dir: str):
     """Unzip the model data to the given directory.
-    
+
     Args:
         temp_dir: Path to the temporary directory to extract the model data to
 
@@ -26,19 +26,20 @@ def _unzip_model_data(temp_dir: str):
         Path to the directory containing the extracted model data
     """
     model_path = Path(temp_dir) / "model"
-    with zipfile.ZipFile(Path(__file__).parent / "test_model_data.zip", 'r') as zip_ref:
+    with zipfile.ZipFile(Path(__file__).parent / "test_model_data.zip", "r") as zip_ref:
         zip_ref.extractall(model_path)
     return model_path
+
+
 class TestDataLoading(TestCase):
     """Test a real model with data loading and saving functionality."""
 
     def test_load_save(self):
         """Set up test model with data."""
 
-         
         with tempfile.TemporaryDirectory() as temp_dir:
             model_path = _unzip_model_data(temp_dir)
-            
+
             model = Model()
             model.load(model_path)
             results = model.run(dates=model.dates[0:3])
