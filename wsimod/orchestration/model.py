@@ -300,14 +300,14 @@ class Model(WSIObj):
             # Use individual files (original behavior)
             for name, node in nodes.items():
                 if "filename" in node.keys():
-                    node["data_input_dict"] = read_data_file(
+                    node["data_input_dict"] = read_csv(
                         os.path.join(address, node["filename"])
                     )
                     del node["filename"]
                 if "surfaces" in node.keys():
                     for key, surface in node["surfaces"].items():
                         if "filename" in surface.keys():
-                            node["surfaces"][key]["data_input_dict"] = read_data_file(
+                            node["surfaces"][key]["data_input_dict"] = read_csv(
                                 os.path.join(address, surface["filename"])
                             )
                             del surface["filename"]
@@ -407,7 +407,7 @@ class Model(WSIObj):
                                 .replace("/", "_")
                                 .replace(" ", "_")
                             )
-                            write_data_file(
+                            write_csv(
                                 surface.data_input_dict,
                                 {"node": node.name, "surface": surface.surface},
                                 os.path.join(address, filename),
@@ -426,7 +426,7 @@ class Model(WSIObj):
                 elif node.data_input_dict:
                     # Save individual file
                     filename = "{0}-inputs.{1}".format(node.name, file_type)
-                    write_data_file(
+                    write_csv(
                         node.data_input_dict,
                         {"node": node.name},
                         os.path.join(address, filename),
@@ -1259,116 +1259,6 @@ def write_csv(data, fixed_data={}, filename="", compress=False):
         fixed_data_values = list(fixed_data.values())
         for key, value in data.items():
             writer.writerow(fixed_data_values + list(key) + [str(value)])
-
-
-def read_parquet(file_path):
-    """Read data from a parquet file and convert to data_input_dict format.
-
-    Args:
-        file_path (str): Path to the parquet file
-
-    Returns:
-        dict: Dictionary with (variable, time) keys and data values
-    """
-    if not PANDAS_AVAILABLE:
-        raise ImportError("pandas is required for parquet support")
-
-    df = pd.read_parquet(file_path)
-
-    # Convert to the expected data_input_dict format
-    data = {}
-    for _, row in df.iterrows():
-        key = (row["variable"], to_datetime(row["time"]))
-        data[key] = float(row["value"])
-
-    return data
-
-
-def write_parquet(data, fixed_data={}, filename="", compress=False):
-    """Write data to a parquet file.
-
-    Args:
-        data (dict): Dictionary with (variable, time) keys and data values
-        fixed_data (dict): Additional fixed data columns
-        filename (str): Output filename
-        compress (bool): Whether to compress the file (not used for parquet)
-    """
-    if not PANDAS_AVAILABLE:
-        raise ImportError("pandas is required for parquet support")
-
-    # Convert data to DataFrame format
-    rows = []
-    for key, value in data.items():
-        variable, time = key
-        row = dict(fixed_data)
-        row["variable"] = variable
-        row["time"] = str(time)  # Convert to string for parquet
-        row["value"] = value
-        rows.append(row)
-
-    df = pd.DataFrame(rows)
-    df.to_parquet(filename, index=False)
-
-
-def read_data_file(file_path, file_format=None, **kwargs):
-    """Read data from a file, automatically detecting format or using specified format.
-
-    Args:
-        file_path (str): Path to the data file
-        file_format (str, optional): File format ('csv', 'parquet', or None for
-            auto-detect)
-        **kwargs: Additional arguments passed to the specific reader
-
-    Returns:
-        dict: Dictionary with (variable, time) keys and data values
-    """
-    if file_format is None:
-        # Auto-detect based on file extension
-        if file_path.endswith(".parquet"):
-            file_format = "parquet"
-        elif file_path.endswith((".csv", ".csv.gz")):
-            file_format = "csv"
-        else:
-            # Default to CSV for backward compatibility
-            file_format = "csv"
-
-    if file_format == "parquet":
-        return read_parquet(file_path, **kwargs)
-    elif file_format == "csv":
-        delimiter = kwargs.get("delimiter", ",")
-        return read_csv(file_path, delimiter)
-    else:
-        raise ValueError(f"Unsupported file format: {file_format}")
-
-
-def write_data_file(data, fixed_data={}, filename="", file_format=None, **kwargs):
-    """Write data to a file, automatically detecting format or using specified format.
-
-    Args:
-        data (dict): Dictionary with (variable, time) keys and data values
-        fixed_data (dict): Additional fixed data columns
-        filename (str): Output filename
-        file_format (str, optional): File format ('csv', 'parquet', or None for
-            auto-detect)
-        **kwargs: Additional arguments passed to the specific writer
-    """
-    if file_format is None:
-        # Auto-detect based on file extension
-        if filename.endswith(".parquet"):
-            file_format = "parquet"
-        elif filename.endswith((".csv", ".csv.gz")):
-            file_format = "csv"
-        else:
-            # Default to CSV for backward compatibility
-            file_format = "csv"
-
-    if file_format == "parquet":
-        write_parquet(data, fixed_data, filename, **kwargs)
-    elif file_format == "csv":
-        compress = kwargs.get("compress", False)
-        write_csv(data, fixed_data, filename, compress)
-    else:
-        raise ValueError(f"Unsupported file format: {file_format}")
 
 
 def create_unified_dataframe(nodes_data, surfaces_data=None):
