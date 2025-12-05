@@ -20,7 +20,8 @@ dependencies = [
     "PyYAML",
     "tqdm",
     "dill",
-    "pandas"
+    "pandas",
+    "pyarrow"
 ]
 
 [project.scripts]
