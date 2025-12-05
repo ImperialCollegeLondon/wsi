@@ -13,7 +13,7 @@ from unittest import TestCase
 import pandas as pd
 import zipfile
 
-from wsimod.orchestration.model import Model, PANDAS_AVAILABLE
+from wsimod.orchestration.model import Model, PARQUET_AVAILABLE
 
 
 def _unzip_model_data(temp_dir: str):
@@ -53,6 +53,48 @@ class TestDataLoading(TestCase):
         df2 = pd.DataFrame(results2[0])
         df2.time = df2.time.astype(str)
         pd.testing.assert_frame_equal(df, df2)
+
+    def test_misc_load_save(self):
+        """Test miscellaneous load and save functionality."""
+
+        from wsimod.orchestration.model import Model
+
+        model = Model()
+        model.add_nodes(
+            [
+                {
+                    "name": "my-land2",
+                    "type_": "Land",
+                    "surfaces": [
+                        {
+                            "surface": "my_surface",
+                            "area": 1,
+                            "type_": "GrowingSurface",
+                            "initial_storage": {
+                                "phosphate": 1,
+                                "nitrate": 2,
+                                "nitrite": 3,
+                                "ammonia": 4,
+                                "org-nitrogen": 5,
+                                "org-phosphorus": 6,
+                            },
+                        },
+                    ],
+                }
+            ]
+        )
+        with tempfile.TemporaryDirectory() as temp_dir:
+            model.save(temp_dir)
+            model = Model()
+            model.load(temp_dir)
+        assert model.nodes["my-land2"].surfaces[0].initial_storage == {
+            "phosphate": 1,
+            "nitrate": 2,
+            "nitrite": 3,
+            "ammonia": 4,
+            "org-nitrogen": 5,
+            "org-phosphorus": 6,
+        }
 
     def test_performance_comparison(self):
         """Compare performance of original vs unified data save/load/run."""

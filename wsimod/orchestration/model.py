@@ -24,9 +24,9 @@ try:
     pyarrow_available = importlib.util.find_spec("pyarrow") is not None
     fastparquet_available = importlib.util.find_spec("fastparquet") is not None
 
-    PANDAS_AVAILABLE = pyarrow_available or fastparquet_available
+    PARQUET_AVAILABLE = pyarrow_available or fastparquet_available
 except ImportError:
-    PANDAS_AVAILABLE = False
+    PARQUET_AVAILABLE = False
 
 from wsimod.arcs import arcs as arcs_mod
 from wsimod.core import constants
@@ -259,66 +259,10 @@ class Model(WSIObj):
 
         # Check if using unified data file
         unified_data_file = data.get("unified_data_file")
-        if unified_data_file and PANDAS_AVAILABLE:
-
-            # Load unified data
-            unified_data_path = os.path.join(address, unified_data_file)
-            self.unified_data = pd.read_parquet(unified_data_path)
-
-            # Create a single comprehensive data dictionary for all nodes
-            # This is much faster than individual lookups
-            surface_data = self.unified_data.dropna(subset=["surface"]).copy()
-            surface_data["time"] = pd.to_datetime(surface_data["time"]).dt.to_period(
-                "M"
-            )
-            surface_dict = (
-                surface_data.groupby(["node", "surface"])
-                .apply(lambda x: x.set_index(["variable", "time"]).value.to_dict())
-                .to_dict()
-            )
-
-            node_data = self.unified_data.loc[self.unified_data.surface.isna()].copy()
-            node_data["time"] = pd.to_datetime(node_data["time"])
-            node_dict = (
-                node_data.groupby("node")
-                .apply(lambda x: x.set_index(["variable", "time"]).value.to_dict())
-                .to_dict()
-            )
-
-            # Assign the same comprehensive data dict to all nodes that need it
-            for name, node in nodes.items():
-                if "data_input_dict" in node.keys() and node["data_input_dict"]:
-                    node["data_input_dict"] = node_dict[name]
-                if "surfaces" in node.keys():
-                    for key, surface in node["surfaces"].items():
-                        if (
-                            "data_input_dict" in surface.keys()
-                            and surface["data_input_dict"]
-                        ):
-                            node["surfaces"][key]["data_input_dict"] = surface_dict[
-                                (name, key)
-                            ]
-                    node["surfaces"] = list(node["surfaces"].values())
-            if "dates" in data.keys():
-                self.dates = pd.to_datetime(data["dates"])
+        if unified_data_file and PARQUET_AVAILABLE:
+            self._load_unified_data(address, unified_data_file, nodes, data)
         else:
-            # Use individual files (original behavior)
-            for name, node in nodes.items():
-                if "filename" in node.keys():
-                    node["data_input_dict"] = read_csv(
-                        os.path.join(address, node["filename"])
-                    )
-                    del node["filename"]
-                if "surfaces" in node.keys():
-                    for key, surface in node["surfaces"].items():
-                        if "filename" in surface.keys():
-                            node["surfaces"][key]["data_input_dict"] = read_csv(
-                                os.path.join(address, surface["filename"])
-                            )
-                            del surface["filename"]
-                    node["surfaces"] = list(node["surfaces"].values())
-            if "dates" in data.keys():
-                self.dates = [to_datetime(x) for x in data["dates"]]
+            self._load_individual_files(address, nodes, data)
         arcs = data.get("arcs", {})
         self.add_nodes(list(nodes.values()))
         self.add_arcs(list(arcs.values()))
@@ -326,6 +270,80 @@ class Model(WSIObj):
         self.add_overrides(data.get("overrides", {}))
 
         apply_patches(self)
+
+    def _load_unified_data(self, address, unified_data_file, nodes, data):
+        """Load model data from a unified parquet file.
+
+        Args:
+            address (str): Path to directory containing the unified data file
+            unified_data_file (str): Name of the unified parquet file
+            nodes (dict): Dictionary of node configurations
+            data (dict): Full configuration dictionary
+        """
+        # Load unified data
+        unified_data_path = os.path.join(address, unified_data_file)
+        self.unified_data = pd.read_parquet(unified_data_path)
+
+        # Create a single comprehensive data dictionary for all nodes
+        # This is much faster than individual lookups
+        surface_data = self.unified_data.dropna(subset=["surface"]).copy()
+        surface_data["time"] = pd.to_datetime(surface_data["time"]).dt.to_period("M")
+        surface_dict = (
+            surface_data.groupby(["node", "surface"])
+            .apply(lambda x: x.set_index(["variable", "time"]).value.to_dict())
+            .to_dict()
+        )
+
+        node_data = self.unified_data.loc[self.unified_data.surface.isna()].copy()
+        node_data["time"] = pd.to_datetime(node_data["time"])
+        node_dict = (
+            node_data.groupby("node")
+            .apply(lambda x: x.set_index(["variable", "time"]).value.to_dict())
+            .to_dict()
+        )
+
+        # Assign the same comprehensive data dict to all nodes that need it
+        for name, node in nodes.items():
+            if "data_input_dict" in node.keys() and node["data_input_dict"]:
+                node["data_input_dict"] = node_dict[name]
+            if "surfaces" in node.keys():
+                for key, surface in node["surfaces"].items():
+                    if (
+                        "data_input_dict" in surface.keys()
+                        and surface["data_input_dict"]
+                    ):
+                        node["surfaces"][key]["data_input_dict"] = surface_dict[
+                            (name, key)
+                        ]
+                node["surfaces"] = list(node["surfaces"].values())
+        if "dates" in data.keys():
+            self.dates = pd.to_datetime(data["dates"])
+
+    def _load_individual_files(self, address, nodes, data):
+        """Load model data from individual CSV files (original behavior).
+
+        Args:
+            address (str): Path to directory containing the data files
+            nodes (dict): Dictionary of node configurations
+            data (dict): Full configuration dictionary
+        """
+        # Use individual files (original behavior)
+        for name, node in nodes.items():
+            if "filename" in node.keys():
+                node["data_input_dict"] = read_csv(
+                    os.path.join(address, node["filename"])
+                )
+                del node["filename"]
+            if "surfaces" in node.keys():
+                for key, surface in node["surfaces"].items():
+                    if "filename" in surface.keys():
+                        node["surfaces"][key]["data_input_dict"] = read_csv(
+                            os.path.join(address, surface["filename"])
+                        )
+                        del surface["filename"]
+                node["surfaces"] = list(node["surfaces"].values())
+        if "dates" in data.keys():
+            self.dates = [to_datetime(x) for x in data["dates"]]
 
     def save(self, address, config_name="config.yml", compress=False):
         """Save the model object to a yaml file and input data to csv.gz format in the
@@ -373,7 +391,9 @@ class Model(WSIObj):
             special_args = set(["surfaces", "parent", "data_input_dict"])
 
             node_props = {
-                x: getattr(node, x) for x in set(init_args).difference(special_args)
+                x: getattr(node, x)
+                for x in set(init_args).difference(special_args)
+                if hasattr(node, x)
             }
             node_props["type_"] = node.__class__.__name__
             node_props["node_type_override"] = (
@@ -387,6 +407,7 @@ class Model(WSIObj):
                     surface_props = {
                         x: getattr(surface, x)
                         for x in set(surface_args).difference(special_args)
+                        if hasattr(surface, x)
                     }
                     surface_props["type_"] = surface.__class__.__name__
 
@@ -542,8 +563,11 @@ class Model(WSIObj):
             config_name (str): Name of the config file
             compress (bool): Whether to compress (not used for parquet)
         """
-        if not PANDAS_AVAILABLE:
-            raise ImportError("pandas is required for unified data saving")
+        if not PARQUET_AVAILABLE:
+            raise ImportError(
+                "parquet support (pyarrow or fastparquet) is required "
+                "for unified data saving"
+            )
 
         if not os.path.exists(address):
             os.mkdir(address)
@@ -1278,8 +1302,11 @@ def create_unified_dataframe(nodes_data, surfaces_data=None):
         pd.DataFrame: Unified DataFrame with columns: node, surface, variable,
             time, value
     """
-    if not PANDAS_AVAILABLE:
-        raise ImportError("pandas is required for unified DataFrame support")
+    if not PARQUET_AVAILABLE:
+        raise ImportError(
+            "parquet support (pyarrow or fastparquet) is required "
+            "for unified DataFrame support"
+        )
 
     rows = []
 
