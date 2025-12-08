@@ -261,6 +261,8 @@ class Model(WSIObj):
         unified_data_file = data.get("unified_data_file")
         if unified_data_file and PARQUET_AVAILABLE:
             self._load_unified_data(address, unified_data_file, nodes, data)
+        elif unified_data_file and not PARQUET_AVAILABLE:
+            raise ValueError("Parquet support is required for unified data loading")
         else:
             self._load_individual_files(address, nodes, data)
         arcs = data.get("arcs", {})
