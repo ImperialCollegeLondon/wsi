@@ -5,6 +5,7 @@
 """
 import csv
 import gzip
+import importlib.util
 import inspect
 import os
 import sys
@@ -14,6 +15,18 @@ from math import log10
 import dill as pickle
 import yaml
 from tqdm import tqdm
+
+# Try to import pandas for efficient data loading
+try:
+    import pandas as pd
+
+    # Check if parquet engine is available
+    pyarrow_available = importlib.util.find_spec("pyarrow") is not None
+    fastparquet_available = importlib.util.find_spec("fastparquet") is not None
+
+    PARQUET_AVAILABLE = pyarrow_available or fastparquet_available
+except ImportError:
+    PARQUET_AVAILABLE = False
 
 from wsimod.arcs import arcs as arcs_mod
 from wsimod.core import constants
@@ -37,11 +50,18 @@ class to_datetime:
                 format %Y-%m-%d or %Y-%m.
         """
         self._date = self._parse_date(date_string)
+        self._original_format = self._detect_original_format(date_string)
 
     def __str__(self):
+        # Return format based on original input format
+        if self._original_format == "YYYY-MM":
+            return self._date.strftime("%Y-%m")
         return self._date.strftime("%Y-%m-%d")
 
     def __repr__(self):
+        # Return format based on original input format
+        if self._original_format == "YYYY-MM":
+            return self._date.strftime("%Y-%m")
         return self._date.strftime("%Y-%m-%d")
 
     @property
@@ -100,6 +120,22 @@ class to_datetime:
         year = self._date.year
         return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
 
+    def _detect_original_format(self, date_string):
+        """Detect the original format of the date string.
+
+        Args:
+            date_string (str): The original date string
+
+        Returns:
+            str: "YYYY-MM" or "YYYY-MM-DD" based on original format
+        """
+        # Check if it matches YYYY-MM format
+        # (exactly 7 characters, no dashes after month)
+        if len(date_string) == 7 and date_string.count("-") == 1:
+            return "YYYY-MM"
+        else:
+            return "YYYY-MM-DD"
+
     def _parse_date(self, date_string, date_format="%Y-%m-%d %H:%M:%S"):
         try:
             return datetime.strptime(date_string, date_format)
@@ -108,14 +144,22 @@ class to_datetime:
                 return datetime.strptime(date_string, "%Y-%m-%d")
             except ValueError:
                 try:
-                    # Check if valid 'YYYY-MM' format
-                    if len(date_string.split("-")[0]) == 4:
-                        int(date_string.split("-")[0])
-                    if len(date_string.split("-")[1]) == 2:
-                        int(date_string.split("-")[1])
-                    return date_string
+                    # Try 'YYYY-MM' format - set day to 1
+                    return datetime.strptime(date_string, "%Y-%m")
                 except ValueError:
-                    raise ValueError
+                    try:
+                        # Try 'YYYY-MM-DD HH:MM:SS' format
+                        return datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S")
+                    except ValueError:
+                        # If all parsing attempts fail, raise a clear error
+                        raise ValueError(
+                            (
+                                "Unable to parse date string '"
+                                f"{date_string}"
+                                "'. Expected formats: 'YYYY-MM-DD', 'YYYY-MM',"
+                                " or 'YYYY-MM-DD HH:MM:SS'"
+                            )
+                        )
 
     def __eq__(self, other):
         if isinstance(other, to_datetime):
@@ -213,6 +257,79 @@ class Model(WSIObj):
 
         nodes = data["nodes"]
 
+        # Check if using unified data file
+        unified_data_file = data.get("unified_data_file")
+        if unified_data_file and PARQUET_AVAILABLE:
+            self._load_unified_data(address, unified_data_file, nodes, data)
+        elif unified_data_file and not PARQUET_AVAILABLE:
+            raise ValueError("Parquet support is required for unified data loading")
+        else:
+            self._load_individual_files(address, nodes, data)
+        arcs = data.get("arcs", {})
+        self.add_nodes(list(nodes.values()))
+        self.add_arcs(list(arcs.values()))
+
+        self.add_overrides(data.get("overrides", {}))
+
+        apply_patches(self)
+
+    def _load_unified_data(self, address, unified_data_file, nodes, data):
+        """Load model data from a unified parquet file.
+
+        Args:
+            address (str): Path to directory containing the unified data file
+            unified_data_file (str): Name of the unified parquet file
+            nodes (dict): Dictionary of node configurations
+            data (dict): Full configuration dictionary
+        """
+        # Load unified data
+        unified_data_path = os.path.join(address, unified_data_file)
+        self.unified_data = pd.read_parquet(unified_data_path)
+
+        # Create a single comprehensive data dictionary for all nodes
+        # This is much faster than individual lookups
+        surface_data = self.unified_data.dropna(subset=["surface"]).copy()
+        surface_data["time"] = pd.to_datetime(surface_data["time"]).dt.to_period("M")
+        surface_dict = (
+            surface_data.groupby(["node", "surface"])
+            .apply(lambda x: x.set_index(["variable", "time"]).value.to_dict())
+            .to_dict()
+        )
+
+        node_data = self.unified_data.loc[self.unified_data.surface.isna()].copy()
+        node_data["time"] = pd.to_datetime(node_data["time"])
+        node_dict = (
+            node_data.groupby("node")
+            .apply(lambda x: x.set_index(["variable", "time"]).value.to_dict())
+            .to_dict()
+        )
+
+        # Assign the same comprehensive data dict to all nodes that need it
+        for name, node in nodes.items():
+            if "data_input_dict" in node.keys() and node["data_input_dict"]:
+                node["data_input_dict"] = node_dict[name]
+            if "surfaces" in node.keys():
+                for key, surface in node["surfaces"].items():
+                    if (
+                        "data_input_dict" in surface.keys()
+                        and surface["data_input_dict"]
+                    ):
+                        node["surfaces"][key]["data_input_dict"] = surface_dict[
+                            (name, key)
+                        ]
+                node["surfaces"] = list(node["surfaces"].values())
+        if "dates" in data.keys():
+            self.dates = pd.to_datetime(data["dates"])
+
+    def _load_individual_files(self, address, nodes, data):
+        """Load model data from individual CSV files (original behavior).
+
+        Args:
+            address (str): Path to directory containing the data files
+            nodes (dict): Dictionary of node configurations
+            data (dict): Full configuration dictionary
+        """
+        # Use individual files (original behavior)
         for name, node in nodes.items():
             if "filename" in node.keys():
                 node["data_input_dict"] = read_csv(
@@ -227,16 +344,8 @@ class Model(WSIObj):
                         )
                         del surface["filename"]
                 node["surfaces"] = list(node["surfaces"].values())
-        arcs = data.get("arcs", {})
-        self.add_nodes(list(nodes.values()))
-        self.add_arcs(list(arcs.values()))
-
-        self.add_overrides(data.get("overrides", {}))
-
         if "dates" in data.keys():
             self.dates = [to_datetime(x) for x in data["dates"]]
-
-        apply_patches(self)
 
     def save(self, address, config_name="config.yml", compress=False):
         """Save the model object to a yaml file and input data to csv.gz format in the
@@ -249,18 +358,44 @@ class Model(WSIObj):
         """
         if not os.path.exists(address):
             os.mkdir(address)
-        nodes = {}
 
         if compress:
             file_type = "csv.gz"
         else:
             file_type = "csv"
+
+        # Use the extracted config save method
+        self._save_model_config(
+            address, config_name, file_type=file_type, compress=compress
+        )
+
+    def _save_model_config(
+        self,
+        address,
+        config_name="config.yml",
+        unified_data_file=None,
+        file_type="csv",
+        compress=False,
+    ):
+        """Save model configuration to a YAML file.
+
+        Args:
+            address (str): Path to save directory
+            config_name (str): Name of the config file
+            unified_data_file (str, optional): Name of unified data file if using
+                unified data
+            file_type (str): File type for individual data files ("csv" or "csv.gz")
+            compress (bool): Whether to compress individual files
+        """
+        nodes = {}
         for node in self.nodes.values():
             init_args = self.get_init_args(node.__class__)
             special_args = set(["surfaces", "parent", "data_input_dict"])
 
             node_props = {
-                x: getattr(node, x) for x in set(init_args).difference(special_args)
+                x: getattr(node, x)
+                for x in set(init_args).difference(special_args)
+                if hasattr(node, x)
             }
             node_props["type_"] = node.__class__.__name__
             node_props["node_type_override"] = (
@@ -274,6 +409,7 @@ class Model(WSIObj):
                     surface_props = {
                         x: getattr(surface, x)
                         for x in set(surface_args).difference(special_args)
+                        if hasattr(surface, x)
                     }
                     surface_props["type_"] = surface.__class__.__name__
 
@@ -282,8 +418,14 @@ class Model(WSIObj):
                     del surface_props["capacity"]
                     if set(["rooting_depth", "pore_depth"]).intersection(surface_args):
                         del surface_props["depth"]
+
+                    # Handle data input dict based on save mode
                     if "data_input_dict" in surface_args:
-                        if surface.data_input_dict:
+                        if unified_data_file and surface.data_input_dict:
+                            # Mark that data should be loaded from unified file
+                            surface_props["data_input_dict"] = True
+                        elif surface.data_input_dict:
+                            # Save individual file
                             filename = (
                                 "{0}-{1}-inputs.{2}".format(
                                     node.name, surface.surface, file_type
@@ -300,11 +442,17 @@ class Model(WSIObj):
                                 compress=compress,
                             )
                             surface_props["filename"] = filename
+
                     surfaces[surface_props["surface"]] = surface_props
                 node_props["surfaces"] = surfaces
 
+            # Handle node-level data input dict based on save mode
             if "data_input_dict" in init_args:
-                if node.data_input_dict:
+                if unified_data_file and node.data_input_dict:
+                    # Mark that data should be loaded from unified file
+                    node_props["data_input_dict"] = True
+                elif node.data_input_dict:
+                    # Save individual file
                     filename = "{0}-inputs.{1}".format(node.name, file_type)
                     write_csv(
                         node.data_input_dict,
@@ -339,6 +487,10 @@ class Model(WSIObj):
             "extensions": self.extensions,
             "river_discharge_order": self.river_discharge_order,
         }
+
+        if unified_data_file:
+            data["unified_data_file"] = unified_data_file
+
         if hasattr(self, "dates"):
             data["dates"] = [str(x) for x in self.dates]
 
@@ -397,6 +549,57 @@ class Model(WSIObj):
         check_and_coerce_dict(data)
 
         write_yaml(address, config_name, data)
+
+    def save_unified_data(
+        self,
+        address,
+        parquet_filename="unified_data.parquet",
+        config_name="config.yml",
+        compress=False,
+    ):
+        """Save model data to a unified parquet file.
+
+        Args:
+            address (str): Path to save directory
+            parquet_filename (str): Name of the parquet file
+            config_name (str): Name of the config file
+            compress (bool): Whether to compress (not used for parquet)
+        """
+        if not PARQUET_AVAILABLE:
+            raise ImportError(
+                "parquet support (pyarrow or fastparquet) is required "
+                "for unified data saving"
+            )
+
+        if not os.path.exists(address):
+            os.mkdir(address)
+
+        # Collect all data from nodes and surfaces
+        nodes_data = {}
+        surfaces_data = {}
+
+        for node in self.nodes.values():
+            if hasattr(node, "data_input_dict") and node.data_input_dict:
+                nodes_data[node.name] = node.data_input_dict
+
+            if hasattr(node, "surfaces"):
+                for surface in node.surfaces:
+                    if hasattr(surface, "data_input_dict") and surface.data_input_dict:
+                        surfaces_data[(node.name, surface.surface)] = (
+                            surface.data_input_dict
+                        )
+
+        # Create unified DataFrame
+        unified_df = create_unified_dataframe(nodes_data, surfaces_data)
+
+        # Save unified parquet file
+        parquet_path = os.path.join(address, parquet_filename)
+        unified_df.to_parquet(parquet_path, index=False)
+
+        # Save config file using the extracted method
+        self._save_model_config(
+            address, config_name, unified_data_file=parquet_filename
+        )
 
     def load_pickle(self, fid):
         """Load model object to a pickle file, including the model states.
@@ -1087,6 +1290,56 @@ def write_csv(data, fixed_data={}, filename="", compress=False):
         fixed_data_values = list(fixed_data.values())
         for key, value in data.items():
             writer.writerow(fixed_data_values + list(key) + [str(value)])
+
+
+def create_unified_dataframe(nodes_data, surfaces_data=None):
+    """Create a unified DataFrame from multiple nodes' data_input_dict.
+
+    Args:
+        nodes_data (dict): Dictionary mapping node names to their data_input_dict
+        surfaces_data (dict, optional): Dictionary mapping (node_name,
+            surface_name) to data_input_dict
+
+    Returns:
+        pd.DataFrame: Unified DataFrame with columns: node, surface, variable,
+            time, value
+    """
+    if not PARQUET_AVAILABLE:
+        raise ImportError(
+            "parquet support (pyarrow or fastparquet) is required "
+            "for unified DataFrame support"
+        )
+
+    rows = []
+
+    # Process nodes data
+    for node_name, data_dict in nodes_data.items():
+        for (variable, time), value in data_dict.items():
+            rows.append(
+                {
+                    "node": node_name,
+                    "surface": None,
+                    "variable": variable,
+                    "time": str(time),
+                    "value": value,
+                }
+            )
+
+    # Process surfaces data
+    if surfaces_data:
+        for (node_name, surface_name), data_dict in surfaces_data.items():
+            for (variable, time), value in data_dict.items():
+                rows.append(
+                    {
+                        "node": node_name,
+                        "surface": surface_name,
+                        "variable": variable,
+                        "time": str(time),
+                        "value": value,
+                    }
+                )
+
+    return pd.DataFrame(rows)
 
 
 def flatten_dict(d, parent_key="", sep="-"):
