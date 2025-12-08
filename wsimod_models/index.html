@@ -1,0 +1,928 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://imperialcollegelondon.github.io/wsi/wsimod_models/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.0">
+    
+    
+      
+        <title>WSIMOD models - WSIMOD docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.618322db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#wsimod-models" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="WSIMOD docs" class="md-header__button md-logo" aria-label="WSIMOD docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            WSIMOD docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              WSIMOD models
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/ImperialCollegeLondon/wsi" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="WSIMOD docs" class="md-nav__button md-logo" aria-label="WSIMOD docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    WSIMOD docs
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/ImperialCollegeLondon/wsi" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M173.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6m-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3m44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9M252.8 8C114.1 8 8 113.3 8 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C436.2 457.8 504 362.9 504 252 504 113.3 391.5 8 252.8 8M105.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1m-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7m32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1m-11.4-14.7c-1.6 1-1.6 3.6 0 5.9s4.3 3.3 5.6 2.3c1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../paper/paper/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    About
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tutorials
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../how-to/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    How to guide
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../component-library/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Component library
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../wsimod-cli/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Command line interface
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dafni/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Run WSIMOD in DAFNI
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../demo/scripts/quickstart_demo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quickstart (.py)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../coverage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Coverage report
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="https://github.com/barneydobson/wsi" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    WSIMOD repository
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Introduction
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#what-data-do-you-need" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What data do you need?
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wsimod-model" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        WSIMOD model
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="WSIMOD model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nodes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Nodes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#arcs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arcs
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#model-properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Model properties
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#input-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#limitations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limitations
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="wsimod-models">WSIMOD models</h1>
+<ol>
+<li>
+<p><a href="#introduction">Introduction</a></p>
+</li>
+<li>
+<p><a href="#what-data-do-you-need">What data do you need</a></p>
+</li>
+<li>
+<p><a href="#wsimod-model">WSIMOD model</a></p>
+<p>3.1. <a href="#nodes">Nodes</a></p>
+<p>3.2. <a href="#arcs">Arcs</a></p>
+<p>3.3. <a href="#model-properties">Model properties</a></p>
+</li>
+<li>
+<p><a href="#input-data">Input data</a></p>
+</li>
+<li>
+<p><a href="#limitations">Limitations</a></p>
+</li>
+</ol>
+<h2 id="introduction">Introduction</h2>
+<p>In other <a href="../tutorials/">tutorials</a>, we generally create nodes and arcs in a dictionary format
+to best explain how to understand what is going on in WSIMOD. However, this
+is not a streamlined way to setup or use a model in practice. Instead, we
+provide a structured format that a model can be loaded from and the ability
+to save models to this format. In this tutorial we will describe the format,
+and give examples.</p>
+<h2 id="what-data-do-you-need">What data do you need?</h2>
+<p>WSIMOD combines a variety of different models into different types of
+node/component. Our goal is a highly flexible approach to representing a wide
+variety of water systems. The result is that your data requirements will be
+highly specific to your project, the systems that you want to include, and the
+questions you want to ask of your model. To understand what model components
+you should include, and what data requirements these have, we recommend
+familiarising yourself with the WSIMOD approach through completing the
+<a href="../tutorials/">tutorials</a> and viewing the <a href="../reference/">API</a>. Ultimately though,
+all nodes and arcs can be resolved in terms of dictionaries that
+determine their parameters/input data, which makes them ideal to be structured using
+the <a href="https://pyyaml.org/">PyYAML</a> data langauge.</p>
+<h2 id="wsimod-model">WSIMOD model</h2>
+<p>As demonstrated in the tutorials, a <a href="../reference-model/#wsimod.orchestration.model.Model">model object</a>
+is a helpful way to contain your nodes/arcs and orchestrate your simulation.
+From the model object, you can <code>save</code> or <code>load</code> data by providing a data
+directory. Critically, these functions interact with a <code>config.yml</code> file that
+contains all of the information to describe your model. Below, we will explain
+this file using examples from <a href="demo/scripts/quickstart_demo.md">quickstart demo</a>,
+highlighting the key features of this config file. You can create this yourself by
+running the demo and appending the following command:</p>
+<pre><code class="language-python">my_model.save(&lt;directory_address_on_your_filesystem&gt;)
+</code></pre>
+<p>The top level entries of the <code>config.yml</code> file created in the provided directorty are:</p>
+<pre><code class="language-yaml">nodes
+arcs
+pollutants
+additive_pollutants
+non_additive_pollutants
+float_accuracy
+dates
+</code></pre>
+<p>, which cover all of the properties needed to describe a model object.</p>
+<p>To load a model, we to initialise a model object and call the <code>load</code> function:</p>
+<pre><code class="language-python">my_model = Model()
+my_model.load(&lt;directory_address_on_your_filesystem&gt;)
+</code></pre>
+<h3 id="nodes">Nodes</h3>
+<p>The <code>nodes</code> entry of <code>config.yml</code> will contain the information required to initialise all of the components
+in your model. Below are a sewer node and default node.</p>
+<pre><code class="language-yaml">nodes:
+  my_sewer:
+    chamber_area: 1
+    name: my_sewer
+    pipe_time: 0
+    chamber_floor: 10
+    capacity: 0.04
+    pipe_timearea:
+      0: 1
+    type_: Sewer
+    node_type_override: Sewer
+  my_river:
+    name: my_river
+    type_: Node
+    node_type_override: Node
+</code></pre>
+<p>By inspecting the <a href="../reference-sewer/#wsimod.nodes.sewer.Sewer"><code>Sewer</code></a> API,
+we can see that this entry contains the parameters required to initiliase a
+<code>Sewer</code> object, however the <code>capacity</code> and <code>name</code> fields have been updated to
+the values that they are set as in the <a href="demo/scripts/quickstart_demo.md">quickstart demo</a>.</p>
+<p>We see two additional fields of <code>type_</code> and <code>node_type_override</code>. If only
+<code>type_</code> is provided, then this will specify the object that is created which
+should match an object in WSIMOD. It also specifies how other nodes view it,
+for example, a <a href="../reference-sewer/#wsimod.nodes.sewer.Sewer"><code>Sewer</code></a> node
+receives water differently from <a href="../reference-land/#wsimod.nodes.land.Land"><code>Land</code></a>
+nodes than it does from <a href="../reference-other/#wsimod.nodes.demand.Demand"><code>Demand</code></a>
+nodes. However, there are a variety of subclasses of <code>Demand</code> node, so to
+ensure the <code>Sewer</code> object treats all <code>Demand</code> subclasses the same, we overwrite
+the <code>__class__.__name__</code> property in each subclass so that the model treats
+(e.g.,) <a href="../reference-other/#wsimod.nodes.demand.ResidentialDemand"><code>ResidentialDemand</code></a>
+as a <code>Demand</code> object. In cases such as these, to ensure WSIMOD creates a
+<code>ResidentialDemand</code> object that is treated like a <code>Demand</code> object, we specify
+the <code>type_</code> as <code>Demand</code> but the <code>node_type_override</code> as <code>ResidentialDemand</code>.</p>
+<h3 id="arcs">Arcs</h3>
+<p>The <code>arcs</code> entry of <code>config.yml</code> contains the initialisation fields of the
+<a href="../reference-arc/#wsimod.arcs.arcs.Arc"><code>Arc</code></a>
+object. If we inspect the <a href="demo/scripts/quickstart_demo.md">quickstart demo</a>,
+we will see that the <code>storm_outflow</code> arc was not initiliased with any values
+for the <code>preference</code> or <code>capacity</code> parameter. They are saved by the
+<code>Model.save()</code> function because, upon initialisation, if they are not provided,
+the arc receives a default unbounded capacity and a neutral preference of 1.</p>
+<pre><code class="language-yaml">arcs:
+  storm_outflow:
+    capacity: 1000000000000000.0
+    name: storm_outflow
+    preference: 1
+    type_: Arc
+    in_port: my_sewer
+    out_port: my_river
+</code></pre>
+<h3 id="model-properties">Model properties</h3>
+<p>The <code>pollutants</code> entries are used to tell the model which pollutants should be simulated, which are additive (i.e., mass based), and which are non-additive (e.g., temperature).</p>
+<p>The <code>float_accuracy</code> entry provides a number used in <a href="../reference-core/#wsimod.core.core.WSIObj.mass_balance">mass balance checking</a>. Common sense is suggested in interpreting mass balance errors.</p>
+<p>The <code>dates</code> entry is written if the model object has a <code>dates</code> property and is a list of <code>dates</code> for which the model will run for if the <a href="../reference-model/#wsimod.orchestration.model.Model.run"><code>Model.run()</code></a> function is called. It is assumed that the <code>dates</code> are compatible with the dates provided in the input data.</p>
+<h2 id="input-data">Input data</h2>
+<p>While the <code>config.yml</code> file contains information to parameterise and initialise
+WSIMOD objects, timeseries input data is stored separately to create a more
+manageable model directory. As established through the <a href="../tutorials/">tutorials</a>,
+any node timeseries input data must be provided as a dictionary where the keys
+are tuples containing the variable and time, and stored in the <code>data_input_dict</code>
+property. For example, using the <a href="../reference-other/#wsimod.nodes.catchment.Catchment"><code>Catchment</code></a>
+node, which is primarily a data reader:</p>
+<pre><code class="language-python"># Imports
+from wsimod.core import constants
+from wsimod.nodes.catchment import Catchment
+from wsimod.orchestration.model import to_datetime
+
+# Model only temperature and phosphate
+constants.set_simple_pollutants()
+
+# Create input data dictionary
+date = to_datetime('2000-01-01')
+forcing_data = {('flow', date) : 2,
+                    ('phosphate', date) : 0.2,
+                    ('temperature', date) : 10}
+
+# Create Catchment object
+my_catch = Catchment(name = 'my_catchment', data_input_dict = forcing_data)
+
+# Assign date
+my_catch.t = date
+
+# Get flows
+print(my_catch.get_flow())
+{'volume': 2, 'phosphate': 0.4, 'temperature': 10}
+</code></pre>
+<p>We note that dates can take any hashable format, however some components require the date to have properties such as <code>dayofyear</code>, and so recommend using <code>datetime</code> like objects, we provide a simple <code>datetime</code> wrapper in <a href="../reference-model/#wsimod.orchestration.model.to_datetime"><code>model.to_datetime</code></a>.</p>
+<p>When we call <code>Model.save()</code> it will convert each node's <code>data_input_dict</code>
+into a separate <code>.csv</code> (or <code>.csv.gz</code> if the <code>compress</code> option is specified),
+and create an entry called <code>filename</code> for the node in the <code>config.yml</code> file.</p>
+<p>For example,</p>
+<pre><code class="language-python">import os
+from wsimod.orchestration.model import Model
+
+my_model = Model()
+my_model.add_instantiated_nodes([my_catch])
+my_model.save(os.getcwd())
+</code></pre>
+<p>Which will create a <code>config.yml</code> file containing the <code>nodes</code> entry of:</p>
+<pre><code class="language-yaml">nodes:
+  my_catchment:
+    name: my_catchment
+    type_: Catchment
+    node_type_override: Catchment
+    filename: my_catchment-inputs.csv
+</code></pre>
+<p>and a file in the current directory named <code>my_catchment-inputs.csv</code> containing:</p>
+<pre><code class="language-text">node,variable,time,value
+my_catchment,flow,2000-01-01,2
+my_catchment,phosphate,2000-01-01,0.2
+my_catchment,temperature,2000-01-01,10
+</code></pre>
+<h2 id="limitations">Limitations</h2>
+<p>It is important that there are key limitations to model saving/loading. To
+avoid overly complicated <code>config.yml</code> files that are easy for a user to edit,
+we opted to only save the properties of a node/arc required to initialise
+that object. This means that state variables, user-added properties, or
+method overriding are not preserved when the model is saved. Thus, when the
+model is loaded, its objects are initialised as if new. However, if a user
+wishes to achieve this then the <code>Model/save_pickle</code> and <code>Model/load_pickle</code>
+functions can help to achieve it, though these create binary files that are not
+user readable.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["content.code.copy"], "search": "../assets/javascripts/workers/search.7a47a382.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.e71a0d61.min.js"></script>
+      
+    
+  </body>
+</html>
