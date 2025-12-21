@@ -2,7 +2,7 @@
 """
 Created on Wed Jan 25 10:30:46 2023
 
-@author: bdobson
+@author: bdobson, Fangjun
 """
 
 from wsimod.nodes.land import Node, Land, GrowingSurface, VariableAreaSurface
@@ -16,24 +16,56 @@ class Wetland(Land):
                                   'h_max' : 4,
                                   'p' : 2,
                                   'area' : 10,
-                                  'r_coefficient' : 10, # unit: m3/s (determines the outflow at a water level 1m above the threshold) leon set as 1
-                                'r_exponent' : 2, # p in the rating curve equation could be set at 2 as a standard value
-                                'wetland_infiltration' : 0.06, # 0.001m/d - 0.009m/d
-                                'decays' : {'phosphate' : {'constant' : 0.001, 'exponent' : 1.005},
-                                            'ammonia': {'constant': 0.1, 'exponent': 1.005}, 
-                                            'nitrite': {'constant': 0.05, 'exponent': 1.005}},
-                                },
+                                  'r_coefficient' : 10, 
+                                  'r_exponent' : 2, 
+                                  'wetland_infiltration' : 0.06, 
+                                  'decays' : {'phosphate' : {'constant' : 0.001, 'exponent' : 1.005},
+                                              'ammonia': {'constant': 0.1, 'exponent': 1.005}, 
+                                              'nitrite': {'constant': 0.05, 'exponent': 1.005}},
+                                 },
                  **kwargs):
-        """Wetland Land node, includes a single soil surface and a single
-        wetland water tank. Assumes they have the same area, but the exposed
-        surface area varies depending on how much water is in the water tank
-        
+        """
+        A specialized Land node representing a Wetland system. It consists of a soil surface 
+        and an overlying water tank. The node dynamically calculates the interaction 
+        between the water level and the exposed soil area.
+
+        Key features:
+        - Dynamic surface area: The exposed soil area decreases as the wetland water volume increases.
+        - Water balance: Integrates precipitation, evapotranspiration, infiltration to soil, and rating-curve-based discharge.
+        - Water quality: Inherits decay processes for pollutants within the wetland water body.
+
+        Parameters:
+            name (str): Node name.
+            soil_surface (list, optional): List of dicts describing soil surface parameters. Defaults to [].
+            water_surface (dict, optional): Parameters for the WetlandWaterTank including:
+                - threshold (float): Water level height at which outflow to river begins (m).
+                - h_max (float): Maximum possible water depth (m).
+                - p (float): Shape parameter for the volume-area-depth relationship.
+                - area (float): Total area of the wetland at h_max (m2).
+                - r_coefficient (float): Determine the outflow at a water level 1m above the threshold, unit: m3/s
+                - r_exponent (float): Rating curve exponent (typically 2).
+                - wetland_infiltration (float): Daily infiltration rate from water tank to soil (0.001m/d - 0.009 m/d).
+                - decays (dict): Pollutant decay constants and temperature exponents.
+            **kwargs: Additional arguments passed to the Land parent class.
+
+        Key Assumptions:
+            - Wetland Land node, includes a single soil surface and a single wetland water tank. 
+            Assumes they have the same area, but the exposed surface area varies depending on how much water is in the water tank
+            - The wetland water body and soil surface share the same footprint.
+            - Outflow follows a rating curve once the water level exceeds the threshold.
+            - Infiltration to the underlying soil is driven by the saturated area of the wetland.
+
+        Input Data Requirements:
+            - Precipitation: Depth (m/timestep).
+            - ET0: Reference evapotranspiration (m/timestep).
+            - Temperature: Average temperature (C).
+            
         wetland_infiltration: 
             Very low - Soils with infiltration rates of less than 0.06 m/d, soils in this group are very high in percentage of clay (Marble 1992).
             Low - Infiltration rates of 0.06 to 0.3 m/d, most of these soils are shallow, high in clay, or low in organic matter.
             Medium - Infiltration rates of 0.3 to 0.6 m/d, soils in this group are loams and silts.
             High - Rates of greater than 0.6 m/d, these are deep sands and deep wellaggregated silt loams. 
-        (Reference: Technical Guidance for Creating Wetlands As Part of Unconsolidated Surface Mining Reclamation)
+        (Reference: Technical Guidance for Creating Wetlands As Part of Unconsolidated Surface Mining Reclamation)        
         """
         if soil_surface:
             surfaces = soil_surface
@@ -97,7 +129,7 @@ class Wetland(Land):
             tanks.end_timestep()
     
     def run_(self):
-        """Call the run function in all surfaces, update surface/subsurface/
+        """Call the run function in VariableAreaSurface, update surface/subsurface/
         percolation tanks, discharge to rivers/groundwater
         """
         
@@ -124,34 +156,19 @@ class Wetland(Land):
             #Update percolation 'tank'
             _ = self.percolation.push_storage(reply, force = True)
         
-        # #pull water from soil tank to groundwater
-        # percolation_2 = self.surfaces[0].pull_storage({'volume' : (self.surfaces[0].storage['volume']/2)})
-        # reply_2 = self.push_distributed(percolation_2, of_type = ['Groundwater'])
-        
-        # if reply_2['volume'] > constants.FLOAT_ACCURACY:
-        #     #Update soil 'tank'
-        #     _ = self.surfaces[0].push_storage(reply_2, force = True)
-        
         #Apply residence time to subsurface/surface runoff
         surface_runoff = self.surface_runoff.pull_outflow()
         self.surface_runoff_ = surface_runoff
-        # print(surface_runoff)
-        # print(self.wetland_tank.storage)
+
         reply_surface = self.wetland_tank.push_storage(surface_runoff, force = True)
         if reply_surface['volume'] > 0:
             self.surface_runoff.push_storage(reply_surface, force = True)
         
         
-        # print(flow_to_river, flow_to_soil)
         #Send water to soil (TODO - this would need updating if you had multiple soil surfaces)
         reply = self.surfaces[0].push_storage(flow_to_soil)
 
         _ = self.wetland_tank.push_storage(reply, force =True)
-        
-        # percolation_2 = self.surfaces[0].pull_storage({'volume' : flow_to_soil['volume']})
-        # reply_2 = self.percolation.push_storage(percolation_2, force = True)
-        # if reply_2['volume'] > 0:
-        #     self.surfaces[0].push_storage(reply_2, force = True)
             
         #Get subsurface runoff
         subsurface_runoff = self.subsurface_runoff.pull_outflow()
@@ -178,12 +195,28 @@ class WetlandWaterTank(DecayTank):
                     h_max = 4,
                     p = 2,
                     area = 10,
-                    r_coefficient = 10, # unit: m3/s (determines the outflow at a water level 1m above the threshold) leon set as 1
-                    r_exponent = 2, # p in the rating curve equation could be set at 2 as a standard value
-                    wetland_infiltration = 0.002, # 0.001m/d - 0.009m/d
+                    r_coefficient = 10,
+                    r_exponent = 2,
+                    wetland_infiltration = 0.002,
                     et0_coefficient = 2.5,
                     **kwargs,
                     ):
+        """
+        A storage tank representing the open water component of a wetland. 
+        It uses power-law equations to represent the volume-area-depth relationships 
+        characteristic of shallow depressions.
+
+        Parameters:
+            parent (Node): The parent Wetland Land node.
+            threshold (float): Height (h) at which the wetland starts spilling to the river (m).
+            h_max (float): Maximum height capacity of the wetland (m).
+            p (float): Power-law parameter (2/p) relating depth to area (Hayashi & van der Kamp, 2000).
+            area (float): Maximum surface area at h_max (m2).
+            r_coefficient (float): Determine the outflow at a water level 1m above the threshold, unit: m3/s
+            r_exponent (float): Rating curve exponent. 2 as a standard value
+            wetland_infiltration (float): Constant infiltration rate to the soil (0.001m/d - 0.009m/d).
+            et0_coefficient (float): Scaling factor for potential evapotranspiration (e.g., for cattails/bulrushes).
+        """
         self.parent = parent
         self.S0 = area / (h_max ** (2/p))
         self.p = p
@@ -213,30 +246,36 @@ class WetlandWaterTank(DecayTank):
         
         
     def calculate_s_water_surface(self, h):
+        """Calculate surface area (S) for a given depth (h) using S = S0 * h^(2/p)"""
+        '''
+        Hayashi, M. & van der Kamp, G. Simple equations to represent the 
+        volume–area–depth relations of shallow wetlands in small 
+         depressions. Journal of Hydrology 237, 74-85, 
+         doi:https://doi.org/10.1016/S0022-1694(00)00300-0 (2000)
+         
+        Bam, E. K. P. & Ireson, A. M. Quantifying the wetland water balance: 
+            A new isotope-based approach that includes precipitation and infiltration. 
+            Journal of Hydrology 570, 185-200, doi:10.1016/j.jhydrol.2018.12.032 (2019)
+        '''    
         return (self.S0 * h ** (2/self.p))        
-    '''
-    Hayashi, M. & van der Kamp, G. Simple equations to represent the 
-    volume–area–depth relations of shallow wetlands in small 
-     depressions. Journal of Hydrology 237, 74-85, 
-     doi:https://doi.org/10.1016/S0022-1694(00)00300-0 (2000)
-     
-    Bam, E. K. P. & Ireson, A. M. Quantifying the wetland water balance: 
-        A new isotope-based approach that includes precipitation and infiltration. 
-        Journal of Hydrology 570, 185-200, doi:10.1016/j.jhydrol.2018.12.032 (2019)
-    '''    
+
     def volume_wetland(self, h):
+        """Integrate area to get volume: V = (S0 / (2/p + 1)) * h^(2/p + 1)"""
         return (self.S0 * (2/ self.p + 1)**(-1) * h**(2/self.p + 1))
     
     def h_current(self, V):
+        """Invert the volume equation to find current water depth (h) from volume (V)"""
         return ((2/self.p+1) * V / self.S0)** (1/(2/self.p + 1))
     
     def wetland_outflow(self, h):
-        return self.r_coefficient * (h - self.threshold) ** self.r_exponent
+        """Calculate discharge using rating curve: Q = r_coeff * (h - threshold)^r_exp"""
         '''
         From HYPE
         Lindström, G. Lake water levels for calibration of the S-HYPE model. 
         Hydrology Research 47, 672-682, doi:10.2166/nh.2016.019 (2016).
         '''
+        return self.r_coefficient * (h - self.threshold) ** self.r_exponent
+
     def get_data_input(self, var):
         """Read data input from parent Land node (i.e., for precipitation/et0/temp)
 
