@@ -148,6 +148,7 @@ class Model(WSIObj):
             {"FWTW": "treat_water"},
             {"Demand": "create_demand"},
             {"Land": "run"},
+            {"Wetland": "run"},
             {"Groundwater": "infiltrate"},
             {"Sewer": "make_discharge"},
             {"Foul": "make_discharge"},
