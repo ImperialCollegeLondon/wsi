@@ -6,7 +6,7 @@ Created on Wed Jan 25 10:30:46 2023
 """
 
 from wsimod.nodes.land import Node, Land, GrowingSurface, VariableAreaSurface
-from wsimod.nodes.nodes import Tank, DecayTank
+from wsimod.nodes.tanks import Tank, DecayTank
 from wsimod.core import constants
 class Wetland(Land):
     def __init__(self,
@@ -36,7 +36,7 @@ class Wetland(Land):
         (Reference: Technical Guidance for Creating Wetlands As Part of Unconsolidated Surface Mining Reclamation)
         """
         if soil_surface:
-            surfaces = [soil_surface]
+            surfaces = soil_surface
         else:
             surfaces = []
         super().__init__(name,
@@ -161,7 +161,7 @@ class Wetland(Land):
         self.total_runoff = total_runoff
         if total_runoff['volume'] > 0:
             #Send to rivers (or nodes, which are assumed to be junctions)
-            reply = self.push_distributed(total_runoff, of_type = ['River','Node','Sewer','Wetland'])
+            reply = self.push_distributed(total_runoff, of_type = ['River','Node','Sewer','Wetland','Waste'])
             
             #Redistribute total_runoff not sent
             if reply['volume'] > 0:
