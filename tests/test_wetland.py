@@ -136,6 +136,7 @@ def plot_results(flows, output_dir):
 
     output_path = output_dir / "wetland_flows_plot_v22_m3s.png"
     plt.savefig(output_path)
+    plt.show()
     plt.close()
 # =====================================================================
 # Main test function
