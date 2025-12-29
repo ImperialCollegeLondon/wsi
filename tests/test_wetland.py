@@ -23,6 +23,7 @@ OUTPUT_DIR = Path("D:/Data/created_data")
 # Helper function: Create wetland input CSV files
 # =====================================================================
 
+
 def create_wetland_input_files(temp_dir, days):
     """
     Create daily and monthly input CSV files required by WSIMOD wetland
@@ -37,12 +38,14 @@ def create_wetland_input_files(temp_dir, days):
     # -----------------------------------------------------------------
     daily_input_filename = temp_dir / "wetland-daily-inputs.csv"
 
-    df_daily = pd.DataFrame({
-        "time": dates,
-        "precipitation": [0.005] * days,
-        "et0": [0.002] * days,
-        "temperature": [20.0] * days,
-    })
+    df_daily = pd.DataFrame(
+        {
+            "time": dates,
+            "precipitation": [0.005] * days,
+            "et0": [0.002] * days,
+            "temperature": [20.0] * days,
+        }
+    )
 
     df_daily_long = pd.melt(
         df_daily,
@@ -59,11 +62,21 @@ def create_wetland_input_files(temp_dir, days):
     monthly_surface_filename = temp_dir / "wetland-monthly-surface-inputs.csv"
 
     zero_variables = [
-        "nhx-fertiliser", "noy-fertiliser", "srp-fertiliser",
-        "nhx-manure", "noy-manure", "srp-manure",
-        "nhx-dry", "noy-dry", "srp-dry",
-        "nhx-wet", "noy-wet", "srp-wet",
-        "noy-residue", "crop-factor", "crop-stage-day",
+        "nhx-fertiliser",
+        "noy-fertiliser",
+        "srp-fertiliser",
+        "nhx-manure",
+        "noy-manure",
+        "srp-manure",
+        "nhx-dry",
+        "noy-dry",
+        "srp-dry",
+        "nhx-wet",
+        "noy-wet",
+        "srp-wet",
+        "noy-residue",
+        "crop-factor",
+        "crop-stage-day",
     ]
 
     monthly_data = {"time": monthly_dates}
@@ -86,9 +99,10 @@ def create_wetland_input_files(temp_dir, days):
 # Helper function: Plot flow results
 # =====================================================================
 
+
 def plot_results(flows, output_dir):
     """
-    Plot daily flows with optimized X-axis labels (Month-Year) 
+    Plot daily flows with optimized X-axis labels (Month-Year)
     without importing additional libraries.
     """
     # Ensure time is in datetime format
@@ -105,23 +119,37 @@ def plot_results(flows, output_dir):
 
     # Plot existing arcs
     if "river_arc" in df_plot.columns:
-        plt.plot(df_plot.index, df_plot["river_arc"], 
-                 label="Surface Runoff (Wetland → River)", color="green")
+        plt.plot(
+            df_plot.index,
+            df_plot["river_arc"],
+            label="Surface Runoff (Wetland → River)",
+            color="green",
+        )
 
     if "groundwater_arc" in df_plot.columns:
-        plt.plot(df_plot.index, df_plot["groundwater_arc"], 
-                 label="Percolation to GW (Wetland → GW)", linestyle="--", color="brown")
+        plt.plot(
+            df_plot.index,
+            df_plot["groundwater_arc"],
+            label="Percolation to GW (Wetland → GW)",
+            linestyle="--",
+            color="brown",
+        )
 
     if "baseflow_arc" in df_plot.columns:
-        plt.plot(df_plot.index, df_plot["baseflow_arc"], 
-                 label="GW Baseflow (GW → River)", linestyle=":", color="red")
+        plt.plot(
+            df_plot.index,
+            df_plot["baseflow_arc"],
+            label="GW Baseflow (GW → River)",
+            linestyle=":",
+            color="red",
+        )
 
     # --- Optimize X-axis labels ---
     # Select only the first day of each month for ticks
     tick_dates = df_plot.index[df_plot.index.day == 1]
     # Format labels as 'MM-YYYY' or 'Jan-2000'
-    tick_labels = [d.strftime('%b-%Y') for d in tick_dates]
-    
+    tick_labels = [d.strftime("%b-%Y") for d in tick_dates]
+
     plt.xticks(tick_dates, tick_labels, rotation=45)
     # ------------------------------
 
@@ -130,7 +158,7 @@ def plot_results(flows, output_dir):
     plt.ylabel("Flow (m³/s)")
     plt.legend()
     plt.grid(True, linestyle="--", alpha=0.6)
-    
+
     # Adjust layout to prevent label clipping
     plt.tight_layout()
 
@@ -138,9 +166,12 @@ def plot_results(flows, output_dir):
     plt.savefig(output_path)
     plt.show()
     plt.close()
+
+
 # =====================================================================
 # Main test function
 # =====================================================================
+
 
 def test_wetland_gw_baseflow():
     """
@@ -170,7 +201,9 @@ def test_wetland_gw_baseflow():
     # Build daily input dictionary (WetlandWaterTank)
     # -----------------------------------------------------------------
     daily_df = pd.read_csv(daily_path)
-    daily_df["time"] = pd.to_datetime(daily_df["time"]).dt.normalize().dt.to_pydatetime()
+    daily_df["time"] = (
+        pd.to_datetime(daily_df["time"]).dt.normalize().dt.to_pydatetime()
+    )
 
     ws_time_map = {ws_date._date: ws_date for ws_date in dates_ws}
     daily_data_dict = {}
@@ -206,35 +239,37 @@ def test_wetland_gw_baseflow():
                 "type_": "Wetland",
                 "name": "wetland1",
                 "data_input_dict": {},
-                "soil_surface": [{
-                    "type_": "VariableAreaSurface",
-                    "data_input_dict": {},
-                    "rooting_depth": 1,
-                    "ET_depletion_factor": 0.5,
-                    "infiltration_capacity": 0.5,
-                    "surface_coefficient": 0.05,
-                    "percolation_coefficient": 0.75,
-                    "pollutant_load": {
-                        "nitrate": 1e-9,
-                        "ammonia": 1e-9,
-                        "nitrite": 1e-9,
-                    },
-                    "initial_soil_storage": {
-                        "phosphate": 0.0,
-                        "ammonia": 0.0,
-                        "nitrate": 0.0,
-                        "nitrite": 0.0,
-                        "org-nitrogen": 0.0,
-                        "org-phosphorus": 0.0,
-                        "solids": 0.0,
-                        "bod": 0.0,
-                        "cod": 0.0,
-                        "do": 0.0,
-                        "ph": 7.0,
-                        "temperature": 20.0,
-                    },
-                    "initial_storage": 0.0,
-                }],
+                "soil_surface": [
+                    {
+                        "type_": "VariableAreaSurface",
+                        "data_input_dict": {},
+                        "rooting_depth": 1,
+                        "ET_depletion_factor": 0.5,
+                        "infiltration_capacity": 0.5,
+                        "surface_coefficient": 0.05,
+                        "percolation_coefficient": 0.75,
+                        "pollutant_load": {
+                            "nitrate": 1e-9,
+                            "ammonia": 1e-9,
+                            "nitrite": 1e-9,
+                        },
+                        "initial_soil_storage": {
+                            "phosphate": 0.0,
+                            "ammonia": 0.0,
+                            "nitrate": 0.0,
+                            "nitrite": 0.0,
+                            "org-nitrogen": 0.0,
+                            "org-phosphorus": 0.0,
+                            "solids": 0.0,
+                            "bod": 0.0,
+                            "cod": 0.0,
+                            "do": 0.0,
+                            "ph": 7.0,
+                            "temperature": 20.0,
+                        },
+                        "initial_storage": 0.0,
+                    }
+                ],
                 "water_surface": {
                     "threshold": 0.1,
                     "h_max": 4,
@@ -295,13 +330,9 @@ def test_wetland_gw_baseflow():
     wetland.monthyear = types.MethodType(lambda self: self.time.to_period(), wetland)
 
     def get_surface_input(self, var):
-        return self.data_input_dict.get(
-            (var, self.name, self.parent.monthyear), 0.0
-        )
+        return self.data_input_dict.get((var, self.name, self.parent.monthyear), 0.0)
 
-    surface.get_data_input_surface = types.MethodType(
-        get_surface_input, surface
-    )
+    surface.get_data_input_surface = types.MethodType(get_surface_input, surface)
 
     # -----------------------------------------------------------------
     # Run model

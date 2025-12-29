@@ -2460,27 +2460,33 @@ class VariableAreaSurface(GrowingSurface):
         evaporation_depth *= self.current_soil_surface_area / self.area
 
         return precipitation_depth, evaporation_depth
-    
+
     def storage_distribution(self):
-        #Get flow division rates out of soil tank 
+        # Get flow division rates out of soil tank
         surface_rate = self.surface_coefficient
-        percolation_rate = (1-self.surface_coefficient) * self.percolation_coefficient
-        subsurface_flow_rate = (1-self.surface_coefficient) * self.subsurface_coefficient
-        
-        #Get current moisture deficit
+        percolation_rate = (1 - self.surface_coefficient) * self.percolation_coefficient
+        subsurface_flow_rate = (
+            1 - self.surface_coefficient
+        ) * self.subsurface_coefficient
+
+        # Get current moisture deficit
         current_moisture_deficit_depth = self.get_cmd()
-        deficit_depth = (self.depth - self.field_capacity) - min((self.depth - self.field_capacity), current_moisture_deficit_depth)
-        
+        deficit_depth = (self.depth - self.field_capacity) - min(
+            (self.depth - self.field_capacity), current_moisture_deficit_depth
+        )
+
         surface_distribution = surface_rate * deficit_depth * self.area
         subsurface_distribution = subsurface_flow_rate * deficit_depth * self.area
         percolation_distribution = percolation_rate * deficit_depth * self.area
-        
-        surface_distribution = self.pull_storage({'volume': surface_distribution})
-        subsurface_distribution = self.pull_storage({'volume': subsurface_distribution})
-        percolation_distribution = self.pull_storage({'volume': percolation_distribution})
-        
-        self.parent.surface_runoff.push_storage(surface_distribution, force = True)
-        self.parent.subsurface_runoff.push_storage(subsurface_distribution, force = True)
-        self.parent.percolation.push_storage(percolation_distribution, force = True)
-        
+
+        surface_distribution = self.pull_storage({"volume": surface_distribution})
+        subsurface_distribution = self.pull_storage({"volume": subsurface_distribution})
+        percolation_distribution = self.pull_storage(
+            {"volume": percolation_distribution}
+        )
+
+        self.parent.surface_runoff.push_storage(surface_distribution, force=True)
+        self.parent.subsurface_runoff.push_storage(subsurface_distribution, force=True)
+        self.parent.percolation.push_storage(percolation_distribution, force=True)
+
         return (self.empty_vqip(), self.empty_vqip())
