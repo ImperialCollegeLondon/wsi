@@ -201,7 +201,7 @@ class Wetland(Land):
         if reply_surface["volume"] > 0:
             self.surface_runoff.push_storage(reply_surface, force=True)
 
-        # Send water to soil (TODO - this would need updating if you had multiple soil surfaces)
+        # Send water to soil (TODO: update for multiple soil surfaces)
         reply = self.surfaces[0].push_storage(flow_to_soil)
 
         _ = self.wetland_tank.push_storage(reply, force=True)
@@ -252,15 +252,27 @@ class WetlandWaterTank(DecayTank):
         characteristic of shallow depressions.
 
         Parameters:
-            parent (Node): The parent Wetland Land node.
-            threshold (float): Height (h) at which the wetland starts spilling to the river (m).
-            h_max (float): Maximum height capacity of the wetland (m).
-            p (float): Power-law parameter (2/p) relating depth to area (Hayashi & van der Kamp, 2000).
-            area (float): Maximum surface area at h_max (m2).
-            r_coefficient (float): Determine the outflow at a water level 1m above the threshold, unit: m3/s
-            r_exponent (float): Rating curve exponent. 2 as a standard value
-            wetland_infiltration (float): Constant infiltration rate to the soil (0.001m/d - 0.009m/d).
-            et0_coefficient (float): Scaling factor for potential evapotranspiration (e.g., for cattails/bulrushes).
+            parent (Node): 
+                The parent Wetland Land node.
+            threshold (float): 
+                Height (h) at which the wetland starts spilling to the river (m).
+            h_max (float): 
+                Maximum height capacity of the wetland (m).
+            p (float): 
+                Power-law parameter (2/p) relating depth to area
+                (Hayashi & van der Kamp, 2000).
+            area (float): 
+                Maximum surface area at h_max (m2).
+            r_coefficient (float): 
+                Determines the outflow at a water level 1 m above the threshold
+                (m3/s).
+            r_exponent (float): 
+                Rating curve exponent. 2 as a standard value
+            wetland_infiltration (float): 
+                Constant infiltration rate to the soil (0.001m/d - 0.009m/d).
+            et0_coefficient (float): 
+                Scaling factor for potential evapotranspiration 
+                (e.g., for cattails/bulrushes).
         """
         self.parent = parent
         self.S0 = area / (h_max ** (2 / p))
@@ -285,7 +297,8 @@ class WetlandWaterTank(DecayTank):
         et0_coefficient default: 2.5
         Evapotranspiration Crop Coefficients for Cattail and Bulrush
         https://scholarworks.montana.edu/xmlui/bitstream/handle/1/13425/04-040_Evapotranspiration_Crop_Coefficients.pdf?sequence=1
-        Effects of evapotranspiration on treatment performance in constructed wetlands: Experimental studies and modeling
+        Effects of evapotranspiration on treatment performance in constructed 
+        wetlands: Experimental studies and modeling
         https://www.sciencedirect.com/science/article/pii/S0925857414003425
         """
         # Calculate surface area of water
@@ -316,7 +329,10 @@ class WetlandWaterTank(DecayTank):
         return ((2 / self.p + 1) * V / self.S0) ** (1 / (2 / self.p + 1))
 
     def wetland_outflow(self, h):
-        """Calculate discharge using rating curve: Q = r_coeff * (h - threshold)^r_exp"""
+        """
+        Calculate discharge using rating curve: 
+        Q = r_coeff * (h - threshold)^r_exp
+        """
         """
         From HYPE
         Lindström, G. Lake water levels for calibration of the S-HYPE model. 
@@ -387,6 +403,5 @@ class WetlandWaterTank(DecayTank):
         self.parent.running_outflow_mb = self.sum_vqip(
             self.parent.running_outflow_mb, effective_evaporation
         )
-        # self.parent.running_outflow_mb = self.sum_vqip(self.parent.running_outflow_mb, flow_to_soil)
 
         return flow_to_river, flow_to_soil
