@@ -32,76 +32,76 @@ class Wetland(Land):
         **kwargs,
     ):
         """
-    A specialized Land node representing a Wetland system. 
-        
-    It consists of a soil surface and an overlying water tank. The node 
-    dynamically calculates the interaction between the water level and the 
-    exposed soil area.
+        A specialized Land node representing a Wetland system.
 
-    Key features:
-        - Dynamic surface area: 
-        The exposed soil area decreases as the wetland water volume increases.
-        - Water balance: 
-        Integrates precipitation, evapotranspiration, infiltration to soil, 
-        and rating-curve-based discharge.
-        - Water quality: 
-        Inherits decay processes for pollutants within the wetland water body.
+        It consists of a soil surface and an overlying water tank. The node
+        dynamically calculates the interaction between the water level and the
+        exposed soil area.
 
-    Parameters:
-        name (str):
-            Node name.
-        soil_surface (list, optional):
-            List of dicts describing soil surface parameters.
-            Defaults to [].
-        water_surface (dict, optional):
-            Parameters for the WetlandWaterTank including:
-                - threshold (float):
-                  Water level height at which outflow to river begins (m).
-                - h_max (float):
-                  Maximum possible water depth (m).
-                - p (float):
-                  Shape parameter for the volume-area-depth relationship.
-                - area (float):
-                  Total area of the wetland at h_max (m2).
-                - r_coefficient (float):
-                  Determines the outflow at a water level 1 m above the threshold
-                  (m3/s).
-                - r_exponent (float):
-                  Rating curve exponent (typically 2).
-                - wetland_infiltration (float):
-                  Daily infiltration rate from water tank to soil
-                  (0.001 m/d–0.009 m/d).
-                - decays (dict):
-                  Pollutant decay constants and temperature exponents.
-        **kwargs:
-            Additional arguments passed to the Land parent class.
+        Key features:
+            - Dynamic surface area:
+            The exposed soil area decreases as the wetland water volume increases.
+            - Water balance:
+            Integrates precipitation, evapotranspiration, infiltration to soil,
+            and rating-curve-based discharge.
+            - Water quality:
+            Inherits decay processes for pollutants within the wetland water body.
 
-    Key assumptions:
-        - Wetland Land node includes a single soil surface and a single wetland
-          water tank.
-        - The wetland water body and soil surface share the same footprint.
-        - Exposed surface area varies with the wetland water volume.
-        - Outflow follows a rating curve once the water level exceeds the
-          threshold.
-        - Infiltration to the underlying soil is driven by the saturated area of
-          the wetland.
+        Parameters:
+            name (str):
+                Node name.
+            soil_surface (list, optional):
+                List of dicts describing soil surface parameters.
+                Defaults to [].
+            water_surface (dict, optional):
+                Parameters for the WetlandWaterTank including:
+                    - threshold (float):
+                      Water level height at which outflow to river begins (m).
+                    - h_max (float):
+                      Maximum possible water depth (m).
+                    - p (float):
+                      Shape parameter for the volume-area-depth relationship.
+                    - area (float):
+                      Total area of the wetland at h_max (m2).
+                    - r_coefficient (float):
+                      Determines the outflow at a water level 1 m above the threshold
+                      (m3/s).
+                    - r_exponent (float):
+                      Rating curve exponent (typically 2).
+                    - wetland_infiltration (float):
+                      Daily infiltration rate from water tank to soil
+                      (0.001 m/d–0.009 m/d).
+                    - decays (dict):
+                      Pollutant decay constants and temperature exponents.
+            **kwargs:
+                Additional arguments passed to the Land parent class.
 
-    Input data requirements:
-        wetland_infiltration:
-            Very low:
-                Infiltration rates < 0.06 m/d. Soils in this group have a high
-                clay content (Marble, 1992).
-            Low:
-                Infiltration rates of 0.06–0.3 m/d. These soils are often shallow,
-                clay-rich, or low in organic matter.
-            Medium:
-                Infiltration rates of 0.3–0.6 m/d. Soils are typically loams and
-                silts.
-            High:
-                Infiltration rates > 0.6 m/d. These are deep sands and well-
-                aggregated silt loams.
-        (Reference: Technical Guidance for Creating Wetlands As Part of 
-         Unconsolidated Surface Mining Reclamation)
+        Key assumptions:
+            - Wetland Land node includes a single soil surface and a single wetland
+              water tank.
+            - The wetland water body and soil surface share the same footprint.
+            - Exposed surface area varies with the wetland water volume.
+            - Outflow follows a rating curve once the water level exceeds the
+              threshold.
+            - Infiltration to the underlying soil is driven by the saturated area of
+              the wetland.
+
+        Input data requirements:
+            wetland_infiltration:
+                Very low:
+                    Infiltration rates < 0.06 m/d. Soils in this group have a high
+                    clay content (Marble, 1992).
+                Low:
+                    Infiltration rates of 0.06–0.3 m/d. These soils are often shallow,
+                    clay-rich, or low in organic matter.
+                Medium:
+                    Infiltration rates of 0.3–0.6 m/d. Soils are typically loams and
+                    silts.
+                High:
+                    Infiltration rates > 0.6 m/d. These are deep sands and well-
+                    aggregated silt loams.
+            (Reference: Technical Guidance for Creating Wetlands As Part of
+             Unconsolidated Surface Mining Reclamation)
         """
         if soil_surface:
             surfaces = soil_surface
