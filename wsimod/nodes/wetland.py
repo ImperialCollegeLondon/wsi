@@ -252,26 +252,26 @@ class WetlandWaterTank(DecayTank):
         characteristic of shallow depressions.
 
         Parameters:
-            parent (Node): 
+            parent (Node):
                 The parent Wetland Land node.
-            threshold (float): 
+            threshold (float):
                 Height (h) at which the wetland starts spilling to the river (m).
-            h_max (float): 
+            h_max (float):
                 Maximum height capacity of the wetland (m).
-            p (float): 
+            p (float):
                 Power-law parameter (2/p) relating depth to area
                 (Hayashi & van der Kamp, 2000).
-            area (float): 
+            area (float):
                 Maximum surface area at h_max (m2).
-            r_coefficient (float): 
+            r_coefficient (float):
                 Determines the outflow at a water level 1 m above the threshold
                 (m3/s).
-            r_exponent (float): 
+            r_exponent (float):
                 Rating curve exponent. 2 as a standard value
-            wetland_infiltration (float): 
+            wetland_infiltration (float):
                 Constant infiltration rate to the soil (0.001m/d - 0.009m/d).
-            et0_coefficient (float): 
-                Scaling factor for potential evapotranspiration 
+            et0_coefficient (float):
+                Scaling factor for potential evapotranspiration
                 (e.g., for cattails/bulrushes).
         """
         self.parent = parent
@@ -330,7 +330,7 @@ class WetlandWaterTank(DecayTank):
 
     def wetland_outflow(self, h):
         """
-        Calculate discharge using rating curve: 
+        Calculate discharge using rating curve:
         Q = r_coeff * (h - threshold)^r_exp
         """
         """
