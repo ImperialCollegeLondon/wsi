@@ -3,6 +3,7 @@
 
 @author: Barney
 """
+
 import sys
 from bisect import bisect_left
 from math import exp, log, log10, sin
@@ -633,10 +634,8 @@ class ImperviousSurface(Surface):
         self.et0_to_e = overrides.pop("et0_to_e", self.et0_to_e)
         if "depth" in overrides.keys():
             overrides.pop("depth")
-            print(
-                "ERROR: specifying depth is depreciated in overrides for \
-		impervious surface, please specify pore_depth instead"
-            )
+            print("ERROR: specifying depth is depreciated in overrides for \
+		impervious surface, please specify pore_depth instead")
         self.pore_depth = overrides.pop("pore_depth", self.pore_depth)
         self.depth = self.pore_depth
         self.capacity = self.area * self.depth
@@ -1411,10 +1410,8 @@ class GrowingSurface(PerviousSurface):
 
         if "depth" in overrides.keys():
             overrides.pop("depth")
-            print(
-                "ERROR: specifying depth is depreciated in overrides for \
-		GrowingSurface, please specify rooting_depth instead"
-            )
+            print("ERROR: specifying depth is depreciated in overrides for \
+		GrowingSurface, please specify rooting_depth instead")
         self.rooting_depth = overrides.pop("rooting_depth", self.rooting_depth)
         overrides["depth"] = self.rooting_depth
         super().apply_overrides(overrides)
