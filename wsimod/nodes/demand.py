@@ -5,6 +5,7 @@
 
 Converted to totals BD 2022-05-03
 """
+
 from typing import Any, Dict
 
 from wsimod.core import constants
