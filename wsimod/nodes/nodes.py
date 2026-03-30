@@ -334,12 +334,12 @@ class Node(WSIObj):
         """
         try:
             return handler[tag](ip)
-        except Exception:
+        except Exception as e:
             if tag not in handler.keys():
                 print("No functions defined for " + tag)
                 return handler[tag](ip)
             else:
-                print("Some other error")
+                print(e)
                 return handler[tag](ip)
 
     def pull_distributed(self, vqip, of_type=None, tag="default"):
