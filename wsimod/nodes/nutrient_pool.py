@@ -3,6 +3,7 @@
 
 @author: barna
 """
+
 from typing import Any, Dict
 
 from wsimod.core import constants

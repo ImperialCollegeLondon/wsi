@@ -3,6 +3,7 @@
 
 @author: bdobson Converted to totals on 2022-05-03
 """
+
 import warnings
 from math import exp
 from typing import Any, Dict
@@ -644,16 +645,12 @@ class River(Storage):
             setattr(self, param, overrides.pop(param))
 
         if "area" in overrides.keys():
-            warnings.warn(
-                "WARNING: specifying area is depreciated in overrides \
-		for river, please specify length and width instead"
-            )
+            warnings.warn("WARNING: specifying area is depreciated in overrides \
+		for river, please specify length and width instead")
         overrides["area"] = self.length * self.width
         if "capacity" in overrides.keys():
-            warnings.warn(
-                "ERROR: specifying capacity is depreciated in overrides \
-		for river, it is always set as unbounded capacity"
-            )
+            warnings.warn("ERROR: specifying capacity is depreciated in overrides \
+		for river, it is always set as unbounded capacity")
         overrides["capacity"] = constants.UNBOUNDED_CAPACITY
         super().apply_overrides(overrides)
 
