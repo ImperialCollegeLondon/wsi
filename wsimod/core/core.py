@@ -5,6 +5,7 @@
 
 Converted to totals on Thur Apr 21 2022
 """
+
 from math import log10
 
 from wsimod.core import constants

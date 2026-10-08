@@ -5,6 +5,7 @@
 
 Converted to totals on 2022-05-03
 """
+
 from wsimod.core import constants
 from wsimod.nodes.nodes import Node
 

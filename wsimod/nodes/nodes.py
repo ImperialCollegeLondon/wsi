@@ -5,6 +5,7 @@
 
 Converted to totals on Thur Apr 21 2022
 """
+
 import logging
 from typing import Any, Dict
 
