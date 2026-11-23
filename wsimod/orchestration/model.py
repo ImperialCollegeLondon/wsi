@@ -3,6 +3,7 @@
 
 @author: bdobson
 """
+
 import csv
 import gzip
 import importlib.util

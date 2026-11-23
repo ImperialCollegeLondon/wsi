@@ -4,6 +4,7 @@
 @author: bdobson
 Converted to totals on 2022-05-03
 """
+
 from typing import Any, Dict
 
 from wsimod.core import constants
@@ -135,10 +136,8 @@ class Sewer(Node):
         if "pipe_timearea" in overrides.keys():
             pipe_timearea_sum = sum([v for k, v in overrides["pipe_timearea"].items()])
             if pipe_timearea_sum != 1:
-                print(
-                    "ERROR: the sum of pipe_timearea in the overrides dict \
-			is not equal to 1, please check it"
-                )
+                print("ERROR: the sum of pipe_timearea in the overrides dict \
+			is not equal to 1, please check it")
         self.pipe_timearea = overrides.pop("pipe_timearea", self.pipe_timearea)
         super().apply_overrides(overrides)
 

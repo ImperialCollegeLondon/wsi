@@ -36,7 +36,6 @@ from pprint import pprint as print
 
 from wsimod.nodes.sewer import Sewer
 
-
 my_sewer = Sewer(name="mr_sewer")
 print(my_sewer.push_set_handler)
 

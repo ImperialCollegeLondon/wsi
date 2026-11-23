@@ -3,6 +3,7 @@
 
 @author: bdobson
 """
+
 from wsimod.nodes.nodes import Node
 
 
